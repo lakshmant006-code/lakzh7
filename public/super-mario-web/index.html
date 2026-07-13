@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Mario - Web</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="container">
+    <canvas id="game" width="640" height="480"></canvas>
+    <div id="hud">
+      <span id="fps">FPS: --</span>
+    </div>
+    <div id="loading">Loading assets...</div>
+    <div id="controls">
+      <p><strong>Controls:</strong> Arrow keys / H-L to move · Space / Up / K to jump · Shift to boost</p>
+      <p>Esc to pause · Enter to select · Left click: spawn coin · Right click: spawn enemies (secret)</p>
+    </div>
+  </div>
+  <script>
+    var loadingEl = document.getElementById('loading');
+    loadingEl.textContent = 'Initializing...';
+
+    function showLoadError(message) {
+      loadingEl.style.display = 'flex';
+      loadingEl.innerHTML = message;
+    }
+
+    window.addEventListener('error', function (e) {
+      showLoadError('Error: ' + e.message);
+    });
+    window.addEventListener('unhandledrejection', function (e) {
+      var reason = e.reason;
+      var msg = reason && reason.message ? reason.message : String(reason);
+      showLoadError('Error: ' + msg);
+    });
+
+    (async function start() {
+      try {
+        loadingEl.textContent = 'Loading game...';
+        var mod = await import('./js/game.bundle.js');
+        loadingEl.textContent = 'Checking assets...';
+        await mod.probeAssets();
+        await mod.boot();
+      } catch (err) {
+        console.error(err);
+        showLoadError(
+          'Failed to start: ' + err.message +
+          '<br><br>Make sure the server is running, then open:<br>' +
+          '<code>http://localhost:8080/web/</code>'
+        );
+      }
+    })();
+  </script>
+</body>
+</html>

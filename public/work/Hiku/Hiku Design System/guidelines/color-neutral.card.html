@@ -1,0 +1,27 @@
+<!-- @dsCard group="Colors" viewport="700x150" name="Neutrals & Ink" subtitle="Text, borders, surfaces + the two secondary colors" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; font-family: var(--font-sans); background: var(--white); }
+  .row { display: flex; gap: 10px; padding: 20px; }
+  .sw { flex: 1; display: flex; flex-direction: column; }
+  .chip { height: 64px; border-radius: 10px; border: 1px solid var(--line-200); }
+  .name { margin-top: 8px; font-size: 12px; font-weight: 700; color: var(--ink-900); }
+  .hex { font-size: 11px; color: var(--ink-500); font-weight: 500; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="sw"><div class="chip" style="background:var(--black)"></div><span class="name">black</span><span class="hex">#000000</span></div>
+    <div class="sw"><div class="chip" style="background:var(--ink-900)"></div><span class="name">ink-900</span><span class="hex">#1a1a1a</span></div>
+    <div class="sw"><div class="chip" style="background:var(--ink-500)"></div><span class="name">ink-500</span><span class="hex">#717171</span></div>
+    <div class="sw"><div class="chip" style="background:var(--ink-400)"></div><span class="name">ink-400</span><span class="hex">#9a9a9a</span></div>
+    <div class="sw"><div class="chip" style="background:var(--line-300)"></div><span class="name">line-300</span><span class="hex">#dddddd</span></div>
+    <div class="sw"><div class="chip" style="background:var(--surface-100)"></div><span class="name">surface-100</span><span class="hex">#f7f7f7</span></div>
+    <div class="sw"><div class="chip" style="background:var(--white)"></div><span class="name">white</span><span class="hex">#ffffff</span></div>
+  </div>
+</body>
+</html>

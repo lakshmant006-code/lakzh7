@@ -1,0 +1,47 @@
+<!-- @dsCard group="Components" viewport="700x300" name="Content — Rows, Cards, Avatars" subtitle="OptionRow, PlaceCard, Avatar, MapMarker" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../styles.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  body { margin: 0; font-family: var(--font-sans); background: var(--white); }
+  #root { padding: 22px 24px; display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
+  .col { display: flex; flex-direction: column; gap: 12px; }
+  .markers { display: flex; gap: 10px; align-items: center; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+  const { OptionRow, PlaceCard, Avatar, MapMarker } = window.HikuDesignSystem_2ec900;
+  const img = "../../assets/illustration-mountain-river.png";
+  function Demo() {
+    return (
+      <>
+        <div className="col">
+          <OptionRow icon="caravan" title="RV" subtitle="find places that fit your rig" />
+          <OptionRow icon="tent" title="Tent" subtitle="Pitch your own tent" selected />
+          <OptionRow icon="house" title="Lodging" subtitle="Accommodations provided" />
+          <div className="markers">
+            <MapMarker icon="tent" />
+            <MapMarker icon="map-pin" active />
+            <MapMarker icon="caravan" />
+            <Avatar name="Jaden Smith" ring />
+            <Avatar name="Ava Lopez" />
+          </div>
+        </div>
+        <div className="col">
+          <PlaceCard image={img} title="Kachina Trailhead Camp" meta="Flagstaff, AZ · 3.2 mi" rating={4.92} price="$32" priceUnit="night" />
+        </div>
+      </>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!-- @dsCard group="Colors" viewport="700x150" name="Semantic Roles" subtitle="Where the greens land in the UI" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  body { margin: 0; font-family: var(--font-sans); background: var(--white); }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 20px; }
+  .tok { display: flex; flex-direction: column; gap: 8px; }
+  .bar { height: 40px; border-radius: 8px; border: 1px solid var(--line-200); display:flex; align-items:center; padding:0 12px; font-size:12px; font-weight:600; }
+  .lbl { font-size: 11px; color: var(--ink-500); font-weight: 500; }
+  .k { font-size:12px; font-weight:700; color: var(--ink-900); }
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div class="tok"><div class="bar" style="background:var(--action-primary);color:#fff">Book</div><span class="k">--action-primary</span><span class="lbl">buttons, active</span></div>
+    <div class="tok"><div class="bar" style="background:var(--surface-header)">header band</div><span class="k">--surface-header</span><span class="lbl">app top band</span></div>
+    <div class="tok"><div class="bar" style="background:var(--brand-wash);color:var(--green-700)">selected</div><span class="k">--brand-wash</span><span class="lbl">selected chips</span></div>
+    <div class="tok"><div class="bar" style="background:var(--map-bg)">map</div><span class="k">--map-bg</span><span class="lbl">map canvas</span></div>
+  </div>
+</body>
+</html>

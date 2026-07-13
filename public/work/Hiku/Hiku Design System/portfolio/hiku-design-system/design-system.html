@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hiku — Design System</title>
+<style>
+  :root {
+    --green-50:#eef7f1; --green-100:#d9ede1; --green-200:#b9dfc9; --green-300:#8dcaaf;
+    --green-400:#4fb889; --green-500:#349369; --green-600:#2b7c58; --green-700:#216044;
+    --ink-900:#1a1a1a; --ink-500:#717171; --ink-400:#9a9a9a; --line-300:#ddd; --line-200:#ebebeb;
+    --surface-100:#f7f7f7; --white:#fff;
+    --font: "Satoshi", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: var(--font); color: var(--ink-900);
+    background: linear-gradient(180deg,#f3f7f4,#e9efe9); line-height: 1.5; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 56px 28px 80px; }
+  header.hero { display: flex; align-items: center; gap: 22px; margin-bottom: 10px; }
+  header.hero img { width: 78px; height: auto; }
+  h1 { font-size: 46px; font-weight: 900; letter-spacing: -0.02em; margin: 0; color: var(--green-500); }
+  .tagline { color: var(--ink-500); font-size: 17px; margin: 2px 0 0; }
+  .lead { font-size: 18px; color: var(--ink-700, #3a3a3a); max-width: 680px; margin: 24px 0 44px; }
+  h2 { font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--green-600); margin: 52px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--line-200); }
+  h3 { font-size: 15px; font-weight: 700; margin: 0 0 4px; }
+  .muted { color: var(--ink-500); font-size: 13px; }
+  section.card { background: var(--white); border: 1px solid var(--line-200); border-radius: 16px;
+    padding: 26px; box-shadow: 0 2px 10px rgba(26,26,26,0.04); }
+  .grid { display: grid; gap: 16px; }
+  /* colors */
+  .swatches { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+  .sw { border-radius: 12px; overflow: hidden; border: 1px solid var(--line-200); }
+  .sw .chip { height: 72px; }
+  .sw .meta { padding: 8px 10px; }
+  .sw .name { font-size: 12px; font-weight: 700; }
+  .sw .hex { font-size: 11px; color: var(--ink-500); }
+  .src { display:inline-block; margin-top:3px; font-size:9px; font-weight:700; letter-spacing:.05em; color:var(--green-500); }
+  /* type */
+  .type-row { display: flex; align-items: baseline; gap: 18px; padding: 9px 0; border-bottom: 1px dashed var(--line-200); }
+  .type-tag { width: 118px; flex-shrink: 0; font-size: 11px; color: var(--ink-500); }
+  .weights { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 6px; }
+  .weights .w { text-align: center; }
+  .weights .big { font-size: 44px; line-height: 1; }
+  /* components */
+  .comp-grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+  .comp { border: 1px solid var(--line-200); border-radius: 12px; padding: 16px; background: var(--surface-100); }
+  .btn { display:inline-flex; align-items:center; justify-content:center; height:44px; padding:0 22px;
+    border-radius:999px; font-weight:500; font-size:15px; border:1px solid transparent; cursor:pointer; }
+  .btn-primary { background: var(--green-500); color:#fff; }
+  .btn-vibrant { background: var(--green-400); color:#fff; }
+  .btn-secondary { background:#fff; color: var(--ink-900); border-color: var(--line-300); }
+  .chiprow { display:flex; gap:8px; flex-wrap:wrap; }
+  .fchip { height:34px; padding:0 14px; border-radius:999px; border:1px solid var(--line-300);
+    background:#fff; font-size:13px; font-weight:500; display:inline-flex; align-items:center; gap:6px; }
+  .fchip.sel { background: var(--green-50); border-color: var(--green-400); color: var(--green-700); }
+  .input { height:44px; border-radius:12px; border:1px solid var(--line-300); padding:0 14px;
+    font-family:var(--font); font-weight:500; font-size:15px; width:100%; }
+  .navbar { display:flex; justify-content:space-around; border:1px solid var(--line-200); border-radius:12px; padding:8px; background:#fff; }
+  .navitem { display:flex; flex-direction:column; align-items:center; gap:4px; font-size:11px; color:var(--ink-900); }
+  .navitem.on { color: var(--green-500); font-weight:500; }
+  .navitem svg { width:22px; height:22px; }
+  .radii { display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+  .radii .r { width:64px; height:52px; background:var(--green-100); border:1px solid var(--green-300); }
+  .ill { border-radius:12px; overflow:hidden; border:1px solid var(--line-200); }
+  .ill img { display:block; width:100%; }
+  .two { grid-template-columns: 1.1fr 0.9fr; align-items:center; }
+  .proto-link { display:inline-flex; align-items:center; gap:10px; height:48px; padding:0 24px; border-radius:999px;
+    background: var(--green-500); color:#fff; font-weight:500; text-decoration:none; font-size:15px; }
+  ul.tokens { columns: 2; font-size:13px; color:var(--ink-500); padding-left:18px; }
+  ul.tokens li { margin:3px 0; }
+  code { font-family: ui-monospace, monospace; font-size:12px; color: var(--green-700); background: var(--green-50); padding:1px 5px; border-radius:5px; }
+  @media (max-width:720px){ .two{grid-template-columns:1fr;} ul.tokens{columns:1;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <img src="assets/logo-mark.png" alt="Hiku" />
+    <div>
+      <h1>Hiku</h1>
+      <p class="tagline">Design system — trail tracking, camping & gear for hiking enthusiasts</p>
+    </div>
+  </header>
+  <p class="lead">
+    Hiku's identity is <strong>earthy, vibrant and calm</strong> — deep forest greens on generous white space,
+    the Satoshi typeface throughout, Lucide line icons, fully-rounded pills and 12&nbsp;px cards, and flat
+    monochrome-green nature illustration. This page documents the foundations and components that power the
+    Hiku mobile app prototype.
+  </p>
+
+  <h2>Color</h2>
+  <section class="card">
+    <h3>Brand greens</h3>
+    <p class="muted">The whole identity. <code>#8DCAAF</code>, <code>#4FB889</code> and <code>#349369</code> are the source brand colors.</p>
+    <div class="grid swatches" style="margin-top:16px">
+      <div class="sw"><div class="chip" style="background:#d9ede1"></div><div class="meta"><div class="name">green-100</div><div class="hex">#d9ede1</div></div></div>
+      <div class="sw"><div class="chip" style="background:#b9dfc9"></div><div class="meta"><div class="name">green-200</div><div class="hex">#b9dfc9</div></div></div>
+      <div class="sw"><div class="chip" style="background:#8dcaaf"></div><div class="meta"><div class="name">green-300</div><div class="hex">#8dcaaf</div><span class="src">SOURCE</span></div></div>
+      <div class="sw"><div class="chip" style="background:#4fb889"></div><div class="meta"><div class="name">green-400</div><div class="hex">#4fb889</div><span class="src">SOURCE</span></div></div>
+      <div class="sw"><div class="chip" style="background:#349369"></div><div class="meta"><div class="name">green-500</div><div class="hex">#349369</div><span class="src">SOURCE</span></div></div>
+      <div class="sw"><div class="chip" style="background:#2b7c58"></div><div class="meta"><div class="name">green-600</div><div class="hex">#2b7c58</div></div></div>
+      <div class="sw"><div class="chip" style="background:#216044"></div><div class="meta"><div class="name">green-700</div><div class="hex">#216044</div></div></div>
+    </div>
+    <h3 style="margin-top:26px">Neutrals & ink</h3>
+    <div class="grid swatches" style="margin-top:16px">
+      <div class="sw"><div class="chip" style="background:#1a1a1a"></div><div class="meta"><div class="name">ink-900</div><div class="hex">#1a1a1a</div></div></div>
+      <div class="sw"><div class="chip" style="background:#717171"></div><div class="meta"><div class="name">ink-500</div><div class="hex">#717171</div></div></div>
+      <div class="sw"><div class="chip" style="background:#9a9a9a"></div><div class="meta"><div class="name">ink-400</div><div class="hex">#9a9a9a</div></div></div>
+      <div class="sw"><div class="chip" style="background:#dddddd"></div><div class="meta"><div class="name">line-300</div><div class="hex">#dddddd</div></div></div>
+      <div class="sw"><div class="chip" style="background:#f7f7f7"></div><div class="meta"><div class="name">surface-100</div><div class="hex">#f7f7f7</div></div></div>
+      <div class="sw"><div class="chip" style="background:#fff;border-bottom:1px solid #eee"></div><div class="meta"><div class="name">white</div><div class="hex">#ffffff</div></div></div>
+    </div>
+  </section>
+
+  <h2>Typography</h2>
+  <section class="card">
+    <h3>Satoshi — one family carries everything</h3>
+    <p class="muted">Black for big moments, Bold for titles, Medium for buttons & inputs, Regular for body. The login/splash wordmark uses the hand-lettered <em>Architects Daughter</em>.</p>
+    <div style="margin-top:14px">
+      <div class="type-row"><span class="type-tag">display · 34/900</span><span style="font-size:34px;font-weight:900;letter-spacing:-.02em">Find your trail</span></div>
+      <div class="type-row"><span class="type-tag">h1 · 26/700</span><span style="font-size:26px;font-weight:700;letter-spacing:-.02em">Camping style</span></div>
+      <div class="type-row"><span class="type-tag">h3 · 18/700</span><span style="font-size:18px;font-weight:700">ASU Outdoors Club</span></div>
+      <div class="type-row"><span class="type-tag">body · 16/400</span><span style="font-size:16px">Pitch your own tent anywhere.</span></div>
+      <div class="type-row"><span class="type-tag">sm · 14/400</span><span style="font-size:14px;color:#717171">find places that fit your rig</span></div>
+    </div>
+    <div class="weights">
+      <div class="w"><div class="big" style="font-weight:300">Aa</div><div class="muted">Light 300</div></div>
+      <div class="w"><div class="big" style="font-weight:400">Aa</div><div class="muted">Regular 400</div></div>
+      <div class="w"><div class="big" style="font-weight:500">Aa</div><div class="muted">Medium 500</div></div>
+      <div class="w"><div class="big" style="font-weight:700">Aa</div><div class="muted">Bold 700</div></div>
+      <div class="w"><div class="big" style="font-weight:900">Aa</div><div class="muted">Black 900</div></div>
+    </div>
+  </section>
+
+  <h2>Components</h2>
+  <section class="card">
+    <div class="grid comp-grid">
+      <div class="comp"><h3>Buttons</h3><p class="muted">Fully-rounded pills</p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;align-items:flex-start">
+          <button class="btn btn-primary">show 250 places</button>
+          <button class="btn btn-vibrant">Register</button>
+          <button class="btn btn-secondary">Filters</button>
+        </div>
+      </div>
+      <div class="comp"><h3>Filter chips</h3><p class="muted">Dropdown & toggle</p>
+        <div class="chiprow" style="margin-top:12px">
+          <span class="fchip">Camping style ▾</span>
+          <span class="fchip">Amenities ▾</span>
+          <span class="fchip sel">✓ Pets allowed</span>
+        </div>
+      </div>
+      <div class="comp"><h3>Input</h3><p class="muted">12px radius, green focus</p>
+        <div style="margin-top:12px"><input class="input" value="Jaden Smith" readonly /></div>
+      </div>
+      <div class="comp"><h3>Bottom nav</h3><p class="muted">5-tab app bar</p>
+        <div class="navbar" style="margin-top:12px">
+          <span class="navitem on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>Explore</span>
+          <span class="navitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 21.381V8.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></svg>Trails</span>
+          <span class="navitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>Community</span>
+          <span class="navitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Shop</span>
+        </div>
+      </div>
+      <div class="comp"><h3>Corner radii</h3><p class="muted">8 · 12 · 16 · 22 · pill</p>
+        <div class="radii" style="margin-top:12px">
+          <div class="r" style="border-radius:8px"></div>
+          <div class="r" style="border-radius:12px"></div>
+          <div class="r" style="border-radius:16px"></div>
+          <div class="r" style="border-radius:22px"></div>
+          <div class="r" style="border-radius:999px"></div>
+        </div>
+      </div>
+      <div class="comp"><h3>Iconography</h3><p class="muted">Lucide line set · 2px stroke</p>
+        <div style="display:flex;gap:14px;margin-top:14px;color:var(--green-600)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 21 14 3"/><path d="M20.5 21 10 3"/><path d="M15.5 21 12 15l-3.5 6"/><path d="M2 21h20"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/><circle cx="12" cy="12" r="10"/></svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <h2>Brand illustration</h2>
+  <section class="card grid two">
+    <div class="ill"><img src="assets/illustration-mountain-river.png" alt="Hiku mountain-and-river illustration" /></div>
+    <div>
+      <h3>Flat, layered, vibrant</h3>
+      <p class="muted" style="font-size:14px">
+        Illustrations are flat vector landscapes in the brand greens. The system also generates six monochrome
+        hiking scenes (mountains, tent, forest, trail, campfire, lake) built only from the green palette — used
+        for empty states, headers, and as the graceful fallback behind real photography.
+      </p>
+    </div>
+  </section>
+
+  <h2>Interactive prototype</h2>
+  <section class="card grid two">
+    <div>
+      <h3>The Hiku mobile app</h3>
+      <p class="muted" style="font-size:14px">
+        A full click-through built on these foundations: splash → snow-reveal loading → Explore (filter popups),
+        Trails (live hiking map with tap-to-route navigation), Community (expandable clubs), Register (confetti),
+        Shop (browse → cart → checkout), and Account.
+      </p>
+      <p style="margin-top:16px"><a class="proto-link" href="prototype.html">Open the prototype →</a></p>
+    </div>
+    <div class="ill" style="background:#eef4f0">
+      <img src="assets/splash-mountains.png" alt="Hiku app splash" style="aspect-ratio:1/0.9;object-fit:cover" />
+    </div>
+  </section>
+
+  <h2>Foundations reference</h2>
+  <section class="card">
+    <p class="muted" style="margin-top:0">Core tokens (see the full design system for the complete set):</p>
+    <ul class="tokens">
+      <li><code>--green-300</code> #8DCAAF · header band</li>
+      <li><code>--green-400</code> #4FB889 · vibrant accent</li>
+      <li><code>--green-500</code> #349369 · primary action</li>
+      <li><code>--font-sans</code> Satoshi</li>
+      <li><code>--radius-md</code> 12px · cards & inputs</li>
+      <li><code>--radius-xl</code> 22px · search bar</li>
+      <li><code>--radius-pill</code> 999px · buttons & chips</li>
+      <li><code>--space</code> 4px base rhythm</li>
+      <li><code>--shadow-card</code> soft, neutral</li>
+      <li>Icons · Lucide line, 2px stroke</li>
+    </ul>
+  </section>
+</div>
+</body>
+</html>
