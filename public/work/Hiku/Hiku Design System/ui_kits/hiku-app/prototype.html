@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hiku — Interactive Prototype</title>
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://unpkg.com/canvas-confetti@1.9.3/dist/confetti.browser.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<template id="__bundler_thumbnail">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+    <rect width="400" height="400" fill="#eef4f0"/>
+    <g transform="translate(120,150)">
+      <path d="M0 120 L80 0 L120 60 L150 20 L200 120 Z" fill="#4fb889"/>
+      <path d="M80 0 L98 28 L66 40 Z" fill="#fff"/>
+    </g>
+    <text x="200" y="320" font-family="sans-serif" font-size="46" font-weight="700" fill="#349369" text-anchor="middle">Hiku</text>
+  </svg>
+</template>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; }
+  body { font-family: var(--font-sans);
+    background: radial-gradient(760px 760px at 50% 50%, rgba(141,202,175,0.95), rgba(79,184,137,0.5) 34%, rgba(233,237,233,0) 70%),
+      radial-gradient(520px 520px at 50% 50%, rgba(52,147,105,0.4), rgba(233,237,233,0) 55%),
+      linear-gradient(180deg, #eef4f0, #e4ebe6);
+    display: flex; align-items: center; justify-content: center; }
+  #root { display: flex; align-items: center; justify-content: center; }
+  #root ::-webkit-scrollbar { width: 0; height: 0; display: none; }
+  #root * { scrollbar-width: none; -ms-overflow-style: none; }
+  @keyframes hikuLoadBar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  .hiku-map-topo .leaflet-tile-pane { filter: grayscale(1) sepia(0.45) hue-rotate(83deg) saturate(1.25) brightness(1.03) contrast(0.98); }
+  .hiku-map-street .leaflet-tile-pane { filter: grayscale(1) sepia(0.5) hue-rotate(85deg) saturate(1.4) brightness(0.9); }
+  .leaflet-tooltip.hiku-label { background: rgba(255,255,255,0.94); border: 1px solid var(--brand-soft); border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(26,26,26,.12); color: var(--ink-900); font: 700 12px/1.1 "Satoshi", sans-serif; padding: 3px 8px; white-space: nowrap; }
+  .leaflet-tooltip.hiku-label::before { display: none; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="screens.jsx"></script>
+<script type="text/babel">
+  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(window.__HikuApp));
+</script>
+</body>
+</html>

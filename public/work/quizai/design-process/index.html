@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="color-scheme" content="light" />
+<title>Design Process – QuizAI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@500;600&display=swap"
+  rel="stylesheet"
+/>
+<style>
+  @font-face {
+    font-family: "Satoshi";
+    src: url("./fonts/Satoshi-Light.otf") format("opentype");
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Satoshi";
+    src: url("./fonts/Satoshi-Regular.otf") format("opentype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Satoshi";
+    src: url("./fonts/Satoshi-Medium.otf") format("opentype");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { color-scheme: light; }
+  body {
+    background: #f5f5f5;
+    color: #0f0f0f;
+    font-family: "Satoshi", -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 300;
+    padding: 40px 32px;
+  }
+  .panel {
+    max-width: 980px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    text-align: center;
+  }
+  section h2 {
+    font-family: "Crimson Pro", serif;
+    font-size: 2.25rem;
+    font-weight: 500;
+    letter-spacing: -0.05em;
+    color: #0f0f0f;
+    line-height: 1.2;
+    margin-bottom: 0.875rem;
+  }
+  section p {
+    font-size: 1rem;
+    line-height: 1.6;
+    font-weight: 300;
+    color: #0f0f0f;
+    max-width: 720px;
+    margin: 0 auto 0.625rem;
+  }
+  section p:last-of-type {
+    margin-bottom: 0;
+  }
+
+  /* Color palette */
+  .swatch-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+  .swatch {
+    width: 140px;
+  }
+  .swatch-block {
+    height: 90px;
+    border-radius: 8px;
+    border: 1px solid rgba(15, 15, 15, 0.08);
+  }
+  .swatch-hex {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #0f0f0f;
+    margin-top: 0.625rem;
+  }
+  .swatch-label {
+    font-size: 0.7rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #666;
+    margin-top: 0.125rem;
+  }
+
+  /* Typography */
+  .type-sample-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2.5rem;
+    align-items: flex-start;
+    margin-top: 1.25rem;
+  }
+  .type-aa {
+    font-family: "Crimson Pro", serif;
+    font-size: 4rem;
+    font-weight: 500;
+    color: #695b4d;
+    line-height: 1;
+  }
+  .type-aa-label {
+    font-size: 0.7rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #666;
+    margin-top: 0.5rem;
+  }
+
+  @media (min-width: 768px) {
+    section h2 { font-size: 2.75rem; }
+    section p { font-size: 1.125rem; }
+    .swatch-hex { font-size: 1.125rem; }
+    .swatch-label,
+    .type-aa-label { font-size: 0.875rem; }
+  }
+
+  @media (min-width: 1024px) {
+    section h2 { font-size: 3.25rem; }
+    section p { font-size: 1.25rem; }
+  }
+  .type-variants {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+  .type-variants span {
+    font-size: 1.75rem;
+    font-weight: 300;
+    color: #0f0f0f;
+  }
+  .style-medium {
+    font-weight: 400;
+  }
+  .style-bold {
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+  <div class="panel">
+    <section>
+      <h2>Ideation</h2>
+      <p>
+        During the ideation phase, I explored multiple quiz formats, learning
+        styles, and user paths—but my goal remained clear: to create the most
+        accessible and easy-to-use learning experience possible.
+      </p>
+      <p>
+        A key addition was the AI-powered summary generator, designed to
+        simplify complex notes and readings into bite-sized,
+        easy-to-understand formats.
+      </p>
+      <p>
+        This not only saved users valuable time but also helped them grasp
+        core concepts faster and retain them longer, especially before
+        quizzes or exams.
+      </p>
+      <p>
+        It was particularly useful for students who struggled with long
+        texts—giving them the confidence to keep up without feeling
+        overwhelmed.
+      </p>
+    </section>
+
+    <section>
+      <h2>Color Palette</h2>
+      <p>
+        This project adopted a minimalistic visual style, using ASU's
+        official color palette to reflect the academic identity and maintain
+        brand consistency. I incorporated maroon and gold as primary colors
+        to foster energy, motivation, and trust among student users. I also
+        followed the 60–30–10 rule to achieve better visual balance and
+        clarity across the UI.
+      </p>
+      <div class="swatch-row">
+        <div class="swatch">
+          <div class="swatch-block" style="background: #8c1d40"></div>
+          <div class="swatch-hex">#8C1D40</div>
+          <div class="swatch-label">PRIMARY</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block" style="background: #ffc627"></div>
+          <div class="swatch-hex">#FFC627</div>
+          <div class="swatch-label">PRIMARY</div>
+        </div>
+        <div class="swatch">
+          <div
+            class="swatch-block"
+            style="background: #ffffff"
+          ></div>
+          <div class="swatch-hex">#FFFFFF</div>
+          <div class="swatch-label">SECONDARY</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block" style="background: #f3e8ec"></div>
+          <div class="swatch-hex">#F3E8EC</div>
+          <div class="swatch-label">SECONDARY</div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-block" style="background: #fff4d4"></div>
+          <div class="swatch-hex">#FFF4D4</div>
+          <div class="swatch-label">SECONDARY</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Typography</h2>
+      <p>
+        I used San Serif for this web application for its easy to
+        understand, approachable design that aligns with the application's
+        clean and emerging aesthetic.
+      </p>
+      <div class="type-sample-row">
+        <div>
+          <div class="type-aa">Aa</div>
+          <div class="type-aa-label">Satoshi</div>
+        </div>
+        <div class="type-variants">
+          <span>Time Management</span>
+          <span class="style-medium">Time Management</span>
+          <span class="style-bold">Time Management</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function resizeFrame() {
+      if (!window.frameElement) return;
+      window.frameElement.style.height = "0px";
+      const panel = document.querySelector(".panel");
+      const paddingBottom =
+        parseFloat(getComputedStyle(document.body).paddingBottom) || 0;
+      const needed = Math.ceil(
+        panel.getBoundingClientRect().bottom + paddingBottom,
+      );
+      window.frameElement.style.height = needed + "px";
+    }
+    window.addEventListener("load", resizeFrame);
+    window.addEventListener("resize", resizeFrame);
+    if (document.fonts) {
+      document.fonts.ready.then(resizeFrame);
+    }
+    new ResizeObserver(resizeFrame).observe(document.body);
+
+    // Forward wheel scrolling to the parent page so its Lenis smooth-scroll
+    // handles it consistently instead of the browser's native scroll-chaining.
+    (function () {
+      const parentWin = window.parent;
+      if (!parentWin || parentWin === window) return;
+      window.addEventListener(
+        "wheel",
+        (e) => {
+          e.preventDefault();
+          parentWin.dispatchEvent(
+            new parentWin.WheelEvent("wheel", {
+              deltaX: e.deltaX,
+              deltaY: e.deltaY,
+              deltaMode: e.deltaMode,
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+        { passive: false },
+      );
+    })();
+  </script>
+</body>
+</html>

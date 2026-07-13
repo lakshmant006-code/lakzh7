@@ -1,0 +1,28 @@
+/* ============================================================
+   HIKU — Elevation, borders & motion
+   Shadows are soft, low and neutral — never colored. Cards on
+   white lean on hairline borders more than shadow.
+   ============================================================ */
+:root {
+  /* elevation */
+  --shadow-none: none;
+  --shadow-sm:  0 1px 2px rgba(26, 26, 26, 0.06);
+  --shadow-card: 0 2px 8px rgba(26, 26, 26, 0.08);
+  --shadow-float: 0 4px 16px rgba(26, 26, 26, 0.12);   /* FABs, sheets */
+  --shadow-nav:  0 -1px 0 var(--line-200);              /* top hairline of bottom nav */
+
+  /* borders */
+  --border-width: 1px; /* @kind spacing */
+  --border-hairline-width: 1px; /* @kind spacing */
+
+  /* motion — quick, gentle, no bounce */
+  --ease-standard: cubic-bezier(0.2, 0, 0.2, 1); /* @kind other */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* @kind other */
+  --dur-fast: 120ms; /* @kind other */
+  --dur-med:  200ms; /* @kind other */
+  --dur-slow: 320ms; /* @kind other */
+
+  /* interaction */
+  --press-scale: 0.97; /* @kind other */
+  --hover-tint: rgba(52, 147, 105, 0.08); /* @kind color */
+}

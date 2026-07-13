@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Lo-Fi Wireframes – Hiking App</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #d9d9d9;
+    font-family: sans-serif;
+    padding: 24px;
+    min-height: 100vh;
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex; gap: 8px;
+    justify-content: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1.5px solid #bbb;
+    background: #f0f0f0;
+    cursor: pointer;
+    font-size: 12px;
+    color: #555;
+  }
+  .tab-btn.active { background: #555555; color: #fff; border-color: #555555; }
+
+  /* ── Phone shell ── */
+  .phone-wrap {
+    display: flex;
+    justify-content: center;
+  }
+  .phone {
+    width: 320px;
+    background: #fff;
+    border-radius: 28px;
+    border: 2px solid #bbb;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+    min-height: 580px;
+  }
+  .phone.active { display: flex; }
+
+  /* ── Shared ── */
+  .bar { border-radius: 3px; background: #ccc; display: block; }
+
+  /* Header band */
+  .header-band {
+    background: #e0e0e0;
+    padding: 14px 14px 10px;
+    flex-shrink: 0;
+  }
+  .header-logo {
+    width: 40px; height: 28px;
+    background: #cccccc;
+    border-radius: 4px;
+    margin: 0 auto 10px;
+  }
+
+  /* Search bar */
+  .search-row {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 8px;
+  }
+  .search-box {
+    flex: 1; height: 28px;
+    border: 1.5px solid #bbb; border-radius: 5px;
+    background: #fff;
+    display: flex; align-items: center; padding-left: 8px; gap: 6px;
+  }
+  .search-icon { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid #bbb; flex-shrink: 0; }
+  .search-text { height: 8px; background: #d4d4d4; border-radius: 2px; flex: 1; }
+  .filter-btn { width: 28px; height: 28px; border: 1.5px solid #bbb; border-radius: 5px; background: #fff; flex-shrink: 0; }
+
+  /* Filter chips */
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip {
+    height: 22px; padding: 0 10px;
+    border: 1.5px solid #bbb; border-radius: 11px;
+    background: #fff;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .chip-text { height: 7px; width: 50px; background: #ccc; border-radius: 2px; }
+  .chip-arrow { width: 6px; height: 6px; background: #bbb; border-radius: 1px; }
+
+  /* Body scroll area */
+  .body { flex: 1; overflow: hidden; padding: 0; }
+
+  /* Image placeholder */
+  .img-ph {
+    width: 100%; background: #d4d4d4;
+    position: relative; overflow: hidden;
+  }
+  .img-ph svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* Result count bar */
+  .result-count { height: 8px; width: 60px; background: #ccc; border-radius: 2px; margin: 10px 14px 8px; }
+
+  /* Caption bar */
+  .caption { height: 9px; width: 90px; background: #bbb; border-radius: 2px; margin: 6px auto; }
+
+  /* List items */
+  .list-item {
+    display: flex; align-items: center; gap: 10px;
+    border: 1.5px solid #ddd; border-radius: 8px;
+    margin: 6px 14px; padding: 10px 12px;
+    background: #fafafa;
+  }
+  .list-icon { width: 28px; height: 28px; background: #d4d4d4; border-radius: 4px; flex-shrink: 0; }
+  .list-text { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+  .list-title { height: 9px; background: #bbb; border-radius: 2px; width: 80%; }
+  .list-sub { height: 7px; background: #ddd; border-radius: 2px; width: 65%; }
+
+  /* Bottom action row */
+  .bottom-action {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px 12px;
+    border-top: 1px solid #eee;
+  }
+  .clear-btn { height: 8px; width: 30px; background: #bbb; border-radius: 2px; }
+  .show-btn { height: 28px; width: 100px; background: #555555; border-radius: 6px; }
+
+  /* Bottom nav */
+  .bottom-nav {
+    display: flex; justify-content: space-around; align-items: center;
+    padding: 8px 0 10px;
+    border-top: 1px solid #e0e0e0;
+    background: #fff;
+    flex-shrink: 0;
+  }
+  .nav-item-b { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .nav-icon-b { width: 16px; height: 16px; background: #d0d0d0; border-radius: 3px; }
+  .nav-icon-b.active { background: #555555; }
+  .nav-label-b { height: 6px; width: 28px; background: #d8d8d8; border-radius: 2px; }
+  .nav-label-b.active { background: #555555; }
+
+  /* ── MAP screen ── */
+  .map-area {
+    flex: 1; background: #ebebeb; position: relative; overflow: hidden;
+  }
+  .map-grid-h {
+    position: absolute; width: 100%; border-top: 1px solid #ccc;
+  }
+  .map-grid-v {
+    position: absolute; height: 100%; border-left: 1px solid #ccc;
+  }
+  .map-road {
+    position: absolute; background: #cccccc;
+    border-radius: 4px;
+  }
+  .map-pin {
+    position: absolute; width: 10px; height: 10px;
+    background: #555555; border-radius: 50%;
+  }
+  .map-compass {
+    position: absolute; right: 12px; bottom: 12px;
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1.5px solid #bbb; background: #fff;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .map-compass-inner { width: 8px; height: 8px; background: #ccc; border-radius: 1px; transform: rotate(45deg); }
+
+  /* ── SPLASH / ONBOARDING ── */
+  .splash-body {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 20px;
+    background: #fff;
+  }
+  .splash-logo { width: 70px; height: 50px; background: #e0e0e0; border-radius: 10px; margin-bottom: 14px; }
+
+  /* ── REGISTRATION ── */
+  .reg-hero { width: 100%; height: 160px; background: #e0e0e0; position: relative; }
+  .back-circle {
+    position: absolute; top: 10px; left: 10px;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: rgba(255,255,255,0.7);
+  }
+  .reg-body { padding: 14px; flex: 1; }
+  .reg-title { height: 12px; width: 130px; background: #bbb; border-radius: 3px; margin-bottom: 16px; }
+  .reg-field { height: 32px; border: 1.5px solid #d0d0d0; border-radius: 6px; background: #fafafa; margin-bottom: 10px; }
+  .reg-btn { height: 36px; background: #555555; border-radius: 8px; margin-top: 8px; }
+
+  /* ── SHOP ── */
+  .product-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; padding: 10px 14px;
+  }
+  .product-card { display: flex; flex-direction: column; gap: 6px; }
+  .product-img { width: 100%; height: 80px; background: #e0e0e0; border-radius: 6px; }
+  .product-title { height: 7px; background: #bbb; border-radius: 2px; width: 90%; }
+  .product-price { height: 7px; background: #ccc; border-radius: 2px; width: 40%; }
+
+  /* ── COMMUNITY ── */
+  .community-card {
+    margin: 10px 14px 0;
+    border: 1.5px solid #ddd; border-radius: 8px;
+    overflow: hidden; background: #fafafa;
+  }
+  .community-img { width: 100%; height: 90px; background: #e0e0e0; }
+  .community-body { padding: 10px; }
+  .community-title { height: 10px; width: 130px; background: #bbb; border-radius: 3px; margin-bottom: 8px; }
+  .community-line { height: 7px; background: #e0e0e0; border-radius: 2px; margin-bottom: 5px; }
+  .community-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+  .join-btn { height: 26px; width: 70px; background: #555555; border-radius: 5px; }
+  .know-link { height: 8px; width: 50px; background: #d4d4d4; border-radius: 2px; }
+
+  .community-card-sm {
+    margin: 8px 14px 0;
+    border: 1.5px solid #ddd; border-radius: 8px;
+    overflow: hidden; background: #fafafa;
+  }
+  .community-img-sm { width: 100%; height: 60px; background: #e0e0e0; }
+  .community-body-sm { padding: 8px; }
+  .community-title-sm { height: 9px; width: 110px; background: #bbb; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('splash',this)">1. Splash</button>
+  <button class="tab-btn" onclick="showTab('filter',this)">2. Filter</button>
+  <button class="tab-btn" onclick="showTab('map',this)">3. Map</button>
+  <button class="tab-btn" onclick="showTab('register',this)">4. Register</button>
+  <button class="tab-btn" onclick="showTab('shop',this)">5. Shop</button>
+  <button class="tab-btn" onclick="showTab('community',this)">6. Community</button>
+</div>
+
+<div class="phone-wrap">
+
+  <!-- ══ 1. SPLASH ══ -->
+  <div class="phone active" id="phone-splash">
+    <div class="splash-body">
+      <div class="splash-logo"></div>
+      <div class="bar" style="height:10px;width:100px;background:#bbb;margin-bottom:6px"></div>
+      <div class="bar" style="height:7px;width:70px;background:#d4d4d4"></div>
+    </div>
+  </div>
+
+  <!-- ══ 2. FILTER ══ -->
+  <div class="phone" id="phone-filter">
+    <!-- Header -->
+    <div class="header-band">
+      <div class="header-logo"></div>
+      <div class="search-row">
+        <div class="search-box">
+          <div class="search-icon"></div>
+          <div class="search-text" style="width:60px"></div>
+          <div class="bar" style="height:7px;width:80px;background:#e0e0e0"></div>
+        </div>
+        <div class="filter-btn"></div>
+      </div>
+      <div class="chips">
+        <div class="chip"><div class="chip-text" style="width:70px"></div><div class="chip-arrow"></div></div>
+        <div class="chip"><div class="chip-text" style="width:55px"></div><div class="chip-arrow"></div></div>
+        <div class="chip"><div class="chip-text" style="width:65px"></div></div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="body" style="overflow-y:auto">
+      <div class="result-count"></div>
+
+      <!-- Hero image -->
+      <div style="margin:0 14px">
+        <div class="img-ph" style="height:145px;border-radius:8px;overflow:hidden;border:1.5px solid #d0d0d0">
+          <svg viewBox="0 0 292 145" width="100%" height="100%" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="292" height="145" fill="#e8e8e8"/>
+            <line x1="0" y1="0" x2="292" y2="145" stroke="#bbb" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+            <line x1="292" y1="0" x2="0" y2="145" stroke="#bbb" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+          </svg>
+        </div>
+      </div>
+      <div class="caption" style="margin:6px auto 12px"></div>
+
+      <!-- List items -->
+      <div class="list-item">
+        <div class="list-icon"></div>
+        <div class="list-text">
+          <div class="list-title" style="width:30px"></div>
+          <div class="list-sub"></div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-icon"></div>
+        <div class="list-text">
+          <div class="list-title" style="width:38px"></div>
+          <div class="list-sub"></div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-icon"></div>
+        <div class="list-text">
+          <div class="list-title" style="width:55px"></div>
+          <div class="list-sub"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom action -->
+    <div class="bottom-action">
+      <div class="clear-btn"></div>
+      <div class="show-btn"></div>
+    </div>
+  </div>
+
+  <!-- ══ 3. MAP ══ -->
+  <div class="phone" id="phone-map">
+    <!-- Header -->
+    <div class="header-band">
+      <div class="header-logo"></div>
+      <div class="search-row">
+        <div class="search-box">
+          <div class="search-icon"></div>
+          <div class="search-text" style="width:55px"></div>
+        </div>
+        <div class="filter-btn"></div>
+      </div>
+      <div class="chips">
+        <div class="chip"><div class="chip-text" style="width:65px"></div><div class="chip-arrow"></div></div>
+        <div class="chip"><div class="chip-text" style="width:55px"></div><div class="chip-arrow"></div></div>
+        <div class="chip"><div class="chip-text" style="width:65px"></div></div>
+      </div>
+    </div>
+
+    <!-- Map area -->
+    <div class="map-area">
+      <!-- Grid lines -->
+      <div class="map-grid-h" style="top:20%"></div>
+      <div class="map-grid-h" style="top:45%"></div>
+      <div class="map-grid-h" style="top:70%"></div>
+      <div class="map-grid-v" style="left:25%"></div>
+      <div class="map-grid-v" style="left:55%"></div>
+      <div class="map-grid-v" style="left:80%"></div>
+      <!-- Roads -->
+      <div class="map-road" style="width:3px;height:60%;left:42%;top:10%"></div>
+      <div class="map-road" style="width:50%;height:3px;left:20%;top:55%;transform:rotate(-10deg)"></div>
+      <!-- Labels -->
+      <div class="bar" style="height:7px;width:70px;background:#cccccc;position:absolute;top:12%;right:10px"></div>
+      <div class="bar" style="height:7px;width:55px;background:#cccccc;position:absolute;top:40%;left:12%"></div>
+      <!-- Pin -->
+      <div class="map-pin" style="left:41%;top:58%"></div>
+      <!-- Compass -->
+      <div class="map-compass"><div class="map-compass-inner"></div></div>
+    </div>
+
+    <!-- Bottom nav -->
+    <div class="bottom-nav">
+      <div class="nav-item-b"><div class="nav-icon-b"></div><div class="nav-label-b"></div></div>
+      <div class="nav-item-b"><div class="nav-icon-b active"></div><div class="nav-label-b active"></div></div>
+      <div class="nav-item-b"><div class="nav-icon-b"></div><div class="nav-label-b"></div></div>
+      <div class="nav-item-b"><div class="nav-icon-b"></div><div class="nav-label-b"></div></div>
+      <div class="nav-item-b"><div class="nav-icon-b"></div><div class="nav-label-b"></div></div>
+    </div>
+  </div>
+
+  <!-- ══ 4. REGISTER ══ -->
+  <div class="phone" id="phone-register">
+    <!-- Hero image with back button -->
+    <div class="reg-hero">
+      <svg width="100%" height="100%" viewBox="0 0 320 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="0" y1="0" x2="320" y2="160" stroke="#cccccc" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+        <line x1="320" y1="0" x2="0" y2="160" stroke="#cccccc" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+      </svg>
+      <div class="back-circle"></div>
+    </div>
+
+    <!-- Body -->
+    <div class="reg-body">
+      <div class="reg-title"></div>
+      <div class="reg-field"></div>
+      <div class="reg-field"></div>
+      <div class="reg-btn"></div>
+    </div>
+
+    <!-- Bottom nav -->
+    <div class="bottom-nav" style="margin-top:auto">
+      <div class="nav-item-b"><div class="nav-icon-b"></div><div class="nav-label-b"></div></div>
+      <div class="nav-item-b"><div class="nav-icon-b"></div><div class="nav-label-b"></div></div>
+      <div class="nav-item-b"><div class="nav-icon-b active"></div><div class="nav-label-b active"></div></div>
+      <div class="nav-item-b"><div class="nav-icon-b"></div><div class="nav-label-b"></div></div>
+      <div class="nav-item-b"><div class="nav-icon-b"></div><div class="nav-label-b"></div></div>
+    </div>
+  </div>
+
+  <!-- ══ 5. SHOP ══ -->
+  <div class="phone" id="phone-shop">
+    <!-- Header -->
+    <div class="header-band">
+      <div class="header-logo"></div>
+      <div class="search-row">
+        <div class="search-box">
+          <div class="search-icon"></div>
+          <div class="search-text" style="width:40px"></div>
+          <div class="bar" style="height:7px;width:50px;background:#e0e0e0"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product grid -->
+    <div class="body" style="overflow-y:auto">
+      <div class="product-grid">
+        <div class="product-card">
+          <div class="product-img">
+            <svg width="100%" height="100%" viewBox="0 0 130 80" preserveAspectRatio="none">
+              <line x1="0" y1="0" x2="130" y2="80" stroke="#ccc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+              <line x1="130" y1="0" x2="0" y2="80" stroke="#ccc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+            </svg>
+          </div>
+          <div class="product-title"></div>
+          <div class="product-price"></div>
+        </div>
+        <div class="product-card">
+          <div class="product-img">
+            <svg width="100%" height="100%" viewBox="0 0 130 80" preserveAspectRatio="none">
+              <line x1="0" y1="0" x2="130" y2="80" stroke="#ccc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+              <line x1="130" y1="0" x2="0" y2="80" stroke="#ccc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+            </svg>
+          </div>
+          <div class="product-title"></div>
+          <div class="product-price"></div>
+        </div>
+        <div class="product-card">
+          <div class="product-img">
+            <svg width="100%" height="100%" viewBox="0 0 130 80" preserveAspectRatio="none">
+              <line x1="0" y1="0" x2="130" y2="80" stroke="#ccc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+              <line x1="130" y1="0" x2="0" y2="80" stroke="#ccc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+            </svg>
+          </div>
+          <div class="product-title"></div>
+          <div class="product-price"></div>
+        </div>
+        <div class="product-card">
+          <div class="product-img">
+            <svg width="100%" height="100%" viewBox="0 0 130 80" preserveAspectRatio="none">
+              <line x1="0" y1="0" x2="130" y2="80" stroke="#ccc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+              <line x1="130" y1="0" x2="0" y2="80" stroke="#ccc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+            </svg>
+          </div>
+          <div class="product-title"></div>
+          <div class="product-price"></div>
+        </div>
+        <div class="product-card">
+          <div class="product-img">
+            <svg width="100%" height="100%" viewBox="0 0 130 80" preserveAspectRatio="none">
+              <line x1="0" y1="0" x2="130" y2="80" stroke="#ccc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+              <line x1="130" y1="0" x2="0" y2="80" stroke="#ccc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+            </svg>
+          </div>
+          <div class="product-title"></div>
+          <div class="product-price"></div>
+        </div>
+        <div class="product-card">
+          <div class="product-img">
+            <svg width="100%" height="100%" viewBox="0 0 130 80" preserveAspectRatio="none">
+              <line x1="0" y1="0" x2="130" y2="80" stroke="#ccc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+              <line x1="130" y1="0" x2="0" y2="80" stroke="#ccc" stroke-width="1" vector-effect="non-scaling-stroke"/>
+            </svg>
+          </div>
+          <div class="product-title"></div>
+          <div class="product-price"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <div class="bottom-nav">
+      <div class="nav-item-b"><div class="nav-icon-b"></div><div class="nav-label-b"></div></div>
+      <div class="nav-item-b"><div class="nav-icon-b"></div><div class="nav-label-b"></div></div>
+      <div class="nav-item-b"><div class="nav-icon-b"></div><div class="nav-label-b"></div></div>
+      <div class="nav-item-b"><div class="nav-icon-b active"></div><div class="nav-label-b active"></div></div>
+      <div class="nav-item-b"><div class="nav-icon-b"></div><div class="nav-label-b"></div></div>
+    </div>
+  </div>
+
+  <!-- ══ 6. COMMUNITY ══ -->
+  <div class="phone" id="phone-community">
+    <!-- Header -->
+    <div class="header-band">
+      <div class="header-logo"></div>
+      <div class="search-row">
+        <div class="search-box">
+          <div class="search-icon"></div>
+          <div class="search-text" style="width:55px"></div>
+          <div class="bar" style="height:7px;width:70px;background:#e0e0e0"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="body" style="overflow-y:auto;padding-bottom:10px">
+
+      <!-- Main community card -->
+      <div class="community-card">
+        <div class="community-img">
+          <svg width="100%" height="100%" viewBox="0 0 292 90" preserveAspectRatio="none">
+            <line x1="0" y1="0" x2="292" y2="90" stroke="#cccccc" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+            <line x1="292" y1="0" x2="0" y2="90" stroke="#cccccc" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+          </svg>
+        </div>
+        <div class="community-body">
+          <div class="community-title"></div>
+          <div class="community-line" style="width:100%"></div>
+          <div class="community-line" style="width:95%"></div>
+          <div class="community-line" style="width:88%"></div>
+          <div class="community-line" style="width:75%"></div>
+          <div class="community-actions">
+            <div class="join-btn"></div>
+            <div class="know-link"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Second smaller community card -->
+      <div class="community-card-sm">
+        <div class="community-img-sm">
+          <svg width="100%" height="100%" viewBox="0 0 292 60" preserveAspectRatio="none">
+            <line x1="0" y1="0" x2="292" y2="60" stroke="#cccccc" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+            <line x1="292" y1="0" x2="0" y2="60" stroke="#cccccc" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+          </svg>
+        </div>
+        <div class="community-body-sm">
+          <div class="community-title-sm"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom nav -->
+    <div class="bottom-nav">
+      <div class="nav-item-b"><div class="nav-icon-b"></div><div class="nav-label-b"></div></div>
+      <div class="nav-item-b"><div class="nav-icon-b"></div><div class="nav-label-b"></div></div>
+      <div class="nav-item-b"><div class="nav-icon-b active"></div><div class="nav-label-b active"></div></div>
+      <div class="nav-item-b"><div class="nav-icon-b"></div><div class="nav-label-b"></div></div>
+      <div class="nav-item-b"><div class="nav-icon-b"></div><div class="nav-label-b"></div></div>
+    </div>
+  </div>
+
+</div><!-- /phone-wrap -->
+
+<script>
+  function showTab(name, btn) {
+    document.querySelectorAll('.phone').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('phone-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>

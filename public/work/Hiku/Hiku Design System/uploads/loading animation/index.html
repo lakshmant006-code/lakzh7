@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #0f172a;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        }
+
+        .loader {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-visual {
+            position: relative;
+            width: 300px;
+            height: 193px;
+            filter: drop-shadow(0 12px 40px rgba(0, 0, 0, 0.35));
+        }
+
+        #logo-canvas,
+        #snow-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        #snow-canvas {
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="loader">
+        <div class="loader-visual">
+            <canvas id="logo-canvas"></canvas>
+            <canvas id="snow-canvas"></canvas>
+        </div>
+    </div>
+
+    <img id="img-base" src="base logo.png" alt="" hidden>
+    <img id="img-mid" src="mid logo.png" alt="" hidden>
+    <img id="img-final" src="final logo.png" alt="" hidden>
+
+    <script>
+        const logoCanvas = document.getElementById('logo-canvas');
+        const snowCanvas = document.getElementById('snow-canvas');
+        const logoCtx = logoCanvas.getContext('2d');
+        const snowCtx = snowCanvas.getContext('2d');
+
+        const images = {
+            base: document.getElementById('img-base'),
+            mid: document.getElementById('img-mid'),
+            final: document.getElementById('img-final')
+        };
+
+        const FALL_ANGLE = 75 * Math.PI / 180;
+        const VX = -Math.cos(FALL_ANGLE);
+        const VY = Math.sin(FALL_ANGLE);
+        const FLAKE_COUNT = 28;
+        const LOAD_DURATION = 3200;
+        const CAP_CLIP_RATIO = 0.34;
+
+        const PEAK = { xMin: 0.28, xMax: 0.72, yMin: -0.12, yMax: 0.48 };
+
+        let flakes = [];
+        let progress = 0;
+        let loadStart = performance.now();
+        let autoMode = true;
+        let ready = false;
+
+        function easeInOutCubic(t) {
+            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        }
+
+        function allLoaded() {
+            return Object.values(images).every(
+                img => img.complete && img.naturalWidth > 0
+            );
+        }
+
+        function resize() {
+            const rect = logoCanvas.parentElement.getBoundingClientRect();
+            const w = Math.round(rect.width);
+            const h = Math.round(rect.height);
+            logoCanvas.width = w;
+            logoCanvas.height = h;
+            snowCanvas.width = w;
+            snowCanvas.height = h;
+            if (ready) initFlakes();
+        }
+
+        function randomFlakeSize() {
+            const roll = Math.random();
+            if (roll < 0.45) return Math.random() * 0.7 + 0.3;
+            if (roll < 0.8) return Math.random() * 1.4 + 0.9;
+            return Math.random() * 2.2 + 1.8;
+        }
+
+        function createFlake(w, h, scatter = true) {
+            const xMin = PEAK.xMin * w;
+            const xMax = PEAK.xMax * w;
+            const yMin = PEAK.yMin * h;
+            const yMax = PEAK.yMax * h;
+
+            return {
+                x: xMin + Math.random() * (xMax - xMin),
+                y: scatter ? yMin + Math.random() * (yMax - yMin) : yMin - 5,
+                r: randomFlakeSize(),
+                speed: Math.random() * 0.07 + 0.07,
+                alpha: Math.random() * 0.35 + 0.25,
+                phase: Math.random() * Math.PI * 2
+            };
+        }
+
+        function inPeakZone(f, w, h) {
+            return f.x >= PEAK.xMin * w - 5
+                && f.x <= PEAK.xMax * w + 5
+                && f.y >= PEAK.yMin * h - 10
+                && f.y <= PEAK.yMax * h + 5;
+        }
+
+        function initFlakes() {
+            const w = snowCanvas.width;
+            const h = snowCanvas.height;
+            flakes = Array.from({ length: FLAKE_COUNT }, () => createFlake(w, h));
+        }
+
+        function drawLogo(p) {
+            if (!ready) return;
+
+            const w = logoCanvas.width;
+            const h = logoCanvas.height;
+            const eased = easeInOutCubic(p);
+            const capH = h * CAP_CLIP_RATIO;
+
+            logoCtx.clearRect(0, 0, w, h);
+            logoCtx.imageSmoothingEnabled = true;
+            logoCtx.imageSmoothingQuality = 'high';
+
+            logoCtx.globalAlpha = 1;
+            logoCtx.drawImage(images.base, 0, 0, w, h);
+
+            logoCtx.save();
+            logoCtx.beginPath();
+            logoCtx.rect(0, 0, w, capH);
+            logoCtx.clip();
+
+            if (eased < 0.5) {
+                logoCtx.globalAlpha = eased / 0.5;
+                logoCtx.drawImage(images.mid, 0, 0, w, h);
+            } else {
+                const t = (eased - 0.5) / 0.5;
+                logoCtx.globalAlpha = 1;
+                logoCtx.drawImage(images.mid, 0, 0, w, h);
+                logoCtx.globalAlpha = t;
+                logoCtx.drawImage(images.final, 0, 0, w, h);
+            }
+
+            logoCtx.restore();
+            logoCtx.globalAlpha = 1;
+        }
+
+        function drawFlakes(time) {
+            const w = snowCanvas.width;
+            const h = snowCanvas.height;
+            snowCtx.clearRect(0, 0, w, h);
+
+            for (const f of flakes) {
+                const twinkle = 0.75 + 0.25 * Math.sin(time * 0.003 + f.phase);
+                snowCtx.beginPath();
+                snowCtx.fillStyle = `rgba(255,255,255,${f.alpha * twinkle})`;
+                snowCtx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+                snowCtx.fill();
+
+                f.x += VX * f.speed;
+                f.y += VY * f.speed;
+
+                if (!inPeakZone(f, w, h)) {
+                    Object.assign(f, createFlake(w, h, false));
+                }
+            }
+        }
+
+        function tick(time) {
+            if (autoMode) {
+                const elapsed = (time - loadStart) % (LOAD_DURATION + 800);
+                progress = elapsed < LOAD_DURATION ? elapsed / LOAD_DURATION : 1;
+            }
+
+            drawLogo(progress);
+            drawFlakes(time);
+            requestAnimationFrame(tick);
+        }
+
+        window.MountainLoader = {
+            setProgress(v) {
+                autoMode = false;
+                progress = Math.max(0, Math.min(1, v));
+            },
+            complete() { this.setProgress(1); },
+            reset() {
+                autoMode = true;
+                loadStart = performance.now();
+                progress = 0;
+            }
+        };
+
+        function start() {
+            resize();
+            if (allLoaded()) {
+                ready = true;
+                initFlakes();
+            }
+            requestAnimationFrame(tick);
+        }
+
+        Object.values(images).forEach(img => img.addEventListener('load', start));
+        window.addEventListener('resize', resize);
+        start();
+    </script>
+</body>
+</html>

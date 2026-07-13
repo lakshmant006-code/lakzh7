@@ -1,0 +1,97 @@
+<!-- @dsCard group="Hiku App" viewport="900x560" name="Hiku Mobile App" subtitle="Interactive click-through — Splash, Explore, Trails, Register, Shop, Community" -->
+<!-- @startingPoint section="Hiku App" subtitle="Full mobile app click-through" viewport="900x820" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hiku — Mobile App</title>
+<link rel="stylesheet" href="../../styles.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://unpkg.com/canvas-confetti@1.9.3/dist/confetti.browser.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  html, body { max-width: 100%; overflow-x: hidden; }
+  body { margin: 0; font-family: var(--font-sans);
+    background:
+      radial-gradient(460px 460px at 50% 50%, rgba(141,202,175,0.95), rgba(79,184,137,0.5) 42%, rgba(233,237,233,0) 80%),
+      linear-gradient(180deg, #eef4f0, #e4ebe6);
+    background-attachment: fixed;
+    display: flex; align-items: flex-start; justify-content: center;
+    min-height: 100vh; padding: 20px 24px 28px; box-sizing: border-box; }
+  #root { display: flex; flex-direction: column; gap: 16px; align-items: center; justify-content: flex-start; }
+  .tabs { display: flex; flex-direction: row; flex-wrap: wrap; gap: 6px; justify-content: center; order: -1; }
+  .tab { padding: 8px 15px; border-radius: 999px; border: 1px solid var(--border-default);
+    background: rgba(255,255,255,0.86); backdrop-filter: blur(6px);
+    font-family: var(--font-sans); font-size: 13px; font-weight: 600;
+    color: var(--ink-700); cursor: pointer; text-align: center; white-space: nowrap; }
+  .tab.on { background: var(--green-500); color: #fff; border-color: var(--green-500); }
+
+  @keyframes hikuLoadBar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+  /* Hide scrollbars inside the phone (scrolling still works) */
+  #root ::-webkit-scrollbar { width: 0; height: 0; display: none; }
+  #root * { scrollbar-width: none; -ms-overflow-style: none; }
+
+  /* Monochrome map — tint the grayscale CARTO basemap to a soft brand green.
+     Only the tile pane is filtered, so green trails + pins stay full-color. */
+  .hiku-map-topo .leaflet-tile-pane {
+    filter: grayscale(1) sepia(0.45) hue-rotate(83deg) saturate(1.25) brightness(1.03) contrast(0.98);
+  }
+  .hiku-map-street .leaflet-tile-pane {
+    filter: grayscale(1) sepia(0.5) hue-rotate(85deg) saturate(1.4) brightness(0.9);
+  }
+
+  /* Always-visible location labels on the map */
+  .leaflet-tooltip.hiku-label {
+    background: rgba(255,255,255,0.94);
+    border: 1px solid var(--brand-soft);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(26,26,26,.12);
+    color: var(--ink-900);
+    font: 700 12px/1.1 "Satoshi", sans-serif;
+    padding: 3px 8px;
+    white-space: nowrap;
+  }
+  .leaflet-tooltip.hiku-label::before { display: none; }
+
+  /* Compact spacing on small screens */
+  @media (max-width: 640px), (max-height: 720px) {
+    body { padding: 12px; }
+    #root { gap: 12px; }
+    .tab { padding: 7px 13px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="screens.jsx"></script>
+<script type="text/babel">
+  const jumps = [
+    ["Splash", "splash"], ["Loading", "loading"], ["Explore", "explore"], ["Trails", "trails"],
+    ["Community", "community"], ["Register", "register"], ["Shop", "shop"], ["Account", "account"],
+  ];
+  function Harness() {
+    const App = window.__HikuApp;
+    const [jump, setJump] = React.useState("splash");
+    return (
+      <>
+        <div className="tabs">
+          {jumps.map(([label, id]) => (
+            <button key={id} className={"tab" + (jump === id ? " on" : "")}
+              onClick={() => { setJump(id); window.__hikuJump && window.__hikuJump(id); }}>{label}</button>
+          ))}
+        </div>
+        <App key="app" />
+      </>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<Harness />);
+</script>
+</body>
+</html>

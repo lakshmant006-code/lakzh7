@@ -1,0 +1,56 @@
+/* ============================================================
+   HIKU — Color tokens
+   Earthy + vibrant. Green is the whole identity; white space
+   carries it. Brand greens from the source: 8DCAAF / 4FB889 / 349369.
+   ============================================================ */
+:root {
+  /* -- Brand green scale -- */
+  --green-50:  #eef7f1;   /* faint wash behind maps, tints */
+  --green-100: #d9ede1;
+  --green-200: #b9dfc9;
+  --green-300: #8dcaaf;   /* SOURCE — light / header band */
+  --green-400: #4fb889;   /* SOURCE — vibrant mid, primary accents */
+  --green-500: #349369;   /* SOURCE — deep, primary buttons + active */
+  --green-600: #2b7c58;   /* pressed */
+  --green-700: #216044;   /* text-on-tint, deepest */
+
+  /* -- Neutral / ink (sampled from reference screens) -- */
+  --white:     #ffffff;   /* SOURCE secondary */
+  --black:     #000000;   /* SOURCE secondary */
+  --ink-900:   #1a1a1a;   /* primary text */
+  --ink-700:   #3a3a3a;   /* strong body */
+  --ink-500:   #717171;   /* secondary text / captions */
+  --ink-400:   #9a9a9a;   /* placeholder */
+  --line-300:  #dddddd;   /* card + input borders */
+  --line-200:  #ebebeb;   /* hairline dividers */
+  --surface-100: #f7f7f7; /* subtle fills */
+  --map-bg:    #e8efe9;   /* map canvas green-gray */
+  --map-trail: #349369;   /* drawn trail line */
+
+  /* -- Semantic aliases -- */
+  --brand:            var(--green-500);
+  --brand-vibrant:    var(--green-400);
+  --brand-soft:       var(--green-300);
+  --brand-wash:       var(--green-50);
+
+  --text-primary:     var(--ink-900);
+  --text-secondary:   var(--ink-500);
+  --text-placeholder: var(--ink-400);
+  --text-on-brand:    var(--white);
+  --text-link:        var(--green-500);
+
+  --surface-page:     var(--white);
+  --surface-card:     var(--white);
+  --surface-sunken:   var(--surface-100);
+  --surface-header:   var(--green-300);
+
+  --border-default:   var(--line-300);
+  --border-hairline:  var(--line-200);
+  --border-focus:     var(--green-500);
+
+  --action-primary:        var(--green-500);
+  --action-primary-hover:  var(--green-600);
+  --action-primary-press:  var(--green-700);
+  --action-nav-active:      var(--green-500);
+  --action-nav-idle:        var(--ink-900);
+}

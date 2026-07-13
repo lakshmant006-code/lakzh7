@@ -1,0 +1,29 @@
+/* ============================================================
+   HIKU — Spacing, radius & sizing tokens
+   4px base rhythm. Pills are fully rounded; cards ~12px.
+   ============================================================ */
+:root {
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* radii */
+  --radius-sm:   8px;
+  --radius-md:   12px;   /* cards, inputs, option rows */
+  --radius-lg:   16px;
+  --radius-xl:   22px;   /* search bar container */
+  --radius-pill: 999px;  /* chips, primary buttons, FABs */
+
+  /* control heights */
+  --control-sm: 34px;    /* filter chips */
+  --control-md: 44px;    /* inputs (min hit target) */
+  --control-lg: 48px;    /* primary buttons */
+
+  --tap-min: 44px; /* @kind spacing */  /* minimum touch target */
+}
