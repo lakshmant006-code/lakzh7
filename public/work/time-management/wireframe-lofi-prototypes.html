@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Lo-Fi Wireframes – Time Management</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #d9d9d9;
+    font-family: sans-serif;
+    padding: 24px;
+    min-height: 100vh;
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex; gap: 8px;
+    justify-content: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: 1.5px solid #bbb;
+    background: #f0f0f0;
+    cursor: pointer;
+    font-size: 13px;
+    color: #555;
+  }
+  .tab-btn.active { background: #333; color: #fff; border-color: #333; }
+
+  /* ── Browser shell ── */
+  .browser {
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    background: #f2f2f2;
+    border-radius: 10px;
+    border: 1.5px solid #bbb;
+    overflow: hidden;
+  }
+
+  .top-bar {
+    background: #555;
+    height: 34px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .top-bar-label { width: 140px; height: 12px; background: #888; border-radius: 3px; }
+
+  /* ── Pages ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── Shared primitives ── */
+  .bar { border-radius: 3px; background: #ccc; }
+
+  /* Field */
+  .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+  .field-label { height: 9px; background: #d0d0d0; border-radius: 2px; }
+  .field-input { height: 30px; border: 1.5px solid #d0d0d0; border-radius: 5px; background: #fafafa; }
+  .field-textarea { height: 56px; border: 1.5px solid #d0d0d0; border-radius: 5px; background: #fafafa; }
+  .field-select {
+    height: 30px; border: 1.5px solid #d0d0d0; border-radius: 5px;
+    background: #fafafa; display: flex; align-items: center;
+    justify-content: flex-end; padding-right: 10px;
+  }
+  .chevron { width: 8px; height: 8px; background: #ccc; border-radius: 1px; }
+
+  /* Toggle */
+  .toggle { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .toggle-track {
+    width: 36px; height: 18px; border-radius: 9px; background: #555;
+    position: relative; flex-shrink: 0;
+  }
+  .toggle-thumb {
+    width: 13px; height: 13px; background: #fff; border-radius: 50%;
+    position: absolute; top: 2.5px; right: 3px;
+  }
+  .toggle-label { height: 9px; width: 50px; background: #d4d4d4; border-radius: 2px; }
+
+  /* Buttons */
+  .btn-dark { height: 34px; background: #333; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+  .btn-dark .btn-bar { height: 9px; background: #888; border-radius: 2px; }
+  .btn-outline { height: 34px; border: 1.5px solid #ccc; border-radius: 6px; background: #f4f4f4; }
+
+  /* Section heading */
+  .section-head { height: 13px; background: #aaa; border-radius: 3px; margin-bottom: 16px; }
+
+  /* Grid helpers */
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .row-split { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 14px; }
+
+  /* ══════════════════════════════
+     PAGE 1 — LOGIN
+  ══════════════════════════════ */
+  #page-login {
+    background: #f7f7f7;
+    padding: 32px 24px 28px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+  }
+  #page-login.active { display: flex; }
+
+  .login-logo-block {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    margin-bottom: 22px;
+  }
+  .login-logo-box {
+    width: 160px; height: 44px;
+    border: 1.5px solid #ccc; border-radius: 6px; background: #eee;
+  }
+
+  .login-heading { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 24px; }
+  .login-h { width: 320px; height: 16px; background: #bbb; border-radius: 4px; }
+  .login-sub { width: 230px; height: 9px; background: #d8d8d8; border-radius: 2px; }
+  .login-sub2 { width: 190px; height: 9px; background: #d8d8d8; border-radius: 2px; }
+
+  .login-card {
+    width: 420px;
+    background: #fff;
+    border: 1.5px solid #ccc;
+    border-radius: 10px;
+    padding: 28px 28px 22px;
+  }
+
+  .password-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .pw-label { height: 9px; width: 70px; background: #d0d0d0; border-radius: 2px; }
+  .pw-forgot { height: 9px; width: 90px; background: #d8d8d8; border-radius: 2px; }
+
+  .login-footer { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 28px; }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-bar { height: 8px; background: #d4d4d4; border-radius: 2px; }
+
+  /* ══════════════════════════════
+     PAGE 2 — ADMIN DASHBOARD
+  ══════════════════════════════ */
+  #page-dashboard { display: none; }
+  #page-dashboard.active { display: flex; }
+
+  .dash-layout { display: flex; width: 100%; min-height: 520px; }
+
+  .dash-sidebar {
+    width: 180px; flex-shrink: 0;
+    background: #ececec;
+    border-right: 1.5px solid #d8d8d8;
+    padding: 18px 14px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .sidebar-logo { width: 52px; height: 52px; border: 2px solid #bbb; border-radius: 6px; margin-bottom: 22px; }
+
+  .nav-items { display: flex; flex-direction: column; gap: 10px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 6px;
+  }
+  .nav-item.active { background: #e0e0e0; border: 1.5px solid #ccc; }
+  .nav-icon { width: 13px; height: 13px; background: #bbb; border-radius: 2px; flex-shrink: 0; }
+  .nav-label { height: 10px; background: #ccc; border-radius: 2px; flex: 1; }
+  .nav-item.active .nav-label { background: #aaa; }
+
+  .sidebar-logout { display: flex; align-items: center; gap: 8px; padding: 6px 10px; }
+  .logout-icon { width: 12px; height: 12px; background: #bbb; border-radius: 2px; }
+  .logout-label { height: 9px; width: 46px; background: #ccc; border-radius: 2px; }
+
+  .dash-main { flex: 1; padding: 22px 24px; background: #f7f7f7; }
+
+  .dash-title-bar { height: 18px; width: 200px; background: #bbb; border-radius: 4px; margin-bottom: 8px; }
+  .dash-sub-bar { height: 9px; width: 280px; background: #d8d8d8; border-radius: 2px; margin-bottom: 24px; }
+
+  .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .dash-card {
+    background: #fff; border: 1.5px solid #ccc; border-radius: 8px;
+    padding: 16px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .card-header { display: flex; justify-content: space-between; align-items: center; }
+  .card-title { height: 12px; width: 80px; background: #bbb; border-radius: 3px; }
+  .card-icon { width: 16px; height: 16px; background: #d4d4d4; border-radius: 3px; }
+  .card-desc { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .card-line { height: 8px; background: #e4e4e4; border-radius: 2px; }
+  .card-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+
+  .btn-dark-card {
+    height: 30px; background: #333; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .btn-dark-card .plus { width: 10px; height: 10px; background: #777; border-radius: 50%; }
+  .btn-dark-card .lbl { height: 8px; width: 100px; background: #777; border-radius: 2px; }
+
+  /* ══════════════════════════════
+     PAGE 3 — CLIENT REGISTRATION
+  ══════════════════════════════ */
+  #page-register { background: #f7f7f7; padding: 20px 32px 32px; display: none; }
+  #page-register.active { display: block; }
+
+  .back-link { display: flex; align-items: center; gap: 6px; margin-bottom: 18px; }
+  .back-arrow { width: 14px; height: 10px; background: #ccc; border-radius: 2px; }
+  .back-text { width: 100px; height: 9px; background: #ccc; border-radius: 2px; }
+
+  .reg-header { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 18px; }
+  .reg-logo { width: 60px; height: 26px; border: 1.5px solid #bbb; border-radius: 4px; background: #eee; }
+  .reg-badge { height: 18px; width: 80px; background: #888; border-radius: 9px; align-self: center; }
+  .reg-title { height: 18px; width: 220px; background: #bbb; border-radius: 4px; align-self: center; }
+  .reg-sub { height: 9px; width: 180px; background: #d8d8d8; border-radius: 2px; align-self: center; }
+
+  .form-card {
+    background: #fff; border: 1.5px solid #ccc;
+    border-radius: 8px; padding: 20px; margin-bottom: 12px;
+  }
+
+  .add-header { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+  .add-label { height: 9px; width: 70px; background: #d0d0d0; border-radius: 2px; }
+  .add-btn { height: 22px; width: 66px; background: #ddd; border-radius: 4px; }
+
+  .action-row { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
+  .btn-cancel { height: 32px; width: 80px; border: 1.5px solid #ccc; border-radius: 6px; background: #f4f4f4; }
+  .btn-submit { height: 32px; width: 130px; background: #333; border-radius: 6px; }
+
+  .dash-footer { margin-top: 32px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+</style>
+</head>
+<body>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('login',this)">1. Login</button>
+  <button class="tab-btn" onclick="showTab('dashboard',this)">2. Admin Dashboard</button>
+  <button class="tab-btn" onclick="showTab('register',this)">3. Register New Client</button>
+</div>
+
+<div class="browser">
+  <!-- Top bar -->
+  <div class="top-bar"><div class="top-bar-label"></div></div>
+
+  <!-- ══ PAGE 1: LOGIN ══ -->
+  <div class="page active" id="page-login">
+
+    <!-- Logo block -->
+    <div class="login-logo-block">
+      <div class="login-logo-box"></div>
+    </div>
+
+    <!-- Heading -->
+    <div class="login-heading">
+      <div class="login-h"></div>
+      <div class="login-sub"></div>
+      <div class="login-sub2"></div>
+    </div>
+
+    <!-- Card -->
+    <div class="login-card">
+      <!-- Employee ID -->
+      <div class="field">
+        <div class="field-label" style="width:70px"></div>
+        <div class="field-input"></div>
+      </div>
+
+      <!-- Password + Forgot -->
+      <div class="password-row">
+        <div class="pw-label"></div>
+        <div class="pw-forgot"></div>
+      </div>
+      <div class="field-input" style="margin-bottom:16px"></div>
+
+      <!-- Sign In -->
+      <div class="btn-dark" style="margin-bottom:10px">
+        <div class="btn-bar" style="width:60px"></div>
+      </div>
+
+      <!-- Request Account -->
+      <div class="btn-outline" style="display:flex;align-items:center;justify-content:center;">
+        <div class="bar" style="height:9px;width:110px;background:#ccc"></div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <div class="footer-links">
+        <div class="footer-bar" style="width:70px"></div>
+        <div class="footer-bar" style="width:90px"></div>
+      </div>
+      <div class="footer-bar" style="width:200px"></div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 2: ADMIN DASHBOARD ══ -->
+  <div class="page" id="page-dashboard">
+    <div class="dash-layout">
+
+      <!-- Sidebar -->
+      <div class="dash-sidebar">
+        <div>
+          <div class="sidebar-logo"></div>
+          <div class="nav-items">
+            <div class="nav-item active">
+              <div class="nav-icon"></div>
+              <div class="nav-label"></div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon"></div>
+              <div class="nav-label" style="width:55px"></div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon"></div>
+              <div class="nav-label" style="width:80px"></div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon"></div>
+              <div class="nav-label" style="width:60px"></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar-logout">
+          <div class="logout-icon"></div>
+          <div class="logout-label"></div>
+        </div>
+      </div>
+
+      <!-- Main -->
+      <div class="dash-main">
+        <div class="dash-title-bar"></div>
+        <div class="dash-sub-bar"></div>
+
+        <div class="cards-grid">
+          <!-- Clients card -->
+          <div class="dash-card">
+            <div class="card-header">
+              <div class="card-title"></div>
+              <div class="card-icon"></div>
+            </div>
+            <div class="card-desc">
+              <div class="card-line" style="width:100%"></div>
+              <div class="card-line" style="width:90%"></div>
+              <div class="card-line" style="width:80%"></div>
+            </div>
+            <div class="card-btns">
+              <div class="btn-dark-card">
+                <div class="plus"></div>
+                <div class="lbl"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Projects card -->
+          <div class="dash-card">
+            <div class="card-header">
+              <div class="card-title"></div>
+              <div class="card-icon"></div>
+            </div>
+            <div class="card-desc">
+              <div class="card-line" style="width:100%"></div>
+              <div class="card-line" style="width:85%"></div>
+            </div>
+            <div class="card-btns">
+              <div class="btn-dark-card">
+                <div class="plus"></div>
+                <div class="lbl"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Users card -->
+          <div class="dash-card">
+            <div class="card-header">
+              <div class="card-title"></div>
+              <div class="card-icon"></div>
+            </div>
+            <div class="card-desc">
+              <div class="card-line" style="width:100%"></div>
+              <div class="card-line" style="width:90%"></div>
+              <div class="card-line" style="width:75%"></div>
+            </div>
+            <div class="card-btns">
+              <div class="btn-dark-card" style="margin-bottom:2px">
+                <div class="lbl" style="width:70px"></div>
+              </div>
+              <div class="btn-dark-card">
+                <div class="plus"></div>
+                <div class="lbl"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-footer">
+          <div class="bar" style="height:8px;width:80px;background:#d4d4d4"></div>
+          <div class="bar" style="height:8px;width:180px;background:#d4d4d4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 3: REGISTER NEW CLIENT ══ -->
+  <div class="page" id="page-register">
+
+    <!-- Back link -->
+    <div class="back-link">
+      <div class="back-arrow"></div>
+      <div class="back-text"></div>
+    </div>
+
+    <!-- Header -->
+    <div class="reg-header">
+      <div class="reg-logo"></div>
+      <div class="reg-badge"></div>
+      <div class="reg-title"></div>
+      <div class="reg-sub"></div>
+    </div>
+
+    <!-- ── Company Information ── -->
+    <div class="form-card">
+      <div class="section-head" style="width:160px"></div>
+
+      <!-- Client ID + Full Name -->
+      <div class="row-2" style="margin-bottom:12px">
+        <div class="field" style="margin-bottom:0">
+          <div class="field-label" style="width:55%"></div>
+          <div class="field-input"></div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <div class="field-label" style="width:60%"></div>
+          <div class="field-input"></div>
+        </div>
+      </div>
+
+      <!-- Company Name + Contact 1 + Contact 2 -->
+      <div class="row-3" style="margin-bottom:12px">
+        <div class="field" style="margin-bottom:0">
+          <div class="field-label" style="width:75%"></div>
+          <div class="field-input"></div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <div class="field-label" style="width:65%"></div>
+          <div class="field-input"></div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <div class="field-label" style="width:60%"></div>
+          <div class="field-input"></div>
+        </div>
+      </div>
+
+      <!-- Email + Address -->
+      <div class="row-2" style="margin-bottom:12px">
+        <div class="field" style="margin-bottom:0">
+          <div class="field-label" style="width:45%"></div>
+          <div class="field-input"></div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <div class="field-label" style="width:55%"></div>
+          <div class="field-textarea"></div>
+        </div>
+      </div>
+
+      <!-- Company Website + Industry Type -->
+      <div class="row-2">
+        <div class="field" style="margin-bottom:0">
+          <div class="field-label" style="width:70%"></div>
+          <div class="field-input"></div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <div class="field-label" style="width:65%"></div>
+          <div class="field-select"><div class="chevron"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Subscription & Billing ── -->
+    <div class="form-card">
+      <div class="section-head" style="width:190px"></div>
+
+      <!-- Plan + Currency + Billable Status -->
+      <div class="row-split" style="margin-bottom:12px; align-items:end">
+        <div class="field" style="margin-bottom:0">
+          <div class="field-label" style="width:80%"></div>
+          <div class="field-select"><div class="chevron"></div></div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <div class="field-label" style="width:80%"></div>
+          <div class="field-select"><div class="chevron"></div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div class="field-label" style="width:70%"></div>
+          <div class="toggle">
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            <div class="toggle-label"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Budget + Hourly Rate -->
+      <div class="row-2">
+        <div class="field" style="margin-bottom:0">
+          <div class="field-label" style="width:75%"></div>
+          <div class="field-input"></div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <div class="field-label" style="width:65%"></div>
+          <div class="field-input"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Portal Access ── -->
+    <div class="form-card">
+      <div class="section-head" style="width:120px"></div>
+
+      <!-- Portal Access toggle + Portal Password -->
+      <div class="row-2" style="margin-bottom:12px; align-items:start">
+        <div>
+          <div class="field-label" style="width:65%; margin-bottom:6px"></div>
+          <div class="toggle">
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            <div class="toggle-label"></div>
+          </div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <div class="field-label" style="width:70%"></div>
+          <div class="field-input"></div>
+        </div>
+      </div>
+
+      <!-- Active Status -->
+      <div style="margin-bottom:16px">
+        <div class="field-label" style="width:55%; margin-bottom:6px"></div>
+        <div class="toggle">
+          <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          <div class="toggle-label"></div>
+        </div>
+      </div>
+
+      <!-- Softwares + Machines -->
+      <div class="row-2">
+        <div>
+          <div class="add-header">
+            <div class="add-label"></div>
+            <div class="add-btn"></div>
+          </div>
+          <div class="field-select"><div class="chevron"></div></div>
+        </div>
+        <div>
+          <div class="add-header">
+            <div class="add-label"></div>
+            <div class="add-btn"></div>
+          </div>
+          <div class="field-select"><div class="chevron"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="action-row">
+      <div class="btn-cancel"></div>
+      <div class="btn-submit"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  function showTab(name, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // Forward wheel scrolling to the parent page so its Lenis smooth-scroll
+  // handles it consistently instead of the browser's native scroll-chaining.
+  (function () {
+    const parentWin = window.parent;
+    if (!parentWin || parentWin === window) return;
+    window.addEventListener(
+      "wheel",
+      (e) => {
+        e.preventDefault();
+        parentWin.dispatchEvent(
+          new parentWin.WheelEvent("wheel", {
+            deltaX: e.deltaX,
+            deltaY: e.deltaY,
+            deltaMode: e.deltaMode,
+            bubbles: true,
+            cancelable: true,
+          }),
+        );
+      },
+      { passive: false },
+    );
+  })();
+</script>
+</body>
+</html>
