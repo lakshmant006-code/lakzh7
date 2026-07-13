@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Lo-Fi Wireframe – Access Request- lowfedility</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #d9d9d9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: sans-serif;
+  }
+
+  .browser {
+    width: 560px;
+    background: #f2f2f2;
+    border-radius: 10px;
+    border: 1.5px solid #bbb;
+    overflow: hidden;
+  }
+
+  /* ── Top nav bar ── */
+  .top-bar {
+    background: #555;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .top-bar-label {
+    width: 130px; height: 12px;
+    background: #888;
+    border-radius: 3px;
+  }
+
+  /* ── Page body ── */
+  .page {
+    background: #f7f7f7;
+    padding: 20px 60px 32px;
+    min-height: 560px;
+  }
+
+  /* Back link */
+  .back-link {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 28px;
+  }
+  .back-arrow {
+    width: 14px; height: 10px;
+    background: #ccc; border-radius: 2px;
+  }
+  .back-text {
+    width: 70px; height: 10px;
+    background: #ccc; border-radius: 2px;
+  }
+
+  /* Logo placeholder */
+  .logo-wrap {
+    display: flex; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .logo-box {
+    width: 52px; height: 52px;
+    border: 2px solid #aaa;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-inner {
+    width: 30px; height: 30px;
+    border: 2px solid #bbb;
+    border-radius: 4px;
+  }
+
+  /* Heading block */
+  .heading-block {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; margin-bottom: 24px;
+  }
+  .h-bar { height: 16px; background: #bbb; border-radius: 4px; width: 160px; }
+  .sub-bar { height: 10px; background: #d8d8d8; border-radius: 3px; width: 220px; }
+
+  /* Form card */
+  .form-card {
+    background: #fff;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  /* 2-col row */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field-label { height: 9px; background: #d4d4d4; border-radius: 2px; width: 70%; }
+  .field-input {
+    height: 28px;
+    border: 1.5px solid #d0d0d0;
+    border-radius: 5px;
+    background: #fafafa;
+  }
+
+  /* Full-width field */
+  .form-row-full {
+    margin-bottom: 14px;
+  }
+
+  /* Textarea */
+  .field-textarea {
+    height: 58px;
+    border: 1.5px solid #d0d0d0;
+    border-radius: 5px;
+    background: #fafafa;
+  }
+
+  /* Submit button */
+  .submit-wrap {
+    margin-top: 18px;
+    display: flex; justify-content: center;
+  }
+  .submit-btn {
+    width: 100%;
+    height: 36px;
+    background: #555;
+    border-radius: 5px;
+  }
+
+  /* Footer */
+  .page-footer {
+    margin-top: 24px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .footer-bar { height: 9px; background: #d4d4d4; border-radius: 2px; }
+
+  /* Annotation labels */
+  .label {
+    font-size: 9px;
+    color: #999;
+    font-family: monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+<div class="browser">
+
+  <!-- Top nav bar -->
+  <div class="top-bar">
+    <div class="top-bar-label"></div>
+  </div>
+
+  <!-- Page content -->
+  <div class="page">
+
+    <!-- Back link -->
+    <div class="back-link">
+      <div class="back-arrow"></div>
+      <div class="back-text"></div>
+    </div>
+
+    <!-- Logo -->
+    <div class="logo-wrap">
+      <div class="logo-box">
+        <div class="logo-inner"></div>
+      </div>
+    </div>
+
+    <!-- Heading -->
+    <div class="heading-block">
+      <div class="h-bar"></div>
+      <div class="sub-bar"></div>
+    </div>
+
+    <!-- Form card -->
+    <div class="form-card">
+
+      <!-- Row 1: Company Name + Full Name -->
+      <div class="form-row">
+        <div class="field">
+          <div class="field-label" style="width:80%"></div>
+          <div class="field-input"></div>
+        </div>
+        <div class="field">
+          <div class="field-label" style="width:65%"></div>
+          <div class="field-input"></div>
+        </div>
+      </div>
+
+      <!-- Row 2: Email + Phone Number -->
+      <div class="form-row">
+        <div class="field">
+          <div class="field-label" style="width:55%"></div>
+          <div class="field-input"></div>
+        </div>
+        <div class="field">
+          <div class="field-label" style="width:75%"></div>
+          <div class="field-input"></div>
+        </div>
+      </div>
+
+      <!-- Row 3: Company Website (full width) -->
+      <div class="form-row-full">
+        <div class="field">
+          <div class="field-label" style="width:45%"></div>
+          <div class="field-input"></div>
+        </div>
+      </div>
+
+      <!-- Row 4: Reason for Access (textarea) -->
+      <div class="form-row-full">
+        <div class="field">
+          <div class="field-label" style="width:50%"></div>
+          <div class="field-textarea"></div>
+        </div>
+      </div>
+
+      <!-- Submit button -->
+      <div class="submit-wrap">
+        <div class="submit-btn"></div>
+      </div>
+
+    </div><!-- /form-card -->
+
+    <!-- Footer -->
+    <div class="page-footer">
+      <div class="footer-bar" style="width:90px"></div>
+      <div class="footer-bar" style="width:160px"></div>
+    </div>
+
+  </div><!-- /page -->
+</div><!-- /browser -->
+</body>
+</html>

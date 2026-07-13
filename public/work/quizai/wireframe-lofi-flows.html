@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Lo-Fi Wireframes – QuizAI</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #d9d9d9;
+    font-family: sans-serif;
+    padding: 24px;
+  }
+
+  /* ── Tab switcher ── */
+  .tabs {
+    display: flex; gap: 8px;
+    justify-content: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: 1.5px solid #bbb;
+    background: #f0f0f0;
+    cursor: pointer;
+    font-size: 13px;
+    color: #555;
+    transition: all .15s;
+  }
+  .tab-btn.active {
+    background: #555;
+    color: #fff;
+    border-color: #555;
+  }
+
+  /* ── Browser shell ── */
+  .browser {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    background: #f2f2f2;
+    border-radius: 10px;
+    border: 1.5px solid #bbb;
+    overflow: hidden;
+
+  }
+
+  .top-bar {
+    background: #555;
+    height: 34px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .top-bar-label { width: 130px; height: 12px; background: #888; border-radius: 3px; }
+
+  /* pages */
+  .page { display: none; background: #f7f7f7; padding: 18px 24px 28px; }
+  .page.active { display: block; }
+
+  /* ── Shared helpers ── */
+  .bar { border-radius: 3px; background: #ccc; }
+  .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+  .field-label { height: 8px; background: #d0d0d0; border-radius: 2px; width: 55%; }
+  .field-input { height: 28px; border: 1.5px solid #d0d0d0; border-radius: 5px; background: #fafafa; }
+
+  /* nav bar reusable */
+  .nav-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .nav-logo { width: 80px; height: 14px; background: #bbb; border-radius: 3px; }
+  .nav-links { display: flex; gap: 10px; }
+  .nav-link { width: 60px; height: 10px; background: #d4d4d4; border-radius: 2px; }
+  .nav-avatar { width: 28px; height: 28px; border-radius: 50%; background: #bbb; }
+
+  /* stat cards */
+  .stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 18px; }
+  .stat-card {
+    background: #fff; border: 1.5px solid #ddd; border-radius: 8px;
+    padding: 14px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .stat-icon { width: 18px; height: 18px; background: #ddd; border-radius: 3px; }
+  .stat-num { width: 50px; height: 16px; background: #bbb; border-radius: 3px; }
+  .stat-label { width: 80px; height: 8px; background: #e0e0e0; border-radius: 2px; }
+  .stat-sub { width: 100px; height: 7px; background: #ebebeb; border-radius: 2px; }
+
+  /* list card */
+  .list-card {
+    background: #fff; border: 1.5px solid #ddd; border-radius: 8px;
+    padding: 14px; margin-bottom: 10px;
+  }
+  .list-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .lc-title { width: 160px; height: 11px; background: #bbb; border-radius: 3px; }
+  .lc-badge { width: 40px; height: 16px; background: #e0e0e0; border-radius: 10px; }
+  .lc-date { width: 70px; height: 9px; background: #d8d8d8; border-radius: 2px; }
+  .lc-meta { display: flex; gap: 12px; margin-top: 8px; }
+  .lc-meta-item { width: 80px; height: 8px; background: #e4e4e4; border-radius: 2px; }
+  .lc-link { width: 70px; height: 8px; background: #ccc; border-radius: 2px; }
+
+  /* section heading */
+  .section-title { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 20px; }
+  .sec-h { width: 200px; height: 18px; background: #bbb; border-radius: 4px; }
+  .sec-sub { width: 160px; height: 9px; background: #d8d8d8; border-radius: 2px; }
+
+  /* buttons */
+  .btn-filled { height: 32px; background: #555; border-radius: 5px; }
+  .btn-outline { height: 32px; background: #f4f4f4; border: 1.5px solid #ccc; border-radius: 5px; }
+  .btn-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+  .btn-row .btn-filled { width: 110px; }
+  .btn-row .btn-outline { width: 100px; }
+
+  /* ════════════════════════════════
+     PAGE 1 – Landing
+  ════════════════════════════════ */
+  .hero-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+  .hero-btn { width: 110px; height: 28px; border: 1.5px solid #ccc; border-radius: 5px; background: #f4f4f4; }
+
+  .hero-block { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 28px; }
+  .hero-h { width: 340px; height: 22px; background: #bbb; border-radius: 4px; }
+  .hero-sub1 { width: 280px; height: 9px; background: #d8d8d8; border-radius: 2px; }
+  .hero-sub2 { width: 240px; height: 9px; background: #d8d8d8; border-radius: 2px; }
+  .hero-sub3 { width: 200px; height: 9px; background: #d8d8d8; border-radius: 2px; }
+
+  .why-section { margin-top: 10px; }
+  .why-title { width: 180px; height: 14px; background: #bbb; border-radius: 3px; margin: 0 auto 18px; display: block; }
+
+  .why-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+  .why-card { background: #fff; border: 1.5px solid #ddd; border-radius: 8px; padding: 14px; }
+  .why-icon { width: 28px; height: 28px; background: #e8e8e8; border-radius: 50%; margin-bottom: 10px; }
+  .why-card-title { width: 100px; height: 10px; background: #bbb; border-radius: 2px; margin-bottom: 8px; }
+  .why-card-line { height: 7px; background: #e4e4e4; border-radius: 2px; margin-bottom: 5px; }
+
+  /* ════════════════════════════════
+     PAGE 2 – Login
+  ════════════════════════════════ */
+  .login-wrap {
+    min-height: 420px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .login-card {
+    width: 320px;
+    background: #fff;
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
+    padding: 28px 24px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .login-icon { width: 44px; height: 44px; background: #e8e8e8; border-radius: 50%; margin-bottom: 6px; }
+  .login-title { width: 160px; height: 14px; background: #bbb; border-radius: 3px; }
+  .login-sub { width: 130px; height: 8px; background: #d8d8d8; border-radius: 2px; margin-bottom: 6px; }
+  .login-field { width: 100%; }
+  .login-field .field-input { width: 100%; }
+  .login-btn-main { width: 100%; height: 34px; background: #555; border-radius: 5px; margin: 4px 0; }
+  .login-btn-sec { width: 100%; height: 32px; border: 1.5px solid #ccc; border-radius: 5px; background: #fafafa; margin-bottom: 6px; }
+
+  /* ════════════════════════════════
+     PAGE 3 – Quiz History
+  ════════════════════════════════ */
+
+  /* ════════════════════════════════
+     PAGE 4 – Study Session
+  ════════════════════════════════ */
+  .summary-card {
+    background: #fff; border: 1.5px solid #ddd; border-radius: 8px;
+    padding: 14px; margin-bottom: 10px;
+  }
+  .sum-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .sum-filename { display: flex; align-items: center; gap: 8px; }
+  .sum-file-icon { width: 16px; height: 16px; background: #ddd; border-radius: 3px; }
+  .sum-file-bar { width: 140px; height: 10px; background: #bbb; border-radius: 2px; }
+  .sum-icons { display: flex; gap: 6px; }
+  .sum-icon-sq { width: 20px; height: 20px; background: #e0e0e0; border-radius: 4px; }
+  .sum-date { width: 70px; height: 8px; background: #d4d4d4; border-radius: 2px; }
+  .sum-pages { width: 60px; height: 8px; background: #d4d4d4; border-radius: 2px; }
+
+  .sum-body { margin: 10px 0; }
+  .sum-abstract { width: 80px; height: 9px; background: #bbb; border-radius: 2px; margin-bottom: 8px; }
+  .sum-line { height: 7px; background: #ebebeb; border-radius: 2px; margin-bottom: 5px; }
+
+  .sum-read-btn { width: 90px; height: 26px; border: 1.5px solid #ccc; border-radius: 5px; background: #f4f4f4; display: flex; align-items: center; justify-content: center; }
+  .sum-read-bar { width: 60px; height: 8px; background: #ccc; border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- Tab switcher -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('landing')">1. Landing</button>
+  <button class="tab-btn" onclick="showTab('login')">2. Login</button>
+  <button class="tab-btn" onclick="showTab('quiz')">3. Quiz History</button>
+  <button class="tab-btn" onclick="showTab('study')">4. Study Session</button>
+</div>
+
+<div class="browser">
+  <div class="top-bar"><div class="top-bar-label"></div></div>
+
+  <!-- ══ PAGE 1: Landing ══ -->
+  <div class="page active" id="page-landing">
+
+    <!-- Nav -->
+    <div class="hero-nav">
+      <div class="nav-logo"></div>
+      <div class="hero-btn"></div>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero-block">
+      <div class="hero-h"></div>
+      <div class="hero-sub1"></div>
+      <div class="hero-sub2"></div>
+      <div class="hero-sub3"></div>
+      <div class="btn-row" style="margin-top:6px; margin-bottom:0">
+        <div class="btn-filled"></div>
+        <div class="btn-outline"></div>
+      </div>
+    </div>
+
+    <!-- Why section -->
+    <div class="why-section">
+      <div class="why-title"></div>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-icon"></div>
+          <div class="why-card-title"></div>
+          <div class="why-card-line" style="width:100%"></div>
+          <div class="why-card-line" style="width:90%"></div>
+          <div class="why-card-line" style="width:80%"></div>
+        </div>
+        <div class="why-card">
+          <div class="why-icon"></div>
+          <div class="why-card-title"></div>
+          <div class="why-card-line" style="width:100%"></div>
+          <div class="why-card-line" style="width:85%"></div>
+          <div class="why-card-line" style="width:75%"></div>
+        </div>
+        <div class="why-card">
+          <div class="why-icon"></div>
+          <div class="why-card-title"></div>
+          <div class="why-card-line" style="width:100%"></div>
+          <div class="why-card-line" style="width:90%"></div>
+          <div class="why-card-line" style="width:70%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 2: Login ══ -->
+  <div class="page" id="page-login">
+    <div class="login-wrap">
+      <div class="login-card">
+        <div class="login-icon"></div>
+        <div class="login-title"></div>
+        <div class="login-sub"></div>
+        <div class="login-field">
+          <div class="field-input" style="width:100%; margin-bottom:10px"></div>
+          <div class="field-input" style="width:100%; margin-bottom:10px"></div>
+        </div>
+        <div class="login-btn-main"></div>
+        <div class="login-btn-sec"></div>
+        <div class="login-btn-sec" style="margin-bottom:0"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 3: Quiz History ══ -->
+  <div class="page" id="page-quiz">
+
+    <!-- Nav -->
+    <div class="nav-bar">
+      <div class="nav-logo"></div>
+      <div class="nav-links">
+        <div class="nav-link"></div>
+        <div class="nav-link"></div>
+        <div class="nav-link"></div>
+      </div>
+      <div class="nav-avatar"></div>
+    </div>
+
+    <!-- Page title -->
+    <div class="section-title">
+      <div class="sec-h" style="width:180px"></div>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon"></div>
+        <div class="stat-num"></div>
+        <div class="stat-label"></div>
+        <div class="stat-sub"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"></div>
+        <div class="stat-num" style="width:70px"></div>
+        <div class="stat-label"></div>
+        <div class="stat-sub"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"></div>
+        <div class="stat-num" style="width:40px"></div>
+        <div class="stat-label"></div>
+        <div class="stat-sub"></div>
+      </div>
+    </div>
+
+    <!-- Quiz list items -->
+    <div class="list-card">
+      <div class="list-card-header">
+        <div>
+          <div class="lc-title" style="margin-bottom:5px"></div>
+          <div class="lc-date"></div>
+        </div>
+        <div class="lc-badge"></div>
+      </div>
+      <div class="lc-meta">
+        <div class="lc-meta-item"></div>
+        <div class="lc-meta-item"></div>
+        <div class="lc-meta-item"></div>
+        <div class="lc-link"></div>
+      </div>
+    </div>
+
+    <div class="list-card">
+      <div class="list-card-header">
+        <div>
+          <div class="lc-title" style="margin-bottom:5px"></div>
+          <div class="lc-date"></div>
+        </div>
+        <div class="lc-badge"></div>
+      </div>
+      <div class="lc-meta">
+        <div class="lc-meta-item"></div>
+        <div class="lc-meta-item"></div>
+        <div class="lc-meta-item"></div>
+        <div class="lc-link"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE 4: Study Session ══ -->
+  <div class="page" id="page-study">
+
+    <!-- Nav -->
+    <div class="nav-bar">
+      <div class="nav-logo"></div>
+      <div class="nav-links">
+        <div class="nav-link"></div>
+        <div class="nav-link"></div>
+        <div class="nav-link"></div>
+      </div>
+      <div class="nav-avatar"></div>
+    </div>
+
+    <!-- Page title -->
+    <div class="section-title">
+      <div class="sec-h" style="width:220px"></div>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon"></div>
+        <div class="stat-num" style="width:30px"></div>
+        <div class="stat-label"></div>
+        <div class="stat-sub"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"></div>
+        <div class="stat-num" style="width:30px"></div>
+        <div class="stat-label"></div>
+        <div class="stat-sub"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"></div>
+        <div class="stat-num" style="width:30px"></div>
+        <div class="stat-label"></div>
+        <div class="stat-sub"></div>
+      </div>
+    </div>
+
+    <!-- Summary card -->
+    <div class="summary-card">
+      <div class="sum-header">
+        <div class="sum-filename">
+          <div class="sum-file-icon"></div>
+          <div class="sum-file-bar"></div>
+          <div class="sum-icons">
+            <div class="sum-icon-sq"></div>
+            <div class="sum-icon-sq"></div>
+            <div class="sum-icon-sq"></div>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px">
+          <div class="sum-date"></div>
+          <div class="sum-pages"></div>
+        </div>
+      </div>
+
+      <!-- Description lines -->
+      <div class="sum-body">
+        <div class="sum-line" style="width:100%"></div>
+        <div class="sum-line" style="width:95%"></div>
+        <div class="sum-line" style="width:80%"></div>
+      </div>
+
+      <!-- Abstract block -->
+      <div class="sum-abstract"></div>
+      <div class="sum-line" style="width:100%"></div>
+      <div class="sum-line" style="width:90%"></div>
+      <div class="sum-line" style="width:70%; margin-bottom:12px"></div>
+
+      <!-- Read more button -->
+      <div class="sum-read-btn">
+        <div class="sum-read-bar"></div>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /browser -->
+
+<script>
+  function showTab(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    event.target.classList.add('active');
+    resizeFrame();
+  }
+
+  function resizeFrame() {
+    if (!window.frameElement) return;
+    window.frameElement.style.height = "0px";
+    const browser = document.querySelector(".browser");
+    const paddingBottom =
+      parseFloat(getComputedStyle(document.body).paddingBottom) || 0;
+    const needed = Math.ceil(
+      browser.getBoundingClientRect().bottom + paddingBottom,
+    );
+    window.frameElement.style.height = needed + "px";
+  }
+  window.addEventListener("load", resizeFrame);
+  window.addEventListener("resize", resizeFrame);
+  if (document.fonts) {
+    document.fonts.ready.then(resizeFrame);
+  }
+  new ResizeObserver(resizeFrame).observe(document.body);
+
+  // Forward wheel scrolling to the parent page so its Lenis smooth-scroll
+  // handles it consistently instead of the browser's native scroll-chaining.
+  (function () {
+    const parentWin = window.parent;
+    if (!parentWin || parentWin === window) return;
+    window.addEventListener(
+      "wheel",
+      (e) => {
+        e.preventDefault();
+        parentWin.dispatchEvent(
+          new parentWin.WheelEvent("wheel", {
+            deltaX: e.deltaX,
+            deltaY: e.deltaY,
+            deltaMode: e.deltaMode,
+            bubbles: true,
+            cancelable: true,
+          }),
+        );
+      },
+      { passive: false },
+    );
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Lo-Fi Wireframe – Admin Dashboard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #d9d9d9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: sans-serif;
+  }
+
+  .browser {
+    width: 700px;
+    background: #f2f2f2;
+    border-radius: 10px;
+    border: 1.5px solid #bbb;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  }
+
+  /* ── Top nav bar ── */
+  .top-bar {
+    background: #555;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .top-bar-label {
+    width: 130px; height: 12px;
+    background: #888;
+    border-radius: 3px;
+  }
+
+  /* ── Layout: sidebar + main ── */
+  .layout {
+    display: flex;
+    min-height: 560px;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 150px;
+    background: #ececec;
+    border-right: 1.5px solid #d4d4d4;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .sidebar-logo {
+    width: 40px; height: 40px;
+    border: 2px solid #bbb;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-inner {
+    width: 22px; height: 22px;
+    border: 2px solid #ccc;
+    border-radius: 3px;
+  }
+
+  .nav-items { display: flex; flex-direction: column; gap: 10px; }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 8px;
+    border-radius: 5px;
+  }
+  .nav-item.active { background: #fff; border: 1.5px solid #d0d0d0; }
+
+  .nav-icon {
+    width: 12px; height: 12px;
+    background: #bbb; border-radius: 2px; flex-shrink: 0;
+  }
+  .nav-label {
+    height: 9px; background: #ccc; border-radius: 2px; flex: 1;
+  }
+  .nav-item.active .nav-label { background: #aaa; }
+
+  /* Logout at bottom */
+  .sidebar-bottom { display: flex; align-items: center; gap: 8px; padding: 6px 8px; }
+  .logout-icon { width: 12px; height: 12px; background: #bbb; border-radius: 2px; }
+  .logout-label { height: 9px; width: 50px; background: #ccc; border-radius: 2px; }
+
+  /* ── Main content ── */
+  .main {
+    flex: 1;
+    padding: 20px 22px;
+    background: #f7f7f7;
+  }
+
+  /* Page heading */
+  .page-heading { margin-bottom: 4px; }
+  .page-title-bar { height: 16px; width: 180px; background: #bbb; border-radius: 4px; margin-bottom: 8px; }
+  .page-sub-bar { height: 9px; width: 260px; background: #d8d8d8; border-radius: 2px; margin-bottom: 22px; }
+
+  /* Cards grid */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+
+  .card {
+    background: #fff;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    padding: 14px;
+  }
+
+  /* Card header row: title + icon */
+  .card-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .card-title-bar { height: 11px; width: 70px; background: #bbb; border-radius: 3px; }
+  .card-icon { width: 14px; height: 14px; background: #d0d0d0; border-radius: 3px; }
+
+  /* Card description lines */
+  .card-desc { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .desc-line { height: 8px; background: #e0e0e0; border-radius: 2px; }
+
+  /* Card buttons */
+  .card-btns { display: flex; flex-direction: column; gap: 7px; }
+  .btn-outline {
+    height: 26px;
+    border: 1.5px solid #ccc;
+    border-radius: 5px;
+    background: #f4f4f4;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .btn-icon { width: 10px; height: 10px; background: #bbb; border-radius: 50%; }
+  .btn-label { height: 8px; width: 90px; background: #ccc; border-radius: 2px; }
+
+  .btn-filled {
+    height: 26px;
+    background: #555;
+    border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .btn-filled .btn-label { background: #888; }
+
+  /* Footer */
+  .main-footer {
+    margin-top: 30px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .footer-bar { height: 8px; background: #d4d4d4; border-radius: 2px; }
+</style>
+</head>
+<body>
+<div class="browser">
+
+  <!-- Top nav bar -->
+  <div class="top-bar">
+    <div class="top-bar-label"></div>
+  </div>
+
+  <div class="layout">
+
+    <!-- ── Sidebar ── -->
+    <div class="sidebar">
+      <div>
+        <!-- Logo -->
+        <div class="sidebar-logo">
+          <div class="logo-inner"></div>
+        </div>
+
+        <!-- Nav items -->
+        <div class="nav-items">
+          <div class="nav-item active">
+            <div class="nav-icon"></div>
+            <div class="nav-label"></div>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon"></div>
+            <div class="nav-label"></div>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon"></div>
+            <div class="nav-label" style="width:80%"></div>
+          </div>
+          <div class="nav-item">
+            <div class="nav-icon"></div>
+            <div class="nav-label" style="width:60%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Logout -->
+      <div class="sidebar-bottom">
+        <div class="logout-icon"></div>
+        <div class="logout-label"></div>
+      </div>
+    </div>
+
+    <!-- ── Main content ── -->
+    <div class="main">
+
+      <!-- Page heading -->
+      <div class="page-title-bar"></div>
+      <div class="page-sub-bar"></div>
+
+      <!-- 3 cards -->
+      <div class="cards-grid">
+
+        <!-- Card 1: Clients -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-bar"></div>
+            <div class="card-icon"></div>
+          </div>
+          <div class="card-desc">
+            <div class="desc-line" style="width:100%"></div>
+            <div class="desc-line" style="width:85%"></div>
+            <div class="desc-line" style="width:70%"></div>
+          </div>
+          <div class="card-btns">
+            <div class="btn-outline">
+              <div class="btn-icon"></div>
+              <div class="btn-label"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Projects -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-bar"></div>
+            <div class="card-icon"></div>
+          </div>
+          <div class="card-desc">
+            <div class="desc-line" style="width:100%"></div>
+            <div class="desc-line" style="width:90%"></div>
+            <div class="desc-line" style="width:65%"></div>
+          </div>
+          <div class="card-btns">
+            <div class="btn-outline">
+              <div class="btn-icon"></div>
+              <div class="btn-label"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Users -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-bar"></div>
+            <div class="card-icon"></div>
+          </div>
+          <div class="card-desc">
+            <div class="desc-line" style="width:100%"></div>
+            <div class="desc-line" style="width:80%"></div>
+            <div class="desc-line" style="width:60%"></div>
+          </div>
+          <div class="card-btns">
+            <div class="btn-filled">
+              <div class="btn-label"></div>
+            </div>
+            <div class="btn-outline">
+              <div class="btn-icon"></div>
+              <div class="btn-label"></div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /cards-grid -->
+
+      <!-- Footer -->
+      <div class="main-footer">
+        <div class="footer-bar" style="width:80px"></div>
+        <div class="footer-bar" style="width:160px"></div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /layout -->
+</div><!-- /browser -->
+</body>
+</html>

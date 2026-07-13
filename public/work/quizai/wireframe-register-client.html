@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Lo-Fi Wireframe – Register New Client</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #d9d9d9;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px 0;
+    min-height: 100vh;
+    font-family: sans-serif;
+  }
+
+  .browser {
+    width: 600px;
+    background: #f2f2f2;
+    border-radius: 10px;
+    border: 1.5px solid #bbb;
+    overflow: hidden;
+  }
+
+  /* Top nav bar */
+  .top-bar {
+    background: #555;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .top-bar-label {
+    width: 130px; height: 12px;
+    background: #888; border-radius: 3px;
+  }
+
+  /* Page body */
+  .page {
+    background: #f7f7f7;
+    padding: 16px 24px 28px;
+  }
+
+  /* Back link */
+  .back-link {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 16px;
+  }
+  .back-arrow { width: 14px; height: 9px; background: #ccc; border-radius: 2px; }
+  .back-text { width: 90px; height: 9px; background: #ccc; border-radius: 2px; }
+
+  /* Logo + badge + heading */
+  .page-header {
+    display: flex; flex-direction: column; align-items: flex-start;
+    margin-bottom: 16px; gap: 6px;
+  }
+  .logo-box {
+    width: 44px; height: 22px;
+    border: 2px solid #bbb; border-radius: 5px;
+  }
+  .badge {
+    height: 16px; width: 70px;
+    background: #555; border-radius: 10px;
+    align-self: center;
+  }
+  .page-title { height: 16px; width: 200px; background: #bbb; border-radius: 4px; align-self: center; }
+  .page-sub   { height: 9px;  width: 180px; background: #d8d8d8; border-radius: 2px; align-self: center; }
+
+  /* Form card */
+  .form-card {
+    background: #fff;
+    border: 1.5px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+
+  /* Section title */
+  .section-title {
+    height: 11px; width: 140px;
+    background: #aaa; border-radius: 3px;
+    margin-bottom: 14px;
+  }
+
+  /* Grid helpers */
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .row-full { margin-bottom: 12px; }
+
+  /* Field */
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field-label { height: 8px; background: #d0d0d0; border-radius: 2px; width: 60%; }
+  .field-input {
+    height: 26px;
+    border: 1.5px solid #d0d0d0;
+    border-radius: 4px;
+    background: #fafafa;
+  }
+  .field-select {
+    height: 26px;
+    border: 1.5px solid #d0d0d0;
+    border-radius: 4px;
+    background: #fafafa;
+    display: flex; align-items: center; justify-content: flex-end; padding-right: 8px;
+  }
+  .select-arrow { width: 8px; height: 8px; background: #ccc; border-radius: 1px; }
+
+  /* Toggle */
+  .toggle-row { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+  .toggle-track {
+    width: 32px; height: 16px;
+    background: #ccc; border-radius: 10px;
+    position: relative;
+  }
+  .toggle-track.on { background: #555; }
+  .toggle-thumb {
+    width: 12px; height: 12px;
+    background: #fff; border-radius: 50%;
+    position: absolute; top: 2px; left: 2px;
+  }
+  .toggle-track.on .toggle-thumb { left: 18px; }
+
+  /* Add-new row */
+  .add-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 0; }
+  .add-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .add-label-bar { height: 9px; width: 70px; background: #d0d0d0; border-radius: 2px; }
+  .add-btn {
+    height: 18px; width: 60px;
+    background: #e0e0e0; border-radius: 4px;
+  }
+
+  /* Action buttons */
+  .action-row {
+    display: flex; justify-content: flex-end; gap: 10px;
+    margin-top: 16px;
+  }
+  .btn-cancel {
+    height: 30px; width: 70px;
+    border: 1.5px solid #ccc; border-radius: 5px;
+    background: #f4f4f4;
+  }
+  .btn-submit {
+    height: 30px; width: 110px;
+    background: #555; border-radius: 5px;
+  }
+</style>
+</head>
+<body>
+<div class="browser">
+
+  <!-- Top nav -->
+  <div class="top-bar">
+    <div class="top-bar-label"></div>
+  </div>
+
+  <div class="page">
+
+    <!-- Back link -->
+    <div class="back-link">
+      <div class="back-arrow"></div>
+      <div class="back-text"></div>
+    </div>
+
+    <!-- Logo + badge + heading -->
+    <div class="page-header">
+      <div class="logo-box"></div>
+      <div class="badge"></div>
+      <div class="page-title"></div>
+      <div class="page-sub"></div>
+    </div>
+
+    <!-- ── Company Information ── -->
+    <div class="form-card">
+      <div class="section-title"></div>
+
+      <!-- Client ID + Full Name -->
+      <div class="row-2">
+        <div class="field">
+          <div class="field-label" style="width:50%"></div>
+          <div class="field-input"></div>
+        </div>
+        <div class="field">
+          <div class="field-label" style="width:60%"></div>
+          <div class="field-input"></div>
+        </div>
+      </div>
+
+      <!-- Company Name + Contact 1 + Contact 2 -->
+      <div class="row-3">
+        <div class="field">
+          <div class="field-label" style="width:80%"></div>
+          <div class="field-input"></div>
+        </div>
+        <div class="field">
+          <div class="field-label" style="width:70%"></div>
+          <div class="field-input"></div>
+        </div>
+        <div class="field">
+          <div class="field-label" style="width:70%"></div>
+          <div class="field-input"></div>
+        </div>
+      </div>
+
+      <!-- Email + Address -->
+      <div class="row-2">
+        <div class="field">
+          <div class="field-label" style="width:45%"></div>
+          <div class="field-input"></div>
+        </div>
+        <div class="field">
+          <div class="field-label" style="width:55%"></div>
+          <div class="field-input"></div>
+        </div>
+      </div>
+
+      <!-- Company Website + Industry Type -->
+      <div class="row-2">
+        <div class="field">
+          <div class="field-label" style="width:75%"></div>
+          <div class="field-input"></div>
+        </div>
+        <div class="field">
+          <div class="field-label" style="width:65%"></div>
+          <div class="field-select"><div class="select-arrow"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Subscription & Billing ── -->
+    <div class="form-card">
+      <div class="section-title" style="width:160px"></div>
+
+      <!-- Subscription Plan + Default Currency + Billable Status -->
+      <div class="row-3">
+        <div class="field">
+          <div class="field-label" style="width:85%"></div>
+          <div class="field-select"><div class="select-arrow"></div></div>
+        </div>
+        <div class="field">
+          <div class="field-label" style="width:80%"></div>
+          <div class="field-select"><div class="select-arrow"></div></div>
+        </div>
+        <div class="field">
+          <div class="field-label" style="width:75%"></div>
+          <div style="margin-top:4px">
+            <div class="toggle-track on"><div class="toggle-thumb"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Budget Allocation + Hourly Rate -->
+      <div class="row-2">
+        <div class="field">
+          <div class="field-label" style="width:80%"></div>
+          <div class="field-input"></div>
+        </div>
+        <div class="field">
+          <div class="field-label" style="width:65%"></div>
+          <div class="field-input"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Portal Access ── -->
+    <div class="form-card">
+      <div class="section-title" style="width:110px"></div>
+
+      <!-- Client Portal Access toggle -->
+      <div class="row-2" style="margin-bottom:12px">
+        <div class="toggle-row">
+          <div class="field-label" style="width:75%"></div>
+          <div class="toggle-track on"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="field">
+          <div class="field-label" style="width:70%"></div>
+          <div class="field-input"></div>
+        </div>
+      </div>
+
+      <!-- Active Status toggle -->
+      <div class="toggle-row" style="margin-bottom:14px">
+        <div class="field-label" style="width:45%"></div>
+        <div class="toggle-track on"><div class="toggle-thumb"></div></div>
+      </div>
+
+      <!-- Softwares + Machines add-new -->
+      <div class="add-row">
+        <div>
+          <div class="add-header">
+            <div class="add-label-bar"></div>
+            <div class="add-btn"></div>
+          </div>
+          <div class="field-select"><div class="select-arrow"></div></div>
+        </div>
+        <div>
+          <div class="add-header">
+            <div class="add-label-bar"></div>
+            <div class="add-btn"></div>
+          </div>
+          <div class="field-select"><div class="select-arrow"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="action-row">
+      <div class="btn-cancel"></div>
+      <div class="btn-submit"></div>
+    </div>
+
+  </div><!-- /page -->
+</div><!-- /browser -->
+</body>
+</html>
