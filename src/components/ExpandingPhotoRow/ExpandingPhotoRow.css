@@ -1,0 +1,96 @@
+.expanding-photo-row-section {
+  width: 100%;
+}
+
+.expanding-photo-row-hint {
+  margin: 0;
+  padding-top: 0.75rem;
+  text-align: center;
+  font-family: "Satoshi", sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #666;
+}
+
+/* Full-width breakout: absolute centering, 100vw, overflow clips */
+.expanding-photo-row-breakout {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  height: 260px;
+  overflow: hidden;
+  cursor: default;
+  contain: layout paint;
+}
+
+/* Row: same width in both states; always centered with left 50% + x so trio stays centered on all viewports */
+.row-collapsed,
+.row-expanded-draggable {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1656px; /* 8 * 200 + 7 * 8 */
+  height: 260px;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Collapsed: only this 400px band triggers hover; expanded: full row for leave */
+.expanding-photo-row-hitarea {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 260px;
+  top: 0;
+  z-index: 10;
+  cursor: default;
+}
+.expanding-photo-row-hitarea--expanded {
+  width: 100%;
+  left: 0;
+  transform: none;
+  cursor: grab;
+}
+.expanding-photo-row-hitarea--expanded.expanding-photo-row-hitarea--dragging {
+  cursor: grabbing;
+}
+
+/* Card base: dimensions and appearance */
+.card-base {
+  width: 200px;
+  height: 200px;
+  border-radius: 4px;
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+
+.card-absolute {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.card-base img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Mobile: scale down container and photos */
+@media (max-width: 767px) {
+  .expanding-photo-row-wrapper {
+    height: 208px !important; /* 260 * 0.8 */
+  }
+  .expanding-photo-row-breakout {
+    height: 208px;
+  }
+  .expanding-photo-row-inner {
+    transform: scale(0.8);
+    transform-origin: center top;
+    width: 100%;
+    height: 260px;
+  }
+}

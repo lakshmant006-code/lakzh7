@@ -1,0 +1,146 @@
+.dialogue-box {
+  position: relative;
+  font-size: 14px;
+  font-family: "Pokemon GB", monospace;
+  border-radius: 3px;
+  /* Extra bottom padding so text clears the always-visible arrow */
+  padding: 18px 20px 42px;
+  width: 100%;
+  max-width: 400px;
+  min-height: 52px;
+  height: auto;
+  line-height: 22px;
+  margin: auto;
+  cursor: default;
+  background: white;
+  border: 1px solid white;
+  box-shadow:
+    0 1px 0 1px black,
+    inset 0 1px 0 1px black,
+    0 0 0 1px black,
+    inset 0 0 0 1px black;
+  box-sizing: border-box;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  overflow: visible;
+}
+
+/* In-flow ghost line reserves height for the full sentence before typewriter finishes (esp. line 2). */
+.dialogue-box .dialogue-text-column {
+  position: relative;
+  flex: 0 1 auto;
+  min-width: 0;
+  align-self: stretch;
+}
+
+.dialogue-box .dialogue-line {
+  margin: 0;
+  padding: 2px 0;
+  word-break: break-word;
+}
+
+.dialogue-box .dialogue-line--measure {
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+  min-height: 22px;
+}
+
+.dialogue-box .dialogue-line--typed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  min-height: 22px;
+}
+
+/* Pinned bottom-right from first paint — not after typewriter (avoids flex flow below tall ghost text). */
+.dialogue-box .dialogue-arrow-row {
+  position: absolute;
+  z-index: 2;
+  right: 8px;
+  bottom: 4px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  flex-shrink: 0;
+  min-height: 14px;
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dialogue-box .dialogue-arrow-button {
+  cursor: pointer;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 12px 8px 8px 20px;
+  margin: -8px -4px -8px 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  line-height: 0;
+  visibility: visible;
+  opacity: 1;
+}
+
+.dialogue-box .dialogue-arrow-button:focus-visible {
+  outline: 2px solid #1a1a1a;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.dialogue-box .dialogue-arrow-button:disabled {
+  opacity: 1;
+  cursor: default;
+  pointer-events: none;
+}
+
+.dialogue-box .arrow {
+  display: block;
+  width: 0;
+  height: 0;
+  border: 7px solid transparent;
+  border-top-color: black;
+  opacity: 1;
+  animation: pokemon-intro-bounce 0.5s ease-in-out infinite alternate;
+  animation-delay: 0s;
+  will-change: transform;
+}
+
+@keyframes pokemon-intro-bounce {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(4px);
+  }
+}
+
+.pokemon-intro-overlay {
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  padding: 28px 24px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  transition: opacity 500ms ease;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+.pokemon-intro-overlay--hidden {
+  pointer-events: none;
+}

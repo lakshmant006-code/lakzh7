@@ -1,0 +1,851 @@
+.work-bento-item {
+  display: flex;
+  flex-direction: column;
+  background-color: #1a1a1a;
+  border-radius: var(--bento-card-radius);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.3s ease;
+  height: 100%;
+  will-change: transform;
+  min-height: 200px;
+  position: relative;
+}
+
+.work-bento-label {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  width: 80px;
+  height: auto;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+@media (min-width: 768px) {
+  .work-bento-label {
+    width: 96px;
+    height: auto;
+    top: 1rem;
+    left: 1rem;
+  }
+}
+
+@media (min-width: 1026px) {
+  .work-bento-label {
+    width: 112px;
+    height: auto;
+    top: 1.25rem;
+    left: 1.25rem;
+  }
+}
+
+/* Hover lift only on desktop width + real hover (narrow viewports: no hover layout changes) */
+@media (min-width: 1026px) and (hover: hover) {
+  .work-bento-item:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* On tablet/mobile, show hover state by default since you can't hover */
+@media (max-width: 1023px) {
+  .work-bento-item {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+  }
+}
+
+.work-bento-image-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #2a2a2a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+  z-index: 1;
+  /* Remove height transition - keep thumbnail fixed */
+}
+
+/* Case study view: thumbnail gets more height than text section */
+.work-bento-item.case-study-card .work-bento-image-container {
+  height: 45%;
+  flex-shrink: 0;
+}
+
+/* Dandi: give text panel more room on small screens (award line adds height) */
+@media (max-width: 768px) {
+  .work-bento-item.case-study-card[data-project-id="hiku-bio-smart-wearable"]
+    .work-bento-image-container {
+    height: 38%;
+  }
+}
+
+/* On tablet/mobile, for ALL view case studies: 50/50 split (not overlay) */
+@media (max-width: 1025px) {
+  /* On tablet/mobile, show hover state by default for other cases */
+  .work-bento-image-container {
+    height: 100%;
+  }
+
+  /* Override for ALL view case studies to use 50/50 split */
+  .work-bento-item:not(.case-study-card) .work-bento-image-container {
+    height: 50%;
+    flex-shrink: 0;
+  }
+}
+
+@media (min-width: 1026px) and (hover: hover) {
+  .work-bento-item:hover .work-bento-image-container {
+    height: 100%;
+  }
+}
+
+.work-bento-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background-color: #2a2a2a;
+}
+
+.work-bento-item[data-project-id="quizai-approval-flow"] .work-bento-image {
+  background-color: #e7d7d9;
+}
+.work-bento-item[data-project-id="hiku-bio-smart-wearable"] .work-bento-image {
+  background-color: #8ecbb0;
+}
+.work-bento-item[data-project-id="time-management-pain-detection"] .work-bento-image {
+  background-color: #333333;
+}
+
+/* Ensure video controls are hidden */
+.work-bento-image-container video {
+  pointer-events: none;
+}
+
+.work-bento-image-container video::-webkit-media-controls {
+  display: none !important;
+}
+
+.work-bento-image-container video::-webkit-media-controls-enclosure {
+  display: none !important;
+}
+
+.work-bento-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #1a1a1a;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform: translateY(100%);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  z-index: 2;
+}
+
+/* Case study view: text always visible */
+.work-bento-content.case-study-visible {
+  transform: translateY(0);
+  position: relative;
+  height: auto;
+  flex-shrink: 0;
+  padding: 1.25rem;
+}
+
+@media (min-width: 375px) {
+  .work-bento-content.case-study-visible {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .work-bento-content.case-study-visible {
+    padding: 2rem;
+  }
+}
+
+/* On tablet/mobile, for ALL view case studies: content visible and relative (50/50 split) */
+@media (max-width: 1025px) {
+  .work-bento-item:not(.case-study-card) .work-bento-content {
+    transform: translateY(0);
+    position: relative;
+    height: auto;
+    flex-shrink: 0;
+  }
+}
+
+/* On tablet/mobile, use 45/55 split for overlay mode */
+@media (max-width: 1023px) {
+  .work-bento-content {
+    height: 45%;
+  }
+}
+
+@media (min-width: 1026px) and (hover: hover) {
+  .work-bento-item:hover .work-bento-content {
+    transform: translateY(0);
+  }
+}
+
+/* Case study view: don't transform on hover since it's always visible */
+.work-bento-item.case-study-card:hover .work-bento-content.case-study-visible {
+  transform: translateY(0);
+}
+
+/* On tablet/mobile, show hover state by default for overlay mode */
+@media (max-width: 1023px) {
+  .work-bento-content {
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 1026px) {
+  .work-bento-content {
+    height: 55%;
+  }
+}
+
+/* Case study view: adjust image and content heights (thumbnail > text) */
+@media (min-width: 768px) {
+  .work-bento-item.case-study-card .work-bento-image-container {
+    height: 55%;
+  }
+
+  .work-bento-content.case-study-visible {
+    height: auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .work-bento-item.case-study-card .work-bento-image-container {
+    height: 55%;
+  }
+}
+
+/* Responsive height: increase text section as width gets narrower */
+@media (min-width: 1026px) and (max-width: 1400px) {
+  .work-bento-content {
+    height: 60%;
+  }
+}
+
+@media (min-width: 1026px) and (max-width: 1200px) {
+  .work-bento-content {
+    height: 65%;
+  }
+}
+
+@media (min-width: 375px) {
+  .work-bento-content {
+    padding: 1.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .work-bento-content {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1026px) {
+  .work-bento-content {
+    padding: 1.75rem;
+  }
+}
+
+/* Dandi: award at bottom of text panel; title aligns with sibling cards */
+.work-bento-item.case-study-card
+  .work-bento-content.case-study-visible.work-bento-content--with-award {
+  flex: 1 1 auto;
+  flex-shrink: 1;
+  min-height: 0;
+  justify-content: flex-start;
+}
+
+.work-bento-content.case-study-visible.work-bento-content--with-award
+  .work-bento-summary {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.work-bento-award-line {
+  margin: 0;
+  margin-top: 0.75rem;
+  padding-top: 0.625rem;
+  border-top: 1px solid rgba(250, 250, 250, 0.12);
+  flex-shrink: 0;
+  color: #b3b3b3;
+  font-weight: 400;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.work-bento-content.case-study-visible .work-bento-award-line {
+  font-size: 0.65rem;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .work-bento-content.case-study-visible .work-bento-award-line {
+    font-size: 0.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .work-bento-content.case-study-visible .work-bento-award-line {
+    font-size: 0.75rem;
+  }
+}
+
+@media (min-width: 1026px) {
+  .work-bento-award-line {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+  }
+}
+
+.work-bento-title {
+  font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+  font-weight: 500;
+  color: #fafafa;
+  margin: 0 0 0.375rem 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Mobile: prevent wrapped title descenders from clipping */
+@media (max-width: 768px) {
+  .work-bento-title {
+    line-height: 1.4;
+  }
+}
+
+@media (min-width: 768px) {
+  .work-bento-title {
+    font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1025px) {
+  .work-bento-title {
+    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  }
+}
+
+@media (min-width: 1026px) {
+  .work-bento-title {
+    font-size: clamp(1.125rem, 1.5vw, 1.25rem);
+    margin-bottom: 0.5rem;
+  }
+}
+
+.work-bento-role {
+  font-size: 0.75rem;
+  color: #b3b3b3;
+  margin: 0 0 0.5rem 0;
+  font-weight: 400;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .work-bento-role {
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1025px) {
+  .work-bento-role {
+    font-size: 0.95rem;
+  }
+}
+
+@media (min-width: 1026px) {
+  .work-bento-role {
+    font-size: 0.8rem;
+    margin-bottom: 0.625rem;
+  }
+}
+
+.work-bento-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-bottom: 0.625rem;
+}
+
+@media (min-width: 1026px) {
+  .work-bento-tags {
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.work-bento-tag {
+  font-size: 0.65rem;
+  padding: 0.2rem 0.6rem;
+  background-color: rgba(250, 250, 250, 0.1);
+  color: #fafafa;
+  border-radius: var(--bento-card-radius);
+  font-weight: 400;
+  border: 1px solid rgba(250, 250, 250, 0.15);
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+  z-index: 2;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .work-bento-tag {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.7rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1025px) {
+  .work-bento-tag {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.75rem;
+  }
+}
+
+@media (min-width: 1026px) {
+  .work-bento-tag {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.75rem;
+  }
+}
+
+/* Shiny overlay effect */
+.work-bento-tag::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 35%,
+    rgba(255, 255, 255, 0.15) 48%,
+    rgba(255, 255, 255, 0.15) 52%,
+    rgba(255, 255, 255, 0) 65%
+  );
+  background-size: 200% 100%;
+  background-position: 150%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+@media (min-width: 1026px) and (hover: hover) {
+  .work-bento-item:hover .work-bento-tag::before {
+    opacity: 1;
+    background-position: 150%;
+    animation: shine 0.5s linear;
+  }
+}
+
+/* On tablet/mobile, show hover state by default */
+@media (max-width: 1023px) {
+  .work-bento-tag::before {
+    opacity: 1;
+  }
+}
+
+@keyframes shine {
+  0% {
+    background-position: 150%;
+  }
+  100% {
+    background-position: -60%;
+  }
+}
+
+.work-bento-summary {
+  font-size: 0.85rem;
+  color: #e0e0e0;
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 300;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .work-bento-summary {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1025px) {
+  .work-bento-summary {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+}
+
+@media (min-width: 1026px) {
+  .work-bento-summary {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    -webkit-line-clamp: 4;
+  }
+}
+
+/* Case study view: match WorkSection styling */
+/* On mobile/tablet, use same font sizes as normal view */
+.work-bento-content.case-study-visible .work-bento-title {
+  font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+  margin-bottom: 0.375rem;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .work-bento-content.case-study-visible .work-bento-title {
+    font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .work-bento-content.case-study-visible .work-bento-title {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.work-bento-content.case-study-visible .work-bento-role {
+  font-size: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .work-bento-content.case-study-visible .work-bento-role {
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .work-bento-content.case-study-visible .work-bento-role {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.work-bento-content.case-study-visible .work-bento-tags {
+  gap: 0.375rem;
+  margin-bottom: 0.625rem;
+}
+
+@media (min-width: 1024px) {
+  .work-bento-content.case-study-visible .work-bento-tags {
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.work-bento-content.case-study-visible .work-bento-tag {
+  font-size: 0.65rem;
+  padding: 0.2rem 0.6rem;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .work-bento-content.case-study-visible .work-bento-tag {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.7rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .work-bento-content.case-study-visible .work-bento-tag {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+  }
+}
+
+.work-bento-content.case-study-visible .work-bento-summary {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  -webkit-line-clamp: unset;
+  display: block;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .work-bento-content.case-study-visible .work-bento-summary {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+}
+
+@media (min-width: 1024px) {
+  .work-bento-content.case-study-visible .work-bento-summary {
+    font-size: calc(0.95rem + 1px);
+    line-height: 1.6;
+  }
+}
+
+/* ----- Home compact case study cards (thumbnail + tag pills + footer row) ----- */
+.work-bento-item.work-bento-item--compact {
+  --compact-card-gap: 0.625rem;
+  --compact-footer-gap: 0.5rem;
+  --compact-meta-gap: 0.3125rem;
+  --compact-title-size: clamp(0.9375rem, 2.4vw, 1.0625rem);
+  --compact-tag-size: 0.75rem;
+  --compact-tag-pad-y: 0.28rem;
+  --compact-tag-pad-x: 0.6875rem;
+  --compact-role-size: 0.6875rem;
+  --compact-thumb-aspect: 888 / 500;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--compact-card-gap);
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: visible;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 767px) {
+  .work-bento-item.work-bento-item--compact {
+    /* Match .home-bio; slightly taller thumbnails on phone */
+    --compact-title-size: clamp(0.95rem, 2vw, 18px);
+    --compact-thumb-aspect: 888 / 540;
+  }
+}
+
+@media (min-width: 768px) {
+  .work-bento-item.work-bento-item--compact {
+    --compact-card-gap: 0.75rem;
+    --compact-footer-gap: 0.5625rem;
+    --compact-meta-gap: 0.375rem;
+    --compact-title-size: 18px;
+    --compact-tag-size: 0.78125rem;
+    --compact-tag-pad-y: 0.3rem;
+    --compact-tag-pad-x: 0.71875rem;
+    --compact-role-size: 0.71875rem;
+  }
+}
+
+/* Tablet through laptop (768–1024px): slightly larger role */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .work-bento-item.work-bento-item--compact {
+    --compact-role-size: 0.78125rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .work-bento-item.work-bento-item--compact {
+    --compact-card-gap: 0.875rem;
+    --compact-footer-gap: 0.625rem;
+    --compact-meta-gap: 0.4375rem;
+    --compact-title-size: 18px;
+    --compact-tag-size: 0.8125rem;
+    --compact-tag-pad-y: 0.34rem;
+    --compact-tag-pad-x: 0.78125rem;
+    --compact-role-size: 0.75rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .work-bento-item.work-bento-item--compact {
+    box-shadow: none !important;
+  }
+}
+
+@media (min-width: 1026px) and (hover: hover) {
+  .work-bento-item.work-bento-item--compact:hover {
+    box-shadow: none;
+    transform: none;
+  }
+
+  .work-bento-item--compact:hover .work-bento-image-container {
+    height: auto;
+    aspect-ratio: var(--compact-thumb-aspect, 888 / 500);
+  }
+}
+
+.work-bento-item--compact .work-bento-image-container,
+.work-bento-image-container--compact {
+  width: 100%;
+  height: auto;
+  flex: none;
+  aspect-ratio: var(--compact-thumb-aspect, 888 / 500);
+  border-radius: var(--bento-card-radius);
+  overflow: hidden;
+  background-color: #e8e8e8;
+}
+
+.work-bento-item--compact .work-bento-image,
+.work-bento-image-container--compact .work-bento-image {
+  border-radius: var(--bento-card-radius);
+}
+
+.work-bento-item.work-bento-item--compact.case-study-card
+  .work-bento-image-container {
+  height: auto;
+  aspect-ratio: var(--compact-thumb-aspect, 888 / 500);
+  border-radius: var(--bento-card-radius);
+}
+
+@media (min-width: 1026px) and (hover: hover) {
+  .work-bento-item.work-bento-item--compact:hover .work-bento-image-container {
+    height: auto;
+    aspect-ratio: var(--compact-thumb-aspect, 888 / 500);
+  }
+}
+
+.work-bento-compact-footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--compact-footer-gap);
+  padding: 0;
+  min-width: 0;
+}
+
+.work-bento-item--compact .work-bento-compact-tags {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: calc(100% - 2rem);
+  pointer-events: none;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+@media (min-width: 1025px) {
+  .work-bento-item--compact .work-bento-compact-tags {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  .work-bento-item--compact:hover .work-bento-compact-tags {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1024px) {
+  .work-bento-compact-award-pill {
+    top: 0.625rem;
+    left: 0.625rem;
+    font-size: 0.625rem;
+    padding: 0.35rem 0.625rem;
+  }
+
+  .work-bento-item--compact .work-bento-compact-tags {
+    bottom: 0.75rem;
+    left: 0.75rem;
+    gap: 0.375rem;
+  }
+}
+
+.work-bento-compact-tag {
+  font-family: "Satoshi", sans-serif;
+  font-size: var(--compact-tag-size);
+  font-weight: 500;
+  line-height: 1.15;
+  padding: var(--compact-tag-pad-y) var(--compact-tag-pad-x);
+  background-color: #fff;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: var(--bento-card-radius);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  white-space: nowrap;
+}
+
+.work-bento-compact-title {
+  font-family: "Satoshi", sans-serif;
+  font-size: var(--compact-title-size);
+  font-weight: 500;
+  color: #1e1e1e;
+  margin: 0;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@media (max-width: 767px) {
+  .work-bento-compact-title {
+    line-height: 1.6;
+  }
+
+  .work-bento-compact-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .work-bento-compact-role {
+    white-space: normal;
+    text-align: left;
+  }
+}
+
+.work-bento-compact-role {
+  font-family: "Satoshi", sans-serif;
+  font-size: var(--compact-role-size);
+  font-weight: 400;
+  letter-spacing: 0.07em;
+  color: #8a8a8a;
+  text-transform: uppercase;
+  margin: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1.15;
+  text-align: right;
+}
+
+.work-bento-compact-award-pill {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 3;
+  font-family: "Satoshi", sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(117, 117, 117, 0.42);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--bento-card-radius);
+  padding: 0.4rem 0.75rem;
+  line-height: 1.2;
+  pointer-events: none;
+}
+
+@media (min-width: 1025px) {
+  .work-bento-compact-award-pill {
+    top: 1rem;
+    left: 1rem;
+    font-size: 0.75rem;
+    padding: 0.45rem 0.875rem;
+  }
+}

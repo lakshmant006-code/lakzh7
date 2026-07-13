@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+docs
+examples
+scripts
+supabase
+.claude
+public/super-mario-python-master
+public/super-mario-web
+public/projects/concentrix/concentrix.mp4

@@ -1,0 +1,1512 @@
+﻿.hiku-case-study {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  color: #0f0f0f;
+}
+
+/* Hero Section */
+.hiku-hero-section {
+  width: 100%;
+  padding-top: 6rem;
+  padding-bottom: 1rem;
+  background-color: #f5f5f5;
+}
+
+/* Hero Image Containers */
+.hiku-hero-image-container {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 1.5rem; /* px-6 */
+}
+
+.hiku-hero-before {
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.hiku-hero-after {
+  margin-top: 2rem;
+  opacity: 0;
+  animation: dandiFadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) 2.2s forwards;
+}
+
+.hiku-hero-content {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  padding: 0 1.5rem; /* px-6 */
+  opacity: 0;
+  transform: translateY(30px);
+  animation: dandiFadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) 1.2s forwards;
+}
+
+@keyframes dandiFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dandiFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Left Column */
+.hiku-hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.hiku-hero-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.hiku-hero-title {
+  font-family: "Crimson Pro", serif;
+  font-size: 3rem;
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  color: #0f0f0f;
+  margin: 0;
+  line-height: 1;
+}
+
+.hiku-hero-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.hiku-hero-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.hiku-hero-detail-label {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+}
+
+.hiku-hero-detail-value {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #0f0f0f;
+}
+
+/* Right Column */
+.hiku-hero-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.hiku-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.hiku-hero-tag {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  background-color: rgba(15, 15, 15, 0.1);
+  color: #0f0f0f;
+  border-radius: 9999px;
+  font-weight: 400;
+  border: 1px solid rgba(15, 15, 15, 0.15);
+}
+
+.hiku-hero-subtitle {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+}
+
+.hiku-skip-to-solution-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.375rem 0.4rem;
+  background-color: transparent;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(58, 146, 105, 0.12) 0px,
+      transparent 1px,
+      transparent 2px,
+      rgba(58, 146, 105, 0.12) 3px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(58, 146, 105, 0.12) 0px,
+      transparent 1px,
+      transparent 2px,
+      rgba(58, 146, 105, 0.12) 3px
+    );
+  background-size: 4px 4px;
+  color: #3A9269;
+  border: 1px solid rgba(58, 146, 105, 0.35);
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: "Satoshi", sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.hiku-skip-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 50%;
+  background-color: transparent;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hiku-skip-arrow {
+  width: 20px;
+  height: 20px;
+  color: #ffffff;
+  transition:
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 3;
+  display: block;
+  margin: 0 auto;
+}
+
+.hiku-skip-text {
+  color: #3A9269;
+  position: relative;
+  z-index: 2;
+  transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hiku-skip-to-solution-btn::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 44px;
+  height: 44px;
+  background-color: #3A9269;
+  border-radius: 50%;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+.hiku-skip-to-solution-btn:hover {
+  background-image: none;
+}
+
+.hiku-skip-to-solution-btn:hover::before {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+}
+
+.hiku-skip-to-solution-btn:hover .hiku-skip-text,
+.hiku-skip-to-solution-btn:hover .hiku-skip-arrow {
+  color: #ffffff;
+}
+
+.hiku-skip-to-solution-btn:active {
+  transform: scale(0.98);
+}
+
+.hiku-hero-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.hiku-hero-before .hiku-hero-image {
+  max-height: 32vh;
+  object-fit: cover;
+  object-position: center;
+  clip-path: inset(100% 0 0 0);
+  animation: dandiRevealFromBottom 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes dandiRevealFromBottom {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Media Queries - 640px */
+@media (min-width: 640px) {
+  .hiku-hero-section {
+    padding-top: 7rem;
+  }
+
+  .hiku-hero-image-container {
+    padding: 0 2rem; /* sm:px-8 */
+  }
+
+  .hiku-hero-content {
+    padding: 0 2rem; /* sm:px-8 */
+  }
+}
+
+@media (min-width: 768px) {
+  .hiku-hero-before {
+    margin-bottom: 2.5rem;
+  }
+
+  .hiku-hero-after {
+    margin-top: 2.5rem;
+  }
+
+  .hiku-hero-title {
+    font-size: 4rem;
+  }
+
+  .hiku-hero-details {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .hiku-hero-detail-label {
+    font-size: 0.875rem;
+  }
+
+  .hiku-hero-detail-value {
+    font-size: 1.125rem;
+  }
+
+  .hiku-hero-tag {
+    font-size: 0.875rem;
+  }
+
+  .hiku-hero-subtitle {
+    font-size: 1.125rem;
+  }
+
+  .hiku-hero-before .hiku-hero-image {
+    max-height: 40vh;
+  }
+}
+
+/* Media Queries - Tablet and smaller (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .hiku-hero-section,
+  .hiku-context-section,
+  .hiku-where-we-began-section,
+  .hiku-what-we-found-section,
+  .hiku-solution-section,
+  .hiku-see-next-section {
+    overflow-y: hidden;
+  }
+}
+
+/* Media Queries - 1024px */
+@media (min-width: 1024px) {
+  .hiku-hero-image-container {
+    padding: 0 3rem; /* lg:px-12 */
+  }
+
+  .hiku-hero-before {
+    margin-bottom: 3rem;
+  }
+
+  .hiku-hero-after {
+    margin-top: 3rem;
+  }
+
+  .hiku-hero-content {
+    padding: 0 3rem; /* lg:px-12 */
+    grid-template-columns: 1.3fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .hiku-hero-title {
+    font-size: 5rem;
+  }
+
+  .hiku-hero-subtitle {
+    font-size: 1.25rem;
+  }
+
+  .hiku-hero-before .hiku-hero-image {
+    max-height: 48vh;
+  }
+}
+
+/* Context Section */
+.hiku-context-section {
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #f5f5f5;
+}
+
+.hiku-context-content {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.hiku-context-top {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  margin-bottom: 3.5rem;
+}
+
+.hiku-context-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.hiku-context-title {
+  font-family: "Crimson Pro", serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #0f0f0f;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.05em;
+}
+
+.hiku-context-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+}
+
+.hiku-context-impact {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; /* Venmo .venmo-context-impact */
+  margin-bottom: 0;
+}
+
+/* Venmo: .venmo-research-title / first section labels — padding-top + 2rem top margin */
+.hiku-impact-title {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 2rem 0 2rem 0;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* Venmo: .venmo-impact-title — only top margin; gap handles space below */
+.hiku-context-impact .hiku-impact-title {
+  margin: 2rem 0 0 0;
+}
+
+.hiku-context-impact-statement {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+  width: 100%;
+  max-width: none;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.hiku-context-impact-prompt {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+  width: 100%;
+  max-width: none;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.hiku-context-impact-image-container {
+  width: 100%;
+  margin: 1rem 0 1.25rem;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.hiku-context-impact-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.hiku-accent-text {
+  color: #3A9269;
+  font-style: italic;
+  font-weight: 600;
+  margin: 0 0.05em;
+}
+
+/* Same underline as Home landing hero company links (Home.css .home-landing-company-link) */
+.hiku-context-impact-link {
+  display: inline-block;
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.hiku-context-impact-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: currentColor;
+  transition: width 0.3s ease;
+}
+
+.hiku-context-impact-link:hover::after {
+  width: 100%;
+}
+
+.hiku-context-impact-link:focus-visible {
+  outline: 2px solid #3A9269;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Solution — mirrors Venmo solution section; scroll target for skip link */
+.hiku-solution-section {
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #f5f5f5;
+  scroll-margin-top: 5rem;
+}
+
+.hiku-solution-content {
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+/* Venmo: .venmo-solution-title */
+.hiku-solution-title {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 2rem 0 2rem 0;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.hiku-visual-identity-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 4rem; /* Venmo .venmo-solution-overview spacing before solution items */
+  width: 100%;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.hiku-physical-component {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.hiku-physical-component-image-container {
+  width: 100%;
+  margin: 0;
+}
+
+.hiku-physical-component-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* ── Hiku Design System cards ─────────────────────────────── */
+.hiku-ds-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.hiku-ds-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hiku-ds-card-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #717171;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+.hiku-ds-card-frame {
+  width: 100%;
+  border: 1px solid #ebebeb;
+  border-radius: 12px;
+  display: block;
+  pointer-events: none;
+  background: #ffffff;
+}
+
+/* ── Wireframe container ──────────────────────────────────── */
+.hiku-wireframe-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.hiku-wireframe-frame {
+  width: 100%;
+  max-width: 360px;
+  display: block;
+  border: none;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.hiku-app-screens-container {
+  display: block;
+}
+
+.hiku-app-screens-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.hiku-app-screens-frame {
+  max-width: 100%;
+  border-radius: 16px;
+  pointer-events: none;
+  display: block;
+}
+
+.hiku-app-screens-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.hiku-visual-identity-subtitle {
+  font-family: "Crimson Pro", serif;
+  font-size: 2.5rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #0f0f0f;
+  margin: 0;
+  letter-spacing: -0.05em;
+}
+
+.hiku-visual-identity-description {
+  font-family: "Satoshi", sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  font-weight: 300;
+  margin: 0;
+  width: 100%;
+  max-width: none;
+}
+
+.hiku-features-intro {
+  margin-bottom: 2rem;
+}
+
+.hiku-visual-identity-flowers {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, auto);
+  gap: 1.25rem 1rem;
+  margin: 1rem 0 1.25rem;
+  width: 100%;
+  max-width: none;
+}
+
+.hiku-visual-identity-flower-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem;
+  border-radius: 8px;
+  outline: none;
+  width: 100%;
+  min-width: 0;
+}
+
+.hiku-visual-identity-flower-wrap:focus-visible {
+  outline: 2px solid #3A9269;
+  outline-offset: 3px;
+}
+
+.hiku-visual-identity-flower {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: min(320px, 38vh);
+  object-fit: contain;
+  display: block;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: rotate(0deg);
+  will-change: transform;
+}
+
+.hiku-visual-identity-flower-wrap:hover .hiku-visual-identity-flower,
+.hiku-visual-identity-flower-wrap:focus-visible .hiku-visual-identity-flower {
+  transform: rotate(360deg);
+}
+
+/* Features — mirrors Venmo .venmo-solution-item (video left, caption right ≥768px) */
+.hiku-feature-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 4rem;
+}
+
+.hiku-feature-item:last-child {
+  margin-bottom: 0;
+}
+
+.hiku-feature-item-title {
+  font-size: 0.875rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 2rem 0 1rem 0;
+}
+
+.hiku-feature-media {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3.5rem;
+  margin-top: 1rem;
+}
+
+.hiku-feature-video-container {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.hiku-feature-video-container::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle,
+    rgba(58, 146, 105, 0.55) 0%,
+    rgba(58, 146, 105, 0.35) 30%,
+    transparent 60%
+  );
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hiku-feature-video {
+  width: 100%;
+  height: auto;
+  max-height: 660px;
+  display: block;
+  border-radius: 8px;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+}
+
+.hiku-feature-caption {
+  font-family: "Satoshi", sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+}
+
+/* Use a div role="navigation" for links — global nav {} in Nav.css targets all <nav> */
+.hiku-solution-learn-more {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem; /* same as .hiku-feature-item between title and content */
+  width: 100%;
+  padding-top: 2rem;
+}
+
+.hiku-solution-learn-more-title {
+  margin: 0;
+  width: 100%;
+  text-align: left;
+}
+
+.hiku-solution-demo-embed {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0f0f0f;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  margin-bottom: 0.75rem;
+}
+
+.hiku-solution-demo-embed iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.hiku-solution-links {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem 2rem;
+  width: 100%;
+}
+
+.hiku-solution-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: "Satoshi", sans-serif;
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.6;
+  letter-spacing: 0;
+  color: #0f0f0f;
+  text-decoration: none;
+  transition:
+    color 0.2s ease,
+    font-weight 0.2s ease;
+}
+
+.hiku-solution-link:hover {
+  color: #3A9269;
+  font-weight: 400;
+}
+
+.hiku-solution-link:focus-visible {
+  color: #3A9269;
+  outline: 2px solid #3A9269;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.hiku-solution-link-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hiku-solution-link-icon {
+  width: 1rem;
+  height: 1rem;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: rotate(0deg);
+  will-change: transform;
+}
+
+.hiku-solution-link:hover .hiku-solution-link-icon,
+.hiku-solution-link:focus-visible .hiku-solution-link-icon {
+  transform: rotate(360deg);
+}
+
+/* Key Takeaway + Next Steps — mirrors Venmo layout */
+.hiku-takeaways-section,
+.hiku-next-steps-section {
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #f5f5f5;
+}
+
+.hiku-learn-more-section {
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #f5f5f5;
+}
+
+.hiku-takeaways-content,
+.hiku-next-steps-content,
+.hiku-learn-more-content {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.hiku-takeaways-item,
+.hiku-next-steps-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 0;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.hiku-takeaways-title-text,
+.hiku-next-steps-title-text {
+  font-family: "Crimson Pro", serif;
+  font-size: 2.25rem;
+  font-weight: 600;
+  color: #0f0f0f;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.05em;
+}
+
+.hiku-takeaways-description,
+.hiku-next-steps-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+}
+
+/* See Next — mirrors Venmo .venmo-see-next-* */
+.hiku-see-next-section {
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 6rem;
+  background-color: #f5f5f5;
+}
+
+.hiku-see-next-content {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.hiku-see-next-title {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 2rem 0 2rem 0;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.hiku-see-next-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.hiku-see-next-card-link {
+  display: contents;
+  text-decoration: none;
+  color: inherit;
+}
+
+.hiku-see-next-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: 1px solid rgba(15, 15, 15, 0.2);
+  border-radius: 8px;
+  padding: 0;
+  overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  position: relative;
+  background-color: #f0f0f0;
+}
+
+.hiku-see-next-image-container,
+.hiku-see-next-card-title,
+.hiku-see-next-card-description {
+  position: relative;
+}
+
+.hiku-see-next-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.hiku-see-next-image-container {
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+}
+
+.hiku-see-next-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.hiku-see-next-card-title {
+  font-family: "Satoshi", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0f0f0f;
+  margin: 0;
+  line-height: 1.3;
+  letter-spacing: -0.05em;
+  padding: 0 1.5rem;
+}
+
+.hiku-see-next-card-description {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+  padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+/* Where We Began — title uses .hiku-impact-title (same as Impact label) */
+.hiku-where-we-began-section {
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #f5f5f5;
+}
+
+.hiku-where-we-began-content {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.hiku-where-we-began-body {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.hiku-where-we-began-body--above-video {
+  max-width: min(48rem, 100%);
+  align-self: flex-start;
+  text-align: left;
+  margin-bottom: 2rem;
+}
+
+.hiku-where-we-began-body--below-video {
+  max-width: min(48rem, 100%);
+  align-self: flex-end;
+  text-align: right;
+  margin-bottom: 1.75rem;
+}
+
+.hiku-where-we-began-body--closing {
+  width: 100%;
+  max-width: none;
+  align-self: stretch;
+  text-align: left;
+}
+
+.hiku-where-we-began-video-wrap {
+  width: 100%;
+  margin: 1rem 0 2.25rem;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.hiku-where-we-began-video {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+/* What We Found — statement line matches Venmo context statement text */
+.hiku-what-we-found-section {
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #f5f5f5;
+}
+
+.hiku-what-we-found-content {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Mirrors Venmo .venmo-context-statement-content + .venmo-context-statement-text */
+.hiku-what-we-found-statement {
+  margin-bottom: 1.25rem;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.hiku-what-we-found-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 2.75rem;
+  width: 100%;
+  margin-bottom: 1.25rem;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* Row: image | copy (stat-1) or copy | image (stat-2); stacked on small screens */
+.hiku-what-we-found-stat {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  gap: 1.25rem 2rem;
+  align-items: center;
+  margin: 0;
+  padding: 0.35rem 0;
+}
+
+.hiku-what-we-found-stat--text-left .hiku-what-we-found-stat-media {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.hiku-what-we-found-stat--text-left .hiku-what-we-found-stat-copy {
+  grid-column: 1;
+  grid-row: 1;
+  text-align: right;
+}
+
+.hiku-what-we-found-stat-media {
+  min-width: 0;
+}
+
+/* Stat 1: image hugs the text column (right side of image cell) */
+.hiku-what-we-found-stat--image-left .hiku-what-we-found-stat-media {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.hiku-what-we-found-stat--image-left .hiku-what-we-found-stat-image {
+  width: auto;
+  max-width: 100%;
+}
+
+.hiku-what-we-found-stat-image {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: min(260px, 36vh);
+  object-fit: contain;
+  display: block;
+  border-radius: 8px;
+}
+
+.hiku-what-we-found-stat-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.hiku-what-we-found-stat-lead {
+  font-family: "Satoshi", sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  font-weight: 300;
+  margin: 0;
+}
+
+.hiku-stat-metric-line {
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Same as Venmo .venmo-impact-value; Dandi accent color */
+.hiku-stat-metric-line .hiku-stat-metric {
+  font-family: "Crimson Pro", serif;
+  font-weight: 600;
+  font-size: 2.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #3A9269;
+}
+
+.hiku-what-we-found-stat-body {
+  font-family: "Satoshi", sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  font-weight: 300;
+  margin: 0;
+}
+
+@media (max-width: 767px) {
+  .hiku-what-we-found-stat {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .hiku-what-we-found-stat--text-left .hiku-what-we-found-stat-copy {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .hiku-what-we-found-stat--text-left .hiku-what-we-found-stat-media {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .hiku-what-we-found-stat-image {
+    max-height: min(220px, 32vh);
+  }
+}
+
+.hiku-what-we-found-lede {
+  margin: 0 auto;
+  max-width: 36rem;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+@media (min-width: 640px) {
+  .hiku-context-content {
+    padding: 0 2rem;
+  }
+
+  .hiku-where-we-began-content {
+    padding: 0 2rem;
+  }
+
+  .hiku-what-we-found-content {
+    padding: 0 2rem;
+  }
+
+  .hiku-solution-content {
+    padding: 0 2rem;
+  }
+
+  .hiku-takeaways-content,
+  .hiku-next-steps-content,
+  .hiku-learn-more-content {
+    padding: 0 2rem;
+  }
+
+  .hiku-see-next-content {
+    padding: 0 2rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .hiku-context-section {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .hiku-where-we-began-section {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .hiku-what-we-found-section {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .hiku-solution-section {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .hiku-see-next-section {
+    padding-top: 1.5rem;
+    padding-bottom: 7rem;
+  }
+
+  .hiku-see-next-title {
+    font-size: 0.875rem;
+  }
+
+  .hiku-see-next-card-title {
+    font-size: 1.5rem;
+  }
+
+  .hiku-see-next-card-description {
+    font-size: 1rem;
+  }
+
+  .hiku-solution-title {
+    font-size: 0.875rem;
+  }
+
+  .hiku-visual-identity-subtitle {
+    font-size: 3rem;
+  }
+
+  .hiku-visual-identity-description {
+    font-size: 1.125rem;
+  }
+
+  .hiku-where-we-began-body {
+    font-size: 1.125rem;
+  }
+
+  .hiku-context-top {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .hiku-context-title {
+    font-size: 2.5rem;
+  }
+
+  .hiku-context-description {
+    font-size: 1.125rem;
+  }
+
+  .hiku-what-we-found-stat-body,
+  .hiku-what-we-found-stat-lead {
+    font-size: 1.125rem;
+  }
+
+  .hiku-context-impact-statement,
+  .hiku-context-impact-prompt {
+    font-size: 1.125rem;
+  }
+
+  .hiku-impact-title {
+    font-size: 0.875rem;
+  }
+
+  .hiku-stat-metric-line .hiku-stat-metric {
+    font-size: 3.5rem;
+  }
+
+  .hiku-skip-to-solution-btn {
+    font-size: 1rem;
+    padding: 0.4375rem 0.5rem;
+  }
+
+  .hiku-skip-icon-container {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .hiku-skip-to-solution-btn::before {
+    top: 2px;
+    bottom: 0px;
+    left: 2px;
+    width: 50px;
+    height: 50px;
+  }
+
+  .hiku-feature-media {
+    grid-template-columns: 1.7fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .hiku-feature-video {
+    max-height: 740px;
+  }
+
+  .hiku-feature-caption {
+    font-size: 1.125rem;
+  }
+
+  .hiku-takeaways-title-text,
+  .hiku-next-steps-title-text {
+    font-size: 2.75rem;
+  }
+
+  .hiku-takeaways-description,
+  .hiku-next-steps-description {
+    font-size: 1.125rem;
+  }
+
+  .hiku-solution-link {
+    font-size: 1.125rem;
+  }
+
+  .hiku-solution-link-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hiku-context-content {
+    padding: 0 3rem;
+  }
+
+  .hiku-context-section {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .hiku-context-title {
+    font-size: 2.75rem;
+  }
+
+  .hiku-where-we-began-content {
+    padding: 0 3rem;
+  }
+
+  .hiku-what-we-found-content {
+    padding: 0 3rem;
+  }
+
+  .hiku-solution-content {
+    padding: 0 3rem;
+  }
+
+  .hiku-takeaways-content,
+  .hiku-next-steps-content,
+  .hiku-learn-more-content {
+    padding: 0 3rem;
+  }
+
+  .hiku-see-next-content {
+    padding: 0 3rem;
+  }
+
+  .hiku-solution-section {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .hiku-see-next-section {
+    padding-top: 2rem;
+    padding-bottom: 8rem;
+  }
+
+  .hiku-see-next-grid {
+    gap: 3rem;
+  }
+
+  .hiku-see-next-card-title {
+    font-size: 1.75rem;
+  }
+
+  .hiku-see-next-card-description {
+    font-size: 1.125rem;
+  }
+
+  .hiku-stat-metric-line .hiku-stat-metric {
+    font-size: 4rem;
+  }
+
+  .hiku-visual-identity-subtitle {
+    font-size: 3.5rem;
+  }
+
+  .hiku-feature-caption {
+    font-size: 1.25rem;
+  }
+
+  .hiku-takeaways-title-text,
+  .hiku-next-steps-title-text {
+    font-size: 3rem;
+  }
+
+  .hiku-takeaways-description,
+  .hiku-next-steps-description {
+    font-size: 1.25rem;
+  }
+
+  .hiku-solution-link {
+    font-size: 1.25rem;
+  }
+
+  .hiku-solution-link-icon {
+    width: 1.625rem;
+    height: 1.625rem;
+  }
+}
+

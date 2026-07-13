@@ -1,0 +1,117 @@
+.pixel-cat-scene {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  background: transparent;
+  --pixel-cat-scale: 2;
+}
+
+@media (max-width: 767px) {
+  .pixel-cat-scene {
+    --pixel-cat-scale: 1.75;
+  }
+}
+
+.pixel-cat-bubble {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  z-index: 2;
+  margin: 0;
+  font-family: "Pokemon GB", monospace;
+  font-size: 10px;
+  line-height: 1.6;
+  letter-spacing: -0.05em;
+  color: #2a2a2a;
+  text-align: center;
+  pointer-events: none;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+  animation: pixel-cat-bubble-fade 2.8s ease forwards;
+}
+
+.pixel-cat-bubble--persistent {
+  animation: none;
+  opacity: 1;
+}
+
+@keyframes pixel-cat-bubble-fade {
+  0% {
+    opacity: 1;
+  }
+  82% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.pixel-cat-sprite {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  bottom: 0;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  cursor: pointer;
+  transform-origin: bottom center;
+  transition: transform 0.05s linear;
+}
+
+.pixel-cat-floating-heart {
+  position: absolute;
+  bottom: 110px;
+  pointer-events: none;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  animation: pixel-cat-float-up 1s ease-out forwards;
+  transform: translateX(-100%);
+}
+
+.pixel-cat-cursor-ping {
+  position: absolute;
+  pointer-events: none;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  animation: pixel-cat-cursor-ping 0.8s ease-out forwards;
+}
+
+.pixel-cat-cursor-ping-flip {
+  animation-name: pixel-cat-cursor-ping-flip;
+}
+
+@keyframes pixel-cat-cursor-ping {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+@keyframes pixel-cat-cursor-ping-flip {
+  0% {
+    opacity: 1;
+    transform: scaleX(-1) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(-1) scale(0.6);
+  }
+}
+
+@keyframes pixel-cat-float-up {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+}

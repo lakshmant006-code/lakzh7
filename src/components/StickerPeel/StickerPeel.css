@@ -1,0 +1,181 @@
+.sticker-peel-wrapper {
+  --sticker-rotate: 0deg;
+  --sticker-p: 10px;
+  --sticker-peelback-hover: 15%;
+  --sticker-peelback-drag: 0%;
+  --sticker-start: calc(-1 * var(--sticker-p));
+  --sticker-end: calc(100% + var(--sticker-p));
+  --sticker-shadow-opacity: 0.28;
+  --peel-direction: 0deg;
+  display: inline-block;
+  overflow: visible;
+  position: relative;
+}
+
+.sticker-container {
+  position: relative;
+  transform: rotate(var(--peel-direction));
+  transform-origin: center;
+  cursor: grab;
+}
+
+.sticker-container:hover {
+  cursor: grab;
+}
+
+.sticker-container.dragging {
+  cursor: grabbing;
+}
+
+.sticker-container.dragging:hover {
+  cursor: grabbing;
+}
+
+.sticker-container * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sticker-main {
+  clip-path: polygon(
+    var(--sticker-start) var(--sticker-start),
+    var(--sticker-end) var(--sticker-start),
+    var(--sticker-end) var(--sticker-end),
+    var(--sticker-start) var(--sticker-end)
+  );
+  transition: clip-path 0.3s ease-out;
+}
+
+.sticker-main > * {
+  transform: rotate(calc(-1 * var(--peel-direction)));
+}
+
+.sticker-container:hover .sticker-main,
+.sticker-container.touch-active .sticker-main {
+  clip-path: polygon(
+    var(--sticker-start) var(--sticker-peelback-hover),
+    var(--sticker-end) var(--sticker-peelback-hover),
+    var(--sticker-end) var(--sticker-end),
+    var(--sticker-start) var(--sticker-end)
+  );
+}
+
+.sticker-container.dragging .sticker-main {
+  clip-path: polygon(
+    var(--sticker-start) var(--sticker-peelback-drag),
+    var(--sticker-end) var(--sticker-peelback-drag),
+    var(--sticker-end) var(--sticker-end),
+    var(--sticker-start) var(--sticker-end)
+  );
+  transition: clip-path 0.1s linear;
+}
+
+.sticker-container.peeled .sticker-main {
+  clip-path: polygon(
+    var(--sticker-start) 100%,
+    var(--sticker-end) 100%,
+    var(--sticker-end) 100%,
+    var(--sticker-start) 100%
+  );
+  transition: clip-path 0.5s ease-in;
+}
+
+.sticker-image {
+  transform: rotate(var(--sticker-rotate));
+}
+
+.flap {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: calc(-100% - var(--sticker-p) - var(--sticker-p));
+  clip-path: polygon(
+    var(--sticker-start) var(--sticker-start),
+    var(--sticker-end) var(--sticker-start),
+    var(--sticker-end) var(--sticker-start),
+    var(--sticker-start) var(--sticker-start)
+  );
+  transform: scaleY(-1);
+  transition: all 0.3s ease-out;
+}
+
+.flap > * {
+  transform: rotate(calc(-1 * var(--peel-direction)));
+}
+
+.sticker-container:hover .flap,
+.sticker-container.touch-active .flap {
+  clip-path: polygon(
+    var(--sticker-start) var(--sticker-start),
+    var(--sticker-end) var(--sticker-start),
+    var(--sticker-end) var(--sticker-peelback-hover),
+    var(--sticker-start) var(--sticker-peelback-hover)
+  );
+  top: calc(-100% + 2 * var(--sticker-peelback-hover) - 1px);
+}
+
+.sticker-container.dragging .flap {
+  clip-path: polygon(
+    var(--sticker-start) var(--sticker-start),
+    var(--sticker-end) var(--sticker-start),
+    var(--sticker-end) var(--sticker-peelback-drag),
+    var(--sticker-start) var(--sticker-peelback-drag)
+  );
+  top: calc(-100% + 2 * var(--sticker-peelback-drag) - 1px);
+  transition: all 0.1s linear;
+}
+
+.sticker-container.peeled .flap {
+  clip-path: polygon(
+    var(--sticker-start) var(--sticker-start),
+    var(--sticker-end) var(--sticker-start),
+    var(--sticker-end) 100%,
+    var(--sticker-start) 100%
+  );
+  top: calc(100% - 1px);
+  transition: all 0.5s ease-in;
+}
+
+.flap-image {
+  transform: rotate(var(--sticker-rotate));
+}
+
+.sticker-image,
+.flap-image {
+  width: var(--sticker-width, 60px);
+  height: auto;
+  display: block;
+}
+
+.sticker-main,
+.flap {
+  will-change: clip-path, transform;
+}
+
+/* Falling animation */
+.sticker-peel-wrapper.falling {
+  position: fixed !important;
+  z-index: 9999;
+  animation: fallDown 0.6s ease-in forwards;
+}
+
+@keyframes fallDown {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(80vh) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+/* Mobile-specific optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .sticker-container {
+    touch-action: none;
+  }
+}

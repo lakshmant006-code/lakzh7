@@ -1,0 +1,120 @@
+/* Block interaction with page behind overlay; keep content visible (no scale/blur on #root) */
+body.vinyl-overlay-active #root {
+  pointer-events: none;
+  user-select: none;
+}
+
+.vinyl-overlay-root {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  isolation: isolate;
+}
+
+.vinyl-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.32);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  cursor: pointer;
+}
+
+.vinyl-overlay-card-wrap {
+  position: fixed;
+  z-index: 2;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.vinyl-overlay-tilt {
+  width: 100%;
+  height: 100%;
+  perspective: 900px;
+  transform-style: preserve-3d;
+}
+
+.vinyl-overlay-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: translate3d(0, -0.35rem, 1.5rem) rotateX(var(--rotate-x, 0deg))
+    rotateY(var(--rotate-y, 0deg));
+  will-change: transform;
+}
+
+.vinyl-overlay-shadow-side {
+  position: absolute;
+  top: 42%;
+  left: -10%;
+  width: 62%;
+  height: 58%;
+  border-radius: 45%;
+  background: radial-gradient(
+    ellipse 115% 130% at 88% 6%,
+    rgba(0, 0, 0, 0.38) 0%,
+    rgba(0, 0, 0, 0.24) 26%,
+    rgba(0, 0, 0, 0.12) 50%,
+    transparent 72%
+  );
+  filter: blur(12px);
+  transform: translate3d(-6px, 2px, -2px) rotate(-4deg);
+  transform-origin: top right;
+  opacity: 0.92;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.vinyl-overlay-face {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  overflow: hidden;
+  background: #e6e2da;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.14),
+    0 22px 40px rgba(0, 0, 0, 0.22),
+    0 1px 0 rgba(255, 255, 255, 0.4) inset;
+  backface-visibility: hidden;
+}
+
+.vinyl-overlay-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vinyl-overlay-placeholder {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--vinyl-placeholder-bg, #ebe7e0);
+}
+
+.vinyl-overlay-card-wrap::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -12px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  filter: blur(18px);
+  transform: scaleX(1.05);
+  pointer-events: none;
+  z-index: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vinyl-overlay-card {
+    transform: translate3d(0, -0.2rem, 0.5rem);
+  }
+}

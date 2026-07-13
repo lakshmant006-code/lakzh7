@@ -1,0 +1,325 @@
+.demo-flow {
+  --demo-flow-pill-idle: #d4d4d4;
+  --demo-flow-pill-active: #0f0f0f;
+  --demo-flow-pill-slim: 0.3125rem;
+  --demo-flow-pill-tall: 0.775rem;
+  --demo-flow-max-height: 80vh;
+  --demo-flow-aspect-ratio: 16 / 9;
+  --demo-flow-media-max-width: calc(var(--demo-flow-max-height) * 16 / 9);
+  --demo-flow-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --demo-flow-pill-duration: 0.12s;
+  --demo-flow-crossfade: 0.45s;
+  display: flex;
+  flex-direction: column;
+  gap: var(--blockparty-inner-gap-sm, 1.5rem);
+  width: 100%;
+  min-width: 0;
+}
+
+@keyframes demo-flow-content-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.demo-flow__media {
+  position: relative;
+  display: block;
+  width: min(100%, var(--demo-flow-media-max-width));
+  max-width: 100%;
+  aspect-ratio: var(--demo-flow-aspect-ratio);
+  max-height: var(--demo-flow-max-height);
+  height: auto;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: #0f0f0f;
+}
+
+.demo-flow__media-toggle {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.demo-flow__media-toggle:hover {
+  background-color: rgba(15, 15, 15, 0.04);
+}
+
+.demo-flow__media-toggle:focus-visible {
+  outline: 2px solid #fafafa;
+  outline-offset: -4px;
+}
+
+.demo-flow__media-toggle:disabled {
+  cursor: default;
+  pointer-events: none;
+}
+
+.demo-flow__paused-indicator {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.demo-flow__paused-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  color: rgba(255, 255, 255, 0.95);
+  transform: translateZ(0);
+  isolation: isolate;
+}
+
+.demo-flow__paused-badge::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  transform: translateZ(0);
+  will-change: backdrop-filter;
+}
+
+.demo-flow__paused-badge svg {
+  position: relative;
+  z-index: 1;
+  width: 1.35rem;
+  height: 1.35rem;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+}
+
+.demo-flow__media-inner {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.demo-flow__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity var(--demo-flow-crossfade) var(--demo-flow-ease);
+  pointer-events: none;
+}
+
+.demo-flow__video--active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.demo-flow__pills {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  min-height: calc(var(--demo-flow-pill-tall) + 0.5rem);
+  padding: 0.25rem 0;
+}
+
+.demo-flow__play-pause {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: #0f0f0f;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.demo-flow__play-pause svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.demo-flow__play-pause:hover {
+  background-color: rgba(15, 15, 15, 0.06);
+}
+
+.demo-flow__play-pause:focus-visible {
+  outline: 2px solid #0f0f0f;
+  outline-offset: 2px;
+}
+
+.demo-flow__pills-track {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.demo-flow__pills:hover .demo-flow__pill {
+  height: var(--demo-flow-pill-tall);
+}
+
+.demo-flow__pill {
+  position: relative;
+  flex-shrink: 1;
+  min-width: 0;
+  height: var(--demo-flow-pill-slim);
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background-color: var(--demo-flow-pill-idle);
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    height var(--demo-flow-pill-duration) var(--demo-flow-ease),
+    background-color 0.35s var(--demo-flow-ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.demo-flow__pill-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  background-color: var(--demo-flow-pill-active);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.demo-flow__pill--active {
+  background-color: var(--demo-flow-pill-idle);
+}
+
+.demo-flow__pill--complete {
+  background-color: var(--demo-flow-pill-active);
+}
+
+.demo-flow__pill:focus-visible {
+  outline: 2px solid #0f0f0f;
+  outline-offset: 3px;
+}
+
+.demo-flow__detail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  min-width: 0;
+  animation: demo-flow-content-in 0.35s var(--demo-flow-ease);
+}
+
+.demo-flow__detail-measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.demo-flow__detail-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.demo-flow__detail-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  min-width: 0;
+}
+
+.demo-flow__detail-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-family: "Crimson Pro", serif;
+  font-size: clamp(1.1875rem, 0.875rem + 1.25vw, 1.375rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: #0f0f0f;
+}
+
+.demo-flow__detail-blurb {
+  margin: 0;
+}
+
+.demo-flow__detail-blurb a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.demo-flow__detail-blurb a:hover {
+  color: #0f0f0f;
+}
+
+@media (min-width: 768px) {
+  .demo-flow__pills-track {
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .demo-flow__paused-badge {
+    width: 3.75rem;
+    height: 3.75rem;
+  }
+
+  .demo-flow__paused-badge svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-flow__pill {
+    transition: background-color 0.2s ease;
+  }
+
+  .demo-flow__pills:hover .demo-flow__pill {
+    transition: none;
+  }
+
+  .demo-flow__video {
+    transition: none;
+  }
+
+  .demo-flow__detail {
+    animation: none;
+  }
+}

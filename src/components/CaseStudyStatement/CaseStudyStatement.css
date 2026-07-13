@@ -1,0 +1,102 @@
+.case-study-statement {
+  /* Desktop-first: generous line length, scaled down per breakpoint */
+  --case-study-statement-width: 52rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: min(var(--case-study-statement-width), 100%);
+  margin-inline: auto;
+  text-align: center;
+}
+
+.case-study-statement--wide {
+  --case-study-statement-width: 56rem;
+}
+
+.case-study-statement--narrow {
+  --case-study-statement-width: 44rem;
+}
+
+.case-study-statement__headline {
+  font-family: "Crimson Pro", serif;
+  font-size: clamp(2.25rem, 1.5rem + 2vw, 3.25rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.05em;
+  color: #0f0f0f;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.case-study-statement__headline :is(em, i, [class*="-accent-text"]) {
+  line-height: inherit;
+  letter-spacing: inherit;
+}
+
+.case-study-statement__body {
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+@media (max-width: 1023px) {
+  .case-study-statement {
+    --case-study-statement-width: 46rem;
+  }
+
+  .case-study-statement--wide {
+    --case-study-statement-width: 50rem;
+  }
+
+  .case-study-statement--narrow {
+    --case-study-statement-width: 40rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .case-study-statement {
+    --case-study-statement-width: min(38rem, 92vw);
+  }
+
+  .case-study-statement--wide {
+    --case-study-statement-width: min(42rem, 94vw);
+  }
+
+  .case-study-statement--narrow {
+    --case-study-statement-width: min(34rem, 90vw);
+  }
+}
+
+@media (max-width: 479px) {
+  .case-study-statement {
+    --case-study-statement-width: min(32rem, 94vw);
+  }
+
+  .case-study-statement--wide {
+    --case-study-statement-width: min(34rem, 96vw);
+  }
+
+  .case-study-statement--narrow {
+    --case-study-statement-width: min(28rem, 92vw);
+  }
+}
+
+@media (min-width: 768px) {
+  .case-study-statement {
+    gap: 1.25rem;
+  }
+
+  .case-study-statement__body {
+    font-size: 1.125rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .case-study-statement__body {
+    font-size: 1.25rem;
+  }
+}

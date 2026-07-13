@@ -1,0 +1,400 @@
+.awards-rack-section {
+  --vinyl-size: clamp(7.5rem, 21vw, 12.75rem);
+  --vinyl-gap: clamp(1.15rem, 3.6vw, 2.35rem);
+  --tier-gap: clamp(3.75rem, 9vw, 5.75rem);
+  --shelf-fill: #e6e6e6;
+  --shelf-border: rgba(0, 0, 0, 0.1);
+  --shelf-height: 11px;
+  --shelf-shadow: rgba(0, 0, 0, 0.14);
+  --vinyl-grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+
+  padding: 4.5rem 0 3rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.awards-rack-inner {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.awards-rack {
+  width: 100%;
+  perspective: 1100px;
+  perspective-origin: center center;
+}
+
+.awards-rack-tier {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.awards-rack-tier + .awards-rack-tier {
+  margin-top: var(--tier-gap);
+}
+
+.awards-rack-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: var(--vinyl-gap);
+  width: min(100%, calc(var(--vinyl-size) * 4 + var(--vinyl-gap) * 3));
+  padding-bottom: 0.15rem;
+}
+
+.awards-rack-shelf-block {
+  position: relative;
+  width: min(100%, calc(var(--vinyl-size) * 4 + var(--vinyl-gap) * 3 + 1.5rem));
+}
+
+.awards-rack-shelf {
+  width: 100%;
+  height: var(--shelf-height);
+  background: var(--shelf-fill);
+  border: 1px solid var(--shelf-border);
+  border-radius: 3px;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.09),
+    0 6px 14px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.awards-rack-shelf-shadow {
+  position: absolute;
+  left: 1.5%;
+  right: 1.5%;
+  top: calc(100% + 1px);
+  height: 18px;
+  background: linear-gradient(
+    to bottom,
+    var(--shelf-shadow) 0%,
+    rgba(0, 0, 0, 0.04) 45%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.awards-vinyl-wrap {
+  position: relative;
+  width: var(--vinyl-size);
+  height: var(--vinyl-size);
+  flex-shrink: 0;
+}
+
+.awards-vinyl-shadow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.awards-vinyl-shadow-base,
+.awards-vinyl-shadow-float {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: -5px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.42);
+  filter: blur(8px);
+  transform: scaleX(0.94);
+}
+
+.awards-vinyl-shadow-base {
+  opacity: 0.52;
+}
+
+.awards-vinyl-shadow-base::after,
+.awards-vinyl-shadow-float::after {
+  content: "";
+  position: absolute;
+  inset: -120%;
+  background-image: var(--vinyl-grain);
+  background-repeat: repeat;
+  background-size: 120px 120px;
+  opacity: 0.55;
+  mix-blend-mode: multiply;
+  border-radius: inherit;
+}
+
+.awards-vinyl-shadow-float {
+  left: 4%;
+  right: 4%;
+  bottom: -16px;
+  height: 26px;
+  background: rgba(0, 0, 0, 0.48);
+  opacity: 0;
+  filter: blur(18px);
+  transform: scaleX(1.06);
+  transition:
+    opacity 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.58s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.awards-vinyl-wrap[data-motion="lifted"] .awards-vinyl-shadow-float {
+  opacity: 0.82;
+}
+
+.awards-vinyl-wrap[data-motion="dropping"] .awards-vinyl-shadow-float {
+  transition-duration: 0.34s;
+  transition-timing-function: cubic-bezier(0.55, 0.03, 0.95, 0.22);
+}
+
+.awards-vinyl {
+  --vinyl-tilt-x: 0deg;
+  --vinyl-tilt-y: 0deg;
+
+  appearance: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform-style: preserve-3d;
+  transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg);
+  will-change: transform;
+}
+
+.awards-vinyl-shadow-side {
+  position: absolute;
+  top: 42%;
+  left: -10%;
+  width: 62%;
+  height: 58%;
+  border-radius: 45%;
+  background: radial-gradient(
+    ellipse 115% 130% at 88% 6%,
+    rgba(0, 0, 0, 0.38) 0%,
+    rgba(0, 0, 0, 0.24) 26%,
+    rgba(0, 0, 0, 0.12) 50%,
+    transparent 72%
+  );
+  filter: blur(12px);
+  transform: translate3d(-6px, 2px, -2px) rotate(-4deg);
+  transform-origin: top right;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.58s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.awards-vinyl-wrap[data-motion="lifted"] .awards-vinyl-shadow-side {
+  opacity: 0.92;
+}
+
+.awards-vinyl-wrap[data-motion="dropping"] .awards-vinyl-shadow-side {
+  transition-duration: 0.34s;
+  transition-timing-function: cubic-bezier(0.55, 0.03, 0.95, 0.22);
+}
+
+.awards-vinyl-wrap[data-motion="lifted"] .awards-vinyl {
+  transform: translate3d(0, -1.05rem, 2.25rem) rotateX(var(--vinyl-tilt-x))
+    rotateY(var(--vinyl-tilt-y));
+  transition: transform 0.58s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.awards-vinyl-wrap[data-motion="dropping"] .awards-vinyl {
+  transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg);
+  transition: transform 0.34s cubic-bezier(0.55, 0.06, 0.9, 0.35);
+  pointer-events: none;
+}
+
+.awards-vinyl-wrap[data-motion="idle"] .awards-vinyl {
+  transform: translate3d(0, 0, 0);
+  transition: none;
+}
+
+.awards-vinyl-wrap[data-motion="intro"] .awards-vinyl {
+  transform: translate3d(0, -1.05rem, 2.25rem);
+  pointer-events: none;
+}
+
+.awards-vinyl-wrap[data-motion="intro"] .awards-vinyl-face {
+  opacity: 0;
+}
+
+.awards-vinyl-wrap[data-motion="intro-revealing"] .awards-vinyl {
+  transform: translate3d(0, -1.05rem, 2.25rem);
+  pointer-events: none;
+}
+
+.awards-vinyl-wrap[data-motion="intro-revealing"] .awards-vinyl-face {
+  opacity: 1;
+  transition: opacity 0.11s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.awards-vinyl-wrap[data-motion="intro-revealed"] .awards-vinyl {
+  transform: translate3d(0, -1.05rem, 2.25rem);
+  pointer-events: none;
+}
+
+.awards-vinyl-wrap[data-motion="intro-revealed"] .awards-vinyl-face {
+  opacity: 1;
+}
+
+.awards-vinyl-wrap[data-motion="intro-dropping"] .awards-vinyl {
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.52s cubic-bezier(0.55, 0.06, 0.9, 0.38);
+  pointer-events: none;
+}
+
+.awards-vinyl-wrap[data-motion="intro-dropping"] .awards-vinyl-face {
+  opacity: 1;
+}
+
+.awards-vinyl-wrap[data-motion="intro-dropping"] .awards-vinyl-shadow-float {
+  opacity: 0.5;
+  transition-duration: 0.52s;
+  transition-timing-function: cubic-bezier(0.55, 0.06, 0.9, 0.38);
+}
+
+.awards-vinyl-wrap[data-motion="overlay-hidden"] {
+  pointer-events: none;
+}
+
+.awards-vinyl-wrap[data-motion="overlay-hidden"] .awards-vinyl {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.awards-vinyl-wrap[data-motion="overlay-hidden"] .awards-vinyl-shadow-base,
+.awards-vinyl-wrap[data-motion="overlay-hidden"] .awards-vinyl-shadow-float {
+  opacity: 0;
+}
+
+/* Overlay close: appear at hover-lift pose, then drop like pointer leave */
+.awards-vinyl-wrap[data-motion="overlay-return-lift"] .awards-vinyl {
+  transform: translate3d(0, -1.05rem, 2.25rem) rotateX(0deg) rotateY(0deg);
+  transition: none;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.awards-vinyl-wrap[data-motion="overlay-return-lift"] .awards-vinyl-shadow-float {
+  opacity: 0.82;
+  transition: none;
+}
+
+.awards-vinyl-wrap[data-motion="overlay-return-lift"] .awards-vinyl-shadow-side {
+  opacity: 0.92;
+  transition: none;
+}
+
+.awards-vinyl-face {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  overflow: hidden;
+  background: #e6e2da;
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.12),
+    0 10px 22px rgba(0, 0, 0, 0.16),
+    0 1px 0 rgba(255, 255, 255, 0.4) inset;
+  backface-visibility: hidden;
+  opacity: 1;
+  transition:
+    box-shadow 0.58s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.awards-vinyl-wrap[data-motion="lifted"] .awards-vinyl-face {
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.14),
+    0 18px 34px rgba(0, 0, 0, 0.2),
+    0 1px 0 rgba(255, 255, 255, 0.4) inset;
+}
+
+.awards-vinyl-wrap[data-motion="dropping"] .awards-vinyl-face {
+  transition-duration: 0.34s;
+  transition-timing-function: cubic-bezier(0.55, 0.03, 0.95, 0.22);
+}
+
+.awards-vinyl-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.awards-vinyl-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: var(--vinyl-placeholder-bg, #ebe7e0);
+  box-sizing: border-box;
+  color: rgba(0, 0, 0, 0.2);
+  font-family: system-ui, sans-serif;
+  font-size: clamp(0.85rem, 2vw, 1.1rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.awards-vinyl:focus-visible {
+  outline: 2px solid #1e1e1e;
+  outline-offset: 4px;
+}
+
+@media (max-width: 640px) {
+  .awards-rack-section {
+    padding: 3rem 0 2rem;
+    --vinyl-size: clamp(6rem, 24vw, 8.5rem);
+    --vinyl-gap: clamp(0.75rem, 4vw, 1.25rem);
+    --tier-gap: clamp(3rem, 11vw, 4.25rem);
+  }
+
+  .awards-rack-inner {
+    align-items: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .awards-vinyl-shadow-float,
+  .awards-vinyl-shadow-side,
+  .awards-vinyl-face {
+    transition: none;
+  }
+
+  .awards-vinyl-wrap[data-motion="intro"] .awards-vinyl,
+  .awards-vinyl-wrap[data-motion="intro-revealing"] .awards-vinyl,
+  .awards-vinyl-wrap[data-motion="intro-revealed"] .awards-vinyl,
+  .awards-vinyl-wrap[data-motion="intro-dropping"] .awards-vinyl {
+    transform: translate3d(0, 0, 0);
+    transition: none;
+    pointer-events: auto;
+  }
+
+  .awards-vinyl-wrap[data-motion="intro"] .awards-vinyl-face,
+  .awards-vinyl-wrap[data-motion="intro-revealing"] .awards-vinyl-face,
+  .awards-vinyl-wrap[data-motion="intro-revealed"] .awards-vinyl-face,
+  .awards-vinyl-wrap[data-motion="intro-dropping"] .awards-vinyl-face {
+    opacity: 1;
+    transition: none;
+  }
+
+  .awards-vinyl-wrap[data-motion="lifted"] .awards-vinyl {
+    transform: translate3d(0, -0.45rem, 0.65rem);
+    transition: none;
+  }
+
+  .awards-vinyl-wrap[data-motion="dropping"] .awards-vinyl {
+    transition: none;
+    transform: translate3d(0, 0, 0);
+  }
+}

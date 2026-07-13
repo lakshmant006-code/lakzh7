@@ -1,0 +1,452 @@
+/* Home – main homepage layout (navbar/footer from App) */
+
+.home {
+  min-height: 100vh;
+  width: 100%;
+  --home-section-gap: clamp(4rem, 10vh, 6rem);
+  --home-footer-gap: 7rem;
+}
+
+@media (max-width: 767px) {
+  .home {
+    --home-section-gap: clamp(2.75rem, 7vh, 3.5rem);
+    --home-footer-gap: 4.5rem;
+  }
+}
+
+/* ----- Landing ----- */
+/* Horizontal inset via .page-content-shell (same as navbar) */
+.home-landing {
+  position: relative;
+  width: 100%;
+  min-height: 0;
+  background-color: #fafafa;
+  padding: clamp(8rem, 22vh, 15rem) 0 calc(var(--home-section-gap) / 2);
+}
+
+.home-landing-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Grid: left = title/subtitle, right = game (column on small). */
+.home-landing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "title"
+    "bio"
+    "cat";
+  row-gap: 0;
+  column-gap: 16px;
+  align-items: stretch;
+  width: 100%;
+}
+
+.home-hero {
+  grid-area: title;
+}
+.home-bio {
+  grid-area: bio;
+}
+.home-landing-cat {
+  grid-area: cat;
+}
+
+/* Mobile: column layout, each child full width; cat needs min-height so absolute scene is visible */
+@media (max-width: 767px) {
+  .home-landing-content {
+    padding-bottom: 0;
+  }
+  .home-landing-grid {
+    width: 100%;
+  }
+  .home-landing-cat {
+    display: none;
+  }
+  .pixel-cat-scene {
+    height: 140px;
+    bottom: -30px;
+  }
+  /* Heart floats above cat; default bottom:110 is outside short container – position so it stays visible */
+  .home-landing-cat .pixel-cat-floating-heart {
+    bottom: 110px;
+  }
+}
+
+/* Desktop/tablet: text left, game right; game stretches to fill the
+   full text-column height (it sizes itself to whatever it's given). */
+@media (min-width: 768px) {
+  .home-landing-grid {
+    grid-template-columns: minmax(0, 28rem) 1fr;
+    grid-template-areas:
+      "title cat"
+      "bio   cat";
+    column-gap: 16px;
+    align-items: stretch;
+  }
+}
+
+/* Narrow tablet: shrink text cap so Boba has more room to walk */
+@media (min-width: 768px) and (max-width: 899px) {
+  .home-landing-grid {
+    grid-template-columns: minmax(0, 24rem) 1fr;
+  }
+}
+
+/* Wide tablet: text grows a little; cat still gets the majority of leftover space */
+@media (min-width: 900px) and (max-width: 1024px) {
+  .home-landing-grid {
+    grid-template-columns: minmax(0, 33rem) 1fr;
+  }
+}
+
+/* Small desktop: wider hero copy, cat fills remaining column width */
+@media (min-width: 1025px) and (max-width: 1279px) {
+  .home-landing-grid {
+    grid-template-columns: minmax(0, 42rem) minmax(0, 1fr);
+  }
+}
+
+/* Large desktop: widest text column, cat fills remaining column width */
+@media (min-width: 1280px) {
+  .home-landing-grid {
+    grid-template-columns: minmax(0, 46rem) minmax(0, 1fr);
+  }
+}
+
+/* PixelCat: scene clips in PixelCat.css; overflow visible for label stack */
+.home-landing-cat {
+  position: relative;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  overflow: visible;
+  opacity: 0;
+}
+
+/* Desktop/tablet: room for tall scene anchored to bottom */
+@media (min-width: 768px) {
+  .home-landing-cat > .pixel-cat-scene {
+    position: absolute;
+    inset: auto 0 -30px 0;
+    width: 100%;
+    min-width: 100%;
+    height: 120%;
+    box-sizing: border-box;
+  }
+}
+
+/* Landing title + bio: rise-from-baseline (line inners start below) */
+.home-hero-line {
+  display: block;
+  overflow: hidden;
+  line-height: 1.05;
+  margin: 0;
+  padding-bottom: 0.2em; /* room for descenders (g, y, p) */
+}
+.home-hero-line-inner {
+  display: block;
+  line-height: 1.05;
+}
+.home-bio-line {
+  display: block;
+  overflow: hidden;
+  line-height: 1.6;
+  margin: 0;
+}
+.home-bio-line-inner {
+  display: block;
+  line-height: 1.6;
+}
+.home-landing .home-hero-line-inner,
+.home-landing .home-bio-line-inner {
+  transform: translateY(100%);
+}
+/* PixelCat: start hidden for rise + fade on render */
+.home-landing .home-landing-cat {
+  opacity: 0;
+  transform: translateY(56px);
+}
+
+/* Title: full width of column */
+.home-hero {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 500;
+  color: #1e1e1e;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin: 0 0 1.25rem 0;
+}
+
+.home-hero em {
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Subtitle — full width of the title's grid column */
+.home-bio {
+  width: 100%;
+  max-width: 100%;
+  font-family: "Satoshi", sans-serif;
+  font-size: clamp(0.95rem, 2vw, 18px);
+  color: #353535;
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 300;
+}
+
+.home-bio strong {
+  font-weight: 500;
+}
+
+/* Company name with logo (Salesforce, Confido) – logo scaled to line height, small gap */
+.home-company-with-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  white-space: nowrap;
+  vertical-align: -0.15em;
+  margin-left: 0.25em;
+}
+
+.home-company-logo {
+  height: 1em;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* Underline-on-hover (same as About page institution links) */
+.home-landing-company-link {
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.home-landing-company-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: currentColor;
+  transition: width 0.3s ease;
+}
+
+.home-landing-company-link:hover::after {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .home-landing .home-company-with-logo {
+    margin-left: 0.1em;
+  }
+
+  .home-hero {
+    font-size: 2.25rem;
+  }
+
+  /* 375px and smaller: slightly smaller titles */
+  @media (max-width: 375px) {
+    .home-hero {
+      font-size: 2.1rem;
+    }
+  }
+}
+
+/* ----- Work: 2x2 case studies ----- */
+.home-work {
+  padding: calc(var(--home-section-gap) / 2) 0 calc(var(--home-section-gap) / 2);
+}
+
+.home-work-section-intro .home-play-subtitle {
+  margin-bottom: 2rem;
+}
+
+.home-play-section-intro .home-play-subtitle {
+  margin-bottom: 2rem;
+}
+
+.home-work-loading-wrapper {
+  position: relative;
+}
+
+.home-work-skeleton {
+  min-height: 200px;
+}
+
+.home-work-skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  min-height: unset;
+  background: transparent;
+}
+
+@media (min-width: 768px) {
+  .home-work-skeleton-card {
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .home-work-skeleton-card {
+    gap: 0.875rem;
+  }
+}
+
+.home-work-skeleton-card::before {
+  content: "";
+  aspect-ratio: 888 / 500;
+  background: #e8e8e8;
+  border-radius: var(--bento-card-radius);
+}
+
+@media (max-width: 767px) {
+  .home-work-skeleton-card::before {
+    aspect-ratio: 888 / 540;
+  }
+}
+
+.home-work-skeleton-card::after {
+  content: "";
+  height: 1rem;
+  width: 72%;
+  background: #e8e8e8;
+  border-radius: 2px;
+}
+
+/* Home case study grid — compact cards size from media aspect ratio */
+.home-case-study-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  width: 100%;
+  position: relative;
+  grid-auto-rows: auto;
+}
+
+/* Single column at 1024px and below; 2 columns from 1025px */
+@media (max-width: 1024px) {
+  .home-case-study-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-case-study-grid {
+    gap: 1.75rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .home-case-study-grid {
+    gap: 2rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  .home-case-study-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+/* Grid placement for WorkBentoItem (same as Work page) */
+.home-case-study-grid
+  .work-bento-item[data-grid-col][data-grid-row-start][data-grid-row-end] {
+  grid-column: var(--grid-col);
+  grid-row: var(--grid-row-start) / var(--grid-row-end);
+}
+
+/* ----- Play: title, subtitle, bento grid (play projects only) ----- */
+.home-play {
+  padding: calc(var(--home-section-gap) / 2) 0 var(--home-footer-gap);
+}
+
+/* /google-creative: play → case studies — same section gap; work sits above footer */
+.home-google-creative .home-play {
+  padding: calc(var(--home-section-gap) / 2) 0 calc(var(--home-section-gap) / 2);
+}
+
+.home-google-creative .home-work {
+  padding: calc(var(--home-section-gap) / 2) 0 var(--home-footer-gap);
+}
+
+.home-play-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  margin: 0 0 1.25rem 0;
+}
+
+.home-play-title-row .home-play-title {
+  margin: 0;
+}
+
+.home-play-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 500;
+  color: #1e1e1e;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin: 0 0 1.25rem 0;
+}
+
+.home-play-subtitle {
+  font-family: "Satoshi", sans-serif;
+  font-size: clamp(0.95rem, 2vw, 18px);
+  color: #353535;
+  line-height: 1.6;
+  margin: 0 0 2rem 0;
+  max-width: 65%;
+  font-weight: 300;
+}
+
+/* Mobile: play text section (title + subtitle) full width; slightly larger title */
+@media (max-width: 767px) {
+  .home-play-inner {
+    width: 100%;
+  }
+  .home-play-title {
+    font-size: 2.25rem;
+  }
+  .home-play-title-row,
+  .home-play-title,
+  .home-play-subtitle {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 375px) {
+  .home-play-title {
+    font-size: 2.1rem;
+  }
+}
+
+.home-play-subtitle .play-question {
+  font-weight: 500;
+}
+
+.home-play .filter-pills-container {
+  margin-bottom: 1.5rem;
+}
+
+/* Play bento grid: place items by data attributes (desktop) */
+@media (min-width: 1024px) {
+  .home-play
+    .bento-item[data-grid-col][data-grid-row-start][data-grid-row-end] {
+    grid-column: var(--grid-col) / span var(--grid-col-span, 1);
+    grid-row: var(--grid-row-start) / var(--grid-row-end);
+  }
+}
+
+/* content-visibility removed: was causing mid/lower grid scroll jank (visibility recalc during scroll) */

@@ -1,0 +1,5 @@
+.gameboy-pixel-text {
+  font-family: "Pokemon GB", monospace;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+}

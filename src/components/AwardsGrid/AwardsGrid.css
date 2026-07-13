@@ -1,0 +1,166 @@
+.awards-section {
+  padding: 4rem 0;
+}
+
+.awards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 0;
+  border: 1px solid rgba(250, 250, 250, 0.1);
+  width: 100%;
+  max-width: 100%;
+}
+
+.award-card {
+  border-right: 1px solid rgba(250, 250, 250, 0.1);
+  border-bottom: 1px solid rgba(250, 250, 250, 0.1);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Slight grain overlay on hover */
+.award-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 120px 120px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 1;
+}
+
+.award-card:hover::before {
+  opacity: 0.3;
+}
+
+/* Ensure content stays above the shiny overlay */
+.award-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Remove right border from last column items (every 3rd item) */
+.award-card:nth-child(3n) {
+  border-right: none;
+}
+
+/* Remove bottom border from last row items (items 4-6) */
+.award-card:nth-child(n + 4) {
+  border-bottom: none;
+}
+
+.award-title {
+  font-size: 1.125rem; /* text-lg - matches experience title */
+  font-weight: 700; /* font-bold - matches experience title */
+  color: #d4d4d8; /* text-zinc-300 - matches experience title */
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.award-organization {
+  font-size: 0.875rem; /* text-sm - matches experience description */
+  color: #71717a; /* text-zinc-500 - matches experience description */
+  margin-bottom: 0.25rem;
+  line-height: 1.75; /* leading-relaxed - matches experience description */
+  font-weight: 400; /* font-normal - matches experience description */
+}
+
+.award-year {
+  font-size: 0.75rem;
+  color: #71717a;
+  margin-top: auto;
+  line-height: 1.4;
+}
+
+/* Responsive: 2 columns on tablets, 1 column on mobile */
+@media (max-width: 768px) {
+  .awards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, auto);
+  }
+
+  /* Reset borders for 2-column layout - override desktop rules */
+  .award-card {
+    border-right: 1px solid rgba(250, 250, 250, 0.1);
+    border-bottom: 1px solid rgba(250, 250, 250, 0.1);
+  }
+
+  /* Override desktop :nth-child(3n) rule - restore right border for items 3, 6 */
+  .award-card:nth-child(3n) {
+    border-right: 1px solid rgba(250, 250, 250, 0.1);
+  }
+
+  /* Override desktop :nth-child(n + 4) rule - restore bottom border for items 4, 5, 6 */
+  .award-card:nth-child(n + 4) {
+    border-bottom: 1px solid rgba(250, 250, 250, 0.1);
+  }
+
+  /* Remove right border from even items (2nd column) */
+  .award-card:nth-child(2n) {
+    border-right: none;
+  }
+
+  /* Remove bottom border from last row items (items 7+) */
+  .award-card:nth-child(n + 7) {
+    border-bottom: none;
+  }
+
+  .award-title {
+    font-size: 1.125rem; /* Keep same size as experience title */
+  }
+
+  .award-organization {
+    font-size: 0.875rem; /* Keep same size as experience description */
+  }
+
+  .award-year {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .awards-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(6, auto);
+  }
+
+  /* Reset borders for 1-column layout - override all desktop and tablet rules */
+  .award-card {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(250, 250, 250, 0.1) !important;
+    padding: 1.25rem;
+  }
+
+  /* Override desktop :nth-child(3n) rule */
+  .award-card:nth-child(3n) {
+    border-right: none !important;
+  }
+
+  /* Override desktop :nth-child(n + 4) rule - restore bottom border for items 4, 5, 6 */
+  .award-card:nth-child(n + 4) {
+    border-bottom: 1px solid rgba(250, 250, 250, 0.1) !important;
+  }
+
+  /* Override tablet :nth-child(2n) rule */
+  .award-card:nth-child(2n) {
+    border-right: none !important;
+  }
+
+  /* Remove bottom border from last item only */
+  .award-card:last-child {
+    border-bottom: none !important;
+  }
+}

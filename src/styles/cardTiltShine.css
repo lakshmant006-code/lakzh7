@@ -1,0 +1,28 @@
+/* Reflective glare — moves with --pointer-x / --pointer-y from useCardTiltShine */
+.card-tilt-shine__glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 2;
+  opacity: var(--shine-opacity, 0);
+  transition: opacity 0.2s ease;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.5) 46%,
+    rgba(255, 252, 250, 0.32) 49%,
+    rgba(255, 248, 252, 0.18) 51%,
+    transparent 56%
+  );
+  background-size: 220% 220%;
+  background-position: calc(var(--pointer-x, 0.5) * 100%)
+    calc(var(--pointer-y, 0.5) * 100%);
+  mix-blend-mode: soft-light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-tilt-shine__glare {
+    display: none;
+  }
+}

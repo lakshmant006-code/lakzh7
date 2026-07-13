@@ -1,0 +1,22 @@
+/* Simple 2x2 grid (full width) or single column on small devices */
+.work-bento-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  width: 100%;
+  position: relative;
+  --work-bento-row-h: 480px;
+}
+
+/* Single column through 1024px; 2 columns from 1025px */
+@media (min-width: 1025px) {
+  .work-bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+    --work-bento-row-h: 600px;
+  }
+}
+
+.work-bento-grid {
+  grid-auto-rows: var(--work-bento-row-h);
+}

@@ -1,0 +1,364 @@
+.flower-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(18, 28, 18, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.flower-modal {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 28rem);
+  max-height: min(90vh, 44rem);
+  overflow: visible;
+  padding: 1.75rem 1.5rem 1.5rem;
+  border-radius: 0.5rem;
+  background: #fafcf8;
+  border: 1px solid rgba(18, 42, 4, 0.08);
+  box-shadow: 0 24px 64px rgba(18, 42, 4, 0.18);
+  color: #0f0f0f;
+}
+
+.flower-modal-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.flower-modal-close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: #0f0f0f;
+  cursor: pointer;
+}
+
+.flower-modal-close:hover {
+  background: rgba(15, 15, 15, 0.06);
+}
+
+.flower-modal-title {
+  margin: 0 0 1.25rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
+.flower-modal-title--playfair {
+  font-family: "Playfair Display", Georgia, serif;
+}
+
+.flower-modal-title-row {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: nowrap;
+  gap: 0.35rem;
+  margin-bottom: 1.25rem;
+}
+
+.flower-modal-title-row .flower-modal-title {
+  margin: 0;
+  line-height: 1.25;
+}
+
+.flower-modal-info {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  transform: translateY(0.12em);
+}
+
+.flower-modal-info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(15, 15, 15, 0.5);
+  cursor: help;
+}
+
+.flower-modal-info-btn:hover,
+.flower-modal-info-btn:focus-visible {
+  color: #0f0f0f;
+  background: rgba(15, 15, 15, 0.06);
+  outline: none;
+}
+
+.flower-modal-info-tooltip {
+  position: absolute;
+  right: 0;
+  left: auto;
+  bottom: calc(100% + 0.45rem);
+  z-index: 210;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: min(16rem, calc(100vw - 3rem));
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.35rem;
+  background: #1f1f1f;
+  color: #fafafa;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: break-word;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    visibility 0.15s ease;
+}
+
+.flower-modal-info:hover .flower-modal-info-tooltip,
+.flower-modal-info:focus-within .flower-modal-info-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.flower-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.flower-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.flower-field label,
+.flower-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0f0f0f;
+}
+
+.flower-field input[type="text"] {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgba(15, 15, 15, 0.15);
+  border-radius: 0.5rem;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.6;
+  font-weight: 300;
+  background: #fff;
+  color: #0f0f0f;
+}
+
+.flower-field input[type="text"]:focus,
+.flower-field input[type="text"]:focus-visible {
+  outline: 2px solid rgba(15, 15, 15, 0.35);
+  outline-offset: 2px;
+}
+
+.flower-name-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.flower-name-row input {
+  flex: 1;
+}
+
+.flower-reroll {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  flex-shrink: 0;
+  border: 1px solid #1f1f1f;
+  border-radius: 0.5rem;
+  background: #1f1f1f;
+  color: #fafafa;
+  cursor: pointer;
+}
+
+.flower-reroll:hover {
+  background: #333333;
+  border-color: #333333;
+}
+
+.flower-reroll:focus-visible {
+  outline: 2px solid rgba(15, 15, 15, 0.35);
+  outline-offset: 2px;
+}
+
+.flower-field-hint {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  font-weight: 300;
+  color: rgba(15, 15, 15, 0.5);
+}
+
+.flower-color-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.flower-color-row input[type="color"] {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+}
+
+.flower-color-row input[type="color"]:focus,
+.flower-color-row input[type="color"]:focus-visible {
+  outline: 2px solid rgba(15, 15, 15, 0.35);
+  outline-offset: 2px;
+}
+
+.flower-color-row input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.flower-color-row input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 50%;
+}
+
+.flower-color-row input[type="color"]::-moz-color-swatch {
+  border: none;
+  border-radius: 50%;
+}
+
+.flower-color-hex {
+  font-family: inherit;
+  font-size: 0.85rem;
+  color: rgba(15, 15, 15, 0.5);
+  text-transform: uppercase;
+}
+
+.flower-modal-primary {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: #1f1f1f;
+  color: #fafafa;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.flower-modal-primary:hover:not(:disabled) {
+  background: #333333;
+}
+
+.flower-modal-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.flower-modal-primary--loading:disabled {
+  cursor: wait;
+}
+
+.flower-modal-error {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #b42318;
+}
+
+.flower-preview-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 14rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 0.65rem;
+  background:
+    linear-gradient(45deg, #e8ece8 25%, transparent 25%),
+    linear-gradient(-45deg, #e8ece8 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e8ece8 75%),
+    linear-gradient(-45deg, transparent 75%, #e8ece8 75%);
+  background-size: 16px 16px;
+  background-position:
+    0 0,
+    0 8px,
+    8px -8px,
+    -8px 0;
+  background-color: #f0f4f0;
+}
+
+.flower-preview-image {
+  max-width: 100%;
+  max-height: 16rem;
+  object-fit: contain;
+}
+
+.flower-modal-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+.flower-modal-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  flex-shrink: 0;
+  padding: 0;
+  border: 1px solid rgba(15, 15, 15, 0.35);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #0f0f0f;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.flower-modal-back:hover {
+  background: rgba(15, 15, 15, 0.06);
+  border-color: rgba(15, 15, 15, 0.5);
+}
+
+.flower-modal-back:focus-visible {
+  outline: 2px solid rgba(15, 15, 15, 0.35);
+  outline-offset: 2px;
+}
+
+.flower-modal-actions .flower-modal-primary {
+  flex: 1;
+  width: auto;
+}

@@ -1,0 +1,68 @@
+.back-to-top-button {
+  position: fixed;
+  bottom: 2rem;
+  right: 1.5rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 3px;
+  background: #0f0f0f;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  z-index: 99;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease,
+    transform 0.3s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+  color: #fafafa;
+}
+
+.back-to-top-button.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top-button:hover {
+  transform: translateY(-2px);
+}
+
+.back-to-top-button:active {
+  transform: translateY(0);
+}
+
+.back-to-top-button .back-to-top-arrow {
+  width: 24px;
+  height: 24px;
+  display: block;
+  color: inherit;
+}
+
+/* When over footer: light background to match site, arrow matches footer */
+.back-to-top-button.in-footer {
+  background-color: #f5f5f5;
+  color: #1a1a1a;
+}
+
+/* Desktop - position closer to center */
+@media (min-width: 769px) {
+  .back-to-top-button {
+    right: 4rem;
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .back-to-top-button {
+    bottom: 1.5rem;
+    right: 1rem;
+  }
+}

@@ -1,0 +1,58 @@
+/* Experience Timeline Section Styles */
+
+.experience-timeline-section {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+.experience-timeline-row {
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .experience-timeline-row-arrow {
+    width: 2.5rem;
+    justify-content: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .experience-timeline-section {
+    padding-top: 4rem;
+    padding-bottom: 6rem;
+  }
+}
+
+.experience-timeline-title {
+  font-family: "Crimson Pro", serif;
+  font-size: 3.5rem;
+  font-weight: 400;
+  letter-spacing: -0.05em; /* tracking-tighter */
+  line-height: 0.95;
+}
+
+.experience-timeline-title-wrapper {
+  display: inline-block;
+  overflow: hidden;
+}
+
+.experience-timeline-title-text {
+  display: inline-block;
+}
+
+.experience-timeline-title-where {
+  font-weight: 700;
+  color: #fafafa;
+}
+
+.experience-timeline-title-ivebeen {
+  font-weight: 500;
+  color: #7dd3fc;
+}
+
+@media (min-width: 768px) {
+  .experience-timeline-title {
+    font-size: 5.5rem;
+    letter-spacing: -0.05em; /* tracking-tighter */
+  }
+}

@@ -1,0 +1,156 @@
+.mario-game {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 140px;
+  border-radius: var(--bento-card-radius, 16px);
+  overflow: hidden;
+  outline: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.mario-game:focus-visible {
+  box-shadow: 0 0 0 3px rgba(92, 148, 252, 0.55);
+}
+
+.mario-game-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.mario-game-hint {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  font-family: "Satoshi", sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.mario-game-hint-mobile {
+  display: none;
+}
+
+.mario-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 2;
+  animation: mario-overlay-in 0.2s ease;
+}
+
+@keyframes mario-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.mario-overlay-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px 28px;
+  text-align: center;
+  font-family: "Satoshi", sans-serif;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  max-width: 85%;
+}
+
+.mario-overlay-card h3 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #222;
+}
+
+.mario-overlay-card p {
+  margin: 0 0 14px;
+  font-size: 13px;
+  color: #555;
+}
+
+.mario-restart-btn {
+  pointer-events: auto;
+  background: #e84141;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.mario-restart-btn:hover {
+  background: #d12f2f;
+}
+
+.mario-restart-btn:active {
+  transform: scale(0.97);
+}
+
+.mario-controls {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: none;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 10px;
+  pointer-events: none;
+}
+
+.mario-controls-left {
+  display: flex;
+  gap: 8px;
+}
+
+.mario-btn {
+  pointer-events: auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.35);
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.mario-btn:active {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+@media (hover: none) {
+  .mario-controls {
+    display: flex;
+  }
+
+  .mario-game-hint-desktop {
+    display: none;
+  }
+
+  .mario-game-hint-mobile {
+    display: inline;
+  }
+}

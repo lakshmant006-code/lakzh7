@@ -1,0 +1,32 @@
+/* Work Page Styles */
+
+.work-page-title {
+  font-family: "Crimson Pro", serif;
+  font-size: 2.75rem;
+  font-weight: 400;
+  letter-spacing: -0.05em;
+  color: #0f0f0f;
+  margin: 0 0 2rem 0;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.work-page-title-wrapper {
+  display: inline-block;
+  overflow: hidden;
+}
+
+.work-page-title-accent {
+  font-weight: 500;
+  color: #7dd3fc;
+  letter-spacing: -0.05em;
+}
+
+@media (min-width: 768px) {
+  .work-page-title {
+    font-size: 5rem;
+    letter-spacing: -0.05em;
+    font-weight: 400;
+    margin-bottom: 2rem;
+  }
+}

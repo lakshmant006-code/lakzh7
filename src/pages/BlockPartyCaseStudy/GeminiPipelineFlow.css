@@ -1,0 +1,318 @@
+.gemini-flow {
+  --gemini-flow-pill-idle: #d4d4d4;
+  --gemini-flow-pill-active: #0f0f0f;
+  --gemini-flow-muted: #666;
+  --gemini-flow-pill-slim: 0.3125rem;
+  --gemini-flow-pill-tall: 0.775rem;
+  --gemini-flow-media-height: min(42vh, 16rem);
+  --gemini-flow-media-gap: clamp(0.75rem, 2.5vw, 1.5rem);
+  --gemini-flow-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --gemini-flow-pill-duration: 0.12s;
+  display: flex;
+  flex-direction: column;
+  gap: var(--blockparty-inner-gap-sm, 1.5rem);
+  width: 100%;
+  min-width: 0;
+}
+
+@keyframes gemini-flow-content-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.gemini-flow__media {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: var(--gemini-flow-media-height);
+  min-height: var(--gemini-flow-media-height);
+  box-sizing: border-box;
+  padding: 0.5rem 0;
+}
+
+.gemini-flow__media-toggle {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gemini-flow__media-toggle:focus-visible {
+  outline: 2px solid #0f0f0f;
+  outline-offset: 2px;
+}
+
+.gemini-flow__media-toggle:disabled {
+  cursor: default;
+  pointer-events: none;
+}
+
+.gemini-flow__media-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: var(--gemini-flow-media-height);
+  animation: gemini-flow-content-in 0.35s var(--gemini-flow-ease);
+  pointer-events: none;
+}
+
+.gemini-flow__media-row {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gemini-flow-media-gap);
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  min-height: var(--gemini-flow-media-height);
+}
+
+.gemini-flow__media-img {
+  display: block;
+  flex: 0 1 auto;
+  width: auto;
+  height: var(--gemini-flow-media-height);
+  min-height: var(--gemini-flow-media-height);
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.gemini-flow__media-row[data-stage="first-look"] .gemini-flow__media-img {
+  transform: scale(0.88);
+  transform-origin: center center;
+}
+
+.gemini-flow__media-row[data-image-count="2"] .gemini-flow__media-img {
+  max-width: calc((100% - var(--gemini-flow-media-gap)) / 2);
+}
+
+.gemini-flow__media-row[data-image-count="3"] .gemini-flow__media-img {
+  max-width: calc((100% - 2 * var(--gemini-flow-media-gap)) / 3);
+}
+
+.gemini-flow__pills {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  min-height: calc(var(--gemini-flow-pill-tall) + 0.5rem);
+  padding: 0.25rem 0;
+}
+
+.gemini-flow__play-pause {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: #0f0f0f;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gemini-flow__play-pause svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.gemini-flow__play-pause:hover {
+  background-color: rgba(15, 15, 15, 0.06);
+}
+
+.gemini-flow__play-pause:focus-visible {
+  outline: 2px solid #0f0f0f;
+  outline-offset: 2px;
+}
+
+.gemini-flow__pills-track {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.gemini-flow__pills:hover .gemini-flow__pill {
+  height: var(--gemini-flow-pill-tall);
+}
+
+.gemini-flow__pill {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  height: var(--gemini-flow-pill-slim);
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background-color: var(--gemini-flow-pill-idle);
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    height var(--gemini-flow-pill-duration) var(--gemini-flow-ease),
+    background-color 0.35s var(--gemini-flow-ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gemini-flow__pill-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  background-color: var(--gemini-flow-pill-active);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.gemini-flow__pill--active {
+  background-color: var(--gemini-flow-pill-idle);
+}
+
+.gemini-flow__pill--complete {
+  background-color: var(--gemini-flow-pill-active);
+}
+
+.gemini-flow__pill:focus-visible {
+  outline: 2px solid #0f0f0f;
+  outline-offset: 3px;
+}
+
+.gemini-flow__detail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  min-width: 0;
+  animation: gemini-flow-content-in 0.35s var(--gemini-flow-ease);
+}
+
+.gemini-flow__detail-measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.gemini-flow__detail-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.gemini-flow__detail-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  min-width: 0;
+}
+
+.gemini-flow__detail-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-family: "Crimson Pro", serif;
+  font-size: clamp(1.1875rem, 0.875rem + 1.25vw, 1.375rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: #0f0f0f;
+}
+
+.gemini-flow__detail-blurb {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  font-weight: 300;
+  color: #0f0f0f;
+}
+
+.gemini-flow__model-tag {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-family: "Satoshi", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.15;
+  padding: 0.28rem 0.6875rem;
+  border-radius: var(--bento-card-radius);
+  background-color: rgba(15, 15, 15, 0.06);
+  color: var(--gemini-flow-muted);
+  border: 1px solid rgba(15, 15, 15, 0.1);
+  transition:
+    background-color 0.35s var(--gemini-flow-ease),
+    color 0.35s var(--gemini-flow-ease);
+}
+
+@media (min-width: 768px) {
+  .gemini-flow {
+    --gemini-flow-media-height: min(38vh, 18rem);
+  }
+
+  .gemini-flow__pills-track {
+    gap: 0.5rem;
+  }
+
+  .gemini-flow__detail-blurb {
+    font-size: 1.0625rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gemini-flow {
+    --gemini-flow-media-height: 18rem;
+  }
+
+  .gemini-flow__detail-blurb {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .gemini-flow {
+    --gemini-flow-media-height: min(36vh, 11rem);
+    --gemini-flow-media-gap: 0.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gemini-flow__pill {
+    transition: background-color 0.2s ease;
+  }
+
+  .gemini-flow__pills:hover .gemini-flow__pill {
+    transition: none;
+  }
+
+  .gemini-flow__media-inner,
+  .gemini-flow__detail {
+    animation: none;
+  }
+}

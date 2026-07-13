@@ -1,0 +1,133 @@
+/* TEMP preview: natural-aspect play bento (no fixed row heights / object-cover crop) */
+
+.home-play-bento-grid-natural {
+  --play-natural-gap: 1rem;
+  width: 100%;
+  overflow-anchor: none;
+}
+
+.home-play-bento-grid-natural-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--play-natural-gap);
+}
+
+.home-play-bento-grid-natural-desktop {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .home-play-bento-grid-natural-mobile {
+    display: none;
+  }
+
+  .home-play-bento-grid-natural-desktop {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--play-natural-gap);
+  }
+
+  .home-play-bento-natural-col {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--play-natural-gap);
+  }
+
+  .home-play-bento-natural-col:first-child {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Explicit spacer — height set from measured block party card (JS) */
+  .home-play-bento-wide-span-spacer {
+    flex-shrink: 0;
+    width: 100%;
+    pointer-events: none;
+  }
+
+  .natural-play-bento-item--wide {
+    width: calc(200% + var(--play-natural-gap));
+    max-width: calc(200% + var(--play-natural-gap));
+  }
+}
+
+.natural-play-bento-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: var(--bento-card-radius);
+  border: 1px solid #e5e5e5;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+
+.natural-play-bento-item--black {
+  background: #000;
+  border-color: #333;
+}
+
+.natural-play-bento-item:not(.natural-play-bento-item--iframe):not(
+    .natural-play-bento-item--no-hover
+  ):hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.natural-play-bento-media {
+  position: relative;
+  width: 100%;
+  line-height: 0;
+}
+
+.natural-play-bento-media-layer {
+  position: relative;
+  transition: opacity 0.5s ease;
+}
+
+/* Native media sizing — no forced box fit (avoids pillar/letter bars) */
+.natural-play-bento-media-poster,
+.natural-play-bento-media-video,
+.natural-play-bento-media-static,
+.natural-play-bento-lqip-inline {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--bento-card-radius);
+}
+
+.natural-play-bento-lqip-inline {
+  filter: blur(12px);
+  transform: scale(1.02);
+}
+
+.natural-play-bento-media-stack {
+  width: 100%;
+  line-height: 0;
+}
+
+/* Iframe embeds don't have intrinsic size on the wrapper; use viewport-height
+   sizing only (no locked aspect-ratio) so we don't pillarbox their content */
+.natural-play-bento-iframe-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.natural-play-bento-iframe-placeholder {
+  min-height: clamp(380px, 65vh, 760px);
+}
+
+.natural-play-bento-iframe-wrap iframe {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-radius: var(--bento-card-radius);
+  min-height: clamp(380px, 65vh, 760px);
+  height: clamp(380px, 65vh, 760px);
+}
