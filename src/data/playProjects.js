@@ -28,7 +28,8 @@ export const playProjects = [
     tags: ["Interaction Design", "Neumorphism"],
     category: "digital",
     media: {
-      image: "/projects/morph-idea/poster.jpg",
+      video: "/projects/morph-idea/morph-idea.mp4",
+      poster: "/projects/morph-idea/poster.jpg",
     },
     actions: [
       {
