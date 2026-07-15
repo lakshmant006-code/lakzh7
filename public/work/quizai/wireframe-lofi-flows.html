@@ -187,10 +187,10 @@
 
 <!-- Tab switcher -->
 <div class="tabs">
-  <button class="tab-btn active" onclick="showTab('landing')">1. Landing</button>
-  <button class="tab-btn" onclick="showTab('login')">2. Login</button>
-  <button class="tab-btn" onclick="showTab('quiz')">3. Quiz History</button>
-  <button class="tab-btn" onclick="showTab('study')">4. Study Session</button>
+  <button class="tab-btn active" onclick="showTab('landing', event)">1. Landing</button>
+  <button class="tab-btn" onclick="showTab('login', event)">2. Login</button>
+  <button class="tab-btn" onclick="showTab('quiz', event)">3. Quiz History</button>
+  <button class="tab-btn" onclick="showTab('study', event)">4. Study Session</button>
 </div>
 
 <div class="browser">
@@ -422,11 +422,11 @@
 </div><!-- /browser -->
 
 <script>
-  function showTab(name) {
+  function showTab(name, evt) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('page-' + name).classList.add('active');
-    event.target.classList.add('active');
+    evt.target.classList.add('active');
     resizeFrame();
   }
 
