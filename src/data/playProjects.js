@@ -9,6 +9,7 @@ export const playProjects = [
     theme: "white",
     tags: ["Web Design", "Motion Graphics"],
     category: "digital",
+    staticThumbnail: true,
     media: {
       video: "/projects/concentrix/concentrix.mp4",
       poster: "/projects/concentrix/poster.jpg",

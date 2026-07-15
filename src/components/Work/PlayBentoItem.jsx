@@ -110,6 +110,7 @@ const NaturalPlayBentoItem = React.forwardRef(function NaturalPlayBentoItem(
     actions,
     media,
     caseStudyRoute,
+    staticThumbnail,
   } = project;
   const [isMediaLoaded, setIsMediaLoaded] = useState(false);
   const [iframeReady, setIframeReady] = useState(false);
@@ -119,13 +120,16 @@ const NaturalPlayBentoItem = React.forwardRef(function NaturalPlayBentoItem(
   const iframeObserverTargetRef = useRef(null);
 
   const isBlack = theme === "black";
+  // staticThumbnail forces the always-poster treatment for this card
+  // regardless of viewport, overriding the grid's posterOnly breakpoint.
+  const effectivePosterOnly = posterOnly || !!staticThumbnail;
   const hasVideo = media?.video;
   const hasPoster = hasVideo && media?.poster;
   const hasImage = media?.image || media?.thumbnail;
   const hasIframe = media?.iframe;
-  const showVideoBlock = hasVideo && !posterOnly;
+  const showVideoBlock = hasVideo && !effectivePosterOnly;
   const posterOnlyImage =
-    posterOnly && hasVideo && (media?.poster || media?.thumbnail);
+    effectivePosterOnly && hasVideo && (media?.poster || media?.thumbnail);
   const hasMedia = showVideoBlock || hasIframe || hasImage || !!posterOnlyImage;
   const disableHover = id === "draw-canvas";
   const lqip = media?.lqip ?? null;
@@ -143,7 +147,7 @@ const NaturalPlayBentoItem = React.forwardRef(function NaturalPlayBentoItem(
   );
 
   useEffect(() => {
-    if (!posterOnly) return;
+    if (!effectivePosterOnly) return;
     const imgEl = posterImgRef.current;
     if (!imgEl) return;
 
@@ -168,10 +172,10 @@ const NaturalPlayBentoItem = React.forwardRef(function NaturalPlayBentoItem(
 
     observer.observe(imgEl);
     return () => observer.disconnect();
-  }, [posterOnly, setMediaLoadedDeferred]);
+  }, [effectivePosterOnly, setMediaLoadedDeferred]);
 
   useEffect(() => {
-    if (posterOnly || !showVideoBlock || !media?.video) return;
+    if (effectivePosterOnly || !showVideoBlock || !media?.video) return;
     const container = videoContainerRef.current;
     if (!container) return;
 
@@ -201,7 +205,7 @@ const NaturalPlayBentoItem = React.forwardRef(function NaturalPlayBentoItem(
       observer.disconnect();
       videoRef.current?.pause();
     };
-  }, [posterOnly, showVideoBlock, media?.video]);
+  }, [effectivePosterOnly, showVideoBlock, media?.video]);
 
   useEffect(() => {
     if (!hasIframe) return;
@@ -313,7 +317,7 @@ const NaturalPlayBentoItem = React.forwardRef(function NaturalPlayBentoItem(
             <img
               ref={posterImgRef}
               className="natural-play-bento-media-static"
-              {...(posterOnly
+              {...(effectivePosterOnly
                 ? {
                     "data-src":
                       media.image || media.thumbnail || media.poster,
