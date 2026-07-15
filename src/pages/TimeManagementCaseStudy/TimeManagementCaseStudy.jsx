@@ -216,7 +216,7 @@ const TimeManagementCaseStudy = () => {
               src="/work/time-management/iMac_Mockup_3.png"
               alt="Time Management"
               className="time-management-hero-image"
-              style={{ height: "600px" }}
+              style={{ height: "450px" }}
             />
           </div>
 
