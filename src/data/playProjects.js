@@ -12,6 +12,7 @@ export const playProjects = [
     media: {
       video: "/projects/concentrix/concentrix.mp4",
       poster: "/projects/concentrix/poster.jpg",
+      thumbnail: "/projects/concentrix/poster.jpg",
     },
     actions: [
       {
