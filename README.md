@@ -13,7 +13,6 @@ Personal portfolio site for **Lakshman Thota**, UX Designer/Researcher. Showcase
 - [Tailwind CSS](https://tailwindcss.com/) + custom CSS
 - [GSAP](https://gsap.com/) & [Framer Motion](https://www.framer.com/motion/) for animation
 - [Three.js](https://threejs.org/) / React Three Fiber for 3D experiences
-- Vercel serverless functions for the garden API (`api/`)
 
 ## Getting started
 
@@ -38,8 +37,6 @@ The dev server runs at `http://localhost:5173` by default.
 ```
 ├── src/           # React app (pages, components, data)
 ├── public/        # Static assets (images, videos, case study media)
-├── api/           # Vercel serverless functions
-├── server/        # Shared server logic (Supabase, Gemini)
 └── vercel.json    # Vercel deployment config
 ```
 
@@ -48,11 +45,7 @@ The dev server runs at `http://localhost:5173` by default.
 1. Push this repo to GitHub.
 2. Go to [vercel.com/new](https://vercel.com/new) and import **My-portfolio**.
 3. Vercel auto-detects Vite — keep the defaults from `vercel.json`.
-4. Add environment variables if using the garden/flower API:
-   - `SUPABASE_URL`
-   - `SUPABASE_SERVICE_ROLE_KEY`
-   - `GEMINI_API_KEY` (for flower generation)
-5. Deploy.
+4. Deploy.
 
 ## Case studies & work
 

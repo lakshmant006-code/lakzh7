@@ -44,16 +44,4 @@ export const caseStudyNavConfig = {
       { id: "hiku-see-next", label: "See Next" },
     ],
   },
-  blockparty: {
-    accentColor: "#0f0f0f",
-    sections: [
-      { id: "blockparty-why", label: "Context" },
-      { id: "blockparty-inspiration", label: "Inspiration" },
-      { id: "blockparty-problem-making", label: "Design Iterations" },
-      { id: "blockparty-full-experience", label: "Demo Experience" },
-      { id: "blockparty-whats-next", label: "What's Next" },
-      { id: "blockparty-learning-points", label: "Takeaways" },
-      { id: "blockparty-closing", label: "Closing" },
-    ],
-  },
 };

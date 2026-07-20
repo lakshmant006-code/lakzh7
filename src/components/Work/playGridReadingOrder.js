@@ -2,6 +2,7 @@
 export const allPlayPositions = {
   concentrix: { col: 1, rowStart: 1, rowEnd: 3 },
   "morph-idea": { col: 2, rowStart: 1, rowEnd: 2 },
+  "ascii-studio": { col: 2, rowStart: 2, rowEnd: 3 },
   sketches: { col: 3, rowStart: 1, rowEnd: 2 },
 };
 

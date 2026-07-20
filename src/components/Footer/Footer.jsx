@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./Footer.css";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const FOOTER_RISE_DURATION = 1;
 const FOOTER_RISE_EASE = "power2.out";
@@ -46,27 +43,35 @@ const Footer = () => {
 
     gsap.set(lineInners, { y: "100%" });
 
-    let scrollTrigger = null;
-    const timeoutId = window.setTimeout(() => {
-      ScrollTrigger.refresh();
-      scrollTrigger = ScrollTrigger.create({
-        trigger: footer,
-        start: "top 85%",
-        once: true,
-        onEnter: () => {
-          gsap.to(lineInners, {
-            y: 0,
-            duration: FOOTER_RISE_DURATION,
-            ease: FOOTER_RISE_EASE,
-            stagger: FOOTER_LINE_STAGGER,
-          });
-        },
+    let rafId;
+    let done = false;
+
+    const animate = () => {
+      done = true;
+      cancelAnimationFrame(rafId);
+      gsap.to(lineInners, {
+        y: 0,
+        duration: FOOTER_RISE_DURATION,
+        ease: FOOTER_RISE_EASE,
+        stagger: FOOTER_LINE_STAGGER,
       });
-    }, 100);
+    };
+
+    const poll = () => {
+      if (done) return;
+      const rect = footer.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.95 && rect.bottom > 0) {
+        animate();
+      } else {
+        rafId = requestAnimationFrame(poll);
+      }
+    };
+
+    rafId = requestAnimationFrame(poll);
 
     return () => {
-      window.clearTimeout(timeoutId);
-      if (scrollTrigger) scrollTrigger.kill();
+      done = true;
+      cancelAnimationFrame(rafId);
     };
   }, []);
 

@@ -584,26 +584,6 @@ const MarioGame = () => {
     };
   }, [restartKey]);
 
-  const handleKeyDown = useCallback((e) => {
-    const action = KEY_MAP[e.key];
-    if (!action) return;
-    e.preventDefault();
-    if (action === "jump") {
-      if (!inputRef.current.jumpHeld) inputRef.current.jumpQueued = true;
-      inputRef.current.jumpHeld = true;
-    } else {
-      inputRef.current[action] = true;
-    }
-  }, []);
-
-  const handleKeyUp = useCallback((e) => {
-    const action = KEY_MAP[e.key];
-    if (!action) return;
-    e.preventDefault();
-    if (action === "jump") inputRef.current.jumpHeld = false;
-    else inputRef.current[action] = false;
-  }, []);
-
   const handleRestart = useCallback(() => {
     inputRef.current = {
       left: false,
@@ -616,6 +596,30 @@ const MarioGame = () => {
     setGameStatus("playing");
     setDeathCause(null);
     setRestartKey((k) => k + 1);
+  }, []);
+
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === "r" || e.key === "R") {
+      handleRestart();
+      return;
+    }
+    const action = KEY_MAP[e.key];
+    if (!action) return;
+    e.preventDefault();
+    if (action === "jump") {
+      if (!inputRef.current.jumpHeld) inputRef.current.jumpQueued = true;
+      inputRef.current.jumpHeld = true;
+    } else {
+      inputRef.current[action] = true;
+    }
+  }, [handleRestart]);
+
+  const handleKeyUp = useCallback((e) => {
+    const action = KEY_MAP[e.key];
+    if (!action) return;
+    e.preventDefault();
+    if (action === "jump") inputRef.current.jumpHeld = false;
+    else inputRef.current[action] = false;
   }, []);
 
   const press = (key) => () => {
@@ -642,7 +646,7 @@ const MarioGame = () => {
       {showHint ? (
         <div className="mario-game-hint">
           <span className="mario-game-hint-desktop">
-            ← → to move · Space to jump
+            ← → to move · Space to jump · R to restart
           </span>
           <span className="mario-game-hint-mobile">Tap to play</span>
         </div>

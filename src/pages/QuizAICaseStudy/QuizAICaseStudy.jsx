@@ -208,7 +208,7 @@ const QuizAICaseStudy = () => {
         <div className="quizai-hero-image-container quizai-hero-before">
           <img
             src="/work/quizai/hero-before.png"
-            alt="Quiz AI Approval Flow Redesign"
+            alt="QuizAI landing page mockup on a laptop screen"
             className="quizai-hero-image"
           />
         </div>
@@ -286,7 +286,7 @@ const QuizAICaseStudy = () => {
         <div className="quizai-hero-image-container quizai-hero-after">
           <img
             src="/work/quizai/hero-new.png"
-            alt="Quiz AI Approval Flow Redesign"
+            alt="QuizAI landing page, dashboard, and AI study assistant screens"
             className="quizai-hero-image"
           />
         </div>
@@ -328,9 +328,9 @@ const QuizAICaseStudy = () => {
                   className="quizai-impact-value"
                   ref={(el) => (metricRefs.current[0] = el)}
                 >
-                  15-0
+                  15–24
                 </div>
-                <div className="quizai-impact-label">AGE GROUP</div>
+                <div className="quizai-impact-label">TARGET AGE GROUP</div>
               </div>
               <div
                 className="quizai-impact-metric"
@@ -340,9 +340,9 @@ const QuizAICaseStudy = () => {
                   className="quizai-impact-value"
                   ref={(el) => (metricRefs.current[1] = el)}
                 >
-                  0%
+                  100%
                 </div>
-                <div className="quizai-impact-label">USAGE</div>
+                <div className="quizai-impact-label">TASK COMPLETION RATE</div>
               </div>
               <div
                 className="quizai-impact-metric"
@@ -352,10 +352,10 @@ const QuizAICaseStudy = () => {
                   className="quizai-impact-value"
                   ref={(el) => (metricRefs.current[2] = el)}
                 >
-                  0%
+                  30%
                 </div>
                 <div className="quizai-impact-label">
-                  INCREASE IN PRODUCTIVITY
+                  REDUCTION IN STUDY PREP TIME
                 </div>
               </div>
             </div>
@@ -459,16 +459,14 @@ const QuizAICaseStudy = () => {
                 as="h4"
                 ref={designApproach1TitleRef}
               >
-                Redesigning the Approval Flow
+                Streamlining the Upload-to-Quiz Flow
               </CaseStudyStatementHeadline>
               <CaseStudyStatementBody>
-                The redesigned flow introduces{" "}
-                <span style={{ fontWeight: 600 }}>clear terminal states</span>{" "}
-                for all rejection paths and{" "}
-                <span style={{ fontWeight: 600 }}>
-                  fallback user assignments
-                </span>{" "}
-                to prevent workflow breakdowns.
+                Research showed students were dropping off after uploading —
+                the path from document to quiz wasn't clear. The redesigned
+                flow makes each step explicit:{" "}
+                <span style={{ fontWeight: 600 }}>upload, process, generate</span>
+                {" "}— so students always know where they are and what comes next.
               </CaseStudyStatementBody>
             </CaseStudyStatement>
             <div
@@ -496,10 +494,11 @@ const QuizAICaseStudy = () => {
                 From Research to Design
               </CaseStudyStatementHeadline>
               <CaseStudyStatementBody>
-                To address the systemic issues, I moved approvals from buried
-                modals to{" "}
+                To address the information overload students described, I pulled
+                frequently-accessed materials to the front of the dashboard and
+                placed AI-generated summaries and quizzes{" "}
                 <span style={{ fontWeight: 600 }}>
-                  its own dedicated section with full navigation and visibility
+                  one click away from any uploaded document
                 </span>
                 .
               </CaseStudyStatementBody>

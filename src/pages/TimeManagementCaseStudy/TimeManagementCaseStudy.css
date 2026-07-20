@@ -782,7 +782,6 @@
   display: block;
   border-radius: 8px;
   border: none;
-  pointer-events: none;
 }
 
 .time-management-hifi-gallery {

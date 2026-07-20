@@ -63,22 +63,22 @@ const TimeManagementCaseStudy = () => {
     () => [
       {
         value: 60,
-        prefix: "28-",
+        prefix: "28–",
         suffix: "",
         elementRef: metricRefs,
         index: 0,
       },
       {
-        value: 100,
+        value: 1,
         prefix: "",
-        suffix: "%",
+        suffix: "",
         elementRef: metricRefs,
         index: 1,
       },
       {
-        value: 30,
+        value: 3,
         prefix: "",
-        suffix: "%",
+        suffix: "",
         elementRef: metricRefs,
         index: 2,
       },
@@ -232,7 +232,7 @@ const TimeManagementCaseStudy = () => {
                 <div className="time-management-hero-detail-item">
                   <div className="time-management-hero-detail-label">TIMELINE</div>
                   <div className="time-management-hero-detail-value">
-                    Feb — March 2020
+                    Feb — March 2024
                   </div>
                 </div>
                 <div className="time-management-hero-detail-item">
@@ -373,9 +373,9 @@ const TimeManagementCaseStudy = () => {
                     className="time-management-impact-value"
                     ref={(el) => (metricRefs.current[0] = el)}
                   >
-                    28-0
+                    28–60
                   </div>
-                  <div className="time-management-impact-label">AGE GROUP</div>
+                  <div className="time-management-impact-label">TARGET AGE GROUP</div>
                 </div>
                 <div
                   className="time-management-impact-metric"
@@ -385,9 +385,9 @@ const TimeManagementCaseStudy = () => {
                     className="time-management-impact-value"
                     ref={(el) => (metricRefs.current[1] = el)}
                   >
-                    0%
+                    1
                   </div>
-                  <div className="time-management-impact-label">USAGE</div>
+                  <div className="time-management-impact-label">CLIENT DELIVERED TO</div>
                 </div>
                 <div
                   className="time-management-impact-metric"
@@ -397,10 +397,10 @@ const TimeManagementCaseStudy = () => {
                     className="time-management-impact-value"
                     ref={(el) => (metricRefs.current[2] = el)}
                   >
-                    0%
+                    3
                   </div>
                   <div className="time-management-impact-label">
-                    INCREASE IN PRODUCTIVITY
+                    USER ROLES DESIGNED
                   </div>
                 </div>
               </div>
@@ -837,11 +837,11 @@ const TimeManagementCaseStudy = () => {
                     />
                   </div>
                   <h4 className="time-management-see-next-card-title">
-                    Rebuilding QuizAI's Approval Flow
+                    QuizAI: AI-Powered Notetaking App
                   </h4>
                   <p className="time-management-see-next-card-description">
-                    Redesigning approval workflows with smarter logic and
-                    clearer audit trails for improved enterprise usability.
+                    Helping students turn uploaded notes into personalized
+                    quizzes and summaries through a centralized study dashboard.
                   </p>
                 </div>
               </Link>

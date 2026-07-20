@@ -73,6 +73,18 @@ const About = () => {
             >
               <em>Where</em> I've been
             </h2>
+            <p className="about-sandbox-bio">
+              My path to UX started in architecture. I spent two years building
+              BIM-driven product workflows at UBC Impex, then moved into
+              architectural design and visualization at 23dds. That work taught
+              me that the most critical design decisions aren't about aesthetics —
+              they're about how people understand and move through systems. I
+              kept noticing the same problem in digital products: flows that
+              confused people, dashboards that buried what mattered, onboarding
+              that left users lost. UX research gave me a framework to
+              investigate those failures systematically, and I've been applying
+              that spatial and systems thinking to digital products ever since.
+            </p>
           </div>
           <ExperienceTimeline revealEarlier />
         </div>

@@ -632,11 +632,14 @@
   display: block;
   border: none;
   border-radius: 8px;
-  pointer-events: none;
+  margin: 0 auto;
+  /* Height scales proportionally to container (360px design width → 760px design height) */
+  height: min(760px, calc(100vw * 2.11));
 }
 
 .hiku-app-screens-container {
-  display: block;
+  display: flex;
+  justify-content: center;
 }
 
 .hiku-app-screens-wrapper {
@@ -645,10 +648,15 @@
 }
 
 .hiku-app-screens-frame {
-  max-width: 100%;
+  width: min(390px, 100%);
+  max-width: 390px;
+  margin: 0 auto;
   border-radius: 16px;
   pointer-events: none;
   display: block;
+  /* iPhone 14 aspect ratio (390×844) — scales down on narrow viewports */
+  aspect-ratio: 390 / 844;
+  height: auto;
 }
 
 .hiku-app-screens-overlay {

@@ -1884,6 +1884,16 @@ async function boot() {
       menu.handleKey(e.code);
     } else if (mario?.pause) {
       mario.pauseObj.handleKey(e.code);
+    } else if (e.code === "KeyR" && mario) {
+      const levelName = menu.levelNames[menu.currSelectedLevel - 1];
+      dashboard.points = 0;
+      dashboard.coins = 0;
+      dashboard.time = 0;
+      dashboard.ticks = 0;
+      dashboard.state = "start";
+      level.loadLevel(levelName).then(() => {
+        mario = new Mario(0, 0, level, ctx, dashboard, sound, sprites);
+      });
     }
   });
   canvas.addEventListener("contextmenu", (e) => e.preventDefault());

@@ -53,21 +53,6 @@
     position: relative;
   }
 
-  .case-study-spy-nav--blockparty {
-    --spy-nav-enter-delay: 0.45s;
-    --spy-nav-enter-duration: 0.65s;
-    --spy-nav-enter-easing: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .case-study-spy-nav--blockparty .case-study-spy-nav__link {
-    gap: 0;
-    padding: 0;
-  }
-
-  .case-study-spy-nav--blockparty .case-study-spy-nav__label {
-    line-height: 1.25;
-  }
-
   .case-study-spy-nav__list {
     list-style: none;
     margin: 0;

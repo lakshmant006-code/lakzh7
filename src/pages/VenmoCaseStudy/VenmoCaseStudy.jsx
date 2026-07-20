@@ -380,10 +380,10 @@ const VenmoCaseStudy = () => {
                   className="venmo-impact-value"
                   ref={(el) => (metricRefs.current[0] = el)}
                 >
-                  0%
+                  100%
                 </div>
                 <div className="venmo-impact-label">
-                  of users make informed privacy decisions (vs 0% currently)
+                  of users make an active privacy choice during onboarding
                 </div>
               </div>
               <div
@@ -394,10 +394,10 @@ const VenmoCaseStudy = () => {
                   className="venmo-impact-value"
                   ref={(el) => (metricRefs.current[1] = el)}
                 >
-                  &lt;0 sec
+                  &lt;5 sec
                 </div>
                 <div className="venmo-impact-label">
-                  to find privacy settings (vs 2-3 min currently)
+                  to find privacy settings (down from 2–3 min)
                 </div>
               </div>
               <div
@@ -408,10 +408,10 @@ const VenmoCaseStudy = () => {
                   className="venmo-impact-value"
                   ref={(el) => (metricRefs.current[2] = el)}
                 >
-                  0%
+                  75%
                 </div>
                 <div className="venmo-impact-label">
-                  industry alignment achieved (from being the only outlier)
+                  of competing apps default to private — Venmo was the only outlier
                 </div>
               </div>
             </div>
@@ -844,11 +844,11 @@ const VenmoCaseStudy = () => {
                   />
                 </div>
                 <h4 className="venmo-see-next-card-title">
-                  Rebuilding QuizAI's Approval Flow
+                  QuizAI: AI-Powered Notetaking App
                 </h4>
                 <p className="venmo-see-next-card-description">
-                  Redesigning approval workflows with smarter logic and clearer
-                  audit trails for improved enterprise usability.
+                  Helping students turn uploaded notes into personalized
+                  quizzes and summaries through a centralized study dashboard.
                 </p>
               </div>
             </Link>

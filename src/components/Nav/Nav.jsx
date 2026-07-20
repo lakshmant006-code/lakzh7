@@ -12,7 +12,7 @@ import {
 import "./Nav.css";
 import darkLogo from "../../assets/img/dark-logo.png";
 import lightLogo from "../../assets/img/light-logo.png";
-import flowerIcon from "../../assets/img/spiraL.png";
+import spiralIcon from "../../assets/img/spiraL.png";
 
 const Nav = () => {
   const location = useLocation();
@@ -35,13 +35,7 @@ const Nav = () => {
     { label: "work", href: "/", isLink: true },
     { label: "playground", href: "/", isLink: true },
     { label: "about", href: "/about", isLink: true },
-    {
-      label: "flower",
-      href: "/flower",
-      isLink: true,
-      image: flowerIcon,
-      imageAlt: "Plant your flower",
-    },
+    { label: "particles", href: "/particles", isLink: true },
   ];
 
   const handleLogoClick = (e) => {
@@ -64,23 +58,20 @@ const Nav = () => {
       if (item.label === "about") return false;
     }
     if (item.label === "about") return path === "/about";
-    if (item.label === "flower") return path === "/flower";
+    if (item.label === "particles") return path === "/particles";
     return false;
   };
 
   const renderPillLabel = (item) => {
-    if (item.image) {
+    if (item.label === "particles") {
       return (
-        <span className="pill-label">
-          <img
-            src={item.image}
-            alt={item.imageAlt ?? item.label}
-            className="pill-flower-icon"
-          />
-        </span>
+        <img
+          src={spiralIcon}
+          alt="Particles"
+          className="nav-spiral-icon"
+        />
       );
     }
-
     return (
       <>
         <span className="pill-label">{item.label}</span>
@@ -98,7 +89,6 @@ const Nav = () => {
     "/wholefoods",
     "/quizai",
     "/hiku",
-    "/blockparty",
   ];
   const NAV_FADE_DELAY = isDefaultHomePath(location.pathname)
     ? LANDING_NAV_DELAY
@@ -184,18 +174,14 @@ const Nav = () => {
 
         const label = pill.querySelector(".pill-label");
         const white = pill.querySelector(".pill-label-hover");
-        const isFlowerPill = pill.classList.contains("pill-flower");
-        const flowerIcon = isFlowerPill
-          ? pill.querySelector(".pill-flower-icon")
-          : null;
 
         if (label) gsap.set(label, { y: 0 });
-        if (white && !isFlowerPill) gsap.set(white, { y: h + 12, opacity: 0 });
+        if (white) gsap.set(white, { y: h + 12, opacity: 0 });
 
         tlRefs.current[index]?.kill();
         const tl = gsap.timeline({ paused: true });
 
-        if (shouldAnimateCircle && !isFlowerPill) {
+        if (shouldAnimateCircle) {
           tl.to(
             circle,
             {
@@ -209,46 +195,32 @@ const Nav = () => {
           );
         }
 
-        if (isFlowerPill && flowerIcon) {
-          gsap.set(flowerIcon, { rotation: 0, transformOrigin: "50% 50%" });
+        if (label) {
           tl.to(
-            flowerIcon,
+            label,
             {
-              rotation: 180,
-              duration: 1,
+              y: -(h + 8),
+              duration: 2,
               ease: "power1.easeOut",
               overwrite: "auto",
             },
             0,
           );
-        } else {
-          if (label) {
-            tl.to(
-              label,
-              {
-                y: -(h + 8),
-                duration: 2,
-                ease: "power1.easeOut",
-                overwrite: "auto",
-              },
-              0,
-            );
-          }
+        }
 
-          if (white) {
-            gsap.set(white, { y: Math.ceil(h + 100), opacity: 0 });
-            tl.to(
-              white,
-              {
-                y: 0,
-                opacity: 1,
-                duration: 2,
-                ease: "power1.easeOut",
-                overwrite: "auto",
-              },
-              0,
-            );
-          }
+        if (white) {
+          gsap.set(white, { y: Math.ceil(h + 100), opacity: 0 });
+          tl.to(
+            white,
+            {
+              y: 0,
+              opacity: 1,
+              duration: 2,
+              ease: "power1.easeOut",
+              overwrite: "auto",
+            },
+            0,
+          );
         }
 
         tlRefs.current[index] = tl;
@@ -485,7 +457,7 @@ const Nav = () => {
           <Link to="/" onClick={handleLogoClick} className="logo-link">
             <img
               src={isMobileMenuOpen ? lightLogo : darkLogo}
-              alt="Beverly Yip"
+              alt="Lakshman Thota"
               className="logo-image"
             />
           </Link>
@@ -494,7 +466,7 @@ const Nav = () => {
               <li key={item.label}>
                 <Link
                   to={item.href}
-                  className={`pill${item.image ? " pill-flower" : ""}${isNavItemActive(item) ? " pill-active" : ""}`}
+                  className={`pill${isNavItemActive(item) ? " pill-active" : ""}`}
                   onMouseEnter={() => handleEnter(i)}
                   onMouseLeave={() => handleLeave(i)}
                   onClick={item.label === "work" ? handleWorkClick : item.label === "playground" ? handlePlaygroundClick : undefined}
@@ -542,15 +514,12 @@ const Nav = () => {
                   toggleMobileMenu();
                 }}
               >
-                {item.image ? (
-                  <img
-                    src={item.image}
-                    alt={item.imageAlt ?? item.label}
-                    className="mobile-menu-flower-icon"
-                  />
-                ) : (
-                  item.label
-                )}
+                {item.label === "particles" ? (
+                  <span className="mobile-particles-link">
+                    <img src={spiralIcon} alt="" className="nav-spiral-icon" aria-hidden="true" />
+                    particles
+                  </span>
+                ) : item.label}
               </Link>
             </li>
           ))}

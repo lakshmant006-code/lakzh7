@@ -380,7 +380,7 @@ const WholeFoodsCaseStudy = () => {
                   className="wholefoods-impact-value"
                   ref={(el) => (metricRefs.current[0] = el)}
                 >
-                  0%
+                  77%
                 </div>
                 <div className="wholefoods-impact-label">
                   faster checkout completion
@@ -394,7 +394,7 @@ const WholeFoodsCaseStudy = () => {
                   className="wholefoods-impact-value"
                   ref={(el) => (metricRefs.current[1] = el)}
                 >
-                  0%
+                  61%
                 </div>
                 <div className="wholefoods-impact-label">
                   reduction in user errors
@@ -408,7 +408,7 @@ const WholeFoodsCaseStudy = () => {
                   className="wholefoods-impact-value"
                   ref={(el) => (metricRefs.current[2] = el)}
                 >
-                  0%
+                  100%
                 </div>
                 <div className="wholefoods-impact-label">
                   improvement in user satisfaction
@@ -1041,11 +1041,11 @@ const WholeFoodsCaseStudy = () => {
                   />
                 </div>
                 <h4 className="wholefoods-see-next-card-title">
-                  Rebuilding QuizAI's Approval Flow
+                  QuizAI: AI-Powered Notetaking App
                 </h4>
                 <p className="wholefoods-see-next-card-description">
-                  Redesigning approval workflows with smarter logic and clearer
-                  audit trails for improved enterprise usability.
+                  Helping students turn uploaded notes into personalized
+                  quizzes and summaries through a centralized study dashboard.
                 </p>
               </div>
             </Link>

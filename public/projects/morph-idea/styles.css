@@ -1,0 +1,582 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #d5dae1;
+  --text: #727382;
+  --icon: #292d32;
+  --tick: #bdc4ce;
+  --accent: #d38900;
+  --font: "Satoshi", system-ui, sans-serif;
+
+  --hl-x: 0px;
+  --hl-y: 7px;
+  --dk-x: 0px;
+  --dk-y: -5px;
+
+  --panel-w: 1059px;
+  --panel-h: 597px;
+  --dial-size: 227px;
+  --btn-square: 68px;
+  --btn-large: 182px;
+  --btn-circle: 56px;
+  --slider-w: 68px;
+  --slider-h: 422px;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg);
+  font-family: var(--font);
+}
+
+.brightness-overlay {
+  position: fixed;
+  inset: 0;
+  background: #1a1d24;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.08s linear;
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+/* Frame 190 — full-viewport background */
+.panel {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding:
+    max(16px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
+}
+
+.panel__inner {
+  position: relative;
+  flex-shrink: 0;
+  width: var(--panel-w);
+  height: var(--panel-h);
+}
+
+.neo-btn {
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  color: var(--icon);
+  transition: box-shadow 0.15s ease, color 0.15s ease;
+}
+
+.neo-btn svg {
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+  transition: color 0.15s ease;
+}
+
+/* ── Frame 190 default: raised / extruded ── */
+.neo-btn--square {
+  position: absolute;
+  width: var(--btn-square);
+  height: var(--btn-square);
+  border-radius: 16px;
+  box-shadow:
+    var(--hl-x) var(--hl-y) 6.8px rgba(252, 252, 252, 0.23),
+    var(--dk-x) var(--dk-y) 10.1px rgba(0, 0, 0, 0.2);
+}
+
+.neo-btn--large {
+  position: absolute;
+  left: 137px;
+  top: 336px;
+  width: var(--btn-large);
+  height: calc(var(--btn-large) - 2px);
+  border-radius: 15px;
+  box-shadow:
+    var(--hl-x) var(--hl-y) 13.4px rgba(255, 255, 255, 0.25),
+    var(--dk-x) var(--dk-y) 17.9px -3px rgba(0, 0, 0, 0.25);
+}
+
+.neo-btn--large svg {
+  width: 53px;
+  height: 53px;
+}
+
+.neo-btn--circle {
+  position: relative;
+  width: var(--btn-circle);
+  height: var(--btn-circle);
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow:
+    var(--hl-x) var(--hl-y) 9.6px rgba(255, 255, 255, 0.25),
+    var(--dk-x) var(--dk-y) 12.2px rgba(0, 0, 0, 0.25);
+}
+
+/* ── Frame 182 active: inset / pressed + color ── */
+.neo-btn--square.is-active {
+  box-shadow:
+    inset var(--hl-x) var(--hl-y) 7.7px rgba(255, 255, 255, 0.25),
+    inset var(--dk-x) var(--dk-y) 12.1px rgba(0, 0, 0, 0.25);
+}
+
+.neo-btn--large.is-active {
+  box-shadow:
+    inset var(--hl-x) var(--hl-y) 9px rgba(255, 255, 255, 0.25),
+    inset var(--dk-x) var(--dk-y) 16.5px 3px rgba(0, 0, 0, 0.25);
+}
+
+.neo-btn--circle.is-active:nth-child(1) {
+  box-shadow:
+    inset var(--hl-x) var(--hl-y) 4.6px rgba(255, 255, 255, 0.25),
+    inset var(--dk-x) var(--dk-y) 9.6px rgba(0, 0, 0, 0.25);
+}
+
+.neo-btn--circle.is-active:nth-child(2) {
+  box-shadow:
+    inset var(--hl-x) var(--hl-y) 5.2px rgba(255, 255, 255, 0.25),
+    inset var(--dk-x) var(--dk-y) 11.5px rgba(0, 0, 0, 0.25);
+}
+
+.neo-btn--circle.is-active:nth-child(3) {
+  box-shadow:
+    inset var(--hl-x) var(--hl-y) 4.9px rgba(255, 255, 255, 0.25),
+    inset var(--dk-x) var(--dk-y) 9.2px rgba(0, 0, 0, 0.25);
+}
+
+/* Icon colors only when active (Frame 182) */
+.neo-btn.is-active .icon--home { color: #ca0003; }
+.neo-btn.is-active .icon--cloud { color: #0071ff; }
+.neo-btn.is-active .icon--wifi { color: #d38900; }
+.neo-btn.is-active .icon--flash { color: #15ff00; }
+.neo-btn.is-active .icon--ghost { color: #00ff37; }
+.neo-btn.is-active .icon--glass { color: #cd6c17; }
+.neo-btn.is-active .icon--coffee { color: #c80050; }
+
+.icon--flash path {
+  fill: none;
+}
+
+.neo-btn.is-active .icon--flash path {
+  fill: currentColor;
+}
+
+/* Left grid — Frame 183 */
+.button-grid {
+  position: absolute;
+  left: 137px;
+  top: 93px;
+  width: 182px;
+  height: 206px;
+}
+
+.button-grid .neo-btn:nth-child(1) { left: 0; top: 0; }
+.button-grid .neo-btn:nth-child(2) { left: 114px; top: 0; }
+.button-grid .neo-btn:nth-child(3) { left: 0; top: 138px; }
+.button-grid .neo-btn:nth-child(4) { left: 114px; top: 138px; }
+
+/* Mode buttons — Frame 189 */
+.mode-buttons {
+  position: absolute;
+  left: 456px;
+  top: 144px;
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  width: 288px;
+  height: 56px;
+}
+
+/* Shadow dial — Ellipse 11 */
+.dial-wrap {
+  position: absolute;
+  left: 485px;
+  top: 287px;
+  width: var(--dial-size);
+}
+
+.dial {
+  position: relative;
+  width: var(--dial-size);
+  height: var(--dial-size);
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow:
+    var(--hl-x) var(--hl-y) 13.6px rgba(255, 255, 255, 0.25),
+    var(--dk-x) var(--dk-y) 26.1px rgba(0, 0, 0, 0.25);
+  display: grid;
+  place-items: center;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.dial:active {
+  cursor: grabbing;
+}
+
+.dial:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.dial__indicator {
+  position: absolute;
+  top: calc(var(--dial-size) * 0.0793);
+  left: 50%;
+  width: 5px;
+  height: calc(var(--dial-size) * 0.0991);
+  margin-left: -2.5px;
+  background: var(--accent);
+  border-radius: 3px;
+  transform-origin: center calc(var(--dial-size) * 0.4207);
+  transform: rotate(0deg);
+  pointer-events: none;
+}
+
+.dial__value {
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 27px;
+  color: var(--text);
+  pointer-events: none;
+}
+
+.label {
+  display: block;
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 14px;
+  text-align: center;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+
+.label--shadow {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--dial-size) + 17px);
+  width: 95px;
+  transform: translateX(-50%);
+}
+
+/* Brightness slider — Frame 180 */
+.slider-wrap {
+  position: absolute;
+  left: 875px;
+  top: 77px;
+  width: var(--slider-w);
+}
+
+.slider-track {
+  position: relative;
+  width: var(--slider-w);
+  height: var(--slider-h);
+  border-radius: 16px;
+  background: var(--bg);
+  box-shadow:
+    inset var(--hl-x) var(--hl-y) 13.4px rgba(255, 255, 255, 0.25),
+    inset var(--dk-x) var(--dk-y) 13.2px rgba(0, 0, 0, 0.15);
+}
+
+.slider-ticks {
+  position: absolute;
+  left: 10px;
+  top: 103px;
+  width: 45px;
+  height: 270px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 45px;
+  pointer-events: none;
+}
+
+.slider-ticks span {
+  display: block;
+  width: 40px;
+  height: 0;
+  border-top: 3px solid var(--tick);
+}
+
+.slider-handle {
+  position: absolute;
+  left: 2px;
+  top: 0;
+  width: 64px;
+  height: 68px;
+  border-radius: 16px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 10px;
+  cursor: grab;
+  touch-action: none;
+  transition: box-shadow 0.15s ease;
+  box-shadow:
+    var(--hl-x) var(--hl-y) 6.8px rgba(252, 252, 252, 0.23),
+    var(--dk-x) var(--dk-y) 10.1px rgba(0, 0, 0, 0.2);
+}
+
+.slider-handle.is-dragging,
+.slider-handle:active {
+  cursor: grabbing;
+  box-shadow:
+    inset var(--hl-x) var(--hl-y) 7.7px rgba(255, 255, 255, 0.25),
+    inset var(--dk-x) var(--dk-y) 12.1px rgba(0, 0, 0, 0.25);
+}
+
+.slider-handle span {
+  display: block;
+  width: 33px;
+  height: 0;
+  border-top: 3px solid var(--tick);
+}
+
+.label--brightness {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--slider-h) + 14px);
+  width: 61px;
+  transform: translateX(-50%);
+}
+
+/* Tablet / small desktop — scale panel to fit viewport */
+@media (max-width: 1130px), (max-height: 650px) {
+  .panel__inner {
+    transform: scale(
+      min(
+        calc((100vw - 32px) / var(--panel-w)),
+        calc((100dvh - 32px) / var(--panel-h)),
+        1
+      )
+    );
+    transform-origin: center center;
+  }
+}
+
+/* Mobile / tablet portrait — reflow into a stacked layout with touch-friendly sizing */
+@media (max-width: 768px) {
+  .panel {
+    overflow-x: hidden;
+    overflow-y: auto;
+    align-items: flex-start;
+    padding:
+      max(20px, env(safe-area-inset-top))
+      max(16px, env(safe-area-inset-right))
+      max(20px, env(safe-area-inset-bottom))
+      max(16px, env(safe-area-inset-left));
+  }
+
+  .panel__inner {
+    --btn-square: clamp(56px, 16vw, 68px);
+    --btn-large: clamp(120px, 34vw, 182px);
+    --btn-circle: clamp(48px, 13vw, 56px);
+    --dial-size: clamp(180px, 52vw, 227px);
+    --slider-w: clamp(56px, 16vw, 68px);
+    --slider-h: clamp(240px, 55vw, 320px);
+
+    width: min(100%, 400px);
+    height: auto;
+    transform: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "controls reset"
+      "modes modes"
+      "dial dial"
+      "slider slider";
+    gap: clamp(20px, 5vw, 32px);
+    align-items: center;
+    justify-items: center;
+  }
+
+  .button-grid {
+    position: relative;
+    left: auto;
+    top: auto;
+    grid-area: controls;
+    justify-self: end;
+    width: calc(var(--btn-square) * 2 + 46px);
+    height: calc(var(--btn-square) * 2 + 70px);
+  }
+
+  .button-grid .neo-btn:nth-child(1) { left: 0; top: 0; }
+  .button-grid .neo-btn:nth-child(2) { left: calc(var(--btn-square) + 46px); top: 0; }
+  .button-grid .neo-btn:nth-child(3) { left: 0; top: calc(var(--btn-square) + 70px); }
+  .button-grid .neo-btn:nth-child(4) { left: calc(var(--btn-square) + 46px); top: calc(var(--btn-square) + 70px); }
+
+  .neo-btn--large {
+    position: relative;
+    left: auto;
+    top: auto;
+    grid-area: reset;
+    justify-self: start;
+    align-self: center;
+  }
+
+  .mode-buttons {
+    position: relative;
+    left: auto;
+    top: auto;
+    grid-area: modes;
+    width: auto;
+    height: auto;
+    gap: clamp(24px, 8vw, 60px);
+  }
+
+  .dial-wrap {
+    position: relative;
+    left: auto;
+    top: auto;
+    grid-area: dial;
+    width: var(--dial-size);
+    padding-bottom: 28px;
+  }
+
+  .slider-wrap {
+    position: relative;
+    left: auto;
+    top: auto;
+    grid-area: slider;
+    width: var(--slider-w);
+    padding-bottom: 24px;
+  }
+
+  .slider-ticks {
+    top: calc(var(--slider-h) * 0.244);
+    height: calc(var(--slider-h) * 0.64);
+    gap: calc(var(--slider-h) * 0.107);
+  }
+
+  .slider-handle {
+    width: calc(var(--slider-w) - 4px);
+    height: var(--btn-square);
+  }
+
+  .neo-btn--large svg {
+    width: clamp(36px, 28vw, 53px);
+    height: clamp(36px, 28vw, 53px);
+  }
+
+  .dial__value {
+    font-size: clamp(16px, 5vw, 20px);
+    line-height: 1.35;
+  }
+}
+
+/* Very short viewports — fall back to scale so landscape phones still fit */
+@media (max-width: 768px) and (max-height: 520px) {
+  .panel {
+    overflow: hidden;
+    align-items: center;
+  }
+
+  .panel__inner {
+    --btn-square: 68px;
+    --btn-large: 182px;
+    --btn-circle: 56px;
+    --dial-size: 227px;
+    --slider-w: 68px;
+    --slider-h: 422px;
+
+    display: block;
+    width: var(--panel-w);
+    height: var(--panel-h);
+    transform: scale(
+      min(
+        calc((100vw - 24px) / var(--panel-w)),
+        calc((100dvh - 24px) / var(--panel-h))
+      )
+    );
+    transform-origin: center center;
+  }
+
+  .button-grid,
+  .neo-btn--large,
+  .mode-buttons,
+  .dial-wrap,
+  .slider-wrap {
+    position: absolute;
+  }
+
+  .neo-btn--large {
+    left: 137px;
+    top: 336px;
+  }
+
+  .button-grid {
+    left: 137px;
+    top: 93px;
+    width: 182px;
+    height: 206px;
+  }
+
+  .button-grid .neo-btn:nth-child(1) { left: 0; top: 0; }
+  .button-grid .neo-btn:nth-child(2) { left: 114px; top: 0; }
+  .button-grid .neo-btn:nth-child(3) { left: 0; top: 138px; }
+  .button-grid .neo-btn:nth-child(4) { left: 114px; top: 138px; }
+
+  .mode-buttons {
+    left: 456px;
+    top: 144px;
+    width: 288px;
+    height: 56px;
+    gap: 60px;
+  }
+
+  .dial-wrap {
+    left: 485px;
+    top: 287px;
+    width: 227px;
+    padding-bottom: 0;
+  }
+
+  .slider-wrap {
+    left: 875px;
+    top: 77px;
+    width: 68px;
+    padding-bottom: 0;
+  }
+
+  .slider-ticks {
+    top: 103px;
+    height: 270px;
+    gap: 45px;
+  }
+
+  .slider-handle {
+    width: 64px;
+    height: 68px;
+  }
+}

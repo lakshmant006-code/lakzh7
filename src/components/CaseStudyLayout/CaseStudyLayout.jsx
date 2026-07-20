@@ -5,7 +5,6 @@ import { CASE_STUDY_SCROLL_OFFSET } from "../../constants/caseStudyScroll";
 import { useLenisScroll } from "../../hooks/useLenisScroll";
 import { usePinnedSpyNav } from "../../hooks/usePinnedSpyNav";
 import { useScrollSpy } from "../../hooks/useScrollSpy";
-import BlockPartySpyNavSprite from "../../pages/BlockPartyCaseStudy/BlockPartySpyNavSprite";
 import "./CaseStudyLayout.css";
 
 function CaseStudySpyNav({
@@ -24,8 +23,6 @@ function CaseStudySpyNav({
   const activeId = useScrollSpy(sectionIds);
   const { lenis, scrollToTop, scrollToElement } = useLenisScroll();
   const { pinStyle, atBottom } = usePinnedSpyNav(slotRef, mainRef, navRef);
-  const isBlockParty = projectId === "blockparty";
-
   useEffect(() => {
     return () => window.clearTimeout(settleTimerRef.current);
   }, []);
@@ -76,7 +73,7 @@ function CaseStudySpyNav({
         ref={navRef}
         className={`case-study-spy-nav${pinStyle ? " is-pinned" : ""}${
           atBottom ? " is-at-bottom" : ""
-        }${isBlockParty ? " case-study-spy-nav--blockparty" : ""}`}
+        }`}
         role="navigation"
         aria-label="Case study sections"
         style={{
@@ -85,14 +82,6 @@ function CaseStudySpyNav({
         }}
       >
         <div ref={trackRef} className="case-study-spy-nav__track">
-          {isBlockParty ? (
-            <BlockPartySpyNavSprite
-              activeId={activeId}
-              sectionIds={sectionIds}
-              linkRefs={linkRefs}
-              trackRef={trackRef}
-            />
-          ) : null}
           <ul ref={listRef} className="case-study-spy-nav__list">
             {sections.map((section, index) => (
               <li
@@ -111,17 +100,10 @@ function CaseStudySpyNav({
                   onClick={() => handleClick(section.id, index)}
                   aria-current={activeId === section.id ? "true" : undefined}
                 >
-                  {isBlockParty ? (
-                    <span
-                      className="blockparty-spy-nav__sprite-slot"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <span
-                      className="case-study-spy-nav__dot"
-                      aria-hidden="true"
-                    />
-                  )}
+                  <span
+                    className="case-study-spy-nav__dot"
+                    aria-hidden="true"
+                  />
                   <span className="case-study-spy-nav__label">
                     {section.label}
                   </span>

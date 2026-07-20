@@ -9,11 +9,10 @@ export const playProjects = [
     theme: "white",
     tags: ["Web Design", "Motion Graphics"],
     category: "digital",
-    staticThumbnail: true,
     media: {
       video: "/projects/concentrix/concentrix.mp4",
       poster: "/projects/concentrix/poster.jpg",
-      thumbnail: "/projects/concentrix/poster.jpg",
+      staticThumbnail: true,
     },
     actions: [
       {
@@ -30,14 +29,32 @@ export const playProjects = [
     tags: ["Interaction Design", "Neumorphism"],
     category: "digital",
     media: {
-      video: "/projects/morph-idea/morph-idea.mp4",
-      poster: "/projects/morph-idea/poster.jpg",
+      video: "/projects/morph-idea/morph%20idea.mp4",
+      eager: true,
     },
     actions: [
       {
         type: "live",
         tooltip: "View App",
         url: "https://morph-idea.vercel.app/",
+      },
+    ],
+  },
+  {
+    id: "ascii-studio",
+    size: "short",
+    theme: "white",
+    tags: ["ASCII Art", "Creative Coding"],
+    category: "digital",
+    media: {
+      video: "/projects/ascii-studio/ascii%20art.mp4",
+      poster: "/projects/ascii-studio/poster.jpg",
+    },
+    actions: [
+      {
+        type: "live",
+        tooltip: "View App",
+        url: "https://ascii-studio-one.vercel.app/",
       },
     ],
   },

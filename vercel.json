@@ -3,20 +3,5 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }],
-  "functions": {
-    "api/generate-flower.js": {
-      "maxDuration": 60,
-      "memory": 1024,
-      "includeFiles": "server/assets/**"
-    },
-    "api/flowers.js": {
-      "maxDuration": 30,
-      "memory": 1024
-    },
-    "api/garden-stats.js": {
-      "maxDuration": 10,
-      "memory": 256
-    }
-  }
+  "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }]
 }

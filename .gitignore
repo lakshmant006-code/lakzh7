@@ -40,6 +40,9 @@ src/components/GridBackground.jsx
 # Large media files (over GitHub's 100 MB limit)
 public/projects/concentrix/concentrix.mp4
 
+# Particle sculpture source project (built assets live in public/models/)
+public/david-particle-sculpture/
+
 
 
 

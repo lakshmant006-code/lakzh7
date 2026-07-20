@@ -472,6 +472,16 @@
   }
 }
 
+.about-sandbox-bio {
+  font-family: "Satoshi", sans-serif;
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  line-height: 1.7;
+  color: #374151;
+  max-width: 560px;
+  margin: 0 0 2.5rem 0;
+  font-weight: 300;
+}
+
 /* ----- What I enjoy ----- */
 .about-sandbox-enjoy-section {
   padding: 0 1.5rem 5rem; /* top 0 — gap above = where-section padding-bottom (5rem); bottom 5rem = gap before Footer */

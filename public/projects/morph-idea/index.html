@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neumorphic Control Panel</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@500,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="brightness-overlay" id="brightnessOverlay" aria-hidden="true"></div>
+  <main class="panel" id="panel" aria-label="Control panel">
+    <div class="panel__inner">
+    <!-- Left grid — Frame 184 -->
+    <div class="button-grid">
+      <button class="neo-btn neo-btn--square" type="button" data-control="home" aria-label="Home">
+        <svg class="icon icon--home" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M9.02 2.84 3.63 7.04C2.73 7.74 2 9.24 2 10.36V17.77C2 20.09 3.89 21.99 6.21 21.99H17.79C20.11 21.99 22 20.09 22 17.78V10.5C22 9.29 21.29 7.79 20.32 7.05L14.02 2.72C12.62 1.74 10.37 1.79 9.02 2.84Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 17.99V14.99" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="neo-btn neo-btn--square" type="button" data-control="cloud" aria-label="Cloud notification">
+        <svg class="icon icon--cloud" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M18.32 8.77C18.11 5.55 15.53 3 12.28 3C9.25 3 6.84 5.24 6.44 8.18C4.47 8.84 3 10.72 3 12.95C3 15.63 5.17 17.8 7.85 17.8H18.15C20.23 17.8 22 16.03 22 13.95C22 12.04 20.49 10.43 18.62 10.11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M7.5 19.5L8.5 18.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 6.5C16.55 6.5 17 6.05 17 5.5C17 4.95 16.55 4.5 16 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="neo-btn neo-btn--square" type="button" data-control="wifi" aria-label="Wi-Fi">
+        <svg class="icon icon--wifi" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M2 8.82C8.4 3.38 15.6 3.38 22 8.82" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5.64 12.25C9.58 9.03 14.42 9.03 18.36 12.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M8.56 15.67C10.38 14.17 13.62 14.17 15.44 15.67" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M11.99 19.01H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="neo-btn neo-btn--square" type="button" data-control="flash" aria-label="Flash">
+        <svg class="icon icon--flash" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M13.02 2.22L4.66 12.87C4.06 13.66 4.57 14.84 5.54 14.84H10.83L10.42 21.51C10.37 22.31 11.28 22.81 11.88 22.23L20.24 11.58C20.84 10.79 20.33 9.61 19.36 9.61H14.07L14.48 2.94C14.53 2.14 13.62 1.64 13.02 2.22Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Large reset — Frame 185 -->
+    <button class="neo-btn neo-btn--large" type="button" data-control="reset" aria-label="Reset">
+      <svg class="icon icon--reset" viewBox="0 0 53 53" fill="none" aria-hidden="true">
+        <path d="M42.75 26.5C42.75 35.5 35.5 42.75 26.5 42.75C17.5 42.75 10.25 35.5 10.25 26.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10.25 16.25V26.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10.25 16.25H20.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <!-- Mode buttons — Frame 189 -->
+    <div class="mode-buttons">
+      <button class="neo-btn neo-btn--circle" type="button" data-mode="ghost" aria-label="Ghost mode">
+        <svg class="icon icon--ghost" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2C8.13 2 5 5.13 5 9V22L8.5 19.5L12 22L15.5 19.5L19 22V9C19 5.13 15.87 2 12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9.5 14H14.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="9.5" cy="10" r="1" fill="currentColor"/>
+          <circle cx="14.5" cy="10" r="1" fill="currentColor"/>
+        </svg>
+      </button>
+      <button class="neo-btn neo-btn--circle" type="button" data-mode="glass" aria-label="Glass mode">
+        <svg class="icon icon--glass" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M2 6.5H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 6.5H22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 13.11H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M14 13.11H22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 17.5H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button class="neo-btn neo-btn--circle" type="button" data-mode="coffee" aria-label="Coffee mode">
+        <svg class="icon icon--coffee" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6.5 6.5H16.5V16.5C16.5 18.71 14.71 20.5 12.5 20.5H10.5C8.29 20.5 6.5 18.71 6.5 16.5V6.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M6.5 2.25H8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10.5 2.25H12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M14.5 2.25H16.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M17.79 8.95C19.05 9.84 20 11.32 20 13C20 15.76 17.76 18 15 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M6.5 12H16.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Shadow dial — Ellipse 11 -->
+    <div class="dial-wrap">
+      <div class="dial" id="shadowDial" role="slider" aria-label="Shadow control" aria-valuemin="0" aria-valuemax="359" aria-valuenow="0" tabindex="0">
+        <div class="dial__indicator" id="dialIndicator"></div>
+        <span class="dial__value" id="shadowValue">0</span>
+      </div>
+      <span class="label label--shadow">SHADOW CONTROL</span>
+    </div>
+
+    <!-- Brightness slider — Frame 183 -->
+    <div class="slider-wrap">
+      <div class="slider-track" id="brightnessTrack">
+        <div class="slider-ticks" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <button class="slider-handle" id="brightnessHandle" type="button" aria-label="Brightness" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+      <span class="label label--brightness">BRIGHTNESS</span>
+    </div>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

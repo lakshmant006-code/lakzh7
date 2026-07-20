@@ -27,6 +27,33 @@
   cursor: pointer;
 }
 
+.mobile-particles-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-spiral-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: grayscale(1) opacity(0.75);
+}
+
+.nav-spiral-icon:hover {
+  transform: rotate(360deg);
+  filter: grayscale(0) opacity(1);
+}
+
+@media (min-width: 768px) {
+  .nav-spiral-icon {
+    width: 32px;
+    height: 32px;
+  }
+}
+
 .logo-image {
   height: 36px;
   width: 36px;
@@ -154,42 +181,6 @@
   z-index: 3;
   display: inline-block;
   will-change: transform, opacity;
-}
-
-.pill-flower {
-  padding: 0 28px;
-}
-
-.pill-flower .label-stack {
-  display: inline-flex;
-  align-items: center;
-  height: 24px;
-}
-
-.pill-flower .pill-label {
-  display: inline-flex;
-  align-items: center;
-  height: 24px;
-  line-height: 0;
-}
-
-.pill-flower-icon {
-  display: block;
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
-  transform-origin: center center;
-}
-
-.mobile-menu-flower-icon {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
-  vertical-align: middle;
-  filter: invert(1);
-  transform-origin: center center;
-  transition: transform 0.2s ease;
 }
 
 /* ============================================
@@ -431,6 +422,3 @@ body.mobile-menu-open {
   opacity: 1;
 }
 
-.mobile-menu-popover .mobile-menu-link:hover .mobile-menu-flower-icon {
-  transform: rotate(180deg);
-}

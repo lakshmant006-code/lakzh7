@@ -110,7 +110,6 @@ const NaturalPlayBentoItem = React.forwardRef(function NaturalPlayBentoItem(
     actions,
     media,
     caseStudyRoute,
-    staticThumbnail,
   } = project;
   const [isMediaLoaded, setIsMediaLoaded] = useState(false);
   const [iframeReady, setIframeReady] = useState(false);
@@ -122,8 +121,9 @@ const NaturalPlayBentoItem = React.forwardRef(function NaturalPlayBentoItem(
   const isBlack = theme === "black";
   // staticThumbnail forces the always-poster treatment for this card
   // regardless of viewport, overriding the grid's posterOnly breakpoint.
-  const effectivePosterOnly = posterOnly || !!staticThumbnail;
+  const effectivePosterOnly = posterOnly || !!media?.staticThumbnail;
   const hasVideo = media?.video;
+  const isEager = !!media?.eager;
   const hasPoster = hasVideo && media?.poster;
   const hasImage = media?.image || media?.thumbnail;
   const hasIframe = media?.iframe;
@@ -176,6 +176,12 @@ const NaturalPlayBentoItem = React.forwardRef(function NaturalPlayBentoItem(
 
   useEffect(() => {
     if (effectivePosterOnly || !showVideoBlock || !media?.video) return;
+    // Eager videos: src is already set, just play immediately
+    if (isEager) {
+      const video = videoRef.current;
+      if (video) video.play().catch(() => {});
+      return;
+    }
     const container = videoContainerRef.current;
     if (!container) return;
 
@@ -205,7 +211,7 @@ const NaturalPlayBentoItem = React.forwardRef(function NaturalPlayBentoItem(
       observer.disconnect();
       videoRef.current?.pause();
     };
-  }, [effectivePosterOnly, showVideoBlock, media?.video]);
+  }, [effectivePosterOnly, showVideoBlock, media?.video, isEager]);
 
   useEffect(() => {
     if (!hasIframe) return;
@@ -282,14 +288,16 @@ const NaturalPlayBentoItem = React.forwardRef(function NaturalPlayBentoItem(
             <div className="natural-play-bento-media-stack">
               <video
                 ref={videoRef}
-                data-src={media.video}
+                {...(isEager
+                  ? { src: media.video, preload: "auto", autoPlay: true }
+                  : { "data-src": media.video, preload: "none" })}
                 poster={hasPoster ? media.poster : undefined}
                 loop
                 muted
                 playsInline
-                preload="none"
                 onCanPlay={setMediaLoadedDeferred}
                 onLoadedData={setMediaLoadedDeferred}
+                onError={setMediaLoadedDeferred}
                 className="natural-play-bento-media-video"
               />
             </div>

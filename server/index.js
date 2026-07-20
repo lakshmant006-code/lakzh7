@@ -1,24 +1,22 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import express from "express";
-import { createFlowersMiddleware } from "./flowers-api.js";
-import { createGardenStatsMiddleware } from "./garden-stats-api.js";
-import { createGeminiFlowerMiddleware } from "./gemini-flower.js";
+import uploadPortraitHandler from "../api/upload-portrait.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, "..", "dist");
-const env = process.env;
 
 const app = express();
 
-app.use("/api/generate-flower", createGeminiFlowerMiddleware(env));
-app.use("/api/flowers", createFlowersMiddleware(env));
-app.use("/api/garden-stats", createGardenStatsMiddleware(env));
+app.use(express.json({ limit: "10mb" }));
+app.post("/api/upload-portrait", uploadPortraitHandler);
 
 app.use(express.static(distDir));
 
 // SPA fallback — mirrors the rewrite in vercel.json for client-side routing.
-app.get("*", (req, res) => {
+// A path-less middleware (rather than app.get("*", ...)) avoids Express 5's
+// path-to-regexp requiring named wildcards (e.g. "/*splat").
+app.use((req, res) => {
   res.sendFile(path.join(distDir, "index.html"));
 });
 

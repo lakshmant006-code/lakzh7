@@ -489,28 +489,12 @@ const HikuCaseStudy = () => {
               visual design began.
             </p>
             <div className="hiku-wireframe-container">
-              <div className="hiku-app-screens-wrapper">
-                <iframe
-                  src="/work/Hiku/wireframe-lofi-prototypes.html"
-                  title="Lo-Fi Wireframes – Hiking App"
-                  className="hiku-wireframe-frame"
-                  style={{ height: "760px" }}
-                  scrolling="no"
-                />
-                <div
-                  className="hiku-app-screens-overlay"
-                  onClick={(e) => {
-                    const frame = e.currentTarget.previousElementSibling;
-                    if (!frame || !frame.contentDocument) return;
-                    const rect = frame.getBoundingClientRect();
-                    const el = frame.contentDocument.elementFromPoint(
-                      e.clientX - rect.left,
-                      e.clientY - rect.top
-                    );
-                    if (el) el.click();
-                  }}
-                />
-              </div>
+              <iframe
+                src="/work/Hiku/wireframe-lofi-prototypes.html"
+                title="Lo-Fi Wireframes – Hiking App"
+                className="hiku-wireframe-frame"
+                scrolling="no"
+              />
             </div>
           </div>
 
@@ -529,7 +513,6 @@ const HikuCaseStudy = () => {
                   src="/work/Hiku/Hiku%20Design%20System/ui_kits/hiku-app/index.html"
                   title="Hiku Mobile App Screens"
                   className="hiku-wireframe-frame hiku-app-screens-frame"
-                  style={{ height: "900px" }}
                   scrolling="no"
                 />
                 <div
@@ -603,11 +586,11 @@ const HikuCaseStudy = () => {
                   />
                 </div>
                 <h4 className="hiku-see-next-card-title">
-                  Rebuilding QuizAI&apos;s Approval Flow
+                  QuizAI: AI-Powered Notetaking App
                 </h4>
                 <p className="hiku-see-next-card-description">
-                  Redesigning approval workflows with smarter logic and clearer
-                  audit trails for improved enterprise usability.
+                  Helping students turn uploaded notes into personalized
+                  quizzes and summaries through a centralized study dashboard.
                 </p>
               </div>
             </Link>

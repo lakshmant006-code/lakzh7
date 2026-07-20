@@ -8,11 +8,5 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 20.11.1
-      - key: SUPABASE_URL
-        sync: false
-      - key: SUPABASE_SERVICE_ROLE_KEY
-        sync: false
-      - key: GEMINI_API_KEY
-        sync: false
-      - key: GEMINI_IMAGE_MODEL
+      - key: BLOB_READ_WRITE_TOKEN
         sync: false
