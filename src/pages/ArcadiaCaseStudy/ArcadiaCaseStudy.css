@@ -259,7 +259,7 @@
 
 .arcadia-hero-before .arcadia-hero-image {
   object-fit: cover;
-  object-position: center -100px;
+  object-position: top;
   clip-path: inset(100% 0 0 0);
   animation: revealFromBottom 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }

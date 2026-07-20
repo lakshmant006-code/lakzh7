@@ -14,7 +14,7 @@ const workProjects = [
     tags: ["UX Research", "Workflow Design"],
     summary:
       "Helping Revolution Steel formulate a user workflow so work gets distributed clearly and tasks are streamlined.",
-    image: "/work/arcadia/placeholder-thumbnail.svg",
+    video: "/work/arcadia/arcadia custom.mp4",
     category: "case-study",
   },
   {
