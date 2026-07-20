@@ -154,7 +154,12 @@ const ArcadiaCaseStudy = () => {
         {/* Hero Section */}
         <section className="arcadia-hero-section">
           <div className="arcadia-hero-image-container arcadia-hero-before">
-            <ArcadiaPlaceholder label="Hero image" aspectRatio="1360 / 450" />
+            <img
+              src="/work/arcadia/Arcadia-Hero.png"
+              alt="Arcadia Custom Builders"
+              className="arcadia-hero-image"
+              style={{ aspectRatio: "1523 / 617" }}
+            />
           </div>
 
           <div className="arcadia-hero-content">
