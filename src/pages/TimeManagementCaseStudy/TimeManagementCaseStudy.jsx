@@ -837,7 +837,7 @@ const TimeManagementCaseStudy = () => {
                     />
                   </div>
                   <h4 className="time-management-see-next-card-title">
-                    QuizAI: AI-Powered Notetaking App
+                    QuizAI: AI Powered Notetaking Application
                   </h4>
                   <p className="time-management-see-next-card-description">
                     Helping students turn uploaded notes into personalized

@@ -1041,7 +1041,7 @@ const WholeFoodsCaseStudy = () => {
                   />
                 </div>
                 <h4 className="wholefoods-see-next-card-title">
-                  QuizAI: AI-Powered Notetaking App
+                  QuizAI: AI Powered Notetaking Application
                 </h4>
                 <p className="wholefoods-see-next-card-description">
                   Helping students turn uploaded notes into personalized
