@@ -1,0 +1,2000 @@
+.arcadia-case-study {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  color: #0f0f0f;
+}
+
+/* Hero Section */
+.arcadia-hero-section {
+  width: 100%;
+  padding-top: 6rem;
+  padding-bottom: 1rem;
+  background-color: #f5f5f5;
+}
+
+/* Hero Image Containers */
+.arcadia-hero-image-container {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 1.5rem; /* px-6 */
+}
+
+.arcadia-hero-before {
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.arcadia-hero-after {
+  margin-top: 2rem;
+  opacity: 0;
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) 2.2s forwards;
+}
+
+.arcadia-hero-content {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  padding: 0 1.5rem; /* px-6 */
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) 1.2s forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Left Column */
+.arcadia-hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.arcadia-hero-title {
+  font-family: "Crimson Pro", serif;
+  font-size: 3rem;
+  font-weight: 500;
+  letter-spacing: -0.06em;
+  color: #0f0f0f;
+  margin: 0;
+  line-height: 1;
+}
+
+.arcadia-hero-category {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #666;
+  margin: -1.25rem 0 0;
+}
+
+.arcadia-hero-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.arcadia-hero-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.arcadia-hero-detail-label {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+}
+
+.arcadia-hero-detail-value {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #0f0f0f;
+}
+
+/* Right Column */
+.arcadia-hero-right {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.arcadia-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.arcadia-hero-tag {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  background-color: rgba(15, 15, 15, 0.1);
+  color: #0f0f0f;
+  border-radius: 9999px;
+  font-weight: 400;
+  border: 1px solid rgba(15, 15, 15, 0.15);
+}
+
+.arcadia-hero-subtitle {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+}
+
+.arcadia-skip-to-solution-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.375rem 0.4rem;
+  background-color: transparent;
+  background-image: repeating-linear-gradient(
+      0deg,
+      rgba(25, 0, 255, 0.05) 0px,
+      transparent 1px,
+      transparent 2px,
+      rgba(25, 0, 255, 0.05) 3px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(25, 0, 255, 0.05) 0px,
+      transparent 1px,
+      transparent 2px,
+      rgba(25, 0, 255, 0.05) 3px
+    );
+  background-size: 4px 4px;
+  color: #3B5A73;
+  border: 1px solid rgba(25, 0, 255, 0.2);
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: "Satoshi", sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.arcadia-skip-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 50%;
+  background-color: transparent;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.arcadia-skip-arrow {
+  width: 20px;
+  height: 20px;
+  color: #ffffff;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 3;
+  display: block;
+  margin: 0 auto;
+}
+
+.arcadia-skip-text {
+  color: #3B5A73;
+  position: relative;
+  z-index: 2;
+  transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover fill animation - starts from top-left corner as circle, expands to fill */
+.arcadia-skip-to-solution-btn::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  width: 44px;
+  height: 44px;
+  background-color: #3B5A73;
+  border-radius: 50%;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+.arcadia-skip-to-solution-btn:hover {
+  background-image: none;
+}
+
+.arcadia-skip-to-solution-btn:hover::before {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+}
+
+.arcadia-skip-to-solution-btn:hover .arcadia-skip-text {
+  color: #ffffff;
+}
+
+.arcadia-skip-to-solution-btn:active {
+  transform: scale(0.98);
+}
+
+.arcadia-hero-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.arcadia-hero-before .arcadia-hero-image {
+  object-fit: cover;
+  object-position: center -100px;
+  clip-path: inset(100% 0 0 0);
+  animation: revealFromBottom 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes revealFromBottom {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.arcadia-hero-after .arcadia-hero-image {
+  object-fit: cover;
+  object-position: top;
+}
+
+/* Context Section */
+.arcadia-context-section {
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #f5f5f5;
+}
+
+.arcadia-context-content {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem; /* px-6 */
+}
+
+.arcadia-context-top {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  margin-bottom: 3.5rem;
+}
+
+.arcadia-context-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-context-title {
+  font-family: "Crimson Pro", serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #0f0f0f;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.05em;
+}
+
+.arcadia-context-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+}
+
+.arcadia-context-statement {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 0;
+}
+
+.arcadia-context-statement-title {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 2rem 0 0 0;
+  text-align: left;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-context-statement-question-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  width: 100%;
+  text-align: center;
+}
+
+.arcadia-context-statement-answer {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #666;
+  margin: 0;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.arcadia-context-statement-bold {
+  font-weight: 700;
+  margin-top: 1rem;
+}
+
+.arcadia-context-statement-medium-bold {
+  font-weight: 600;
+}
+
+.arcadia-requirements-label {
+  display: inline-block;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.8rem;
+  color: #3B5A73;
+  margin-bottom: 0.5rem;
+}
+
+.arcadia-requirements-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 720px;
+  margin: 0 auto;
+  border-radius: 8px;
+}
+
+.arcadia-painpoints-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.625rem;
+  margin: -0.5rem auto 0;
+  max-width: 640px;
+}
+
+.arcadia-painpoint-tag {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.375rem 0.875rem;
+  border-radius: 9999px;
+  background-color: rgba(25, 0, 255, 0.1);
+  color: #3B5A73;
+  border: 1px solid rgba(25, 0, 255, 0.25);
+}
+
+.arcadia-context-image-container {
+  width: 100%;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-context-statement .arcadia-context-image-container:first-of-type {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.arcadia-context-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.arcadia-context-statement
+  .arcadia-context-image-container:last-of-type
+  .arcadia-context-image {
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.arcadia-context-image-caption {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 1rem 0 0 0;
+  font-weight: 300;
+  text-align: center;
+}
+
+.arcadia-userflow-image-container {
+  width: 100%;
+  margin-bottom: 3.5rem;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-userflow-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.arcadia-context-impact {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 3.5rem;
+}
+
+.arcadia-impact-title {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 2rem 0 0 0;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-impact-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.arcadia-impact-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-impact-value {
+  font-family: "Crimson Pro", serif;
+  font-size: 3rem;
+  font-weight: 600;
+  color: #3B5A73;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.arcadia-impact-label {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #0f0f0f;
+  font-weight: 300;
+}
+
+.arcadia-accent-text {
+  color: #3B5A73;
+  font-style: italic;
+  margin: 0 0.05em;
+}
+
+/* Research Section */
+.arcadia-research-section {
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #f5f5f5;
+}
+
+.arcadia-research-content {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem; /* px-6 */
+}
+
+.arcadia-research-title {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 2rem 0 2rem 0;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-ideation-subsection {
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.arcadia-ideation-subheading {
+  font-family: "Crimson Pro", serif;
+  font-size: 2.25rem;
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  color: #0f0f0f;
+  margin: 0 0 0.875rem;
+}
+
+.arcadia-ideation-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  max-width: 720px;
+  margin: 0 auto 1.25rem;
+}
+
+.arcadia-swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.arcadia-swatch {
+  width: 130px;
+}
+
+.arcadia-swatch-block {
+  height: 80px;
+  border-radius: 8px;
+}
+
+.arcadia-swatch-block-bordered {
+  border: 1px solid rgba(15, 15, 15, 0.15);
+}
+
+.arcadia-swatch-hex {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #0f0f0f;
+  margin-top: 0.625rem;
+}
+
+.arcadia-swatch-label {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin-top: 0.125rem;
+}
+
+.arcadia-type-sample-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 480px;
+  margin: 1.25rem auto 0;
+  border-radius: 8px;
+}
+
+.arcadia-research-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+
+.arcadia-research-benchmarking {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.arcadia-research-benchmarking-text-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-research-benchmarking-title {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 500;
+}
+
+.arcadia-research-benchmarking-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+}
+
+.arcadia-research-overview-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+  text-align: center;
+  max-width: 36rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.arcadia-research-image-container {
+  width: 100%;
+  margin-top: 0.5rem;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-research-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.arcadia-research-benchmarking .arcadia-research-image {
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.arcadia-research-finding {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 4rem;
+}
+
+.arcadia-research-finding:last-child {
+  margin-bottom: 0;
+}
+
+.arcadia-research-finding-title {
+  font-size: 0.875rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 2rem 0 1rem 0;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* Solution Section */
+.arcadia-solution-section {
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #f5f5f5;
+  overflow-y: hidden;
+}
+
+.arcadia-solution-content {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem; /* px-6 */
+}
+
+.arcadia-solution-title {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 2rem 0 2rem 0;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-solution-visual-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+
+.arcadia-solution-visual-identity-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: left;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-solution-visual-identity-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+}
+
+.arcadia-solution-visual-identity-medium-bold {
+  font-weight: 600;
+}
+
+.arcadia-solution-subsection {
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.arcadia-solution-subheading {
+  font-family: "Crimson Pro", serif;
+  font-size: 2.25rem;
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  color: #0f0f0f;
+  margin: 0 0 1.25rem;
+}
+
+.arcadia-wireframe-container {
+  width: 100%;
+}
+
+.arcadia-wireframe-frame {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  border: none;
+}
+
+.arcadia-hifi-gallery {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.arcadia-hifi-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.arcadia-hifi-caption {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 1.5rem 0 0;
+  font-weight: 300;
+  text-align: left;
+}
+
+.arcadia-solution-visual-identity-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.arcadia-solution-image-container {
+  width: 100%;
+  overflow: hidden;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-solution-image-left {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: stretch;
+}
+
+.arcadia-solution-image-left .arcadia-solution-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.arcadia-solution-visual-identity-right-column {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.arcadia-solution-image-right-top {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.arcadia-solution-image-right-bottom {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.arcadia-solution-image-right-top .arcadia-solution-image,
+.arcadia-solution-image-right-bottom .arcadia-solution-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.arcadia-solution-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.arcadia-solution-key-features {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 4rem;
+}
+
+.arcadia-solution-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 4rem;
+}
+
+.arcadia-solution-item:last-child {
+  margin-bottom: 0;
+}
+
+.arcadia-solution-item-title {
+  font-size: 0.875rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 2rem 0 1rem 0;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-solution-media {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3.5rem;
+  margin-top: 1rem;
+}
+
+.arcadia-solution-video-container {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-solution-video-container::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle,
+    rgba(118, 137, 130, 0.8) 0%,
+    rgba(118, 137, 130, 0.6) 40%,
+    transparent 60%
+  );
+  border-radius: 50%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.arcadia-solution-video {
+  width: 100%;
+  height: auto;
+  max-height: 660px;
+  display: block;
+  border-radius: 8px;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+}
+
+.arcadia-solution-caption {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-solution-caption-bold {
+  font-weight: 700;
+}
+
+.arcadia-solution-caption-semi-bold {
+  font-weight: 600;
+}
+
+/* Validation Study Section */
+.arcadia-validation-section {
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #f5f5f5;
+}
+
+.arcadia-validation-content {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem; /* px-6 */
+}
+
+.arcadia-validation-title {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 2rem 0 2rem 0;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-validation-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-validation-intro-title {
+  font-family: "Crimson Pro", serif;
+  font-size: 2.5rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #0f0f0f;
+  margin: 0;
+  letter-spacing: -0.05em;
+  text-align: left;
+  width: 100%;
+}
+
+.arcadia-validation-intro-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+  text-align: center;
+  max-width: 36rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.arcadia-validation-image-container {
+  width: 100%;
+  margin-bottom: 2rem;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-validation-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.arcadia-validation-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+
+.arcadia-validation-methods-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.arcadia-validation-methods-label {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin-top: 2rem;
+}
+
+@media (min-width: 640px) {
+  .arcadia-validation-methods-label {
+    font-size: 0.875rem;
+  }
+}
+
+.arcadia-validation-methods-value {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #0f0f0f;
+}
+
+.arcadia-validation-results {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.arcadia-validation-results-title {
+  font-family: "Crimson Pro", serif;
+  font-size: 2.5rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #0f0f0f;
+  margin: 0;
+  letter-spacing: -0.05em;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-validation-results-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.arcadia-validation-results-image-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.arcadia-validation-results-image {
+  width: 60%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.arcadia-validation-results-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-validation-results-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+}
+
+.arcadia-validation-results-medium-bold {
+  font-weight: 600;
+}
+
+/* Key Takeaways Section */
+.arcadia-takeaways-section {
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #f5f5f5;
+}
+
+.arcadia-takeaways-content {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem; /* px-6 */
+}
+
+.arcadia-takeaways-title {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 2rem 0 2rem 0;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-takeaways-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-takeaways-item:last-child {
+  margin-bottom: 0;
+}
+
+.arcadia-takeaways-title-text {
+  font-family: "Crimson Pro", serif;
+  font-size: 2.25rem;
+  font-weight: 600;
+  color: #0f0f0f;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.05em;
+}
+
+.arcadia-takeaways-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+}
+
+/* Next Steps Section */
+.arcadia-next-steps-section {
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: #f5f5f5;
+}
+
+.arcadia-next-steps-content {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem; /* px-6 */
+}
+
+.arcadia-next-steps-title {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 2rem 0 2rem 0;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-next-steps-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.arcadia-next-steps-item {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0 0 1rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+  font-weight: 300;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-next-steps-item::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #0f0f0f;
+}
+
+.arcadia-next-steps-item:last-child {
+  margin-bottom: 0;
+}
+
+/* See Next Section */
+.arcadia-see-next-section {
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 6rem;
+  background-color: #f5f5f5;
+}
+
+.arcadia-see-next-content {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem; /* px-6 */
+}
+
+.arcadia-see-next-title {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 2rem 0 2rem 0;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-see-next-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.arcadia-see-next-card-link {
+  display: contents;
+  text-decoration: none;
+  color: inherit;
+}
+
+.arcadia-see-next-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: 1px solid rgba(15, 15, 15, 0.2);
+  border-radius: 8px;
+  padding: 0;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  position: relative;
+  background-color: #f0f0f0;
+  /* z-index will be set dynamically by GSAP */
+}
+
+/* Ensure all child elements (images, titles, descriptions) respect parent z-index */
+/* Don't create new stacking contexts - children should be part of parent's stacking context */
+.arcadia-see-next-image-container,
+.arcadia-see-next-card-title,
+.arcadia-see-next-card-description {
+  position: relative;
+  /* No z-index - inherit from parent card */
+}
+
+.arcadia-see-next-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.arcadia-see-next-image-container {
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+}
+
+.arcadia-see-next-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.arcadia-see-next-card-title {
+  font-family: "Satoshi", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0f0f0f;
+  margin: 0;
+  line-height: 1.3;
+  letter-spacing: -0.05em;
+  padding: 0 1.5rem;
+}
+
+.arcadia-see-next-card-description {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  margin: 0;
+  font-weight: 300;
+  padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+/* Media Queries - 640px */
+@media (min-width: 640px) {
+  .arcadia-hero-section {
+    padding-top: 7rem;
+  }
+
+  .arcadia-hero-image-container {
+    padding: 0 2rem; /* sm:px-8 */
+  }
+
+  .arcadia-hero-content {
+    padding: 0 2rem; /* sm:px-8 */
+  }
+
+  .arcadia-context-content {
+    padding: 0 2rem; /* sm:px-8 */
+  }
+
+  .arcadia-solution-content {
+    padding: 0 2rem; /* sm:px-8 */
+  }
+}
+
+/* Media Queries - 768px */
+@media (min-width: 768px) {
+  .arcadia-hifi-gallery {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .arcadia-solution-visual-identity-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .arcadia-solution-image-left {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .arcadia-solution-visual-identity-right-column {
+    grid-column: 2;
+    grid-row: 1;
+    height: 100%;
+  }
+
+  .arcadia-hero-before {
+    margin-bottom: 2.5rem;
+  }
+
+  .arcadia-hero-after {
+    margin-top: 2.5rem;
+  }
+
+  .arcadia-hero-title {
+    font-size: 4rem;
+  }
+
+  .arcadia-hero-category {
+    font-size: 1rem;
+  }
+
+  .arcadia-hero-details {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .arcadia-hero-detail-label {
+    font-size: 0.875rem;
+  }
+
+  .arcadia-hero-detail-value {
+    font-size: 1.125rem;
+  }
+
+  .arcadia-hero-tag {
+    font-size: 0.875rem;
+  }
+
+  .arcadia-hero-subtitle {
+    font-size: 1.125rem;
+  }
+
+  .arcadia-skip-to-solution-btn {
+    font-size: 1rem;
+    padding: 0.4375rem 0.5rem;
+  }
+
+  .arcadia-skip-icon-container {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .arcadia-skip-to-solution-btn::before {
+    top: 2px;
+    bottom: 0px;
+    left: 2px;
+    width: 50px;
+    height: 50px;
+  }
+
+  .arcadia-context-section {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .arcadia-context-content {
+    padding: 0 2rem; /* sm:px-8 */
+  }
+
+  .arcadia-context-top {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .arcadia-context-title {
+    font-size: 2.5rem;
+  }
+
+  .arcadia-context-description {
+    font-size: 1.125rem;
+  }
+
+  .arcadia-context-statement {
+    gap: 1.25rem;
+    margin-bottom: 0;
+  }
+
+  .arcadia-context-statement-title {
+    font-size: 0.875rem;
+  }
+
+  .arcadia-context-statement-answer {
+    font-size: 1rem;
+  }
+
+  .arcadia-context-image-caption {
+    font-size: 1.125rem;
+  }
+
+  .arcadia-impact-title {
+    font-size: 0.875rem;
+  }
+
+  .arcadia-impact-metrics {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+  }
+
+  .arcadia-impact-value {
+    font-size: 3.5rem;
+  }
+
+  .arcadia-impact-label {
+    font-size: 1rem;
+  }
+
+  .arcadia-research-section {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .arcadia-research-content {
+    padding: 0 2rem; /* sm:px-8 */
+  }
+
+  .arcadia-research-title {
+    font-size: 0.875rem;
+  }
+
+  .arcadia-research-finding-title {
+    font-size: 0.875rem;
+  }
+
+  .arcadia-research-benchmarking {
+    flex-direction: row;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .arcadia-research-benchmarking .arcadia-research-image-container {
+    flex: 1.2;
+    margin-top: 0;
+  }
+
+  .arcadia-research-benchmarking .arcadia-research-image {
+    max-height: 500px;
+  }
+
+  .arcadia-research-benchmarking-text-container {
+    flex: 1;
+  }
+
+  .arcadia-research-benchmarking-title {
+    font-size: 1.25rem;
+  }
+
+  .arcadia-research-benchmarking-text {
+    font-size: 1.125rem;
+  }
+
+  .arcadia-research-overview-text {
+    font-size: 1.125rem;
+  }
+
+  .arcadia-takeaways-section {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .arcadia-takeaways-content {
+    padding: 0 2rem; /* sm:px-8 */
+  }
+
+  .arcadia-takeaways-title {
+    font-size: 0.875rem;
+  }
+
+  .arcadia-takeaways-title-text {
+    font-size: 3rem;
+  }
+
+  .arcadia-takeaways-description {
+    font-size: 1.125rem;
+  }
+
+  .arcadia-solution-section {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .arcadia-solution-content {
+    padding: 0 2rem; /* sm:px-8 */
+  }
+
+  .arcadia-solution-title {
+    font-size: 0.875rem;
+  }
+
+  .arcadia-solution-item-title {
+    font-size: 0.875rem;
+  }
+
+  .arcadia-solution-media {
+    grid-template-columns: 1.7fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .arcadia-solution-video {
+    max-height: 740px;
+  }
+
+  .arcadia-solution-caption {
+    font-size: 1.125rem;
+  }
+
+  .arcadia-takeaways-section {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .arcadia-takeaways-content {
+    padding: 0 2rem; /* sm:px-8 */
+  }
+
+  .arcadia-takeaways-title {
+    font-size: 0.875rem;
+  }
+
+  .arcadia-takeaways-title-text {
+    font-size: 3.25rem;
+  }
+
+  .arcadia-takeaways-description {
+    font-size: 1.125rem;
+  }
+
+  .arcadia-next-steps-section {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .arcadia-next-steps-content {
+    padding: 0 2rem; /* sm:px-8 */
+  }
+
+  .arcadia-next-steps-title {
+    font-size: 0.875rem;
+  }
+
+  .arcadia-next-steps-item {
+    font-size: 1.125rem;
+  }
+
+  .arcadia-see-next-section {
+    padding-top: 1.5rem;
+    padding-bottom: 8rem;
+  }
+
+  .arcadia-see-next-content {
+    padding: 0 2rem; /* sm:px-8 */
+  }
+
+  .arcadia-see-next-title {
+    font-size: 0.875rem;
+  }
+
+  .arcadia-see-next-card-title {
+    font-size: 1.75rem;
+  }
+
+  .arcadia-see-next-card-description {
+    font-size: 1.125rem;
+  }
+
+  .arcadia-validation-section {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .arcadia-validation-content {
+    padding: 0 2rem; /* sm:px-8 */
+  }
+
+  .arcadia-validation-title {
+    font-size: 0.875rem;
+  }
+
+  .arcadia-validation-intro-title {
+    font-size: 3rem;
+  }
+
+  .arcadia-validation-intro-text {
+    font-size: 1.125rem;
+  }
+
+  .arcadia-validation-methods-label {
+    font-size: 0.875rem;
+  }
+
+  .arcadia-validation-methods-value {
+    font-size: 1.125rem;
+  }
+
+  .arcadia-validation-results-title {
+    font-size: 3rem;
+  }
+
+  .arcadia-validation-results-content {
+    flex-direction: row;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .arcadia-validation-results-image-container {
+    flex: 0.6;
+  }
+
+  .arcadia-validation-results-text {
+    flex: 1.4;
+  }
+
+  .arcadia-validation-results-description {
+    font-size: 1.125rem;
+  }
+}
+
+/* Media Queries - Tablet and smaller (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .arcadia-hero-section,
+  .arcadia-context-section,
+  .arcadia-research-section,
+  .arcadia-solution-section,
+  .arcadia-validation-section,
+  .arcadia-next-steps-section,
+  .arcadia-takeaways-section,
+  .arcadia-see-next-section {
+    overflow-y: hidden;
+  }
+}
+
+/* Media Queries - 1024px */
+@media (min-width: 1024px) {
+  .arcadia-hero-image-container {
+    padding: 0 3rem; /* lg:px-12 */
+  }
+
+  .arcadia-hero-before {
+    margin-bottom: 3rem;
+  }
+
+  .arcadia-hero-after {
+    margin-top: 3rem;
+  }
+
+  .arcadia-hero-content {
+    padding: 0 3rem; /* lg:px-12 */
+    grid-template-columns: 1.3fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .arcadia-hero-title {
+    font-size: 5rem;
+  }
+
+  .arcadia-hero-subtitle {
+    font-size: 1.25rem;
+  }
+
+  .arcadia-context-section {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .arcadia-context-content {
+    padding: 0 3rem; /* lg:px-12 */
+  }
+
+  .arcadia-context-title {
+    font-size: 2.75rem;
+  }
+
+  .arcadia-context-description {
+    font-size: 1.25rem;
+  }
+
+  .arcadia-context-statement-answer {
+    font-size: 1.125rem;
+  }
+
+  .arcadia-context-image-caption {
+    font-size: 1.25rem;
+  }
+
+  .arcadia-impact-value {
+    font-size: 4rem;
+  }
+
+  .arcadia-research-section {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .arcadia-research-content {
+    padding: 0 3rem; /* lg:px-12 */
+  }
+
+  .arcadia-research-benchmarking-title {
+    font-size: 1.375rem;
+  }
+
+  .arcadia-research-benchmarking-text {
+    font-size: 1.25rem;
+  }
+
+  .arcadia-research-overview-text {
+    font-size: 1.25rem;
+  }
+
+  .arcadia-research-benchmarking .arcadia-research-image {
+    max-height: 600px;
+  }
+
+  .arcadia-solution-section {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .arcadia-solution-content {
+    padding: 0 3rem; /* lg:px-12 */
+  }
+
+  .arcadia-solution-visual-identity-text {
+    font-size: 1.25rem;
+  }
+
+  .arcadia-hifi-caption {
+    font-size: 1.25rem;
+  }
+
+  .arcadia-solution-caption {
+    font-size: 1.25rem;
+  }
+
+  .arcadia-validation-section {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .arcadia-validation-content {
+    padding: 0 3rem; /* lg:px-12 */
+  }
+
+  .arcadia-validation-intro-title {
+    font-size: 3.5rem;
+  }
+
+  .arcadia-validation-intro-text {
+    font-size: 1.25rem;
+  }
+
+  .arcadia-validation-results-title {
+    font-size: 3.5rem;
+  }
+
+  .arcadia-validation-results-description {
+    font-size: 1.25rem;
+  }
+
+  .arcadia-takeaways-section {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .arcadia-takeaways-content {
+    padding: 0 3rem; /* lg:px-12 */
+  }
+
+  .arcadia-takeaways-title-text {
+    font-size: 3.25rem;
+  }
+
+  .arcadia-takeaways-description {
+    font-size: 1.25rem;
+  }
+
+  .arcadia-next-steps-section {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .arcadia-next-steps-content {
+    padding: 0 3rem; /* lg:px-12 */
+  }
+
+  .arcadia-next-steps-item {
+    font-size: 1.25rem;
+  }
+
+  .arcadia-see-next-section {
+    padding-top: 2rem;
+    padding-bottom: 8rem;
+  }
+
+  .arcadia-see-next-content {
+    padding: 0 3rem; /* lg:px-12 */
+  }
+
+  .arcadia-see-next-grid {
+    gap: 3rem;
+  }
+
+  .arcadia-see-next-card-title {
+    font-size: 1.75rem;
+  }
+
+  .arcadia-see-next-card-description {
+    font-size: 1.125rem;
+  }
+}
+
+/* ============================================
+   Placeholder blocks (no media added yet)
+   ============================================ */
+.arcadia-placeholder-block {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px dashed #c4c4c4;
+  border-radius: 8px;
+  background-color: #ececec;
+}
+
+.arcadia-placeholder-label {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #8a8a8a;
+  text-align: center;
+  padding: 0 1.5rem;
+}
+
+.arcadia-research-image-container {
+  width: 100%;
+  margin: 2rem 0 3rem 0;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* ============================================
+   Impact Section (standalone, not embedded in Context)
+   ============================================ */
+.arcadia-impact-section {
+  width: 100%;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+  background-color: #f5f5f5;
+}
+
+.arcadia-impact-content {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem; /* px-6 */
+}
+
+.arcadia-impact-section-title {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 2rem 0 2rem 0;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-impact-metric--placeholder {
+  padding: 1.25rem;
+  border: 1.5px dashed #c4c4c4;
+  border-radius: 8px;
+}
+
+.arcadia-impact-value--placeholder {
+  color: #b0b0b0;
+}
+
+.arcadia-impact-summary {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #666;
+  font-weight: 300;
+  font-style: italic;
+  margin: 2rem 0 0 0;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+@media (min-width: 640px) {
+  .arcadia-impact-content {
+    padding: 0 2rem; /* sm:px-8 */
+  }
+}
+
+@media (min-width: 1024px) {
+  .arcadia-impact-content {
+    padding: 0 3rem; /* lg:px-12 */
+  }
+}

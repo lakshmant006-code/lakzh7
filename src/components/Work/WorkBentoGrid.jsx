@@ -56,6 +56,16 @@ const workProjects = [
     thumbnailImage: "/work/venmo/thumbnail-frame.jpg",
     category: "case-study",
   },
+  {
+    id: "arcadia-custom-builders",
+    title: "Arcadia Custom Builders",
+    role: "UX Researcher",
+    tags: ["UX Research", "Workflow Design"],
+    summary:
+      "Helping Revolution Steel formulate a user workflow so work gets distributed clearly and tasks are streamlined.",
+    image: "/work/arcadia/placeholder-thumbnail.svg",
+    category: "case-study",
+  },
 ];
 
 const routeMap = {
@@ -63,6 +73,7 @@ const routeMap = {
   "time-management-pain-detection": "/time-management",
   "quizai-approval-flow": "/quizai",
   "hiku-bio-smart-wearable": "/hiku",
+  "arcadia-custom-builders": "/arcadia-custom-builders",
 };
 
 /** Single work card (full layout on Work page; compact footer on Home) */
@@ -93,7 +104,8 @@ function WorkCard({
     project.id === "venmo-privacy-controls" ||
     project.id === "time-management-pain-detection" ||
     project.id === "quizai-approval-flow" ||
-    project.id === "hiku-bio-smart-wearable";
+    project.id === "hiku-bio-smart-wearable" ||
+    project.id === "arcadia-custom-builders";
 
   const videoSource = project.video;
   const useThumbnailImage = isMobile && project.thumbnailImage;

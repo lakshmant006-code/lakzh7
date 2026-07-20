@@ -14,6 +14,7 @@ import TimeManagementCaseStudy from "./pages/TimeManagementCaseStudy/TimeManagem
 import WholeFoodsCaseStudy from "./pages/WholeFoodsCaseStudy/WholeFoodsCaseStudy";
 import QuizAICaseStudy from "./pages/QuizAICaseStudy/QuizAICaseStudy";
 import HikuCaseStudy from "./pages/HikuCaseStudy/HikuCaseStudy";
+import ArcadiaCaseStudy from "./pages/ArcadiaCaseStudy/ArcadiaCaseStudy";
 import PixelCatPage from "./pages/PixelCat/PixelCat";
 import Particles from "./pages/Particles/Particles";
 import NotFound from "./pages/NotFound/NotFound";
@@ -86,6 +87,10 @@ function App() {
             <Route path="/wholefoods" element={<WholeFoodsCaseStudy />} />
             <Route path="/quizai" element={<QuizAICaseStudy />} />
             <Route path="/hiku" element={<HikuCaseStudy />} />
+            <Route
+              path="/arcadia-custom-builders"
+              element={<ArcadiaCaseStudy />}
+            />
             <Route path="/pixel-cat" element={<PixelCatPage />} />
             <Route path="/particles" element={<Particles />} />
             <Route path="*" element={<NotFound />} />

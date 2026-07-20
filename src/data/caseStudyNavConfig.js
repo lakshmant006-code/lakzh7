@@ -44,4 +44,14 @@ export const caseStudyNavConfig = {
       { id: "hiku-see-next", label: "See Next" },
     ],
   },
+  arcadia: {
+    accentColor: "#3B5A73",
+    sections: [
+      { id: "arcadia-context", label: "Context" },
+      { id: "arcadia-research", label: "Research" },
+      { id: "solution-section", label: "Solution" },
+      { id: "arcadia-impact", label: "Impact" },
+      { id: "arcadia-see-next", label: "See Next" },
+    ],
+  },
 };
