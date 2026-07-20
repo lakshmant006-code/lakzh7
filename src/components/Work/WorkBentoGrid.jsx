@@ -8,6 +8,16 @@ import "./WorkBentoItem.css";
 // thumbnailImage: used as thumbnail in mobile view instead of video
 const workProjects = [
   {
+    id: "arcadia-custom-builders",
+    title: "Arcadia Custom Builders",
+    role: "UX Researcher",
+    tags: ["UX Research", "Workflow Design"],
+    summary:
+      "Helping Revolution Steel formulate a user workflow so work gets distributed clearly and tasks are streamlined.",
+    image: "/work/arcadia/placeholder-thumbnail.svg",
+    category: "case-study",
+  },
+  {
     id: "quizai-approval-flow",
     title: "AI Powered Notetaking Application",
     role: "Product Designer",
@@ -54,16 +64,6 @@ const workProjects = [
       "Transforming Venmo's public-by-default privacy model to help users make informed choices without confusion.",
     video: "/work/venmo/thumbnail.mp4",
     thumbnailImage: "/work/venmo/thumbnail-frame.jpg",
-    category: "case-study",
-  },
-  {
-    id: "arcadia-custom-builders",
-    title: "Arcadia Custom Builders",
-    role: "UX Researcher",
-    tags: ["UX Research", "Workflow Design"],
-    summary:
-      "Helping Revolution Steel formulate a user workflow so work gets distributed clearly and tasks are streamlined.",
-    image: "/work/arcadia/placeholder-thumbnail.svg",
     category: "case-study",
   },
 ];
