@@ -330,9 +330,11 @@ const ArcadiaCaseStudy = () => {
             </CaseStudyStatement>
 
             <div className="arcadia-research-image-container" ref={researchKpiImageRef}>
-              <ArcadiaPlaceholder
-                label="TheyDo journey map — personas, opportunities, pain points, insights, solutions"
-                aspectRatio="1360 / 500"
+              <img
+                src="/work/arcadia/They Do User Journey.png"
+                alt="TheyDo journey map showing phases, opportunities, pain-point insights, and solutions across the team's workflow"
+                className="arcadia-userflow-image"
+                style={{ aspectRatio: "1297 / 720" }}
               />
             </div>
 
