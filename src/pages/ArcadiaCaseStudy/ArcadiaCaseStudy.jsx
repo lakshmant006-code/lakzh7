@@ -256,13 +256,14 @@ const ArcadiaCaseStudy = () => {
               <div className="arcadia-context-item" ref={contextRoleRef}>
                 <h2 className="arcadia-context-title">Problem Statements</h2>
                 <p className="arcadia-context-description">
-                  Placeholder — the specific problem statements and pain
-                  points that surfaced during this project will go here.
+                  Three pain points surfaced across the journey — from intake
+                  through delivery — that were costing the team the most time
+                  and rework.
                 </p>
               </div>
             </div>
 
-            {/* Problem statements / pain points placeholder */}
+            {/* Problem statements / pain points */}
             <div className="arcadia-context-statement">
               <h3
                 className="arcadia-context-statement-title"
@@ -276,30 +277,38 @@ const ArcadiaCaseStudy = () => {
               >
                 <CaseStudyStatementBody>
                   <span className="arcadia-requirements-label">
-                    PROBLEM STATEMENT 1
+                    NO OWNER AT INTAKE
                   </span>
                   <br />
-                  Placeholder — add the first problem statement here.
+                  Incoming specs and RFIs arrive with no assigned owner, so
+                  questions sit unanswered until the team finds out too late
+                  that nothing moved.
                 </CaseStudyStatementBody>
                 <CaseStudyStatementBody>
                   <span className="arcadia-requirements-label">
-                    PROBLEM STATEMENT 2
+                    NO SHARED TASK LIST
                   </span>
                   <br />
-                  Placeholder — add the second problem statement here.
+                  Modelers block out walls with no predefined daily tasks —
+                  each person decides ad hoc what to work on, causing
+                  duplicated effort and missed handoffs.
                 </CaseStudyStatementBody>
                 <CaseStudyStatementBody>
                   <span className="arcadia-requirements-label">
-                    PROBLEM STATEMENT 3
+                    LATE FIELD COMMUNICATION
                   </span>
                   <br />
-                  Placeholder — add the third problem statement here.
+                  Field crews hear about changes late, and with no end-of-day
+                  completion check, no one has visibility into what was
+                  actually finished.
                 </CaseStudyStatementBody>
               </CaseStudyStatement>
               <div className="arcadia-painpoints-tags">
-                <span className="arcadia-painpoint-tag">Add pain point</span>
-                <span className="arcadia-painpoint-tag">Add pain point</span>
-                <span className="arcadia-painpoint-tag">Add pain point</span>
+                <span className="arcadia-painpoint-tag">Unowned intake</span>
+                <span className="arcadia-painpoint-tag">Ad hoc task planning</span>
+                <span className="arcadia-painpoint-tag">
+                  Late field visibility
+                </span>
               </div>
             </div>
           </div>
@@ -412,13 +421,62 @@ const ArcadiaCaseStudy = () => {
                 Problem → Solution Pairs
               </h4>
               <div
-                className="arcadia-research-image-container"
+                className="arcadia-pairs-grid"
                 ref={solutionPairsImageRef}
               >
-                <ArcadiaPlaceholder
-                  label="Problem / solution pairs"
-                  aspectRatio="1360 / 500"
-                />
+                <div className="arcadia-pair-card">
+                  <div className="arcadia-pair-phase">AEC INTAKE</div>
+                  <div className="arcadia-pair-problem">
+                    Incoming specs and RFIs have no assigned owner.
+                  </div>
+                  <div className="arcadia-pair-insight">
+                    Questions raised in meetings never reach the person who
+                    could actually answer them.
+                  </div>
+                  <div className="arcadia-pair-solution">
+                    <span className="arcadia-pair-solution-label">
+                      SOLUTION
+                    </span>{" "}
+                    Assign a named owner to every incoming spec and RFI on
+                    arrival, tracked with a recurring review cadence.
+                  </div>
+                </div>
+                <div className="arcadia-pair-card">
+                  <div className="arcadia-pair-phase">PRE-MODELING</div>
+                  <div className="arcadia-pair-problem">
+                    No predefined daily tasks — each modeler decides ad hoc
+                    what to work on.
+                  </div>
+                  <div className="arcadia-pair-insight">
+                    This causes duplicated effort and missed handoffs between
+                    modelers.
+                  </div>
+                  <div className="arcadia-pair-solution">
+                    <span className="arcadia-pair-solution-label">
+                      SOLUTION
+                    </span>{" "}
+                    Publish a shared daily task list before blockout starts,
+                    so each modeler gets clear, predefined work.
+                  </div>
+                </div>
+                <div className="arcadia-pair-card">
+                  <div className="arcadia-pair-phase">FIELD / DELIVERY</div>
+                  <div className="arcadia-pair-problem">
+                    Field crews hear about changes late, with no end-of-day
+                    completion check.
+                  </div>
+                  <div className="arcadia-pair-insight">
+                    No one has visibility into what was actually finished on
+                    site each day.
+                  </div>
+                  <div className="arcadia-pair-solution">
+                    <span className="arcadia-pair-solution-label">
+                      SOLUTION
+                    </span>{" "}
+                    Run an end-of-day completion check with field crews to
+                    confirm what was actually completed.
+                  </div>
+                </div>
               </div>
             </div>
           </div>

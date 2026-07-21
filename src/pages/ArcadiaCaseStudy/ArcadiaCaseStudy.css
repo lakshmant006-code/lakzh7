@@ -1998,3 +1998,68 @@
     padding: 0 3rem; /* lg:px-12 */
   }
 }
+
+/* ============================================
+   Problem -> Solution Pairs
+   ============================================ */
+.arcadia-pairs-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin: 2rem 0 3rem 0;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.arcadia-pair-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(15, 15, 15, 0.15);
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.arcadia-pair-phase {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #3B5A73;
+}
+
+.arcadia-pair-problem {
+  font-family: "Crimson Pro", serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0f0f0f;
+  line-height: 1.35;
+}
+
+.arcadia-pair-insight {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #555;
+  font-weight: 300;
+}
+
+.arcadia-pair-solution {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #0f0f0f;
+  font-weight: 300;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(15, 15, 15, 0.1);
+}
+
+.arcadia-pair-solution-label {
+  font-weight: 600;
+  color: #3B5A73;
+}
+
+@media (min-width: 1024px) {
+  .arcadia-pairs-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
