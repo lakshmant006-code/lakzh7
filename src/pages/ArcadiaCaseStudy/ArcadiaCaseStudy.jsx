@@ -209,7 +209,7 @@ const ArcadiaCaseStudy = () => {
           <div className="arcadia-hero-image-container arcadia-hero-before">
             <img
               src="/work/arcadia/Arcadia-Hero.png"
-              alt="Arcadia Custom Builders"
+              alt="Revolution Steel"
               className="arcadia-hero-image"
               style={{ aspectRatio: "1523 / 617" }}
             />
@@ -218,15 +218,15 @@ const ArcadiaCaseStudy = () => {
           <div className="arcadia-hero-content">
             {/* Left Column */}
             <div className="arcadia-hero-left">
-              <h1 className="arcadia-hero-title">Arcadia Custom Builders</h1>
+              <h1 className="arcadia-hero-title">Revolution Steel</h1>
               <p className="arcadia-hero-category">
-                Internal Workflow Tool — Revolution Steel
+                Internal Workflow Tool, Arcadia Custom Builders
               </p>
               <div className="arcadia-hero-details">
                 <div className="arcadia-hero-detail-item">
                   <div className="arcadia-hero-detail-label">TIMELINE</div>
                   <div className="arcadia-hero-detail-value">
-                    August 2025 — July 2026
+                    August 2025 to July 2026
                   </div>
                 </div>
                 <div className="arcadia-hero-detail-item">
@@ -309,8 +309,8 @@ const ArcadiaCaseStudy = () => {
               <div className="arcadia-context-item" ref={contextRoleRef}>
                 <h2 className="arcadia-context-title">Problem Statements</h2>
                 <p className="arcadia-context-description">
-                  Three pain points surfaced across the journey — from intake
-                  through delivery — that were costing the team the most time
+                  Three pain points surfaced across the journey, from intake
+                  through delivery, that were costing the team the most time
                   and rework.
                 </p>
               </div>
@@ -342,7 +342,7 @@ const ArcadiaCaseStudy = () => {
                     NO SHARED TASK LIST
                   </span>
                   <br />
-                  Modelers block out walls with no predefined daily tasks —
+                  Modelers block out walls with no predefined daily tasks, so
                   each person decides ad hoc what to work on, causing
                   duplicated effort and missed handoffs.
                 </CaseStudyStatementBody>
@@ -389,7 +389,7 @@ const ArcadiaCaseStudy = () => {
                 <span style={{ fontWeight: 600 }}>insights</span>, framed each
                 as an <span style={{ fontWeight: 600 }}>opportunity</span>, and
                 tied it to a concrete{" "}
-                <span style={{ fontWeight: 600 }}>solution</span> — keeping
+                <span style={{ fontWeight: 600 }}>solution</span>, keeping
                 every pain point anchored to the phase and the person it hits.
               </CaseStudyStatementBody>
             </CaseStudyStatement>
@@ -406,7 +406,7 @@ const ArcadiaCaseStudy = () => {
             <div className="arcadia-quantitize" ref={researchQuantitizeRef}>
               <p className="arcadia-ideation-text">
                 To keep the study from ending at opinion, I quantitized the
-                coded data —{" "}
+                coded data,{" "}
                 <span style={{ fontWeight: 600 }}>7 pain points</span> mapped
                 across <span style={{ fontWeight: 600 }}>6 journey phases</span>{" "}
                 and{" "}
@@ -445,7 +445,7 @@ const ArcadiaCaseStudy = () => {
               <CaseStudyStatementBody>
                 After understanding the pain points, I ran a{" "}
                 <span style={{ fontWeight: 600 }}>competitive audit</span> of
-                what other companies in the space are doing — observing
+                what other companies in the space are doing, observing
                 patterns and figuring out what needed to change to make the
                 team more effective.
               </CaseStudyStatementBody>
@@ -480,8 +480,8 @@ const ArcadiaCaseStudy = () => {
                 , grouped by what mattered most to{" "}
                 <span className="arcadia-solution-visual-identity-medium-bold">
                   stakeholders
-                </span>{" "}
-                — they had invested a lot of time into this project, so
+                </span>
+                , who had invested a lot of time into this project, so
                 keeping their priorities front and center in how the insights
                 were organized was important.
               </p>
@@ -529,8 +529,8 @@ const ArcadiaCaseStudy = () => {
                   <br />
                   The team surfaces friction verbally but has nowhere to log
                   it, so raised issues are never tracked to a close and tend
-                  to recur — talking about a problem had become a substitute
-                  for solving it.
+                  to recur, and talking about a problem had become a
+                  substitute for solving it.
                 </CaseStudyStatementBody>
                 <CaseStudyStatementBody>
                   <span className="arcadia-insight-evidence arcadia-insight-evidence--emerging">
@@ -544,7 +544,7 @@ const ArcadiaCaseStudy = () => {
                   Trouble concentrates in the seams between phases, not inside
                   any one person's work. Where ownership passes from one role
                   to the next, accountability blurs and information loses
-                  currency — the origin of most rework.
+                  currency, the origin of most rework.
                 </CaseStudyStatementBody>
                 <CaseStudyStatementBody>
                   <span className="arcadia-insight-evidence arcadia-insight-evidence--emerging">
@@ -591,7 +591,7 @@ const ArcadiaCaseStudy = () => {
                 <div className="arcadia-pair-card">
                   <div className="arcadia-pair-phase">PRE-MODELING</div>
                   <div className="arcadia-pair-problem">
-                    No predefined daily tasks — each modeler decides ad hoc
+                    No predefined daily tasks, so each modeler decides ad hoc
                     what to work on.
                   </div>
                   <div className="arcadia-pair-insight">
@@ -652,7 +652,7 @@ const ArcadiaCaseStudy = () => {
                 </div>
                 <div className="arcadia-impact-label">
                   Faster process once communication was streamlined and work
-                  stopped stalling — and duplicating — at the handoffs.
+                  stopped stalling and duplicating at the handoffs.
                 </div>
               </div>
               <div
@@ -674,7 +674,7 @@ const ArcadiaCaseStudy = () => {
 
             <p className="arcadia-ideation-text">
               With the workflow flowing seamlessly and no duplicated builds,
-              the shop saved the company a meaningful amount of money — the
+              the shop saved the company a meaningful amount of money, the
               time and material that used to disappear into rework and
               repeated effort. Each gain is tracked against the KPI framework
               below, so the improvement holds instead of drifting back.
@@ -688,7 +688,7 @@ const ArcadiaCaseStudy = () => {
                 <div>
                   <h4 className="arcadia-kpi-title">KPI Index</h4>
                   <p className="arcadia-kpi-sub">
-                    Revolution Steel workflow framework — metric, mapped
+                    Revolution Steel workflow framework: metric, mapped
                     solution, target, and direction of improvement.
                   </p>
                 </div>

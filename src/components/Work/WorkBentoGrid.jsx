@@ -9,7 +9,7 @@ import "./WorkBentoItem.css";
 const workProjects = [
   {
     id: "arcadia-custom-builders",
-    title: "Arcadia Custom Builders",
+    title: "Revolution Steel",
     role: "UX Researcher",
     tags: ["UX Research", "Workflow Design"],
     summary:
