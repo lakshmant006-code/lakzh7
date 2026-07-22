@@ -403,7 +403,7 @@ const ArcadiaCaseStudy = () => {
                   src="/work/arcadia/Affinity mapping.png"
                   alt="Affinity mapping board organizing trends and pain points by stakeholder priority"
                   className="arcadia-userflow-image"
-                  style={{ aspectRatio: "1360 / 600" }}
+                  style={{ aspectRatio: "1147 / 395" }}
                 />
               </div>
               <p className="arcadia-context-image-caption">
