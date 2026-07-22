@@ -382,6 +382,14 @@
   margin-bottom: 0.5rem;
 }
 
+.arcadia-insight-count {
+  display: inline-block;
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
 .arcadia-requirements-image {
   display: block;
   width: 100%;

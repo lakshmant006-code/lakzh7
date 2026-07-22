@@ -419,24 +419,22 @@ const ArcadiaCaseStudy = () => {
               <p className="arcadia-ideation-text">
                 Once pain points were logged in TheyDo, I ran an affinity
                 mapping workshop with the client to sort raw observations
-                into clusters — then re-ordered those clusters by what
-                stakeholders said was costing them the most rework and
-                delay. That prioritization is what shaped which problems
-                got tackled first going into the solution phase.
+                into clusters. The session surfaced{" "}
+                <span style={{ fontWeight: 600 }}>
+                  10 distinct pain points across 4 themes
+                </span>
+                , with Task Planning &amp; Coordination and Communication
+                &amp; Information Flow tied for the largest share — 3 pain
+                points apiece. That distribution is what shaped which
+                problems got tackled first going into the solution phase.
               </p>
               <CaseStudyStatement variant="wide">
                 <CaseStudyStatementBody>
                   <span className="arcadia-requirements-label">
-                    OWNERSHIP &amp; ACCOUNTABILITY
-                  </span>
-                  <br />
-                  Ranked highest by stakeholders — work wasn't stalling from
-                  a lack of effort, it was stalling because no one was named
-                  responsible for it at intake.
-                </CaseStudyStatementBody>
-                <CaseStudyStatementBody>
-                  <span className="arcadia-requirements-label">
                     TASK PLANNING &amp; COORDINATION
+                  </span>{" "}
+                  <span className="arcadia-insight-count">
+                    3 of 10 pain points · 30%
                   </span>
                   <br />
                   Modelers were duplicating and dropping work because daily
@@ -446,6 +444,9 @@ const ArcadiaCaseStudy = () => {
                 <CaseStudyStatementBody>
                   <span className="arcadia-requirements-label">
                     COMMUNICATION &amp; INFORMATION FLOW
+                  </span>{" "}
+                  <span className="arcadia-insight-count">
+                    3 of 10 pain points · 30%
                   </span>
                   <br />
                   Critical updates lived in memory and verbal handoffs, so
@@ -454,7 +455,22 @@ const ArcadiaCaseStudy = () => {
                 </CaseStudyStatementBody>
                 <CaseStudyStatementBody>
                   <span className="arcadia-requirements-label">
+                    OWNERSHIP &amp; ACCOUNTABILITY
+                  </span>{" "}
+                  <span className="arcadia-insight-count">
+                    2 of 10 pain points · 20%
+                  </span>
+                  <br />
+                  Work wasn't stalling from a lack of effort — it was
+                  stalling because no one was named responsible for it at
+                  intake.
+                </CaseStudyStatementBody>
+                <CaseStudyStatementBody>
+                  <span className="arcadia-requirements-label">
                     VISIBILITY &amp; COMPLETION TRACKING
+                  </span>{" "}
+                  <span className="arcadia-insight-count">
+                    2 of 10 pain points · 20%
                   </span>
                   <br />
                   Without an end-of-day check, there was no reliable way for
