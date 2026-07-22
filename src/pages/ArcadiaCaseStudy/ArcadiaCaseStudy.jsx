@@ -399,11 +399,17 @@ const ArcadiaCaseStudy = () => {
                 className="arcadia-research-image-container"
                 ref={solutionAffinityImageRef}
               >
-                <ArcadiaPlaceholder
-                  label="Affinity map — trends organized by stakeholder priority"
-                  aspectRatio="1360 / 600"
+                <img
+                  src="/work/arcadia/Affinity mapping.png"
+                  alt="Affinity mapping board organizing trends and pain points by stakeholder priority"
+                  className="arcadia-userflow-image"
+                  style={{ aspectRatio: "1360 / 600" }}
                 />
               </div>
+              <p className="arcadia-context-image-caption">
+                One of the research sprints with the client from FigJam
+                Workshop
+              </p>
             </div>
 
             <div className="arcadia-solution-subsection" ref={solutionStakeholderRef}>
