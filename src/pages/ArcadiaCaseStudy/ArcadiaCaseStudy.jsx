@@ -38,6 +38,7 @@ const ArcadiaCaseStudy = () => {
   const researchTitleRef = useRef(null);
   const researchOverviewRef = useRef(null);
   const researchKpiImageRef = useRef(null);
+  const researchQuantitizeRef = useRef(null);
   const researchMethodologyRef = useRef(null);
   const researchAuditImageRef = useRef(null);
   const solutionTitleRef = useRef(null);
@@ -57,6 +58,44 @@ const ArcadiaCaseStudy = () => {
       duration: 1.2,
     });
   };
+
+  // KPI framework — metrics grouped by journey phase and mapped solution.
+  const kpiGroups = [
+    {
+      phase: "Program-level",
+      solution: "S0 Pain-Point Tracker + S7 TaskFlow",
+      rows: [
+        { metric: "Weekly update rate", mapped: "S7 TaskFlow", target: "≥ 90%", dir: "up" },
+        { metric: "Average task progress", mapped: "S7 TaskFlow", target: "Steady rise", dir: "up" },
+        { metric: "Issue resolution rate", mapped: "S0 Tracker", target: "Closing ≥ opening", dir: "up" },
+        { metric: "Issue recurrence rate", mapped: "S0 Tracker", target: "Downward", dir: "down" },
+      ],
+    },
+    {
+      phase: "AEC Intake",
+      solution: "S1 Named owner + deadline",
+      rows: [
+        { metric: "Intake ownership rate", mapped: "S1 Intake", target: "100%", dir: "up" },
+        { metric: "Intake response adherence", mapped: "S1 Intake", target: "≥ 90%", dir: "up" },
+      ],
+    },
+    {
+      phase: "Fabrication",
+      solution: "S5 Model-change sign-off gate",
+      rows: [
+        { metric: "Sign-off compliance", mapped: "S5 Gate", target: "100%", dir: "up" },
+        { metric: "Rework rate", mapped: "S5 Gate", target: "Downward", dir: "down" },
+      ],
+    },
+    {
+      phase: "Field / Delivery",
+      solution: "S6 EOD check + same-day alerts",
+      rows: [
+        { metric: "End-of-day check rate", mapped: "S6 Field", target: "≥ 95%", dir: "up" },
+        { metric: "Change-alert latency", mapped: "S6 Field", target: "Same day", dir: "down" },
+      ],
+    },
+  ];
 
   // Use card unfurling hook for See Next section
   useCardUnfurling({
@@ -105,6 +144,7 @@ const ArcadiaCaseStudy = () => {
     createScrollAnimation(researchTitleRef);
     createScrollAnimation(researchOverviewRef, 0.1);
     createScrollAnimation(researchKpiImageRef, 0.15);
+    createScrollAnimation(researchQuantitizeRef, 0.2);
     createScrollAnimation(researchMethodologyRef, 0.2);
     createScrollAnimation(researchAuditImageRef, 0.25);
 
@@ -323,18 +363,21 @@ const ArcadiaCaseStudy = () => {
 
             <CaseStudyStatement ref={researchOverviewRef}>
               <CaseStudyStatementBody>
-                I used{" "}
-                <span style={{ fontWeight: 600 }}>drop-off rates</span> as the
-                key KPI to identify where the workflow was breaking down for
-                the team.
+                I treated this as an embedded piece of{" "}
+                <span style={{ fontWeight: 600 }}>qualitative research</span>.
+                I ran semi-structured interviews with the leads who own each
+                stage and the operators who model and build, sat in on the
+                team's recurring meetings where problems surface out loud, and
+                mapped the whole quote-to-fabrication journey in{" "}
+                <span style={{ fontWeight: 600 }}>TheyDo</span>.
               </CaseStudyStatementBody>
               <CaseStudyStatementBody>
-                To dig into why, I ran a{" "}
-                <span style={{ fontWeight: 600 }}>qualitative study</span> and
-                used{" "}
-                <span style={{ fontWeight: 600 }}>TheyDo</span> to map
-                personas, opportunities, pain points, insights, and solutions
-                across the team's journey.
+                Working the way the tool encourages, I coded what I heard into{" "}
+                <span style={{ fontWeight: 600 }}>insights</span>, framed each
+                as an <span style={{ fontWeight: 600 }}>opportunity</span>, and
+                tied it to a concrete{" "}
+                <span style={{ fontWeight: 600 }}>solution</span> — keeping
+                every pain point anchored to the phase and the person it hits.
               </CaseStudyStatementBody>
             </CaseStudyStatement>
 
@@ -345,6 +388,44 @@ const ArcadiaCaseStudy = () => {
                 className="arcadia-userflow-image"
                 style={{ aspectRatio: "1297 / 720" }}
               />
+            </div>
+
+            <div className="arcadia-quantitize" ref={researchQuantitizeRef}>
+              <p className="arcadia-ideation-text">
+                To keep the study from ending at opinion, I quantitized the
+                coded data —{" "}
+                <span style={{ fontWeight: 600 }}>7 pain points</span> mapped
+                across <span style={{ fontWeight: 600 }}>6 journey phases</span>{" "}
+                and{" "}
+                <span style={{ fontWeight: 600 }}>
+                  5 thematic categories
+                </span>
+                . Communication and ownership carried the heaviest weight, and
+                both cluster at the handoffs between phases rather than inside
+                any one person's work.
+              </p>
+              <div className="arcadia-coding-breakdown">
+                <span className="arcadia-coding-chip">
+                  Communication{" "}
+                  <span className="arcadia-coding-chip-count">×2</span>
+                </span>
+                <span className="arcadia-coding-chip">
+                  Ownership{" "}
+                  <span className="arcadia-coding-chip-count">×2</span>
+                </span>
+                <span className="arcadia-coding-chip">
+                  Information currency{" "}
+                  <span className="arcadia-coding-chip-count">×1</span>
+                </span>
+                <span className="arcadia-coding-chip">
+                  Tracking &amp; accountability{" "}
+                  <span className="arcadia-coding-chip-count">×1</span>
+                </span>
+                <span className="arcadia-coding-chip">
+                  Visibility &amp; planning{" "}
+                  <span className="arcadia-coding-chip-count">×1</span>
+                </span>
+              </div>
             </div>
 
             <CaseStudyStatement ref={researchMethodologyRef}>
@@ -417,64 +498,54 @@ const ArcadiaCaseStudy = () => {
                 Stakeholder Synthesis
               </h4>
               <p className="arcadia-ideation-text">
-                Once pain points were logged in TheyDo, I ran an affinity
-                mapping workshop with the client to sort raw observations
-                into clusters. The session surfaced{" "}
-                <span style={{ fontWeight: 600 }}>
-                  10 distinct pain points across 4 themes
-                </span>
-                , with Task Planning &amp; Coordination and Communication
-                &amp; Information Flow tied for the largest share — 3 pain
-                points apiece. That distribution is what shaped which
-                problems got tackled first going into the solution phase.
+                In an affinity mapping workshop with the client, I clustered
+                the raw observations by theme and re-ordered them by what
+                stakeholders said was costing the most rework and delay.
+                Distilled down, the 7 coded pain points pointed to three core
+                insights that shaped the solution set.
               </p>
               <CaseStudyStatement variant="wide">
                 <CaseStudyStatementBody>
-                  <span className="arcadia-requirements-label">
-                    TASK PLANNING &amp; COORDINATION
-                  </span>{" "}
-                  <span className="arcadia-insight-count">
-                    3 of 10 pain points · 30%
+                  <span className="arcadia-insight-evidence arcadia-insight-evidence--validated">
+                    Validated
                   </span>
                   <br />
-                  Modelers were duplicating and dropping work because daily
-                  tasks were never predefined or shared before blockout
-                  started.
+                  <span className="arcadia-requirements-label">
+                    NO SYSTEM OF RECORD
+                  </span>
+                  <br />
+                  The team surfaces friction verbally but has nowhere to log
+                  it, so raised issues are never tracked to a close and tend
+                  to recur — talking about a problem had become a substitute
+                  for solving it.
                 </CaseStudyStatementBody>
                 <CaseStudyStatementBody>
-                  <span className="arcadia-requirements-label">
-                    COMMUNICATION &amp; INFORMATION FLOW
-                  </span>{" "}
-                  <span className="arcadia-insight-count">
-                    3 of 10 pain points · 30%
+                  <span className="arcadia-insight-evidence arcadia-insight-evidence--emerging">
+                    Emerging · observed
                   </span>
                   <br />
-                  Critical updates lived in memory and verbal handoffs, so
-                  information rarely reached the people who needed it in
-                  time to act on it.
+                  <span className="arcadia-requirements-label">
+                    FRICTION LIVES AT THE HANDOFFS
+                  </span>
+                  <br />
+                  Trouble concentrates in the seams between phases, not inside
+                  any one person's work. Where ownership passes from one role
+                  to the next, accountability blurs and information loses
+                  currency — the origin of most rework.
                 </CaseStudyStatementBody>
                 <CaseStudyStatementBody>
-                  <span className="arcadia-requirements-label">
-                    OWNERSHIP &amp; ACCOUNTABILITY
-                  </span>{" "}
-                  <span className="arcadia-insight-count">
-                    2 of 10 pain points · 20%
+                  <span className="arcadia-insight-evidence arcadia-insight-evidence--emerging">
+                    Emerging · observed
                   </span>
                   <br />
-                  Work wasn't stalling from a lack of effort — it was
-                  stalling because no one was named responsible for it at
-                  intake.
-                </CaseStudyStatementBody>
-                <CaseStudyStatementBody>
                   <span className="arcadia-requirements-label">
-                    VISIBILITY &amp; COMPLETION TRACKING
-                  </span>{" "}
-                  <span className="arcadia-insight-count">
-                    2 of 10 pain points · 20%
+                    VISIBILITY, NOT EFFORT
                   </span>
                   <br />
-                  Without an end-of-day check, there was no reliable way for
-                  the team to confirm what actually got finished each day.
+                  Work suffers less from a lack of effort than from the
+                  absence of shared, up-front visibility. When the day's
+                  tasks, owners, and completion bar aren't set before work
+                  begins, people optimize locally and the sequence drifts.
                 </CaseStudyStatementBody>
               </CaseStudyStatement>
             </div>
@@ -551,38 +622,86 @@ const ArcadiaCaseStudy = () => {
             <h3 className="arcadia-impact-section-title" ref={impactTitleRef}>
               IMPACT
             </h3>
-            <div className="arcadia-impact-metrics">
-              <div
-                className="arcadia-impact-metric arcadia-impact-metric--placeholder"
-                ref={(el) => (impactMetricsRefs.current[0] = el)}
-              >
-                <div className="arcadia-impact-value arcadia-impact-value--placeholder">
-                  —
+            <p className="arcadia-ideation-text">
+              This is a live workflow-improvement effort, not a finished
+              study, so the impact lives in the measurement framework I stood
+              up rather than in after-the-fact numbers. Every solution
+              carries KPIs with a target and a direction of improvement,
+              tracked through TaskFlow and the Pain-Point Tracker.
+            </p>
+
+            <div
+              className="arcadia-kpi-index"
+              ref={(el) => (impactMetricsRefs.current[0] = el)}
+            >
+              <div className="arcadia-kpi-head">
+                <div>
+                  <h4 className="arcadia-kpi-title">KPI Index</h4>
+                  <p className="arcadia-kpi-sub">
+                    Revolution Steel workflow framework — metric, mapped
+                    solution, target, and direction of improvement.
+                  </p>
                 </div>
-                <div className="arcadia-impact-label">Add metric</div>
-              </div>
-              <div
-                className="arcadia-impact-metric arcadia-impact-metric--placeholder"
-                ref={(el) => (impactMetricsRefs.current[1] = el)}
-              >
-                <div className="arcadia-impact-value arcadia-impact-value--placeholder">
-                  —
+                <div className="arcadia-kpi-legend">
+                  <span className="arcadia-kpi-legend-item">
+                    <span className="arcadia-kpi-arrow arcadia-kpi-arrow--up">
+                      ▲
+                    </span>{" "}
+                    higher is better
+                  </span>
+                  <span className="arcadia-kpi-legend-item">
+                    <span className="arcadia-kpi-arrow arcadia-kpi-arrow--down">
+                      ▼
+                    </span>{" "}
+                    lower is better
+                  </span>
                 </div>
-                <div className="arcadia-impact-label">Add metric</div>
               </div>
-              <div
-                className="arcadia-impact-metric arcadia-impact-metric--placeholder"
-                ref={(el) => (impactMetricsRefs.current[2] = el)}
-              >
-                <div className="arcadia-impact-value arcadia-impact-value--placeholder">
-                  —
+
+              <div className="arcadia-kpi-colhead">
+                <span>Metric</span>
+                <span>Mapped to</span>
+                <span>Target</span>
+              </div>
+
+              {kpiGroups.map((group) => (
+                <div className="arcadia-kpi-group" key={group.phase}>
+                  <div className="arcadia-kpi-group-bar">
+                    {group.phase} · {group.solution}
+                  </div>
+                  {group.rows.map((row) => (
+                    <div className="arcadia-kpi-row" key={row.metric}>
+                      <div className="arcadia-kpi-metric">
+                        <span
+                          className={`arcadia-kpi-arrow arcadia-kpi-arrow--${row.dir}`}
+                        >
+                          {row.dir === "up" ? "▲" : "▼"}
+                        </span>
+                        <span>{row.metric}</span>
+                      </div>
+                      <div className="arcadia-kpi-mapped">{row.mapped}</div>
+                      <div className="arcadia-kpi-target">
+                        <span
+                          className={`arcadia-kpi-pill arcadia-kpi-pill--${row.dir}`}
+                        >
+                          {row.target}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="arcadia-impact-label">Add metric</div>
-              </div>
+              ))}
+
+              <p className="arcadia-kpi-foot">
+                KPI index for the quote-to-fabrication workflow study. Targets
+                are baselining goals; values are collected via TaskFlow and
+                the Pain-Point Tracker.
+              </p>
             </div>
+
             <p className="arcadia-impact-summary" ref={impactSummaryRef}>
-              Placeholder — results and real numbers from this project will
-              go here once available.
+              Targets are baselining goals; as tracking data accrues, these
+              move from targets to measured outcomes.
             </p>
           </div>
         </section>
