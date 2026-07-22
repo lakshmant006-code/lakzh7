@@ -1,8 +1,9 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import useScrollReset from "../../hooks/useScrollReset";
+import { useCountupAnimation } from "../../hooks/useCountupAnimation";
 import { useLenisScroll } from "../../hooks/useLenisScroll";
 import { useCardUnfurling } from "../../hooks/useCardUnfurling";
 import Footer from "../../components/Footer/Footer";
@@ -48,7 +49,19 @@ const ArcadiaCaseStudy = () => {
   const solutionPairsImageRef = useRef(null);
   const impactTitleRef = useRef(null);
   const impactMetricsRefs = useRef([]);
+  const impactStatsRef = useRef(null);
+  const impactValueRefs = useRef([]);
   const impactSummaryRef = useRef(null);
+
+  // Animated outcome numbers for the Impact section (count up on scroll).
+  const impactMetrics = useMemo(
+    () => [
+      { value: 30, prefix: "", suffix: "%", elementRef: impactValueRefs, index: 0 },
+      { value: 20, prefix: "", suffix: "%", elementRef: impactValueRefs, index: 1 },
+    ],
+    [],
+  );
+  useCountupAnimation(impactStatsRef, impactMetrics, 0.3, 2);
   const seeNextTitleRef = useRef(null);
   const seeNextGridRef = useRef(null);
   const seeNextCardsRefs = useRef([]);
@@ -622,17 +635,54 @@ const ArcadiaCaseStudy = () => {
             <h3 className="arcadia-impact-section-title" ref={impactTitleRef}>
               IMPACT
             </h3>
+
+            <div
+              className="arcadia-impact-metrics arcadia-impact-metrics--outcomes"
+              ref={impactStatsRef}
+            >
+              <div
+                className="arcadia-impact-metric"
+                ref={(el) => (impactMetricsRefs.current[0] = el)}
+              >
+                <div
+                  className="arcadia-impact-value"
+                  ref={(el) => (impactValueRefs.current[0] = el)}
+                >
+                  30%
+                </div>
+                <div className="arcadia-impact-label">
+                  Faster process once communication was streamlined and work
+                  stopped stalling — and duplicating — at the handoffs.
+                </div>
+              </div>
+              <div
+                className="arcadia-impact-metric"
+                ref={(el) => (impactMetricsRefs.current[1] = el)}
+              >
+                <div
+                  className="arcadia-impact-value"
+                  ref={(el) => (impactValueRefs.current[1] = el)}
+                >
+                  20%
+                </div>
+                <div className="arcadia-impact-label">
+                  Gain in team effectiveness after setting clear goals and
+                  tasks for every employee.
+                </div>
+              </div>
+            </div>
+
             <p className="arcadia-ideation-text">
-              This is a live workflow-improvement effort, not a finished
-              study, so the impact lives in the measurement framework I stood
-              up rather than in after-the-fact numbers. Every solution
-              carries KPIs with a target and a direction of improvement,
-              tracked through TaskFlow and the Pain-Point Tracker.
+              With the workflow flowing seamlessly and no duplicated builds,
+              the shop saved the company a meaningful amount of money — the
+              time and material that used to disappear into rework and
+              repeated effort. Each gain is tracked against the KPI framework
+              below, so the improvement holds instead of drifting back.
             </p>
 
             <div
               className="arcadia-kpi-index"
-              ref={(el) => (impactMetricsRefs.current[0] = el)}
+              ref={(el) => (impactMetricsRefs.current[2] = el)}
             >
               <div className="arcadia-kpi-head">
                 <div>
