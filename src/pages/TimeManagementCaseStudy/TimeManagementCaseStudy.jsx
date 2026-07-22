@@ -62,23 +62,23 @@ const TimeManagementCaseStudy = () => {
   const metrics = useMemo(
     () => [
       {
-        value: 60,
-        prefix: "28–",
-        suffix: "",
+        value: 50,
+        prefix: "",
+        suffix: "+",
         elementRef: metricRefs,
         index: 0,
       },
       {
-        value: 1,
+        value: 20,
         prefix: "",
-        suffix: "",
+        suffix: "%",
         elementRef: metricRefs,
         index: 1,
       },
       {
-        value: 3,
+        value: 30,
         prefix: "",
-        suffix: "",
+        suffix: "%",
         elementRef: metricRefs,
         index: 2,
       },
@@ -373,9 +373,11 @@ const TimeManagementCaseStudy = () => {
                     className="time-management-impact-value"
                     ref={(el) => (metricRefs.current[0] = el)}
                   >
-                    28–60
+                    50+
                   </div>
-                  <div className="time-management-impact-label">TARGET AGE GROUP</div>
+                  <div className="time-management-impact-label">
+                    EMPLOYEES SUPPORTED
+                  </div>
                 </div>
                 <div
                   className="time-management-impact-metric"
@@ -385,9 +387,11 @@ const TimeManagementCaseStudy = () => {
                     className="time-management-impact-value"
                     ref={(el) => (metricRefs.current[1] = el)}
                   >
-                    1
+                    20%
                   </div>
-                  <div className="time-management-impact-label">CLIENT DELIVERED TO</div>
+                  <div className="time-management-impact-label">
+                    INCREASE IN WORKFORCE EFFICIENCY
+                  </div>
                 </div>
                 <div
                   className="time-management-impact-metric"
@@ -397,10 +401,10 @@ const TimeManagementCaseStudy = () => {
                     className="time-management-impact-value"
                     ref={(el) => (metricRefs.current[2] = el)}
                   >
-                    3
+                    30%
                   </div>
                   <div className="time-management-impact-label">
-                    USER ROLES DESIGNED
+                    REDUCTION IN ADMIN EFFORT
                   </div>
                 </div>
               </div>
