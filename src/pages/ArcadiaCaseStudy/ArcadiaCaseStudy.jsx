@@ -417,9 +417,50 @@ const ArcadiaCaseStudy = () => {
                 Stakeholder Synthesis
               </h4>
               <p className="arcadia-ideation-text">
-                Placeholder — insights and takeaways from stakeholder
-                conversations will go here.
+                Once pain points were logged in TheyDo, I ran an affinity
+                mapping workshop with the client to sort raw observations
+                into clusters — then re-ordered those clusters by what
+                stakeholders said was costing them the most rework and
+                delay. That prioritization is what shaped which problems
+                got tackled first going into the solution phase.
               </p>
+              <CaseStudyStatement variant="wide">
+                <CaseStudyStatementBody>
+                  <span className="arcadia-requirements-label">
+                    OWNERSHIP &amp; ACCOUNTABILITY
+                  </span>
+                  <br />
+                  Ranked highest by stakeholders — work wasn't stalling from
+                  a lack of effort, it was stalling because no one was named
+                  responsible for it at intake.
+                </CaseStudyStatementBody>
+                <CaseStudyStatementBody>
+                  <span className="arcadia-requirements-label">
+                    TASK PLANNING &amp; COORDINATION
+                  </span>
+                  <br />
+                  Modelers were duplicating and dropping work because daily
+                  tasks were never predefined or shared before blockout
+                  started.
+                </CaseStudyStatementBody>
+                <CaseStudyStatementBody>
+                  <span className="arcadia-requirements-label">
+                    COMMUNICATION &amp; INFORMATION FLOW
+                  </span>
+                  <br />
+                  Critical updates lived in memory and verbal handoffs, so
+                  information rarely reached the people who needed it in
+                  time to act on it.
+                </CaseStudyStatementBody>
+                <CaseStudyStatementBody>
+                  <span className="arcadia-requirements-label">
+                    VISIBILITY &amp; COMPLETION TRACKING
+                  </span>
+                  <br />
+                  Without an end-of-day check, there was no reliable way for
+                  the team to confirm what actually got finished each day.
+                </CaseStudyStatementBody>
+              </CaseStudyStatement>
             </div>
 
             <div className="arcadia-solution-subsection">
