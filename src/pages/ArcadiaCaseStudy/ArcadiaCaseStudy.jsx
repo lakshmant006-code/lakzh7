@@ -208,10 +208,10 @@ const ArcadiaCaseStudy = () => {
         <section className="arcadia-hero-section">
           <div className="arcadia-hero-image-container arcadia-hero-before">
             <img
-              src="/work/arcadia/Arcadia-Hero.png"
+              src="/work/arcadia/Revolution Steel Hero.png"
               alt="Revolution Steel"
               className="arcadia-hero-image"
-              style={{ aspectRatio: "1523 / 617" }}
+              style={{ aspectRatio: "1200 / 356" }}
             />
           </div>
 
