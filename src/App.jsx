@@ -10,7 +10,6 @@ import Home from "./pages/Home/Home";
 import About from "./pages/About/About";
 import Work from "./pages/Work/Work";
 import TimeManagementCaseStudy from "./pages/TimeManagementCaseStudy/TimeManagementCaseStudy";
-import WholeFoodsCaseStudy from "./pages/WholeFoodsCaseStudy/WholeFoodsCaseStudy";
 import QuizAICaseStudy from "./pages/QuizAICaseStudy/QuizAICaseStudy";
 import HikuCaseStudy from "./pages/HikuCaseStudy/HikuCaseStudy";
 import ArcadiaCaseStudy from "./pages/ArcadiaCaseStudy/ArcadiaCaseStudy";
@@ -82,7 +81,6 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/work" element={<Work />} />
             <Route path="/time-management" element={<TimeManagementCaseStudy />} />
-            <Route path="/wholefoods" element={<WholeFoodsCaseStudy />} />
             <Route path="/quizai" element={<QuizAICaseStudy />} />
             <Route path="/hiku" element={<HikuCaseStudy />} />
             <Route
