@@ -722,7 +722,7 @@ const QuizAICaseStudy = () => {
               </div>
             </Link>
             <Link
-              to="/venmo"
+              to="/arcadia-custom-builders"
               className="quizai-see-next-card-link"
               onMouseEnter={() => setIsHoveringSeeNextCard(true)}
               onMouseLeave={() => setIsHoveringSeeNextCard(false)}
@@ -733,21 +733,23 @@ const QuizAICaseStudy = () => {
               >
                 <div className="quizai-see-next-image-container">
                   <video
-                    src="/work/venmo/thumbnail.mp4"
+                    src="/work/arcadia/arcadia custom.mp4"
                     className="quizai-see-next-image"
                     style={{ aspectRatio: "1920 / 1080" }}
                     autoPlay
                     loop
                     muted
                     playsInline
+                    aria-label="Revolution Steel: Construction Workflow Optimisation — preview"
                   />
                 </div>
                 <h4 className="quizai-see-next-card-title">
-                  Redesigning Venmo's Privacy Model
+                  Revolution Steel: Construction Workflow Optimisation
                 </h4>
                 <p className="quizai-see-next-card-description">
-                  Shifting from public-by-default to private-by-default with
-                  privacy controls surfaced where users make decisions.
+                  Helping Revolution Steel formulate a user workflow so work
+                  gets distributed clearly and tasks are streamlined across the
+                  team.
                 </p>
               </div>
             </Link>

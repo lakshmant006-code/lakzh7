@@ -768,7 +768,7 @@ const ArcadiaCaseStudy = () => {
               data-case-study-nav-boundary
             >
               <Link
-                to="/venmo"
+                to="/hiku"
                 className="arcadia-see-next-card-link"
                 onMouseEnter={() => setIsHoveringSeeNextCard(true)}
                 onMouseLeave={() => setIsHoveringSeeNextCard(false)}
@@ -779,20 +779,22 @@ const ArcadiaCaseStudy = () => {
                 >
                   <div className="arcadia-see-next-image-container">
                     <video
-                      src="/work/venmo/thumbnail.mp4"
+                      src="/work/Hiku/thumbnail.mp4"
                       className="arcadia-see-next-image"
                       autoPlay
                       loop
                       muted
                       playsInline
+                      aria-label="Hiku: A Mobile Application for Hiking Enthusiasts — preview"
                     />
                   </div>
                   <h4 className="arcadia-see-next-card-title">
-                    Redesigning Venmo's Privacy Controls
+                    Hiku: A Mobile Application for Hiking Enthusiasts
                   </h4>
                   <p className="arcadia-see-next-card-description">
-                    Transforming Venmo's public-by-default privacy model to
-                    help users make informed choices without confusion.
+                    Connecting hiking enthusiasts through community, shared
+                    experiences, and a convenient way to buy or rent outdoor
+                    gear.
                   </p>
                 </div>
               </Link>

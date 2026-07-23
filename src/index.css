@@ -92,7 +92,6 @@ body.dg-scroll-lock {
 /* See Next cards: single column through 1024px, three-up above */
 @media (min-width: 1025px) {
   .quizai-see-next-grid,
-  .venmo-see-next-grid,
   .time-management-see-next-grid,
   .hiku-see-next-grid,
   .wholefoods-see-next-grid,

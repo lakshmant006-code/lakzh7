@@ -792,7 +792,7 @@ const TimeManagementCaseStudy = () => {
               data-case-study-nav-boundary
             >
               <Link
-                to="/venmo"
+                to="/arcadia-custom-builders"
                 className="time-management-see-next-card-link"
                 onMouseEnter={() => setIsHoveringSeeNextCard(true)}
                 onMouseLeave={() => setIsHoveringSeeNextCard(false)}
@@ -803,20 +803,22 @@ const TimeManagementCaseStudy = () => {
                 >
                   <div className="time-management-see-next-image-container">
                     <video
-                      src="/work/venmo/thumbnail.mp4"
+                      src="/work/arcadia/arcadia custom.mp4"
                       className="time-management-see-next-image"
                       autoPlay
                       loop
                       muted
                       playsInline
+                      aria-label="Revolution Steel: Construction Workflow Optimisation — preview"
                     />
                   </div>
                   <h4 className="time-management-see-next-card-title">
-                    Redesigning Venmo's Privacy Controls
+                    Revolution Steel: Construction Workflow Optimisation
                   </h4>
                   <p className="time-management-see-next-card-description">
-                    Transforming Venmo's public-by-default privacy model to help
-                    users make informed choices without confusion.
+                    Helping Revolution Steel formulate a user workflow so work
+                    gets distributed clearly and tasks are streamlined across
+                    the team.
                   </p>
                 </div>
               </Link>

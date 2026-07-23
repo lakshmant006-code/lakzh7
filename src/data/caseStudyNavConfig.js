@@ -11,17 +11,6 @@ export const caseStudyNavConfig = {
       { id: "quizai-see-next", label: "See Next" },
     ],
   },
-  venmo: {
-    accentColor: "#008cff",
-    sections: [
-      { id: "venmo-context", label: "Context" },
-      { id: "venmo-research", label: "Research" },
-      { id: "solution-section", label: "Solution" },
-      { id: "venmo-next-steps", label: "Next Steps" },
-      { id: "venmo-takeaways", label: "Takeaways" },
-      { id: "venmo-see-next", label: "See Next" },
-    ],
-  },
   "time-management": {
     accentColor: "#1900FF",
     sections: [

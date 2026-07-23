@@ -626,7 +626,7 @@ const HikuCaseStudy = () => {
               </div>
             </Link>
             <Link
-              to="/venmo"
+              to="/arcadia-custom-builders"
               className="hiku-see-next-card-link"
               onMouseEnter={() => setIsHoveringSeeNextCard(true)}
               onMouseLeave={() => setIsHoveringSeeNextCard(false)}
@@ -639,20 +639,22 @@ const HikuCaseStudy = () => {
               >
                 <div className="hiku-see-next-image-container">
                   <video
-                    src="/work/venmo/thumbnail.mp4"
+                    src="/work/arcadia/arcadia custom.mp4"
                     className="hiku-see-next-image"
                     autoPlay
                     loop
                     muted
                     playsInline
+                    aria-label="Revolution Steel: Construction Workflow Optimisation — preview"
                   />
                 </div>
                 <h4 className="hiku-see-next-card-title">
-                  Redesigning Venmo&apos;s Privacy Controls
+                  Revolution Steel: Construction Workflow Optimisation
                 </h4>
                 <p className="hiku-see-next-card-description">
-                  Transforming Venmo&apos;s public-by-default privacy model to
-                  help users make informed choices without confusion.
+                  Helping Revolution Steel formulate a user workflow so work
+                  gets distributed clearly and tasks are streamlined across the
+                  team.
                 </p>
               </div>
             </Link>

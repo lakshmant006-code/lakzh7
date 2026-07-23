@@ -55,21 +55,9 @@ const workProjects = [
     thumbnailImage: "/work/time-management/thumbnail-frame.jpg",
     category: "case-study",
   },
-  {
-    id: "venmo-privacy-controls",
-    title: "Redesigning Venmo's Privacy Controls",
-    role: "Product Designer",
-    tags: ["UX Research", "FinTech"],
-    summary:
-      "Transforming Venmo's public-by-default privacy model to help users make informed choices without confusion.",
-    video: "/work/venmo/thumbnail.mp4",
-    thumbnailImage: "/work/venmo/thumbnail-frame.jpg",
-    category: "case-study",
-  },
 ];
 
 const routeMap = {
-  "venmo-privacy-controls": "/venmo",
   "time-management-pain-detection": "/time-management",
   "quizai-approval-flow": "/quizai",
   "hiku-bio-smart-wearable": "/hiku",
@@ -101,7 +89,6 @@ function WorkCard({
   };
 
   const isClickable =
-    project.id === "venmo-privacy-controls" ||
     project.id === "time-management-pain-detection" ||
     project.id === "quizai-approval-flow" ||
     project.id === "hiku-bio-smart-wearable" ||
