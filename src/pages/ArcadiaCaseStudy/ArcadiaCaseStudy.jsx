@@ -288,7 +288,7 @@ const ArcadiaCaseStudy = () => {
               src="/work/arcadia/Revolution Steel Shop.jpg"
               alt="Revolution Steel shop floor — the team working across steel framing stations"
               className="arcadia-hero-image"
-              style={{ aspectRatio: "16 / 9", objectPosition: "center" }}
+              style={{ aspectRatio: "3983 / 1754", objectPosition: "center" }}
             />
           </div>
         </section>
