@@ -652,18 +652,14 @@
   max-width: 390px;
   margin: 0 auto;
   border-radius: 16px;
-  pointer-events: none;
   display: block;
   /* iPhone 14 aspect ratio (390×844) — scales down on narrow viewports */
   aspect-ratio: 390 / 844;
   height: auto;
-}
-
-.hiku-app-screens-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  cursor: pointer;
+  /* Scroll started inside the phone stays inside it; the page scrolls only
+     when the wheel/touch is over the background. */
+  overscroll-behavior: contain;
+  touch-action: pan-y;
 }
 
 .hiku-visual-identity-subtitle {

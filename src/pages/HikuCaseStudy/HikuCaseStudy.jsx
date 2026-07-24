@@ -514,19 +514,7 @@ const HikuCaseStudy = () => {
                   title="Hiku Mobile App Screens"
                   className="hiku-wireframe-frame hiku-app-screens-frame"
                   scrolling="no"
-                />
-                <div
-                  className="hiku-app-screens-overlay"
-                  onClick={(e) => {
-                    const frame = e.currentTarget.previousElementSibling;
-                    if (!frame || !frame.contentDocument) return;
-                    const rect = frame.getBoundingClientRect();
-                    const el = frame.contentDocument.elementFromPoint(
-                      e.clientX - rect.left,
-                      e.clientY - rect.top
-                    );
-                    if (el) el.click();
-                  }}
+                  data-lenis-prevent
                 />
               </div>
             </div>
