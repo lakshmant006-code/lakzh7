@@ -160,6 +160,21 @@ function LoadingScreen({ onDone }) {
   );
 }
 
+/* ================= 0. ONBOARDING ================= */
+function OnboardingScreen({ go }) {
+  return (
+    <div style={{ position: "relative", flex: 1, overflow: "hidden",
+      background: `center/cover no-repeat url(${ASSET + "/onboarding-campfire.jpg"})` }}>
+      {/* base scrim so the CTA reads over the artwork */}
+      <div style={{ position: "absolute", inset: 0,
+        background: "linear-gradient(180deg, rgba(15,40,30,0) 58%, rgba(15,40,30,0.34) 100%)" }} />
+      <div style={{ position: "absolute", bottom: 40, left: 24, right: 24 }}>
+        <Button variant="primary" fullWidth onClick={() => go("explore")}>Sign in</Button>
+      </div>
+    </div>
+  );
+}
+
 /* ================= 1. SPLASH ================= */
 function SplashScreen({ go }) {
   return (
@@ -1048,23 +1063,28 @@ function PhoneFrame({ children }) {
 
 function App() {
   const [tab, setTab] = React.useState("explore");
+  const [onboarding, setOnboarding] = React.useState(true);
   const [started, setStarted] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const go = (t) => {
+    setOnboarding(false);
     if (t === "explore") { setLoading(true); return; } // play loader before entering the app
     setStarted(true); setTab(t);
   };
 
   React.useEffect(() => {
     window.__hikuJump = (id) => {
-      if (id === "splash") { setStarted(false); setLoading(false); setTab("explore"); }
+      setOnboarding(id === "onboarding");
+      if (id === "onboarding") { setStarted(false); setLoading(false); }
+      else if (id === "splash") { setStarted(false); setLoading(false); setTab("explore"); }
       else if (id === "loading") { setStarted(false); setLoading(true); }
       else { setLoading(false); setStarted(true); setTab(id); }
     };
   }, []);
 
   let screen, animKey;
-  if (loading) { screen = <LoadingScreen onDone={() => { setLoading(false); setStarted(true); setTab("explore"); }} />; animKey = "loading"; }
+  if (onboarding) { screen = <OnboardingScreen go={go} />; animKey = "onboarding"; }
+  else if (loading) { screen = <LoadingScreen onDone={() => { setLoading(false); setStarted(true); setTab("explore"); }} />; animKey = "loading"; }
   else if (!started) { screen = <SplashScreen go={go} />; animKey = "splash"; }
   else if (tab === "explore") { screen = <ExploreScreen tab={tab} setTab={setTab} />; animKey = "explore"; }
   else if (tab === "trails") { screen = <TrailsScreen />; animKey = "trails"; }
@@ -1073,7 +1093,7 @@ function App() {
   else if (tab === "shop") { screen = <ShopScreen2 />; animKey = "shop"; }
   else if (tab === "account") { screen = <AccountScreen />; animKey = "account"; }
 
-  const showNav = started && !loading;
+  const showNav = started && !loading && !onboarding;
   return (
     <PhoneFrame>
       <ScreenAnim animKey={animKey}>

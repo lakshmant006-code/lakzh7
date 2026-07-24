@@ -73,12 +73,12 @@
 <script type="text/babel" src="screens.jsx"></script>
 <script type="text/babel">
   const jumps = [
-    ["Splash", "splash"], ["Loading", "loading"], ["Explore", "explore"], ["Trails", "trails"],
+    ["Onboarding", "onboarding"], ["Splash", "splash"], ["Loading", "loading"], ["Explore", "explore"], ["Trails", "trails"],
     ["Community", "community"], ["Register", "register"], ["Shop", "shop"], ["Account", "account"],
   ];
   function Harness() {
     const App = window.__HikuApp;
-    const [jump, setJump] = React.useState("splash");
+    const [jump, setJump] = React.useState("onboarding");
     return (
       <>
         <div className="tabs">
