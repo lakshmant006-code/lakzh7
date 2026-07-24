@@ -168,7 +168,7 @@ function OnboardingScreen({ go }) {
       {/* base scrim so the CTA reads over the artwork */}
       <div style={{ position: "absolute", inset: 0,
         background: "linear-gradient(180deg, rgba(15,40,30,0) 58%, rgba(15,40,30,0.34) 100%)" }} />
-      <div style={{ position: "absolute", bottom: 40, left: 24, right: 24 }}>
+      <div style={{ position: "absolute", bottom: 56, left: 28, right: 28 }}>
         <Button variant="primary" fullWidth onClick={() => go("explore")}>Sign in</Button>
       </div>
     </div>
