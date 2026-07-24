@@ -284,9 +284,11 @@ const ArcadiaCaseStudy = () => {
           </div>
 
           <div className="arcadia-hero-image-container arcadia-hero-after">
-            <ArcadiaPlaceholder
-              label="Secondary hero image"
-              aspectRatio="1360 / 400"
+            <img
+              src="/work/arcadia/Revolution Steel Shop.jpg"
+              alt="Revolution Steel shop floor — the team working across steel framing stations"
+              className="arcadia-hero-image"
+              style={{ aspectRatio: "16 / 9", objectPosition: "center" }}
             />
           </div>
         </section>
