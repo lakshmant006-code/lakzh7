@@ -435,6 +435,45 @@ const QuizAICaseStudy = () => {
               />
             </div>
           </div>
+
+          <div className="cs-hmw" style={{ "--hmw-accent": "#695b4d" }}>
+            <h3 className="cs-hmw-heading">HOW MIGHT WE</h3>
+            <div className="cs-hmw-grid">
+              <div className="cs-hmw-card">
+                <p className="cs-hmw-question">
+                  How might we turn dense notes into study-ready material
+                  without the busywork?
+                </p>
+                <p className="cs-hmw-solution">
+                  <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
+                  Auto-generate quizzes and summaries from any uploaded
+                  document, so students spend their time learning instead of
+                  formatting.
+                </p>
+              </div>
+              <div className="cs-hmw-card">
+                <p className="cs-hmw-question">
+                  How might we keep learners aware of their progress and
+                  motivated to review?
+                </p>
+                <p className="cs-hmw-solution">
+                  <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
+                  A progress dashboard tracks mastery by topic and nudges
+                  timely review before knowledge fades.
+                </p>
+              </div>
+              <div className="cs-hmw-card">
+                <p className="cs-hmw-question">
+                  How might we make studying feel less isolating?
+                </p>
+                <p className="cs-hmw-solution">
+                  <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
+                  Study groups let students share decks and quiz each other,
+                  turning solo prep into a shared routine.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

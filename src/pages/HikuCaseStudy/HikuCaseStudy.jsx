@@ -354,6 +354,44 @@ const HikuCaseStudy = () => {
             Combined with the interviews, this ensured a well-rounded
             understanding of what the target audience actually wanted.
           </p>
+
+          <div className="cs-hmw" style={{ "--hmw-accent": "#3A9269" }}>
+            <h3 className="cs-hmw-heading">HOW MIGHT WE</h3>
+            <div className="cs-hmw-grid">
+              <div className="cs-hmw-card">
+                <p className="cs-hmw-question">
+                  How might we help hikers find trails that match their skill
+                  and time?
+                </p>
+                <p className="cs-hmw-solution">
+                  <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
+                  A filterable trail feed ranks routes by difficulty, length,
+                  and season, so users choose with confidence.
+                </p>
+              </div>
+              <div className="cs-hmw-card">
+                <p className="cs-hmw-question">
+                  How might we connect solo hikers with a community they
+                  trust?
+                </p>
+                <p className="cs-hmw-solution">
+                  <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
+                  Local clubs and shared trip logs give newcomers people to
+                  hike with and stories to follow.
+                </p>
+              </div>
+              <div className="cs-hmw-card">
+                <p className="cs-hmw-question">
+                  How might we take the guesswork out of gear for new campers?
+                </p>
+                <p className="cs-hmw-solution">
+                  <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
+                  A curated shop pairs each trail with the gear it calls for,
+                  so first-timers aren&apos;t left guessing.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

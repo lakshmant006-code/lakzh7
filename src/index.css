@@ -98,3 +98,63 @@ body.dg-scroll-lock {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* Shared "How Might We" block (research phase of the case studies).
+   Per-page accent via the --hmw-accent custom property. */
+.cs-hmw {
+  --hmw-accent: #3b5a73;
+  margin: 3rem 0 0;
+}
+
+.cs-hmw-heading {
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin: 0 0 1.5rem;
+}
+
+.cs-hmw-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.cs-hmw-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(15, 15, 15, 0.15);
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.cs-hmw-question {
+  font-family: "Crimson Pro", serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0f0f0f;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.cs-hmw-solution {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #555;
+  font-weight: 300;
+  margin: 0;
+}
+
+.cs-hmw-solution-label {
+  font-weight: 600;
+  color: var(--hmw-accent);
+}
+
+@media (min-width: 1024px) {
+  .cs-hmw-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

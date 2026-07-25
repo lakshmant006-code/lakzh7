@@ -466,6 +466,44 @@ const TimeManagementCaseStudy = () => {
                   Security concerns
                 </span>
               </div>
+
+              <div className="cs-hmw" style={{ "--hmw-accent": "#1900FF" }}>
+                <h3 className="cs-hmw-heading">HOW MIGHT WE</h3>
+                <div className="cs-hmw-grid">
+                  <div className="cs-hmw-card">
+                    <p className="cs-hmw-question">
+                      How might we give managers real-time visibility into
+                      attendance and productivity?
+                    </p>
+                    <p className="cs-hmw-solution">
+                      <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
+                      Role-based dashboards surface clock-ins, task progress,
+                      and performance at a glance, cutting manual check-ins.
+                    </p>
+                  </div>
+                  <div className="cs-hmw-card">
+                    <p className="cs-hmw-question">
+                      How might we make clocking in and tracking time
+                      effortless across the team?
+                    </p>
+                    <p className="cs-hmw-solution">
+                      <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
+                      A one-tap clock-in and a simple daily view keep logging
+                      quick, so adoption sticks with 50+ employees.
+                    </p>
+                  </div>
+                  <div className="cs-hmw-card">
+                    <p className="cs-hmw-question">
+                      How might we help employees grow, not just get tracked?
+                    </p>
+                    <p className="cs-hmw-solution">
+                      <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
+                      A skills feature lets employees select and track job
+                      competencies, tying daily work to personal development.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
