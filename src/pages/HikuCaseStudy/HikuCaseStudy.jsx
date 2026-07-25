@@ -6,6 +6,7 @@ import useScrollReset from "../../hooks/useScrollReset";
 import { useLenisScroll } from "../../hooks/useLenisScroll";
 import { useCardUnfurling } from "../../hooks/useCardUnfurling";
 import Footer from "../../components/Footer/Footer";
+import LazyVideo from "../../components/LazyVideo/LazyVideo";
 import CursorPill from "../../components/CursorPill/CursorPill";
 import CaseStudyLayout from "../../components/CaseStudyLayout/CaseStudyLayout";
 import {
@@ -328,7 +329,7 @@ const HikuCaseStudy = () => {
             className="hiku-where-we-began-video-wrap"
             ref={whereWeBeganVideoRef}
           >
-            <video
+            <LazyVideo
               className="hiku-where-we-began-video"
               src="/work/Hiku/pain-points.mp4"
               autoPlay
@@ -571,7 +572,7 @@ const HikuCaseStudy = () => {
             </p>
             <div className="hiku-onboarding-vids">
               <figure className="hiku-onboarding-vid">
-                <video
+                <LazyVideo
                   src="/work/Hiku/onboarding-community.mp4"
                   autoPlay
                   loop
@@ -584,7 +585,7 @@ const HikuCaseStudy = () => {
                 </figcaption>
               </figure>
               <figure className="hiku-onboarding-vid">
-                <video
+                <LazyVideo
                   src="/work/Hiku/onboarding-gear.mp4"
                   autoPlay
                   loop
@@ -597,7 +598,7 @@ const HikuCaseStudy = () => {
                 </figcaption>
               </figure>
               <figure className="hiku-onboarding-vid">
-                <video
+                <LazyVideo
                   src="/work/Hiku/onboarding-food.mp4"
                   autoPlay
                   loop
@@ -656,7 +657,7 @@ const HikuCaseStudy = () => {
                 }}
               >
                 <div className="hiku-see-next-image-container">
-                  <video
+                  <LazyVideo
                     src="/work/quizai/thumbnail.mp4"
                     className="hiku-see-next-image"
                     autoPlay
@@ -687,7 +688,7 @@ const HikuCaseStudy = () => {
                 }}
               >
                 <div className="hiku-see-next-image-container">
-                  <video
+                  <LazyVideo
                     src="/work/time-management/thumbnail.mp4"
                     className="hiku-see-next-image"
                     autoPlay
@@ -718,7 +719,7 @@ const HikuCaseStudy = () => {
                 }}
               >
                 <div className="hiku-see-next-image-container">
-                  <video
+                  <LazyVideo
                     src="/work/arcadia/arcadia custom.mp4"
                     className="hiku-see-next-image"
                     autoPlay

@@ -7,6 +7,7 @@ import { useLenisScroll } from "../../hooks/useLenisScroll";
 import { useCountupAnimation } from "../../hooks/useCountupAnimation";
 import { useCardUnfurling } from "../../hooks/useCardUnfurling";
 import Footer from "../../components/Footer/Footer";
+import LazyVideo from "../../components/LazyVideo/LazyVideo";
 import CursorPill from "../../components/CursorPill/CursorPill";
 import CaseStudyLayout from "../../components/CaseStudyLayout/CaseStudyLayout";
 import {
@@ -722,7 +723,7 @@ const TimeManagementCaseStudy = () => {
                   className="time-management-solution-video-container"
                   ref={solutionItem1VideoRef}
                 >
-                  <video
+                  <LazyVideo
                     src="/work/time-management/organization-user-management.mp4"
                     className="time-management-solution-video"
                     style={{ aspectRatio: "1920 / 1080" }}
@@ -769,7 +770,7 @@ const TimeManagementCaseStudy = () => {
                   className="time-management-solution-video-container"
                   ref={solutionItem2VideoRef}
                 >
-                  <video
+                  <LazyVideo
                     src="/work/time-management/employee-skill-tracking.mp4"
                     className="time-management-solution-video"
                     style={{ aspectRatio: "1892 / 864" }}
@@ -840,7 +841,7 @@ const TimeManagementCaseStudy = () => {
                   ref={(el) => (seeNextCardsRefs.current[0] = el)}
                 >
                   <div className="time-management-see-next-image-container">
-                    <video
+                    <LazyVideo
                       src="/work/arcadia/arcadia custom.mp4"
                       className="time-management-see-next-image"
                       autoPlay
@@ -871,7 +872,7 @@ const TimeManagementCaseStudy = () => {
                   ref={(el) => (seeNextCardsRefs.current[1] = el)}
                 >
                   <div className="time-management-see-next-image-container">
-                    <video
+                    <LazyVideo
                       src="/work/quizai/thumbnail.mp4"
                       className="time-management-see-next-image"
                       autoPlay
@@ -900,7 +901,7 @@ const TimeManagementCaseStudy = () => {
                   ref={(el) => (seeNextCardsRefs.current[2] = el)}
                 >
                   <div className="time-management-see-next-image-container">
-                    <video
+                    <LazyVideo
                       src="/work/Hiku/thumbnail.mp4"
                       className="time-management-see-next-image"
                       autoPlay

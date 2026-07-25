@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Footer from "../../components/Footer/Footer";
+import LazyVideo from "../../components/LazyVideo/LazyVideo";
 import ExperienceTimeline from "../../components/ExperienceTimeline/ExperienceTimeline";
 import ExpandingPhotoRow from "../../components/ExpandingPhotoRow/ExpandingPhotoRow";
 import useScrollReset from "../../hooks/useScrollReset";
@@ -44,7 +45,7 @@ const About = () => {
           className="about-sandbox-hi-wrap"
           onMouseEnter={handleHiMouseEnter}
         >
-          <video
+          <LazyVideo
             className="about-sandbox-hi-video"
             src={hiVideo}
             autoPlay

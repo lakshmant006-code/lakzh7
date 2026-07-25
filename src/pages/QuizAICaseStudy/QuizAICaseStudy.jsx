@@ -7,6 +7,7 @@ import { useLenisScroll } from "../../hooks/useLenisScroll";
 import { useCardUnfurling } from "../../hooks/useCardUnfurling";
 import { useCountupAnimation } from "../../hooks/useCountupAnimation";
 import Footer from "../../components/Footer/Footer";
+import LazyVideo from "../../components/LazyVideo/LazyVideo";
 import CursorPill from "../../components/CursorPill/CursorPill";
 import CaseStudyLayout from "../../components/CaseStudyLayout/CaseStudyLayout";
 import {
@@ -622,7 +623,7 @@ const QuizAICaseStudy = () => {
                 className="quizai-solution-video-container"
                 ref={solution1VideoRef}
               >
-                <video
+                <LazyVideo
                   src="/work/quizai/quizai-dashboard-v1.mp4"
                   className="quizai-solution-video"
                   autoPlay
@@ -663,7 +664,7 @@ const QuizAICaseStudy = () => {
                 className="quizai-solution-video-container"
                 ref={solution2VideoRef}
               >
-                <video
+                <LazyVideo
                   src="/work/quizai/quiz-generation.mp4"
                   className="quizai-solution-video"
                   autoPlay
@@ -741,7 +742,7 @@ const QuizAICaseStudy = () => {
                 ref={(el) => (seeNextCardsRefs.current[0] = el)}
               >
                 <div className="quizai-see-next-image-container">
-                  <video
+                  <LazyVideo
                     src="/work/time-management/thumbnail.mp4"
                     className="quizai-see-next-image"
                     style={{ aspectRatio: "1920 / 1438" }}
@@ -771,7 +772,7 @@ const QuizAICaseStudy = () => {
                 ref={(el) => (seeNextCardsRefs.current[1] = el)}
               >
                 <div className="quizai-see-next-image-container">
-                  <video
+                  <LazyVideo
                     src="/work/arcadia/arcadia custom.mp4"
                     className="quizai-see-next-image"
                     style={{ aspectRatio: "1920 / 1080" }}
@@ -803,7 +804,7 @@ const QuizAICaseStudy = () => {
                 ref={(el) => (seeNextCardsRefs.current[2] = el)}
               >
                 <div className="quizai-see-next-image-container">
-                  <video
+                  <LazyVideo
                     src="/work/Hiku/thumbnail.mp4"
                     className="quizai-see-next-image"
                     autoPlay

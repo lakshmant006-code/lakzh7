@@ -7,6 +7,7 @@ import { useCountupAnimation } from "../../hooks/useCountupAnimation";
 import { useLenisScroll } from "../../hooks/useLenisScroll";
 import { useCardUnfurling } from "../../hooks/useCardUnfurling";
 import Footer from "../../components/Footer/Footer";
+import LazyVideo from "../../components/LazyVideo/LazyVideo";
 import CursorPill from "../../components/CursorPill/CursorPill";
 import CaseStudyLayout from "../../components/CaseStudyLayout/CaseStudyLayout";
 import {
@@ -780,7 +781,7 @@ const ArcadiaCaseStudy = () => {
                   ref={(el) => (seeNextCardsRefs.current[0] = el)}
                 >
                   <div className="arcadia-see-next-image-container">
-                    <video
+                    <LazyVideo
                       src="/work/Hiku/thumbnail.mp4"
                       className="arcadia-see-next-image"
                       autoPlay
@@ -811,7 +812,7 @@ const ArcadiaCaseStudy = () => {
                   ref={(el) => (seeNextCardsRefs.current[1] = el)}
                 >
                   <div className="arcadia-see-next-image-container">
-                    <video
+                    <LazyVideo
                       src="/work/quizai/thumbnail.mp4"
                       className="arcadia-see-next-image"
                       autoPlay
@@ -841,7 +842,7 @@ const ArcadiaCaseStudy = () => {
                   ref={(el) => (seeNextCardsRefs.current[2] = el)}
                 >
                   <div className="arcadia-see-next-image-container">
-                    <video
+                    <LazyVideo
                       src="/work/time-management/thumbnail.mp4"
                       className="arcadia-see-next-image"
                       autoPlay
