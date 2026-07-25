@@ -503,9 +503,9 @@ const HikuCaseStudy = () => {
               App Screens
             </h4>
             <p className="hiku-visual-identity-description">
-              From splash to community — every screen was designed end-to-end
-              in Figma. Tap through Splash, Explore, Trails, Register, Shop,
-              and Account to see the full mobile experience come together.
+              From onboarding to community, every screen was designed
+              end-to-end in Figma. Swipe through the intro, sign in, and
+              explore the app just like you would on your phone.
             </p>
             <div className="hiku-wireframe-container hiku-app-screens-container">
               <div className="hiku-app-screens-wrapper">

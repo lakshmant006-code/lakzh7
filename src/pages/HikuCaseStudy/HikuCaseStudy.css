@@ -653,9 +653,9 @@
   margin: 0 auto;
   border-radius: 16px;
   display: block;
-  /* Embed viewport — taller than the phone so the full device (plus the tab
-     row above it) fits with padding and can sit centered. */
-  aspect-ratio: 390 / 1000;
+  /* Embed viewport — a little taller than the phone so the full device sits
+     centered with even padding above and below. */
+  aspect-ratio: 390 / 880;
   height: auto;
   /* Scroll started inside the phone stays inside it; the page scrolls only
      when the wheel/touch is over the background. */

@@ -72,24 +72,11 @@
 <div id="root"></div>
 <script type="text/babel" src="screens.jsx"></script>
 <script type="text/babel">
-  const jumps = [
-    ["Onboarding", "onboarding"], ["Splash", "splash"], ["Loading", "loading"], ["Explore", "explore"], ["Trails", "trails"],
-    ["Community", "community"], ["Register", "register"], ["Shop", "shop"], ["Account", "account"],
-  ];
   function Harness() {
     const App = window.__HikuApp;
-    const [jump, setJump] = React.useState("onboarding");
-    return (
-      <>
-        <div className="tabs">
-          {jumps.map(([label, id]) => (
-            <button key={id} className={"tab" + (jump === id ? " on" : "")}
-              onClick={() => { setJump(id); window.__hikuJump && window.__hikuJump(id); }}>{label}</button>
-          ))}
-        </div>
-        <App key="app" />
-      </>
-    );
+    // Standalone app experience — no prototype tabs; navigate via the app's
+    // own onboarding flow and bottom navigation.
+    return <App key="app" />;
   }
   ReactDOM.createRoot(document.getElementById('root')).render(<Harness />);
 </script>

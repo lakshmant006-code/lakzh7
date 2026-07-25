@@ -160,15 +160,55 @@ function LoadingScreen({ onDone }) {
   );
 }
 
-/* ================= 0. ONBOARDING ================= */
+/* ================= 0. ONBOARDING (swipeable) ================= */
 function OnboardingScreen({ go }) {
+  const slides = [
+    { img: "onboarding-community.jpg", text: "Find your people around the fire." },
+    { img: "onboarding-shop.jpg", text: "Gear up before you hit the trail." },
+    { img: "onboarding-food.jpg", text: "Refuel with real food after the climb." },
+  ];
+  const scrollerRef = React.useRef(null);
+  const [active, setActive] = React.useState(0);
+  const onScroll = (e) => {
+    const w = e.currentTarget.clientWidth || 1;
+    setActive(Math.round(e.currentTarget.scrollLeft / w));
+  };
+  const goTo = (i) => {
+    const el = scrollerRef.current;
+    if (el) el.scrollTo({ left: i * el.clientWidth, behavior: "smooth" });
+  };
   return (
-    <div style={{ position: "relative", flex: 1, overflow: "hidden",
-      background: `center/cover no-repeat url(${ASSET + "/onboarding-campfire.jpg"})` }}>
-      {/* base scrim so the CTA reads over the artwork */}
-      <div style={{ position: "absolute", inset: 0,
-        background: "linear-gradient(180deg, rgba(15,40,30,0) 58%, rgba(15,40,30,0.34) 100%)" }} />
-      <div style={{ position: "absolute", bottom: 56, left: 28, right: 28 }}>
+    <div style={{ position: "relative", flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      {/* swipeable slide track */}
+      <div ref={scrollerRef} onScroll={onScroll}
+        style={{ flex: 1, display: "flex", overflowX: "auto", overflowY: "hidden",
+          scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
+        {slides.map((s, i) => (
+          <div key={i} style={{ position: "relative", flex: "0 0 100%", width: "100%", height: "100%",
+            scrollSnapAlign: "center",
+            background: `center/cover no-repeat url(${ASSET + "/" + s.img})` }}>
+            <div style={{ position: "absolute", inset: 0,
+              background: "linear-gradient(180deg, rgba(15,40,30,0) 42%, rgba(15,40,30,0.64) 100%)" }} />
+            <div style={{ position: "absolute", left: 28, right: 28, bottom: 152,
+              fontFamily: "var(--font-sans)", fontSize: 23, fontWeight: 700, lineHeight: 1.25,
+              color: "#fff", textShadow: "0 2px 14px rgba(15,40,30,0.6)" }}>
+              {s.text}
+            </div>
+          </div>
+        ))}
+      </div>
+      {/* pagination dots */}
+      <div style={{ position: "absolute", left: 0, right: 0, bottom: 114, display: "flex",
+        justifyContent: "center", gap: 8, zIndex: 2 }}>
+        {slides.map((_, i) => (
+          <button key={i} onClick={() => goTo(i)} aria-label={"Go to slide " + (i + 1)}
+            style={{ width: i === active ? 22 : 8, height: 8, borderRadius: 999, border: "none", padding: 0,
+              cursor: "pointer", transition: "width .25s, background .25s",
+              background: i === active ? "#fff" : "rgba(255,255,255,0.55)" }} />
+        ))}
+      </div>
+      {/* persistent CTA */}
+      <div style={{ position: "absolute", bottom: 44, left: 28, right: 28, zIndex: 2 }}>
         <Button variant="primary" fullWidth onClick={() => go("explore")}>Sign in</Button>
       </div>
     </div>
