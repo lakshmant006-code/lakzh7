@@ -85,6 +85,7 @@ const HikuCaseStudy = () => {
   const visualIdentityRef = useRef(null);
   const lofiWireframesRef = useRef(null);
   const physicalComponentRef = useRef(null);
+  const onboardingIllusRef = useRef(null);
   const featureItemRefs = useRef([]);
   const takeawaysTitleRef = useRef(null);
   const takeawaysItemRef = useRef(null);
@@ -148,6 +149,7 @@ const HikuCaseStudy = () => {
     createScrollAnimation(visualIdentityRef, 0.1);
     createScrollAnimation(lofiWireframesRef, 0.14);
     createScrollAnimation(physicalComponentRef, 0.18);
+    createScrollAnimation(onboardingIllusRef, 0.22);
     createScrollAnimation(takeawaysTitleRef, 0.06);
     createScrollAnimation(takeawaysItemRef, 0.1);
     createScrollAnimation(seeNextTitleRef, 0.06);
@@ -555,6 +557,58 @@ const HikuCaseStudy = () => {
                   data-lenis-prevent
                 />
               </div>
+            </div>
+          </div>
+
+          <div className="hiku-physical-component" ref={onboardingIllusRef}>
+            <h4 className="hiku-visual-identity-subtitle">
+              Onboarding Illustrations
+            </h4>
+            <p className="hiku-visual-identity-description">
+              The onboarding screens are hand-painted. Each illustration was
+              built up from first sketch to final art: community, gear, and
+              food.
+            </p>
+            <div className="hiku-onboarding-vids">
+              <figure className="hiku-onboarding-vid">
+                <video
+                  src="/work/Hiku/onboarding-community.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  aria-label="Community onboarding illustration being painted"
+                />
+                <figcaption className="hiku-onboarding-vid-caption">
+                  Community
+                </figcaption>
+              </figure>
+              <figure className="hiku-onboarding-vid">
+                <video
+                  src="/work/Hiku/onboarding-gear.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  aria-label="Gear onboarding illustration being painted"
+                />
+                <figcaption className="hiku-onboarding-vid-caption">
+                  Gear
+                </figcaption>
+              </figure>
+              <figure className="hiku-onboarding-vid">
+                <video
+                  src="/work/Hiku/onboarding-food.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  aria-label="Food onboarding illustration being painted"
+                />
+                <figcaption className="hiku-onboarding-vid-caption">
+                  Food
+                </figcaption>
+              </figure>
             </div>
           </div>
         </div>
