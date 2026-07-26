@@ -189,9 +189,9 @@ function OnboardingScreen({ go }) {
             background: `center/cover no-repeat url(${ASSET + "/" + s.img})` }}>
             <div style={{ position: "absolute", inset: 0,
               background: "linear-gradient(180deg, rgba(15,40,30,0) 42%, rgba(15,40,30,0.64) 100%)" }} />
-            <div style={{ position: "absolute", left: 28, right: 28, bottom: 152,
-              fontFamily: "var(--font-sans)", fontSize: 23, fontWeight: 700, lineHeight: 1.25,
-              color: "#fff", textShadow: "0 2px 14px rgba(15,40,30,0.6)" }}>
+            <div style={{ position: "absolute", left: 28, right: 28, bottom: 150,
+              fontFamily: "'Instrument Serif', serif", fontSize: 34, fontWeight: 400,
+              lineHeight: 1.12, color: "#fff", textShadow: "0 2px 14px rgba(15,40,30,0.6)" }}>
               {s.text}
             </div>
           </div>
@@ -207,9 +207,15 @@ function OnboardingScreen({ go }) {
               background: i === active ? "#fff" : "rgba(255,255,255,0.55)" }} />
         ))}
       </div>
-      {/* persistent CTA */}
-      <div style={{ position: "absolute", bottom: 44, left: 28, right: 28, zIndex: 2 }}>
-        <Button variant="primary" fullWidth onClick={() => go("explore")}>Sign in</Button>
+      {/* text CTA (no button) */}
+      <div style={{ position: "absolute", bottom: 48, left: 0, right: 0, textAlign: "center", zIndex: 2 }}>
+        <button onClick={() => go("explore")}
+          style={{ background: "none", border: "none", cursor: "pointer", color: "#fff",
+            fontFamily: "var(--font-sans)", fontSize: 16, fontWeight: 600, letterSpacing: "0.02em",
+            textDecoration: "underline", textUnderlineOffset: 5, padding: 8,
+            textShadow: "0 1px 8px rgba(15,40,30,0.65)" }}>
+          Sign in
+        </button>
       </div>
     </div>
   );
