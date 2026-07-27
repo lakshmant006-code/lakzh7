@@ -189,7 +189,7 @@ function OnboardingScreen({ go }) {
             background: `center/cover no-repeat url(${ASSET + "/" + s.img})` }}>
             <div style={{ position: "absolute", inset: 0,
               background: "linear-gradient(180deg, rgba(15,40,30,0) 42%, rgba(15,40,30,0.64) 100%)" }} />
-            <div style={{ position: "absolute", left: 28, right: 28, bottom: 90,
+            <div style={{ position: "absolute", left: 28, right: 28, bottom: 150,
               fontFamily: "'Instrument Serif', serif", fontSize: 25, fontWeight: 400,
               lineHeight: 1.15, color: "#fff", textShadow: "0 2px 14px rgba(15,40,30,0.6)" }}>
               {s.text}
@@ -198,7 +198,7 @@ function OnboardingScreen({ go }) {
         ))}
       </div>
       {/* pagination dots */}
-      <div style={{ position: "absolute", left: 0, right: 0, bottom: 52, display: "flex",
+      <div style={{ position: "absolute", left: 0, right: 0, bottom: 110, display: "flex",
         justifyContent: "center", gap: 8, zIndex: 2 }}>
         {slides.map((_, i) => (
           <button key={i} onClick={() => goTo(i)} aria-label={"Go to slide " + (i + 1)}
@@ -207,6 +207,12 @@ function OnboardingScreen({ go }) {
               background: i === active ? "#fff" : "rgba(255,255,255,0.55)" }} />
         ))}
       </div>
+      {/* Sign in — only on the last (food) slide; enters the app flow */}
+      {active === slides.length - 1 && (
+        <div style={{ position: "absolute", bottom: 44, left: 28, right: 28, zIndex: 2 }}>
+          <Button variant="primary" fullWidth onClick={() => go("explore")}>Sign in</Button>
+        </div>
+      )}
     </div>
   );
 }
