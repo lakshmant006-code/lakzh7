@@ -382,11 +382,26 @@ const QuizAICaseStudy = () => {
                 Research &amp; User Discovery
               </CaseStudyStatementHeadline>
               <CaseStudyStatementBody>
-                The project began with understanding the study habits,
-                challenges, and goals of students, teachers, and
-                self-learners. Research revealed that users often struggle to
-                organize learning materials and convert them into effective
-                study resources.
+                Sit in on any lecture and watch what happens afterward —
+                notes get scribbled down, filed away, and rarely opened
+                again. The research backs that up: students capture only
+                about a third of the important material, miss close to 40% of
+                the key points, and more than half say they struggle to stay
+                engaged or hold onto what they learned.
+              </CaseStudyStatementBody>
+              <CaseStudyStatementBody>
+                The real gap isn't note-taking, it's what comes next. Active
+                recall and self-testing are what actually move ideas into
+                long-term memory, but building that habit today means hopping
+                between separate tools — one for notes, another for study
+                docs, another for quizzes. So most students simply skip it.
+              </CaseStudyStatementBody>
+              <CaseStudyStatementBody>
+                That's the gap QuizAI is built to close. It takes a student's
+                raw notes and, in a single step, turns them into organized
+                study materials and auto-generated, self-scoring quizzes — so
+                real studying becomes the easy default instead of one more
+                chore to put off.
               </CaseStudyStatementBody>
               <CaseStudyStatementHeadline as="h4">
                 Key Insights &amp; Problem Definition
