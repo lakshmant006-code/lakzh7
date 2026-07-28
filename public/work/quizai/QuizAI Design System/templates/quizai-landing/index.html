@@ -12,6 +12,34 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="../../_ds_bundle.js"></script>
+<script>
+  // At iframe scroll edges, hand the wheel back to the parent page (Lenis).
+  (function () {
+    function onWheel(e) {
+      if (!window.parent || window.parent === window) return;
+      const maxScroll = Math.max(
+        0,
+        document.documentElement.scrollHeight - window.innerHeight
+      );
+      const y = window.scrollY || document.documentElement.scrollTop || 0;
+      const atTop = y <= 0;
+      const atBottom = y >= maxScroll - 1;
+      if ((atTop && e.deltaY < 0) || (atBottom && e.deltaY > 0)) {
+        e.preventDefault();
+        window.parent.postMessage(
+          {
+            source: "quizai-embed",
+            type: "wheel",
+            deltaY: e.deltaY,
+            deltaMode: e.deltaMode,
+          },
+          "*"
+        );
+      }
+    }
+    window.addEventListener("wheel", onWheel, { passive: false });
+  })();
+</script>
 <style>
   html, body {
     margin: 0;

@@ -627,6 +627,25 @@
   border: none;
 }
 
+.quizai-lofi-frame {
+  width: 100%;
+  height: min(72vh, 760px);
+  min-height: 420px;
+  max-height: 820px;
+  display: block;
+  background: #f4f4f2;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid rgba(15, 15, 15, 0.08);
+}
+
+@media (max-width: 767px) {
+  .quizai-lofi-frame {
+    height: min(68vh, 560px);
+    min-height: 360px;
+  }
+}
+
 /* Design System — Visual Identity */
 .quizai-visual-identity-subtitle {
   font-family: "Crimson Pro", serif;

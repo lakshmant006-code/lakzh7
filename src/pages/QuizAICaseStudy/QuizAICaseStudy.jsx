@@ -6,6 +6,7 @@ import useScrollReset from "../../hooks/useScrollReset";
 import { useLenisScroll } from "../../hooks/useLenisScroll";
 import { useCardUnfurling } from "../../hooks/useCardUnfurling";
 import { useCountupAnimation } from "../../hooks/useCountupAnimation";
+import { useQuizaiEmbedScrollBridge } from "../../hooks/useQuizaiEmbedScrollBridge";
 import Footer from "../../components/Footer/Footer";
 import LazyVideo from "../../components/LazyVideo/LazyVideo";
 import CursorPill from "../../components/CursorPill/CursorPill";
@@ -27,14 +28,7 @@ const QUIZAI_DS_CARDS = [
   { name: "Semantic Colors", src: `${DS_BASE}/guidelines/colors-semantic.card.html`, height: 110 },
   { name: "Neutral Surfaces", src: `${DS_BASE}/guidelines/colors-neutral-surfaces.card.html`, height: 150 },
   { name: "Font Family", src: `${DS_BASE}/guidelines/type-family.card.html`, height: 90 },
-  { name: "Display / Headings", src: `${DS_BASE}/guidelines/type-headings.card.html`, height: 230 },
-  { name: "Body / Labels", src: `${DS_BASE}/guidelines/type-body.card.html`, height: 160 },
-  { name: "Spacing Scale", src: `${DS_BASE}/guidelines/spacing-scale.card.html`, height: 140 },
-  { name: "Corner Radii", src: `${DS_BASE}/guidelines/spacing-radii.card.html`, height: 150 },
   { name: "Elevation", src: `${DS_BASE}/guidelines/brand-elevation.card.html`, height: 160 },
-  { name: "Core Components", src: `${DS_BASE}/components/core/core.card.html`, height: 260 },
-  { name: "Cards", src: `${DS_BASE}/components/cards/cards.card.html`, height: 340 },
-  { name: "Navigation Bar", src: `${DS_BASE}/components/core/navbar.card.html`, height: 100 },
 ];
 
 const QUIZAI_SOLUTIONS = [
@@ -94,10 +88,8 @@ const QuizAICaseStudy = () => {
   const designApproach2TitleRef = useRef(null);
   const designApproach2ContentRef = useRef(null);
   const designApproach2Image1Ref = useRef(null);
+  const lofiWireframesFrameRef = useRef(null);
   const designApproachDsRef = useRef(null);
-  const designApproachHighFiTitleRef = useRef(null);
-  const designApproachHighFiContentRef = useRef(null);
-  const designApproachHighFiImagesRef = useRef(null);
   const appScreensRef = useRef(null);
   const solutionItemRefs = useRef([]);
   const reflectionTitleRef = useRef(null);
@@ -105,6 +97,8 @@ const QuizAICaseStudy = () => {
   const seeNextTitleRef = useRef(null);
   const seeNextGridRef = useRef(null);
   const seeNextCardsRefs = useRef([]);
+
+  useQuizaiEmbedScrollBridge();
 
   const metrics = useMemo(
     () => [
@@ -220,11 +214,8 @@ const QuizAICaseStudy = () => {
     createScrollAnimation(designApproach2TitleRef);
     createScrollAnimation(designApproach2ContentRef, 0.1);
     createScrollAnimation(designApproach2Image1Ref, 0.2);
-    // Design System + High-Fi Frames + App Screens
+    // Design System + App Screens
     createScrollAnimation(designApproachDsRef, 0.1);
-    createScrollAnimation(designApproachHighFiTitleRef);
-    createScrollAnimation(designApproachHighFiContentRef, 0.1);
-    createScrollAnimation(designApproachHighFiImagesRef, 0.2);
     createScrollAnimation(appScreensRef, 0.1);
     // Solution Section
     solutionItemRefs.current.forEach((node, index) => {
@@ -622,10 +613,11 @@ const QuizAICaseStudy = () => {
               ref={designApproach2Image1Ref}
             >
               <iframe
+                ref={lofiWireframesFrameRef}
                 src="/work/quizai/lofi-wireframes/index.html"
                 title="Lo-Fi Wireframes – QuizAI"
-                className="quizai-design-approach-image quizai-wireframe-frame"
-                style={{ height: "900px" }}
+                className="quizai-design-approach-image quizai-wireframe-frame quizai-lofi-frame"
+                scrolling="no"
               />
             </div>
           </div>
@@ -657,52 +649,6 @@ const QuizAICaseStudy = () => {
                   />
                 </div>
               ))}
-            </div>
-          </div>
-
-          {/* Design Approach High-Fi Frames */}
-          <div className="quizai-design-approach-item">
-            <CaseStudyStatement
-              ref={designApproachHighFiContentRef}
-              className="quizai-design-approach-statement"
-            >
-              <CaseStudyStatementHeadline
-                as="h4"
-                ref={designApproachHighFiTitleRef}
-              >
-                High Fidelity Frames
-              </CaseStudyStatementHeadline>
-              <CaseStudyStatementBody>
-                With the lo-fi structure validated, I translated each flow into{" "}
-                <span style={{ fontWeight: 600 }}>
-                  polished, ready-to-build screens
-                </span>{" "}
-                covering sign-in, quiz history, and study session summaries —
-                built from the same design system tokens.
-              </CaseStudyStatementBody>
-            </CaseStudyStatement>
-            <div
-              className="quizai-highfi-frames-grid"
-              ref={designApproachHighFiImagesRef}
-            >
-              <img
-                src="/work/quizai/highfi-login.png"
-                alt="QuizAI High Fidelity Sign In Screen"
-                className="quizai-highfi-frame-image"
-                style={{ aspectRatio: "493 / 271" }}
-              />
-              <img
-                src="/work/quizai/highfi-quiz-history.png"
-                alt="QuizAI High Fidelity Quiz History Screen"
-                className="quizai-highfi-frame-image"
-                style={{ aspectRatio: "559 / 271" }}
-              />
-              <img
-                src="/work/quizai/highfi-study-session.png"
-                alt="QuizAI High Fidelity Study Session Summaries Screen"
-                className="quizai-highfi-frame-image"
-                style={{ aspectRatio: "555 / 270" }}
-              />
             </div>
           </div>
 

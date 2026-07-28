@@ -10,13 +10,14 @@
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin></script>
+<script src="/work/quizai/embed-scroll-bridge.js"></script>
 <style>
-  html, body {
+  html, body, #root {
     margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
     background: #f4f4f2;
-  }
-  #root {
-    min-height: 100%;
   }
 </style>
 </head>

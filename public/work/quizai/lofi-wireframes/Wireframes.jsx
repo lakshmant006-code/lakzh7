@@ -41,7 +41,7 @@ function Note({ children }) {
 function AppShell({ active, children }) {
   const items = ["Search", "Home", "Quizzes", "Summaries", "Tasks"];
   return (
-    <div style={{ ...sketch({ display: "flex", overflow: "hidden", minHeight: 520 }) }}>
+    <div style={{ ...sketch({ display: "flex", overflow: "hidden", minHeight: 420, maxHeight: 560 }) }}>
       <div style={{ width: 168, borderRight: `2px solid ${S.ink}`, padding: 14, display: "flex", flexDirection: "column", gap: 10 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ width: 30, height: 30, borderRadius: "50%", border: `2px solid ${S.ink}` }}></div>
@@ -343,16 +343,94 @@ const PAGES = [
 
 function QuizAiWireframes() {
   const [tab, setTab] = React.useState(0);
+  const stageRef = React.useRef(null);
+  const contentRef = React.useRef(null);
+  const [scale, setScale] = React.useState(1);
   const Page = PAGES[tab][1];
+
+  const fitToScreen = React.useCallback(() => {
+    const stage = stageRef.current;
+    const content = contentRef.current;
+    if (!stage || !content) return;
+    content.style.transform = "scale(1)";
+    content.style.width = "100%";
+    const pad = 8;
+    const sw = Math.max(stage.clientWidth - pad * 2, 1);
+    const sh = Math.max(stage.clientHeight - pad * 2, 1);
+    const cw = Math.max(content.scrollWidth, 1);
+    const ch = Math.max(content.scrollHeight, 1);
+    const next = Math.min(sw / cw, sh / ch, 1);
+    setScale(Number.isFinite(next) && next > 0 ? next : 1);
+  }, []);
+
+  React.useEffect(() => {
+    const id = requestAnimationFrame(fitToScreen);
+    const onResize = () => fitToScreen();
+    window.addEventListener("resize", onResize);
+    let ro;
+    if (typeof ResizeObserver !== "undefined" && stageRef.current) {
+      ro = new ResizeObserver(fitToScreen);
+      ro.observe(stageRef.current);
+    }
+    // Fonts / late layout
+    const t1 = setTimeout(fitToScreen, 120);
+    const t2 = setTimeout(fitToScreen, 400);
+    return () => {
+      cancelAnimationFrame(id);
+      window.removeEventListener("resize", onResize);
+      if (ro) ro.disconnect();
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [fitToScreen, tab]);
+
   return (
-    <div style={{ minHeight: "100vh", background: "#f4f4f2", padding: "26px 28px 60px", fontFamily: S.font, color: S.ink }}>
-      <div style={{ maxWidth: 1080, margin: "0 auto" }}>
-        <div style={{ fontSize: 24 }}>QuizAI — low-fidelity wireframes</div>
-        <div style={{ fontSize: 13, color: S.soft, marginTop: 4 }}>Structure and flow only. No colour, no type hierarchy, no final copy.</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "18px 0 16px" }}>
+    <div
+      ref={stageRef}
+      style={{
+        width: "100%",
+        height: "100vh",
+        overflow: "hidden",
+        background: "#f4f4f2",
+        fontFamily: S.font,
+        color: S.ink,
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "center",
+        boxSizing: "border-box",
+        padding: 8,
+      }}
+    >
+      <div
+        ref={contentRef}
+        style={{
+          width: "100%",
+          maxWidth: 980,
+          transform: `scale(${scale})`,
+          transformOrigin: "top center",
+          willChange: "transform",
+        }}
+      >
+        <div style={{ fontSize: 20, lineHeight: 1.2 }}>QuizAI — low-fidelity wireframes</div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, margin: "12px 0 12px" }}>
           {PAGES.map(([name], i) => (
-            <button key={name} onClick={() => setTab(i)}
-              style={{ ...sketch({ background: i === tab ? S.ink : "#fff", padding: "7px 14px", borderRadius: 999 }), color: i === tab ? "#fff" : S.ink, fontFamily: S.font, fontSize: 13, cursor: "pointer" }}>{name}</button>
+            <button
+              key={name}
+              onClick={() => setTab(i)}
+              style={{
+                ...sketch({
+                  background: i === tab ? S.ink : "#fff",
+                  padding: "6px 12px",
+                  borderRadius: 999,
+                }),
+                color: i === tab ? "#fff" : S.ink,
+                fontFamily: S.font,
+                fontSize: 12,
+                cursor: "pointer",
+              }}
+            >
+              {name}
+            </button>
           ))}
         </div>
         <Page />
