@@ -2,6 +2,27 @@
    BASE STYLES
    ============================================ */
 
+/* Small video hanging off the nav's bottom line. It's a child of .site-nav,
+   so it inherits the nav's GSAP entrance transform and drops down together
+   with the nav line on load, then stays fixed with the (fixed) nav. */
+.nav-hang-video {
+  position: absolute;
+  top: 100%;
+  left: 16px;
+  width: auto;
+  height: 84px;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 20;
+}
+
+@media (max-width: 640px) {
+  .nav-hang-video {
+    left: 10px;
+    height: 64px;
+  }
+}
+
 .site-nav {
   background: rgba(250, 250, 250, 0.7);
   backdrop-filter: blur(4px);

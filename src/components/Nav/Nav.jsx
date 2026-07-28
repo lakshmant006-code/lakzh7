@@ -451,6 +451,17 @@ const Nav = () => {
         transform: "translateY(-100px)",
       }}
     >
+      <video
+        className="nav-hang-video"
+        autoPlay
+        loop
+        muted
+        playsInline
+        aria-hidden="true"
+      >
+        <source src="/nav-top-video.webm" type="video/webm" />
+        <source src="/nav-top-video.mp4" type="video/mp4" />
+      </video>
       <div className="page-content-shell">
         <div className="flex items-center justify-between py-5 z-[1000] gap-6 lg:h-16 relative min-h-[32px]">
           <Link to="/" onClick={handleLogoClick} className="logo-link">

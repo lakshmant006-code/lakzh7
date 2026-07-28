@@ -75,17 +75,6 @@ function App() {
               <Nav />
             </div>
           </div>
-          <video
-            className="nav-top-video"
-            autoPlay
-            loop
-            muted
-            playsInline
-            aria-hidden="true"
-          >
-            <source src="/nav-top-video.webm" type="video/webm" />
-            <source src="/nav-top-video.mp4" type="video/mp4" />
-          </video>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/google-creative" element={<Home />} />
