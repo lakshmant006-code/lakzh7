@@ -658,6 +658,9 @@
   flex-direction: column;
   gap: 1rem;
   margin-bottom: 4rem;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
 }
 
 .quizai-solution-item:last-child {
@@ -671,9 +674,6 @@
   letter-spacing: 0.05em;
   color: #666;
   margin: 2rem 0 1rem 0;
-  /* Initial hidden state for GSAP animation */
-  opacity: 0;
-  transform: translateY(30px);
 }
 
 .quizai-solution-media {
@@ -687,9 +687,6 @@
   width: 100%;
   position: relative;
   overflow: hidden;
-  /* Initial hidden state for GSAP animation */
-  opacity: 0;
-  transform: translateY(30px);
 }
 
 .quizai-solution-video-container::before {
@@ -734,9 +731,6 @@
   color: #0f0f0f;
   margin: 0;
   font-weight: 300;
-  /* Initial hidden state for GSAP animation */
-  opacity: 0;
-  transform: translateY(30px);
 }
 
 .quizai-solution-caption-bold {

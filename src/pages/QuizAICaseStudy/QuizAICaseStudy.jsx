@@ -19,6 +19,41 @@ import "./QuizAICaseStudy.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const QUIZAI_SOLUTIONS = [
+  {
+    video: "/work/quizai/Landing.mp4",
+    title: "Solution #1: Landing",
+    headlineLead: "A clear upload-to-quiz path cut early confusion — students saw the full loop ",
+    headlineHighlight: "before they signed up.",
+    caption:
+      "Research showed drop-off started with not knowing what QuizAI did. The landing spells out upload → summarize → quiz up front, so students arrive oriented — a foundation for the 100% task completion rate we later measured in usability testing.",
+  },
+  {
+    video: "/work/quizai/Summarize.mp4",
+    title: "Solution #2: Summary",
+    headlineLead: "Auto-summaries cut study prep time by ",
+    headlineHighlight: "30%.",
+    caption:
+      "Students were capturing only ~⅓ of lecture material and missing close to 40% of key points, then drowning in unread notes. AI summaries pull the essentials forward from any upload — so review starts from what matters, not the full page count.",
+  },
+  {
+    video: "/work/quizai/Quizes.mp4",
+    title: "Solution #3: Quiz",
+    headlineLead: "One-click quizzes drove a ",
+    headlineHighlight: "100% task completion rate.",
+    caption:
+      "More than half of students struggled to stay engaged or retain what they learned, and most skipped self-testing because building quizzes across separate tools took too long. Turning any upload into a self-scoring quiz made active recall the default instead of another chore.",
+  },
+  {
+    video: "/work/quizai/Tasks.mp4",
+    title: "Solution #4: Tasks",
+    headlineLead: "Visible study tasks kept review on track — ",
+    headlineHighlight: "progress stopped fading into guesswork.",
+    caption:
+      "Learners couldn't tell what they had mastered or when to review before knowledge faded. Task flows surface the next review step and keep progress visible — reinforcing the same 100% completion behavior and sustaining the 30% prep-time savings over repeat study sessions.",
+  },
+];
+
 const QuizAICaseStudy = () => {
   useScrollReset();
   const [isHoveringSeeNextCard, setIsHoveringSeeNextCard] = useState(false);
@@ -44,14 +79,7 @@ const QuizAICaseStudy = () => {
   const designApproachHighFiTitleRef = useRef(null);
   const designApproachHighFiContentRef = useRef(null);
   const designApproachHighFiImagesRef = useRef(null);
-  const solution1TitleRef = useRef(null);
-  const solution1ContentRef = useRef(null);
-  const solution1VideoRef = useRef(null);
-  const solution1CaptionRef = useRef(null);
-  const solution2TitleRef = useRef(null);
-  const solution2ContentRef = useRef(null);
-  const solution2VideoRef = useRef(null);
-  const solution2CaptionRef = useRef(null);
+  const solutionItemRefs = useRef([]);
   const reflectionTitleRef = useRef(null);
   const reflectionContentRef = useRef(null);
   const seeNextTitleRef = useRef(null);
@@ -177,16 +205,25 @@ const QuizAICaseStudy = () => {
     createScrollAnimation(designApproachHighFiContentRef, 0.1);
     createScrollAnimation(designApproachHighFiImagesRef, 0.2);
     // Solution Section
-    // Solution 1
-    createScrollAnimation(solution1TitleRef);
-    createScrollAnimation(solution1ContentRef, 0.1);
-    createScrollAnimation(solution1VideoRef, 0.2);
-    createScrollAnimation(solution1CaptionRef, 0.3);
-    // Solution 2
-    createScrollAnimation(solution2TitleRef);
-    createScrollAnimation(solution2ContentRef, 0.1);
-    createScrollAnimation(solution2VideoRef, 0.2);
-    createScrollAnimation(solution2CaptionRef, 0.3);
+    solutionItemRefs.current.forEach((node, index) => {
+      if (!node) return;
+      gsap.set(node, { opacity: 0, y: 30 });
+      const trigger = ScrollTrigger.create({
+        trigger: node,
+        start: "top 80%",
+        once: true,
+        onEnter: () => {
+          gsap.to(node, {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power2.out",
+            delay: 0.06 + index * 0.04,
+          });
+        },
+      });
+      scrollTriggers.push(trigger);
+    });
     // Reflection Section
     createScrollAnimation(reflectionTitleRef);
     createScrollAnimation(reflectionContentRef, 0.1);
@@ -622,85 +659,38 @@ const QuizAICaseStudy = () => {
       {/* Solution Section */}
       <section id="solution-section" className="quizai-solution-section">
         <div className="quizai-solution-content">
-          {/* Solution #1 */}
-          <div className="quizai-solution-item">
-            <h4 className="quizai-solution-item-title" ref={solution1TitleRef}>
-              Solution #1: Centralized Study Dashboard
-            </h4>
-            <CaseStudyStatement ref={solution1ContentRef}>
-              <CaseStudyStatementHeadline>
-                All study materials live in{" "}
-                <span className="quizai-accent-text">one dashboard</span>.
-              </CaseStudyStatementHeadline>
-            </CaseStudyStatement>
-            <div className="quizai-solution-media">
-              <div
-                className="quizai-solution-video-container"
-                ref={solution1VideoRef}
-              >
-                <LazyVideo
-                  src="/work/quizai/quizai-dashboard-v1.mp4"
-                  className="quizai-solution-video"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                />
+          {QUIZAI_SOLUTIONS.map((solution, index) => (
+            <div
+              key={solution.title}
+              className="quizai-solution-item"
+              ref={(el) => {
+                solutionItemRefs.current[index] = el;
+              }}
+            >
+              <h4 className="quizai-solution-item-title">{solution.title}</h4>
+              <CaseStudyStatement>
+                <CaseStudyStatementHeadline>
+                  {solution.headlineLead}
+                  <span className="quizai-accent-text">
+                    {solution.headlineHighlight}
+                  </span>
+                </CaseStudyStatementHeadline>
+              </CaseStudyStatement>
+              <div className="quizai-solution-media">
+                <div className="quizai-solution-video-container">
+                  <LazyVideo
+                    src={solution.video}
+                    className="quizai-solution-video"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  />
+                </div>
+                <p className="quizai-solution-caption">{solution.caption}</p>
               </div>
-              <p className="quizai-solution-caption" ref={solution1CaptionRef}>
-                The dashboard section brings every study material, upload,
-                and AI-generated summary into a{" "}
-                <span style={{ fontWeight: 600 }}>
-                  single, organized view
-                </span>
-                . This centralized structure let students pick up exactly
-                where they left off, without digging through scattered files
-                or tabs.
-              </p>
             </div>
-          </div>
-
-          {/* Solution #2 */}
-          <div className="quizai-solution-item">
-            <h4 className="quizai-solution-item-title" ref={solution2TitleRef}>
-              Solution #2: One-Click AI Quiz Generation
-            </h4>
-            <CaseStudyStatement ref={solution2ContentRef}>
-              <CaseStudyStatementHeadline>
-                Any uploaded document transforms into a{" "}
-                <span className="quizai-accent-text">
-                  ready-to-take quiz
-                </span>
-                .
-              </CaseStudyStatementHeadline>
-            </CaseStudyStatement>
-            <div className="quizai-solution-media">
-              <div
-                className="quizai-solution-video-container"
-                ref={solution2VideoRef}
-              >
-                <LazyVideo
-                  src="/work/quizai/quiz-generation.mp4"
-                  className="quizai-solution-video"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                />
-              </div>
-              <p className="quizai-solution-caption" ref={solution2CaptionRef}>
-                Students can generate a quiz directly from any uploaded
-                document with one click, turning dense readings into{" "}
-                <span style={{ fontWeight: 600 }}>
-                  instant, testable practice
-                </span>
-                . An AI chat assistant sits alongside it for follow-up
-                questions, removing the manual work of writing study
-                questions by hand.
-              </p>
-            </div>
-          </div>
-
+          ))}
         </div>
       </section>
 
