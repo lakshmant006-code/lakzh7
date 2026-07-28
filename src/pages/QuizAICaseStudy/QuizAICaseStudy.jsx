@@ -19,6 +19,24 @@ import "./QuizAICaseStudy.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const DS_BASE = "/work/quizai/QuizAI%20Design%20System";
+const QUIZAI_DS_CARDS = [
+  { name: "Brand Mark", src: `${DS_BASE}/components/brand/brand.card.html`, height: 120 },
+  { name: "ASU Primary Colors", src: `${DS_BASE}/guidelines/colors-brand.card.html`, height: 180 },
+  { name: "ASU Grayscale", src: `${DS_BASE}/guidelines/colors-grayscale.card.html`, height: 150 },
+  { name: "Semantic Colors", src: `${DS_BASE}/guidelines/colors-semantic.card.html`, height: 110 },
+  { name: "Neutral Surfaces", src: `${DS_BASE}/guidelines/colors-neutral-surfaces.card.html`, height: 150 },
+  { name: "Font Family", src: `${DS_BASE}/guidelines/type-family.card.html`, height: 90 },
+  { name: "Display / Headings", src: `${DS_BASE}/guidelines/type-headings.card.html`, height: 230 },
+  { name: "Body / Labels", src: `${DS_BASE}/guidelines/type-body.card.html`, height: 160 },
+  { name: "Spacing Scale", src: `${DS_BASE}/guidelines/spacing-scale.card.html`, height: 140 },
+  { name: "Corner Radii", src: `${DS_BASE}/guidelines/spacing-radii.card.html`, height: 150 },
+  { name: "Elevation", src: `${DS_BASE}/guidelines/brand-elevation.card.html`, height: 160 },
+  { name: "Core Components", src: `${DS_BASE}/components/core/core.card.html`, height: 260 },
+  { name: "Cards", src: `${DS_BASE}/components/cards/cards.card.html`, height: 340 },
+  { name: "Navigation Bar", src: `${DS_BASE}/components/core/navbar.card.html`, height: 100 },
+];
+
 const QUIZAI_SOLUTIONS = [
   {
     video: "/work/quizai/Landing.mp4",
@@ -76,9 +94,11 @@ const QuizAICaseStudy = () => {
   const designApproach2TitleRef = useRef(null);
   const designApproach2ContentRef = useRef(null);
   const designApproach2Image1Ref = useRef(null);
+  const designApproachDsRef = useRef(null);
   const designApproachHighFiTitleRef = useRef(null);
   const designApproachHighFiContentRef = useRef(null);
   const designApproachHighFiImagesRef = useRef(null);
+  const appScreensRef = useRef(null);
   const solutionItemRefs = useRef([]);
   const reflectionTitleRef = useRef(null);
   const reflectionContentRef = useRef(null);
@@ -200,10 +220,12 @@ const QuizAICaseStudy = () => {
     createScrollAnimation(designApproach2TitleRef);
     createScrollAnimation(designApproach2ContentRef, 0.1);
     createScrollAnimation(designApproach2Image1Ref, 0.2);
-    // Design Approach High-Fi Frames
+    // Design System + High-Fi Frames + App Screens
+    createScrollAnimation(designApproachDsRef, 0.1);
     createScrollAnimation(designApproachHighFiTitleRef);
     createScrollAnimation(designApproachHighFiContentRef, 0.1);
     createScrollAnimation(designApproachHighFiImagesRef, 0.2);
+    createScrollAnimation(appScreensRef, 0.1);
     // Solution Section
     solutionItemRefs.current.forEach((node, index) => {
       if (!node) return;
@@ -608,6 +630,36 @@ const QuizAICaseStudy = () => {
             </div>
           </div>
 
+          {/* Design System — Visual Identity */}
+          <div
+            className="quizai-design-approach-item"
+            ref={designApproachDsRef}
+          >
+            <h4 className="quizai-visual-identity-subtitle">Visual Identity</h4>
+            <p className="quizai-visual-identity-description">
+              QuizAI&apos;s visual language follows Arizona State University&apos;s
+              brand system — ASU Maroon (#8C1D40) and Gold (#FFC627) against
+              clean white surfaces, Arial typography, and hairline-bordered
+              cards instead of heavy shadows. Every color, type, spacing, and
+              component token was codified into a living design system so the
+              product stays cohesive from landing to quiz history.
+            </p>
+            <div className="quizai-ds-cards">
+              {QUIZAI_DS_CARDS.map((card) => (
+                <div key={card.src} className="quizai-ds-card">
+                  <p className="quizai-ds-card-label">{card.name}</p>
+                  <iframe
+                    src={card.src}
+                    title={card.name}
+                    className="quizai-ds-card-frame"
+                    style={{ height: `${card.height}px` }}
+                    scrolling="no"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Design Approach High-Fi Frames */}
           <div className="quizai-design-approach-item">
             <CaseStudyStatement
@@ -625,7 +677,8 @@ const QuizAICaseStudy = () => {
                 <span style={{ fontWeight: 600 }}>
                   polished, ready-to-build screens
                 </span>{" "}
-                covering sign-in, quiz history, and study session summaries.
+                covering sign-in, quiz history, and study session summaries —
+                built from the same design system tokens.
               </CaseStudyStatementBody>
             </CaseStudyStatement>
             <div
@@ -650,6 +703,29 @@ const QuizAICaseStudy = () => {
                 className="quizai-highfi-frame-image"
                 style={{ aspectRatio: "555 / 270" }}
               />
+            </div>
+          </div>
+
+          {/* App Screens — interactive landing + app */}
+          <div
+            className="quizai-design-approach-item"
+            ref={appScreensRef}
+          >
+            <h4 className="quizai-visual-identity-subtitle">App Screens</h4>
+            <p className="quizai-visual-identity-description">
+              From the marketing landing through sign-in, dashboard, summaries,
+              quizzes, and tasks — explore the full QuizAI experience in place.
+              Click through just like you would in the live product.
+            </p>
+            <div className="quizai-app-screens-container">
+              <div className="quizai-app-screens-wrapper">
+                <iframe
+                  src={`${DS_BASE}/templates/quizai-landing/index.html`}
+                  title="QuizAI App Screens — Landing + App"
+                  className="quizai-app-screens-frame"
+                  data-lenis-prevent
+                />
+              </div>
             </div>
           </div>
         </div>

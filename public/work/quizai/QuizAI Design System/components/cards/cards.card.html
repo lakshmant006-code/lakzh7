@@ -1,0 +1,24 @@
+<!-- @dsCard group="Components" viewport="700x340" name="Cards: Stat, Quiz History, Summary" -->
+<!DOCTYPE html><html><head><link rel="stylesheet" href="../../styles.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{margin:0;padding:16px;background:#fff}</style></head>
+<body><div id="root"></div>
+<script type="text/babel">
+const { StatTile, QuizHistoryItem, SummaryCard } = window.QuizAIDesignSystem_ab923d;
+function Demo(){
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:'14px'}}>
+      <div style={{display:'flex',gap:'12px'}}>
+        <StatTile icon="fa-solid fa-circle-question" value={37} label="Total Quizzes" sublabel="Completed" />
+        <StatTile icon="fa-solid fa-chart-simple" value="35%" label="Average Score" sublabel="Across all quizzes" />
+      </div>
+      <QuizHistoryItem title="Electromagnet.pdf" date="10/11/2024" questions={8} correct={5} incorrect={3} score={62.5} />
+      <SummaryCard title="GR00T_1_Whitepaper.pdf" date="4/14/2025" pages="1 - 1" excerpt="Here's a structured summary of the document titled GR00T N1." abstract="General-purpose robots require both a versatile body and an intelligent mind." />
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script></body></html>
