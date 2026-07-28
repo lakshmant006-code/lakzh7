@@ -11,25 +11,26 @@
   background-color: #f5f5f5;
 }
 
-/* Video pinned to the very top of the viewport, above every layer
-   (nav sits at z-index 100; this rides above it). */
+/* Small video hanging just under the nav bar, pinned to the far-left,
+   above every layer (nav is z-index 100; this rides above it) and fixed
+   so it stays visible while the page scrolls. */
 .nav-top-video {
   position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 76px;
+  left: 16px;
   width: auto;
-  height: 64px;
+  height: 84px;
   object-fit: contain;
   z-index: 2000;
   pointer-events: none;
-  border-radius: 0 0 10px 10px;
-  overflow: hidden;
+  border-radius: 8px;
 }
 
 @media (max-width: 640px) {
   .nav-top-video {
-    height: 52px;
+    top: 60px;
+    left: 10px;
+    height: 64px;
   }
 }
 
