@@ -600,11 +600,10 @@ const QuizAICaseStudy = () => {
               ref={designApproach2Image1Ref}
             >
               <iframe
-                src="/work/quizai/wireframe-lofi-flows.html"
+                src="/work/quizai/lofi-wireframes/index.html"
                 title="Lo-Fi Wireframes – QuizAI"
                 className="quizai-design-approach-image quizai-wireframe-frame"
-                style={{ height: "650px" }}
-                scrolling="no"
+                style={{ height: "900px" }}
               />
             </div>
           </div>
