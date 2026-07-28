@@ -9,11 +9,16 @@
   position: absolute;
   top: 100%;
   left: 16px;
-  width: auto;
   height: 84px;
-  object-fit: contain;
   pointer-events: none;
   z-index: 20;
+  line-height: 0;
+}
+
+.nav-hang-video img {
+  height: 100%;
+  width: auto;
+  display: block;
 }
 
 @media (max-width: 640px) {
