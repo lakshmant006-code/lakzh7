@@ -75,6 +75,15 @@ function App() {
               <Nav />
             </div>
           </div>
+          <video
+            className="nav-top-video"
+            src="/nav-top-video.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            aria-hidden="true"
+          />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/google-creative" element={<Home />} />

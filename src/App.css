@@ -11,6 +11,28 @@
   background-color: #f5f5f5;
 }
 
+/* Video pinned to the very top of the viewport, above every layer
+   (nav sits at z-index 100; this rides above it). */
+.nav-top-video {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  height: 64px;
+  object-fit: contain;
+  z-index: 2000;
+  pointer-events: none;
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .nav-top-video {
+    height: 52px;
+  }
+}
+
 .main-content {
   flex: 1;
   width: 100%;
