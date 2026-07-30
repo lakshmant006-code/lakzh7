@@ -246,10 +246,12 @@ const ArcadiaCaseStudy = () => {
             {/* Right Column */}
             <div className="arcadia-hero-right">
               <p className="arcadia-hero-subtitle">
-                Helping Revolution Steel, a steel production shop within
-                Arcadia Custom Builders, formulate a user workflow so work
-                gets distributed clearly and tasks are streamlined across the
-                team.
+                Tasked with untangling how work moves through Revolution Steel,
+                a steel-production shop within Arcadia Custom Builders, I led an
+                embedded qualitative study that mapped the quote-to-fabrication
+                journey and turned scattered, verbal friction into a clear,
+                owned workflow, cutting process time by 30% and lifting team
+                effectiveness by 20%.
               </p>
               <div className="arcadia-hero-tags">
                 <span className="arcadia-hero-tag">UX Research</span>
@@ -301,20 +303,21 @@ const ArcadiaCaseStudy = () => {
               <div className="arcadia-context-item" ref={contextGoalRef}>
                 <h2 className="arcadia-context-title">Goal</h2>
                 <p className="arcadia-context-description">
-                  Revolution Steel's team needed a clearer way to distribute
-                  work and move tasks through their production shop. My goal
-                  was to formulate a user workflow that streamlines how work
-                  gets assigned and tracked, by setting goals in planning,
-                  conducting research, and synthesizing and sharing insights
-                  with the team.
+                  Revolution Steel's team had no clear way to distribute work or
+                  move tasks through the shop. I led the study end to end,
+                  setting goals in planning, running the research, and
+                  synthesizing and presenting insights to the team, to formulate
+                  a user workflow that makes how work gets assigned and tracked
+                  explicit at every phase, and ultimately made the process 30%
+                  faster.
                 </p>
               </div>
               <div className="arcadia-context-item" ref={contextRoleRef}>
                 <h2 className="arcadia-context-title">Problem Statements</h2>
                 <p className="arcadia-context-description">
-                  Three pain points surfaced across the journey, from intake
-                  through delivery, that were costing the team the most time
-                  and rework.
+                  I coded 7 pain points across the journey; three carried the
+                  heaviest weight, from intake through delivery, and were
+                  costing the team the most time and rework.
                 </p>
               </div>
             </div>
