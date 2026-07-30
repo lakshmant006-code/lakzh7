@@ -625,6 +625,9 @@
 
 .quizai-wireframe-frame {
   border: none;
+  /* Display-only embeds: let wheel/touch pass through to the page so Lenis
+     scrolls smoothly instead of the iframe trapping the gesture. */
+  pointer-events: none;
 }
 
 .quizai-lofi-frame {

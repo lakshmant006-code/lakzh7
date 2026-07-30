@@ -6,7 +6,6 @@ import useScrollReset from "../../hooks/useScrollReset";
 import { useLenisScroll } from "../../hooks/useLenisScroll";
 import { useCardUnfurling } from "../../hooks/useCardUnfurling";
 import { useCountupAnimation } from "../../hooks/useCountupAnimation";
-import { useQuizaiEmbedScrollBridge } from "../../hooks/useQuizaiEmbedScrollBridge";
 import Footer from "../../components/Footer/Footer";
 import LazyVideo from "../../components/LazyVideo/LazyVideo";
 import CursorPill from "../../components/CursorPill/CursorPill";
@@ -97,8 +96,6 @@ const QuizAICaseStudy = () => {
   const seeNextTitleRef = useRef(null);
   const seeNextGridRef = useRef(null);
   const seeNextCardsRefs = useRef([]);
-
-  useQuizaiEmbedScrollBridge();
 
   const metrics = useMemo(
     () => [
