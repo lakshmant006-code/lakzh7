@@ -401,6 +401,62 @@
   font-weight: 300;
 }
 
+/* Results — product still in production */
+.quizai-production-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1.5rem 1.75rem;
+  border: 1px solid rgba(105, 91, 77, 0.18);
+  border-radius: 12px;
+  background: rgba(105, 91, 77, 0.05);
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.quizai-production-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #695b4d;
+}
+
+.quizai-production-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #695b4d;
+  animation: quizaiStatusPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes quizaiStatusPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.75);
+  }
+}
+
+.quizai-production-status-text {
+  font-family: "Crimson Pro", serif;
+  font-size: 1.75rem;
+  font-weight: 500;
+  color: #0f0f0f;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
 .quizai-accent-text {
   color: #695b4d;
   font-style: italic;
@@ -772,7 +828,19 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #666;
-  margin: 2rem 0 2rem 0;
+  margin: 2rem 0 1rem 0;
+  /* Initial hidden state for GSAP animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.quizai-solution-intro {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  font-weight: 300;
+  color: #0f0f0f;
+  max-width: 52rem;
+  margin: 0 0 3rem 0;
   /* Initial hidden state for GSAP animation */
   opacity: 0;
   transform: translateY(30px);

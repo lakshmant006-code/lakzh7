@@ -34,34 +34,34 @@ const QUIZAI_SOLUTIONS = [
   {
     video: "/work/quizai/Landing.mp4",
     title: "Solution #1: Landing",
-    headlineLead: "A clear upload-to-quiz path cut early confusion — students saw the full loop ",
-    headlineHighlight: "before they signed up.",
+    headlineLead: "A brand-first landing shows the whole upload-to-quiz loop ",
+    headlineHighlight: "before students ever sign up.",
     caption:
-      "Research showed drop-off started with not knowing what QuizAI did. The landing spells out upload → summarize → quiz up front, so students arrive oriented — a foundation for the 100% task completion rate we later measured in usability testing.",
+      "Drop-off started with not knowing what QuizAI did. The landing leads with the brand promise — upload, summarize, quiz — in ASU's maroon-and-gold system, so students arrive oriented and invited in rather than guessing. The first screen is designed to earn trust and make the value obvious at a glance.",
   },
   {
     video: "/work/quizai/Summarize.mp4",
     title: "Solution #2: Summary",
-    headlineLead: "Auto-summaries cut study prep time by ",
-    headlineHighlight: "30%.",
+    headlineLead: "Auto-summaries turn a wall of notes into ",
+    headlineHighlight: "the parts that actually matter.",
     caption:
-      "Students were capturing only ~⅓ of lecture material and missing close to 40% of key points, then drowning in unread notes. AI summaries pull the essentials forward from any upload — so review starts from what matters, not the full page count.",
+      "Students capture only about a third of lecture material, then drown in notes they never reopen. The summary component pulls the essentials forward from any upload and presents them in clean, hairline-bordered cards — designed to feel effortless and rewarding, so review becomes something students want to open instead of avoid.",
   },
   {
     video: "/work/quizai/Quizes.mp4",
     title: "Solution #3: Quiz",
-    headlineLead: "One-click quizzes drove a ",
-    headlineHighlight: "100% task completion rate.",
+    headlineLead: "One-click quizzes make active recall ",
+    headlineHighlight: "the path of least resistance.",
     caption:
-      "More than half of students struggled to stay engaged or retain what they learned, and most skipped self-testing because building quizzes across separate tools took too long. Turning any upload into a self-scoring quiz made active recall the default instead of another chore.",
+      "Most students skip self-testing because building quizzes across separate tools takes too long. Turning any upload into a self-scoring quiz — with immediate, encouraging feedback — makes active recall feel quick and game-like. The component is designed to pull students back for one more round instead of closing the app.",
   },
   {
     video: "/work/quizai/Tasks.mp4",
     title: "Solution #4: Tasks",
-    headlineLead: "Visible study tasks kept review on track — ",
-    headlineHighlight: "progress stopped fading into guesswork.",
+    headlineLead: "Visible study tasks and progress keep students ",
+    headlineHighlight: "coming back to review.",
     caption:
-      "Learners couldn't tell what they had mastered or when to review before knowledge faded. Task flows surface the next review step and keep progress visible — reinforcing the same 100% completion behavior and sustaining the 30% prep-time savings over repeat study sessions.",
+      "Learners couldn't tell what they had mastered or when to review before it faded. Task flows surface the next step and make momentum visible with progress cues in the brand palette — designed to motivate through small, satisfying wins, so studying turns into a habit rather than a one-off.",
   },
 ];
 
@@ -89,7 +89,8 @@ const QuizAICaseStudy = () => {
   const designApproach2Image1Ref = useRef(null);
   const lofiWireframesFrameRef = useRef(null);
   const designApproachDsRef = useRef(null);
-  const appScreensRef = useRef(null);
+  const solutionTitleRef = useRef(null);
+  const solutionIntroRef = useRef(null);
   const solutionItemRefs = useRef([]);
   const reflectionTitleRef = useRef(null);
   const reflectionContentRef = useRef(null);
@@ -97,34 +98,6 @@ const QuizAICaseStudy = () => {
   const seeNextGridRef = useRef(null);
   const seeNextCardsRefs = useRef([]);
 
-  const metrics = useMemo(
-    () => [
-      {
-        value: 24,
-        prefix: "15-",
-        suffix: "",
-        elementRef: metricRefs,
-        index: 0,
-      },
-      {
-        value: 100,
-        prefix: "",
-        suffix: "%",
-        elementRef: metricRefs,
-        index: 1,
-      },
-      {
-        value: 30,
-        prefix: "",
-        suffix: "%",
-        elementRef: metricRefs,
-        index: 2,
-      },
-    ],
-    [],
-  );
-
-  useCountupAnimation(impactSectionRef, metrics);
 
   // Use card unfurling hook for See Next section
   useCardUnfurling({
@@ -213,8 +186,9 @@ const QuizAICaseStudy = () => {
     createScrollAnimation(designApproach2Image1Ref, 0.2);
     // Design System + App Screens
     createScrollAnimation(designApproachDsRef, 0.1);
-    createScrollAnimation(appScreensRef, 0.1);
     // Solution Section
+    createScrollAnimation(solutionTitleRef);
+    createScrollAnimation(solutionIntroRef, 0.1);
     solutionItemRefs.current.forEach((node, index) => {
       if (!node) return;
       gsap.set(node, { opacity: 0, y: 30 });
@@ -367,45 +341,20 @@ const QuizAICaseStudy = () => {
           </div>
 
           <div className="quizai-context-impact" ref={impactSectionRef}>
-            <div className="quizai-impact-metrics">
-              <div
-                className="quizai-impact-metric"
-                ref={(el) => (contextImpactMetricsRefs.current[0] = el)}
-              >
-                <div
-                  className="quizai-impact-value"
-                  ref={(el) => (metricRefs.current[0] = el)}
-                >
-                  15–24
-                </div>
-                <div className="quizai-impact-label">TARGET AGE GROUP</div>
-              </div>
-              <div
-                className="quizai-impact-metric"
-                ref={(el) => (contextImpactMetricsRefs.current[1] = el)}
-              >
-                <div
-                  className="quizai-impact-value"
-                  ref={(el) => (metricRefs.current[1] = el)}
-                >
-                  100%
-                </div>
-                <div className="quizai-impact-label">TASK COMPLETION RATE</div>
-              </div>
-              <div
-                className="quizai-impact-metric"
-                ref={(el) => (contextImpactMetricsRefs.current[2] = el)}
-              >
-                <div
-                  className="quizai-impact-value"
-                  ref={(el) => (metricRefs.current[2] = el)}
-                >
-                  30%
-                </div>
-                <div className="quizai-impact-label">
-                  REDUCTION IN STUDY PREP TIME
-                </div>
-              </div>
+            <div
+              className="quizai-production-status"
+              ref={(el) => (contextImpactMetricsRefs.current[0] = el)}
+            >
+              <span className="quizai-production-status-badge">
+                <span
+                  className="quizai-production-status-dot"
+                  aria-hidden="true"
+                />
+                RESULTS
+              </span>
+              <p className="quizai-production-status-text">
+                Still in production and will be launching soon.
+              </p>
             </div>
           </div>
 
@@ -649,34 +598,23 @@ const QuizAICaseStudy = () => {
             </div>
           </div>
 
-          {/* App Screens — interactive landing + app */}
-          <div
-            className="quizai-design-approach-item"
-            ref={appScreensRef}
-          >
-            <h4 className="quizai-visual-identity-subtitle">App Screens</h4>
-            <p className="quizai-visual-identity-description">
-              From the marketing landing through sign-in, dashboard, summaries,
-              quizzes, and tasks — explore the full QuizAI experience in place.
-              Click through just like you would in the live product.
-            </p>
-            <div className="quizai-app-screens-container">
-              <div className="quizai-app-screens-wrapper">
-                <iframe
-                  src={`${DS_BASE}/templates/quizai-landing/index.html`}
-                  title="QuizAI App Screens — Landing + App"
-                  className="quizai-app-screens-frame"
-                  data-lenis-prevent
-                />
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
       {/* Solution Section */}
       <section id="solution-section" className="quizai-solution-section">
         <div className="quizai-solution-content">
+          <h3 className="quizai-solution-title" ref={solutionTitleRef}>
+            SOLUTION
+          </h3>
+          <p className="quizai-solution-intro" ref={solutionIntroRef}>
+            Every solution started from one question: what makes a student
+            actually want to open QuizAI? I designed each component to carry the
+            brand&apos;s promise — clear, trustworthy, and effortless — in ASU&apos;s
+            maroon-and-gold system, so the product feels credible and inviting.
+            The goal was to pull students in and make real studying the easy
+            default instead of another chore to put off.
+          </p>
           {QUIZAI_SOLUTIONS.map((solution, index) => (
             <div
               key={solution.title}
