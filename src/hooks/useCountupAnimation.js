@@ -1,23 +1,18 @@
 import { useEffect } from "react";
-import { gsap } from "gsap";
 
 /**
- * Custom hook for countup animation on scroll.
+ * Count-up animation on scroll — GSAP-free.
  *
- * Uses IntersectionObserver (not GSAP ScrollTrigger) to detect when the
- * trigger element enters the viewport. ScrollTrigger caches pixel
- * start-positions at creation time, which goes stale on pages with
- * asynchronously-loading images below the fold (a very common case here) —
- * once the page grows taller after that snapshot, the cached trigger point
- * no longer lines up with where the section actually is, so onEnter can
- * fail to fire and the counters stay stuck at their initial value forever
- * (each trigger only fires once). IntersectionObserver has no such cache;
- * it always reflects live layout.
+ * Uses IntersectionObserver to detect when the trigger element enters the
+ * viewport (ScrollTrigger caches pixel start-positions that go stale on pages
+ * with async-loading images below the fold; IntersectionObserver reflects live
+ * layout). The number tween runs on requestAnimationFrame with an ease-out
+ * curve — no animation library required.
  *
  * @param {React.RefObject} triggerRef - Ref to the trigger element
- * @param {Array} metrics - Array of metric objects with { value, prefix, suffix, elementRef, index }
- * @param {number} threshold - Fraction of the trigger element visible before firing (default: 0.3)
- * @param {number} duration - Animation duration in seconds (default: 2)
+ * @param {Array} metrics - Array of { value, prefix, suffix, elementRef, index }
+ * @param {number} threshold - Fraction of the trigger visible before firing (default 0.3)
+ * @param {number} duration - Animation duration in seconds (default 2)
  */
 export const useCountupAnimation = (
   triggerRef,
@@ -29,7 +24,23 @@ export const useCountupAnimation = (
     if (!triggerRef?.current || !metrics || metrics.length === 0) return;
 
     const metricsCopy = [...metrics];
+    const setFinal = () => {
+      metricsCopy.forEach((metric) => {
+        const el = metric.elementRef?.current?.[metric.index];
+        if (el) el.textContent = `${metric.prefix}${metric.value}${metric.suffix}`;
+      });
+    };
+
+    // Respect reduced-motion: show final values, no animation.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setFinal();
+      return;
+    }
+
     let hasFired = false;
+    const rafs = [];
+    const easeOut = (t) => 1 - Math.pow(1 - t, 2); // ≈ power2.out
+    const durationMs = duration * 1000;
 
     const runCountup = () => {
       if (hasFired) return;
@@ -39,16 +50,14 @@ export const useCountupAnimation = (
         const element = metric.elementRef?.current?.[metric.index];
         if (!element) return;
 
-        const obj = { count: 0 };
-        gsap.to(obj, {
-          count: metric.value,
-          duration,
-          ease: "power2.out",
-          onUpdate: () => {
-            const displayValue = Math.round(obj.count);
-            element.textContent = `${metric.prefix}${displayValue}${metric.suffix}`;
-          },
-        });
+        const startTime = performance.now();
+        const tick = (now) => {
+          const p = Math.min((now - startTime) / durationMs, 1);
+          const displayValue = Math.round(metric.value * easeOut(p));
+          element.textContent = `${metric.prefix}${displayValue}${metric.suffix}`;
+          if (p < 1) rafs.push(requestAnimationFrame(tick));
+        };
+        rafs.push(requestAnimationFrame(tick));
       });
     };
 
@@ -64,6 +73,9 @@ export const useCountupAnimation = (
 
     observer.observe(triggerRef.current);
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      rafs.forEach((id) => cancelAnimationFrame(id));
+    };
   }, [triggerRef, metrics, threshold, duration]);
 };

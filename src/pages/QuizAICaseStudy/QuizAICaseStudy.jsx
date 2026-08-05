@@ -1,11 +1,9 @@
-﻿import React, { useRef, useEffect, useState, useMemo } from "react";
+﻿import React, { useRef, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import useScrollReset from "../../hooks/useScrollReset";
 import { useLenisScroll } from "../../hooks/useLenisScroll";
 import { useCardUnfurling } from "../../hooks/useCardUnfurling";
-import { useCountupAnimation } from "../../hooks/useCountupAnimation";
+import { revealOnScroll } from "../../utils/revealOnScroll";
 import Footer from "../../components/Footer/Footer";
 import LazyVideo from "../../components/LazyVideo/LazyVideo";
 import CursorPill from "../../components/CursorPill/CursorPill";
@@ -16,8 +14,6 @@ import {
   CaseStudyStatementHeadline,
 } from "../../components/CaseStudyStatement/CaseStudyStatement";
 import "./QuizAICaseStudy.css";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const DS_BASE = "/work/quizai/QuizAI%20Design%20System";
 const QUIZAI_DS_CARDS = [
@@ -118,105 +114,54 @@ const QuizAICaseStudy = () => {
     });
   };
 
-  // Scroll-triggered animations for context section
+  // Scroll-triggered reveals — GSAP-free (IntersectionObserver + WAAPI)
   useEffect(() => {
-    const scrollTriggers = [];
-
-    // Helper function to create scroll trigger animation
-    const createScrollAnimation = (ref, delay = 0) => {
+    const cleanups = [];
+    const reveal = (ref, delay = 0) => {
       if (!ref || !ref.current) return;
-      gsap.set(ref.current, { opacity: 0, y: 30 });
-      const trigger = ScrollTrigger.create({
-        trigger: ref.current,
-        start: "top 80%",
-        once: true,
-        onEnter: () => {
-          gsap.to(ref.current, {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power2.out",
-            delay: delay,
-          });
-        },
-      });
-      scrollTriggers.push(trigger);
+      cleanups.push(revealOnScroll(ref.current, { delay }));
     };
 
     // Context Section
-    createScrollAnimation(contextWhatIsQuizAIRef);
-    createScrollAnimation(contextMyRoleRef, 0.1);
-    // Impact metrics with stagger
-    contextImpactMetricsRefs.current.forEach((ref, index) => {
-      if (ref) {
-        gsap.set(ref, { opacity: 0, y: 30 });
-        const trigger = ScrollTrigger.create({
-          trigger: ref,
-          start: "top 80%",
-          once: true,
-          onEnter: () => {
-            gsap.to(ref, {
-              opacity: 1,
-              y: 0,
-              duration: 1,
-              ease: "power2.out",
-              delay: 0.3 + index * 0.1,
-            });
-          },
-        });
-        scrollTriggers.push(trigger);
-      }
+    reveal(contextWhatIsQuizAIRef);
+    reveal(contextMyRoleRef, 0.1);
+    // Results / status with stagger
+    contextImpactMetricsRefs.current.forEach((el, index) => {
+      if (el) cleanups.push(revealOnScroll(el, { delay: 0.3 + index * 0.1 }));
     });
 
     // Research Section
-    createScrollAnimation(researchTitleRef);
-    createScrollAnimation(researchOverviewSubtitleRef, 0.1);
-    createScrollAnimation(researchOverviewImageRef, 0.2);
-    createScrollAnimation(researchFindingImageRef);
+    reveal(researchTitleRef);
+    reveal(researchOverviewSubtitleRef, 0.1);
+    reveal(researchOverviewImageRef, 0.2);
+    reveal(researchFindingImageRef);
 
     // Design Approach Section
-    createScrollAnimation(designApproachTitleRef);
-    // Design Approach 1
-    createScrollAnimation(designApproach1TitleRef);
-    createScrollAnimation(designApproach1ContentRef, 0.1);
-    createScrollAnimation(designApproach1ImageRef, 0.2);
-    // Design Approach 2
-    createScrollAnimation(designApproach2TitleRef);
-    createScrollAnimation(designApproach2ContentRef, 0.1);
-    createScrollAnimation(designApproach2Image1Ref, 0.2);
-    // Design System + App Screens
-    createScrollAnimation(designApproachDsRef, 0.1);
+    reveal(designApproachTitleRef);
+    reveal(designApproach1TitleRef);
+    reveal(designApproach1ContentRef, 0.1);
+    reveal(designApproach1ImageRef, 0.2);
+    reveal(designApproach2TitleRef);
+    reveal(designApproach2ContentRef, 0.1);
+    reveal(designApproach2Image1Ref, 0.2);
+    reveal(designApproachDsRef, 0.1);
+
     // Solution Section
-    createScrollAnimation(solutionTitleRef);
-    createScrollAnimation(solutionIntroRef, 0.1);
+    reveal(solutionTitleRef);
+    reveal(solutionIntroRef, 0.1);
     solutionItemRefs.current.forEach((node, index) => {
-      if (!node) return;
-      gsap.set(node, { opacity: 0, y: 30 });
-      const trigger = ScrollTrigger.create({
-        trigger: node,
-        start: "top 80%",
-        once: true,
-        onEnter: () => {
-          gsap.to(node, {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power2.out",
-            delay: 0.06 + index * 0.04,
-          });
-        },
-      });
-      scrollTriggers.push(trigger);
+      if (node) cleanups.push(revealOnScroll(node, { delay: 0.06 + index * 0.04 }));
     });
+
     // Reflection Section
-    createScrollAnimation(reflectionTitleRef);
-    createScrollAnimation(reflectionContentRef, 0.1);
+    reveal(reflectionTitleRef);
+    reveal(reflectionContentRef, 0.1);
 
     // See Next Section
-    createScrollAnimation(seeNextTitleRef);
+    reveal(seeNextTitleRef);
 
     return () => {
-      scrollTriggers.forEach((trigger) => trigger.kill());
+      cleanups.forEach((fn) => fn());
     };
   }, []);
 
