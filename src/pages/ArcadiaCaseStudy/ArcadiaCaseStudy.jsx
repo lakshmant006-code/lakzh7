@@ -1,11 +1,10 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import useScrollReset from "../../hooks/useScrollReset";
 import { useCountupAnimation } from "../../hooks/useCountupAnimation";
 import { useLenisScroll } from "../../hooks/useLenisScroll";
 import { useCardUnfurling } from "../../hooks/useCardUnfurling";
+import { revealOnScroll } from "../../utils/revealOnScroll";
 import Footer from "../../components/Footer/Footer";
 import LazyVideo from "../../components/LazyVideo/LazyVideo";
 import CursorPill from "../../components/CursorPill/CursorPill";
@@ -15,8 +14,6 @@ import {
   CaseStudyStatementBody,
 } from "../../components/CaseStudyStatement/CaseStudyStatement";
 import "./ArcadiaCaseStudy.css";
-
-gsap.registerPlugin(ScrollTrigger);
 
 /** Dashed placeholder block for media that hasn't been added yet. */
 function ArcadiaPlaceholder({ label, aspectRatio = "16 / 9" }) {
@@ -126,26 +123,11 @@ const ArcadiaCaseStudy = () => {
 
   // Scroll-triggered animations
   useEffect(() => {
-    const scrollTriggers = [];
+    const cleanups = [];
 
     const createScrollAnimation = (ref, delay = 0) => {
       if (!ref || !ref.current) return;
-      gsap.set(ref.current, { opacity: 0, y: 30 });
-      const trigger = ScrollTrigger.create({
-        trigger: ref.current,
-        start: "top 80%",
-        once: true,
-        onEnter: () => {
-          gsap.to(ref.current, {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power2.out",
-            delay,
-          });
-        },
-      });
-      scrollTriggers.push(trigger);
+      cleanups.push(revealOnScroll(ref.current, { delay }));
     };
 
     // Context Section
@@ -172,24 +154,7 @@ const ArcadiaCaseStudy = () => {
     // Impact Section
     createScrollAnimation(impactTitleRef);
     impactMetricsRefs.current.forEach((ref, index) => {
-      if (ref) {
-        gsap.set(ref, { opacity: 0, y: 30 });
-        const trigger = ScrollTrigger.create({
-          trigger: ref,
-          start: "top 80%",
-          once: true,
-          onEnter: () => {
-            gsap.to(ref, {
-              opacity: 1,
-              y: 0,
-              duration: 1,
-              ease: "power2.out",
-              delay: 0.1 + index * 0.1,
-            });
-          },
-        });
-        scrollTriggers.push(trigger);
-      }
+      if (ref) cleanups.push(revealOnScroll(ref, { delay: 0.1 + index * 0.1 }));
     });
     createScrollAnimation(impactSummaryRef, 0.4);
 
@@ -197,7 +162,7 @@ const ArcadiaCaseStudy = () => {
     createScrollAnimation(seeNextTitleRef);
 
     return () => {
-      scrollTriggers.forEach((trigger) => trigger.kill());
+      cleanups.forEach((fn) => fn());
     };
   }, []);
 

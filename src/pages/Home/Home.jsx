@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { isGoogleCreativePath, isDefaultHomePath } from "../../constants/homeRoutes";
 import { useLenisScroll } from "../../hooks/useLenisScroll";
-import { gsap } from "gsap";
 import Footer from "../../components/Footer/Footer";
 import WorkBentoGrid from "../../components/Work/WorkBentoGrid";
 import PlayBentoGridNatural from "../../components/Work/PlayBentoGrid";
@@ -59,40 +58,60 @@ const Home = () => {
     const bioLine = bioEl.querySelector(".home-bio-line-inner");
     if (!titleLines.length || !bioLine) return;
 
-    gsap.set(titleLines, { y: "100%" });
-    gsap.set(bioLine, { y: "100%" });
-
+    const titleLinesArr = Array.from(titleLines);
+    const EASE = "cubic-bezier(0.25, 0.46, 0.45, 0.94)"; // ≈ power2.out
     const navFadeDelay = isDefaultHomePath(location.pathname)
       ? LANDING_NAV_DELAY
       : 0.5;
 
-    const tl = gsap.timeline();
-    tl.to(titleLines, {
-      y: 0,
-      duration: LANDING_FADE_DURATION,
-      ease: LANDING_EASE,
-    })
-      .to(
-        bioLine,
-        {
-          y: 0,
-          duration: LANDING_FADE_DURATION,
-          ease: LANDING_EASE,
-        },
-        "-=0.2",
-      )
-      .to(
-        cat,
-        {
-          opacity: 1,
-          y: 0,
-          duration: LANDING_NAV_DURATION,
-          ease: LANDING_EASE,
-        },
-        navFadeDelay,
-      );
+    // Reduced motion: show everything, no reveal.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      titleLinesArr.forEach((l) => (l.style.transform = "none"));
+      bioLine.style.transform = "none";
+      cat.style.opacity = "1";
+      return;
+    }
 
-    return () => tl.kill();
+    // Initial masked state (inner lines sit below their overflow-hidden mask).
+    titleLinesArr.forEach((l) => (l.style.transform = "translateY(100%)"));
+    bioLine.style.transform = "translateY(100%)";
+
+    const anims = [];
+    const riseKeyframes = [
+      { transform: "translateY(100%)" },
+      { transform: "translateY(0)" },
+    ];
+    const riseOpts = (delayMs) => ({
+      duration: LANDING_FADE_DURATION * 1000,
+      delay: delayMs,
+      easing: EASE,
+      fill: "forwards",
+    });
+
+    titleLinesArr.forEach((l) => {
+      const a = l.animate(riseKeyframes, riseOpts(0));
+      a.addEventListener("finish", () => (l.style.transform = "none"));
+      anims.push(a);
+    });
+
+    // Bio starts 0.2s before the title finishes (old "-=0.2").
+    const bioAnim = bioLine.animate(
+      riseKeyframes,
+      riseOpts(LANDING_FADE_DURATION * 1000 - 200),
+    );
+    bioAnim.addEventListener("finish", () => (bioLine.style.transform = "none"));
+    anims.push(bioAnim);
+
+    const catAnim = cat.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: LANDING_NAV_DURATION * 1000,
+      delay: navFadeDelay * 1000,
+      easing: EASE,
+      fill: "forwards",
+    });
+    catAnim.addEventListener("finish", () => (cat.style.opacity = "1"));
+    anims.push(catAnim);
+
+    return () => anims.forEach((a) => a.cancel());
   }, [location.pathname]);
 
   const workSection = (

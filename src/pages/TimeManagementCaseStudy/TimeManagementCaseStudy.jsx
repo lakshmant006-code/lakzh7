@@ -1,11 +1,10 @@
 ﻿import React, { useRef, useMemo, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import useScrollReset from "../../hooks/useScrollReset";
 import { useLenisScroll } from "../../hooks/useLenisScroll";
 import { useCountupAnimation } from "../../hooks/useCountupAnimation";
 import { useCardUnfurling } from "../../hooks/useCardUnfurling";
+import { revealOnScroll } from "../../utils/revealOnScroll";
 import Footer from "../../components/Footer/Footer";
 import LazyVideo from "../../components/LazyVideo/LazyVideo";
 import CursorPill from "../../components/CursorPill/CursorPill";
@@ -16,8 +15,6 @@ import {
   CaseStudyStatementHeadline,
 } from "../../components/CaseStudyStatement/CaseStudyStatement";
 import "./TimeManagementCaseStudy.css";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const TimeManagementCaseStudy = () => {
   useScrollReset();
@@ -104,27 +101,12 @@ const TimeManagementCaseStudy = () => {
 
   // Scroll-triggered animations for context section
   useEffect(() => {
-    const scrollTriggers = [];
+    const cleanups = [];
 
-    // Helper function to create scroll trigger animation
+    // Reveal helper — GSAP-free (IntersectionObserver + WAAPI)
     const createScrollAnimation = (ref, delay = 0) => {
       if (!ref || !ref.current) return;
-      gsap.set(ref.current, { opacity: 0, y: 30 });
-      const trigger = ScrollTrigger.create({
-        trigger: ref.current,
-        start: "top 80%",
-        once: true,
-        onEnter: () => {
-          gsap.to(ref.current, {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power2.out",
-            delay: delay,
-          });
-        },
-      });
-      scrollTriggers.push(trigger);
+      cleanups.push(revealOnScroll(ref.current, { delay }));
     };
 
     // Context Section
@@ -134,24 +116,7 @@ const TimeManagementCaseStudy = () => {
     createScrollAnimation(contextImpactTitleRef, 0.2);
     // Impact metrics with stagger
     contextImpactMetricsRefs.current.forEach((ref, index) => {
-      if (ref) {
-        gsap.set(ref, { opacity: 0, y: 30 });
-        const trigger = ScrollTrigger.create({
-          trigger: ref,
-          start: "top 80%",
-          once: true,
-          onEnter: () => {
-            gsap.to(ref, {
-              opacity: 1,
-              y: 0,
-              duration: 1,
-              ease: "power2.out",
-              delay: 0.3 + index * 0.1,
-            });
-          },
-        });
-        scrollTriggers.push(trigger);
-      }
+      if (ref) cleanups.push(revealOnScroll(ref, { delay: 0.3 + index * 0.1 }));
     });
     createScrollAnimation(contextStatementTitleRef);
     createScrollAnimation(contextStatementContentRef, 0.1);
@@ -177,31 +142,14 @@ const TimeManagementCaseStudy = () => {
     // Key Takeaways Section
     createScrollAnimation(takeawaysTitleRef);
     takeawaysItemsRefs.current.forEach((ref, index) => {
-      if (ref) {
-        gsap.set(ref, { opacity: 0, y: 30 });
-        const trigger = ScrollTrigger.create({
-          trigger: ref,
-          start: "top 80%",
-          once: true,
-          onEnter: () => {
-            gsap.to(ref, {
-              opacity: 1,
-              y: 0,
-              duration: 1,
-              ease: "power2.out",
-              delay: index * 0.1,
-            });
-          },
-        });
-        scrollTriggers.push(trigger);
-      }
+      if (ref) cleanups.push(revealOnScroll(ref, { delay: index * 0.1 }));
     });
 
     // See Next Section
     createScrollAnimation(seeNextTitleRef);
 
     return () => {
-      scrollTriggers.forEach((trigger) => trigger.kill());
+      cleanups.forEach((fn) => fn());
     };
   }, []);
 
