@@ -11,7 +11,7 @@ import MarioGame from "../../components/MarioGame/MarioGame";
 import "./Home.css";
 
 const HERO_BIO_LINE =
-  "I'm Lakshman — a UX researcher and designer who turns messy problems into tested, interactive prototypes, across custom residential-build clients and university digital systems.";
+  "I'm Lakshman, a UX researcher and designer who turns messy problems into tested, interactive prototypes, across custom residential-build clients and university digital systems.";
 
 const LANDING_FADE_DURATION = 1;
 const LANDING_EASE = "power2.out";
