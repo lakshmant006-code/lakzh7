@@ -11,7 +11,7 @@ import MarioGame from "../../components/MarioGame/MarioGame";
 import "./Home.css";
 
 const HERO_BIO_LINE =
-  "Research-led UX work spanning custom residential clients and university digital systems — from comprehension and presentation clarity to navigation, support access, and engagement.";
+  "A UX researcher and designer turning evidence into tested, interactive prototypes — across custom residential-build clients and university digital systems.";
 
 const LANDING_FADE_DURATION = 1;
 const LANDING_EASE = "power2.out";
@@ -179,13 +179,12 @@ const Home = () => {
               <h1 ref={heroTitleRef} className="home-hero">
                 <span className="home-hero-line">
                   <span className="home-hero-line-inner">
-                    Hi, I am Lakshman, a{" "}
-                    <em>UX Researcher and Designer</em>
+                    I&apos;m Lakshman. I turn research into
                   </span>
                 </span>
                 <span className="home-hero-line">
                   <span className="home-hero-line-inner">
-                    turning research into tested, interactive prototypes.
+                    products people <em>actually use.</em>
                   </span>
                 </span>
               </h1>
