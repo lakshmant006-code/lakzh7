@@ -14,6 +14,7 @@ const workProjects = [
     tags: ["UX Research", "Workflow Design"],
     summary:
       "Work stalled and duplicated at every handoff. One clear workflow gave the steel shop owners, tasks, and visibility — and a 30% faster process.",
+    shortSummary: "Work stalled at every handoff — one workflow made it 30% faster.",
     video: "/work/arcadia/arcadia custom.mp4",
     category: "case-study",
   },
@@ -29,6 +30,7 @@ const workProjects = [
     ],
     summary:
       "Students capture a third of a lecture, then never reopen the notes. QuizAI turns any upload into instant summaries and self-scoring quizzes — so studying actually happens.",
+    shortSummary: "Notes pile up; studying doesn't. QuizAI turns uploads into quizzes.",
     video: "/work/quizai/thumbnail.mp4",
     thumbnailImage: "/work/quizai/thumbnail-frame.jpg",
     category: "case-study",
@@ -40,6 +42,7 @@ const workProjects = [
     tags: ["Mobile", "Outdoor Recreation"],
     summary:
       "Great trails are no fun alone, and gear is a hassle to track down. Hiku connects hikers around shared routes and makes buying or renting outdoor gear effortless.",
+    shortSummary: "Trails are better shared — Hiku connects hikers and their gear.",
     video: "/work/Hiku/thumbnail.mp4",
     thumbnailImage: "/work/Hiku/thumbnail-frame.png",
     category: "case-study",
@@ -51,6 +54,7 @@ const workProjects = [
     tags: ["UX Research", "Web Development"],
     summary:
       "A company couldn't see where the workday went. A clean tracking dashboard turned scattered hours into clear productivity insights the team could act on.",
+    shortSummary: "Where did the workday go? A dashboard makes it visible.",
     video: "/work/time-management/thumbnail.mp4",
     thumbnailImage: "/work/time-management/thumbnail-frame.jpg",
     category: "case-study",
@@ -192,6 +196,9 @@ function WorkCard({
         <h3 className="work-bento-compact-title">{project.title}</h3>
         <p className="work-bento-compact-role">{project.role}</p>
       </div>
+      {project.shortSummary ? (
+        <p className="work-bento-compact-summary">{project.shortSummary}</p>
+      ) : null}
     </>
   ) : (
     <>

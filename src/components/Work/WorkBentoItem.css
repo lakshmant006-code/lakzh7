@@ -719,6 +719,15 @@
   min-width: 0;
 }
 
+.work-bento-compact-summary {
+  font-family: "Satoshi", sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 300;
+  color: #5a5a5a;
+  line-height: 1.45;
+  margin: 0.4rem 0 0 0;
+}
+
 .work-bento-item--compact .work-bento-compact-tags {
   position: absolute;
   bottom: 1rem;
