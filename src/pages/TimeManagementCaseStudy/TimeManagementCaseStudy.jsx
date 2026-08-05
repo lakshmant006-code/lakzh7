@@ -161,12 +161,21 @@ const TimeManagementCaseStudy = () => {
         <section className="time-management-hero-section">
           {/* Hero Before Image - Visual welcome */}
           <div className="time-management-hero-image-container time-management-hero-before">
-            <img
-              src="/work/time-management/iMac_Mockup_3.png"
-              alt="Time Management"
-              className="time-management-hero-image"
-              style={{ height: "450px" }}
-            />
+            <picture>
+              <source
+                type="image/webp"
+                srcSet="/work/time-management/iMac_Mockup_3-640.webp 640w, /work/time-management/iMac_Mockup_3-1024.webp 1024w, /work/time-management/iMac_Mockup_3-1600.webp 1600w"
+                sizes="100vw"
+              />
+              <img
+                src="/work/time-management/iMac_Mockup_3-1024.jpg"
+                alt="Time Management"
+                className="time-management-hero-image"
+                style={{ height: "450px" }}
+                loading="eager"
+                decoding="async"
+              />
+            </picture>
           </div>
 
           {/* Hero Text Content */}

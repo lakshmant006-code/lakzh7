@@ -173,11 +173,20 @@ const QuizAICaseStudy = () => {
       <section className="quizai-hero-section">
         {/* Hero Before Image - Visual welcome */}
         <div className="quizai-hero-image-container quizai-hero-before">
-          <img
-            src="/work/quizai/hero-before.png"
-            alt="QuizAI landing page mockup on a laptop screen"
-            className="quizai-hero-image"
-          />
+          <picture>
+            <source
+              type="image/webp"
+              srcSet="/work/quizai/hero-before-640.webp 640w, /work/quizai/hero-before-1024.webp 1024w, /work/quizai/hero-before-1600.webp 1600w"
+              sizes="100vw"
+            />
+            <img
+              src="/work/quizai/hero-before-1024.jpg"
+              alt="QuizAI landing page mockup on a laptop screen"
+              className="quizai-hero-image"
+              loading="eager"
+              decoding="async"
+            />
+          </picture>
         </div>
 
         {/* Hero Text Content */}
