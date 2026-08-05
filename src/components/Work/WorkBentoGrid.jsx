@@ -13,7 +13,7 @@ const workProjects = [
     role: "UX Researcher",
     tags: ["UX Research", "Workflow Design"],
     summary:
-      "Helping Revolution Steel formulate a user workflow so work gets distributed clearly and tasks are streamlined.",
+      "Work stalled and duplicated at every handoff. One clear workflow gave the steel shop owners, tasks, and visibility — and a 30% faster process.",
     video: "/work/arcadia/arcadia custom.mp4",
     category: "case-study",
   },
@@ -28,7 +28,7 @@ const workProjects = [
       "Web Development",
     ],
     summary:
-      "To create an intuitive and easy experience for students to maintain and improve their productivity.",
+      "Students capture a third of a lecture, then never reopen the notes. QuizAI turns any upload into instant summaries and self-scoring quizzes — so studying actually happens.",
     video: "/work/quizai/thumbnail.mp4",
     thumbnailImage: "/work/quizai/thumbnail-frame.jpg",
     category: "case-study",
@@ -39,7 +39,7 @@ const workProjects = [
     role: "UX Researcher, UX Designer",
     tags: ["Mobile", "Outdoor Recreation"],
     summary:
-      "Connecting hiking and camping enthusiasts through community, shared experiences, and a convenient way to buy or rent outdoor gear.",
+      "Great trails are no fun alone, and gear is a hassle to track down. Hiku connects hikers around shared routes and makes buying or renting outdoor gear effortless.",
     video: "/work/Hiku/thumbnail.mp4",
     thumbnailImage: "/work/Hiku/thumbnail-frame.png",
     category: "case-study",
@@ -50,7 +50,7 @@ const workProjects = [
     role: "UX Researcher, Full Stack Developer",
     tags: ["UX Research", "Web Development"],
     summary:
-      "Helping a company track employee productivity through an intuitive, easy-to-navigate time management dashboard.",
+      "A company couldn't see where the workday went. A clean tracking dashboard turned scattered hours into clear productivity insights the team could act on.",
     video: "/work/time-management/thumbnail.mp4",
     thumbnailImage: "/work/time-management/thumbnail-frame.jpg",
     category: "case-study",
