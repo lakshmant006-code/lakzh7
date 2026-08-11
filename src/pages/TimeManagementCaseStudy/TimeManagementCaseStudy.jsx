@@ -279,9 +279,11 @@ const TimeManagementCaseStudy = () => {
               <div className="time-management-context-item" ref={contextWhatIsTimeManagementRef}>
                 <h2 className="time-management-context-title">Goal</h2>
                 <p className="time-management-context-description">
-                  The goal is to create an intuitive and easy experience for
-                  the company to track and oversee the logins and the work
-                  load of their employees.
+                  A company had no real sense of where the workday actually
+                  went — who was logged in, who was buried, who had room to
+                  take more on. The goal was simple to say and harder to do:
+                  make that whole picture easy to see at a glance, without
+                  turning it into one more dashboard nobody opens.
                 </p>
               </div>
               <div className="time-management-context-item" ref={contextMyRoleRef}>
@@ -768,9 +770,11 @@ const TimeManagementCaseStudy = () => {
               ref={(el) => (takeawaysItemsRefs.current[0] = el)}
             >
               <p className="time-management-takeaways-description">
-                Working in this application has really pushed my limits on
-                how to execute a Web Application from the most early stages
-                of designing to execution.
+                This one taught me that "simple" is the hard part. The client
+                kept pulling me back from clever features toward something
+                genuinely easy to use — and building it end to end, from the
+                first Figma frame to working code, showed me how much restraint
+                good design really takes.
               </p>
             </div>
           </div>

@@ -268,13 +268,13 @@ const ArcadiaCaseStudy = () => {
               <div className="arcadia-context-item" ref={contextGoalRef}>
                 <h2 className="arcadia-context-title">Goal</h2>
                 <p className="arcadia-context-description">
-                  Revolution Steel's team had no clear way to distribute work or
-                  move tasks through the shop. I led the study end to end,
-                  setting goals in planning, running the research, and
-                  synthesizing and presenting insights to the team, to formulate
-                  a user workflow that makes how work gets assigned and tracked
-                  explicit at every phase, and ultimately made the process 30%
-                  faster.
+                  On the shop floor, everyone was working hard — the problem was
+                  that nobody could see who owned what, or where a job actually
+                  stood. Work stalled and doubled up in the gaps between people.
+                  I ran the study end to end, from planning the questions to
+                  presenting what I found, and turned all that scattered, verbal
+                  friction into one workflow the team could actually follow —
+                  which ended up making the whole process 30% faster.
                 </p>
               </div>
               <div className="arcadia-context-item" ref={contextRoleRef}>

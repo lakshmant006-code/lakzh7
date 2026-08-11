@@ -245,11 +245,12 @@ const HikuCaseStudy = () => {
                 What is Hiku?
               </h3>
               <p className="hiku-context-description">
-                Hiku is a mobile application that connects hiking and camping
-                enthusiasts, making it easy to build communities and share
-                outdoor experiences. It provides a convenient platform to buy
-                or rent hiking and camping gear, ensuring users are
-                well-prepared for their next adventure.
+                The best hikes are the ones you share — but finding people to go
+                with, and gearing up without a last-minute scramble, is harder
+                than it should be. Hiku is a mobile app that fixes both: it
+                connects hikers and campers around shared trails and communities,
+                and makes buying or renting gear simple, so you show up ready for
+                whatever&apos;s next.
               </p>
             </div>
             <div className="hiku-context-item" ref={contextMyRoleRef}>
@@ -592,9 +593,11 @@ const HikuCaseStudy = () => {
               From a simple idea to something people could use in the wild.
             </h4>
             <p className="hiku-takeaways-description">
-              Working on this application has really pushed my limits on how
-              to execute a mobile application from the most early stages of
-              designing to execution.
+              Hiku stretched me. Taking one small idea all the way from a hunch
+              to screens someone could actually navigate taught me how much of
+              design lives in the unglamorous middle — the wireframes, the
+              re-dos, the tiny navigation calls — and how good it feels when it
+              finally clicks into something real.
             </p>
           </div>
         </div>

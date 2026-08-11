@@ -276,9 +276,11 @@ const QuizAICaseStudy = () => {
             <div className="quizai-context-item" ref={contextWhatIsQuizAIRef}>
               <h2 className="quizai-context-title">What is Quiz AI?</h2>
               <p className="quizai-context-description">
-                This is a web application that allows students to upload their
-                notes and generate summaries and quizzes leveraging OpenAI API
-                based on the notes that are uploaded.
+                Most students want to study smarter — they just don't want to
+                spend an hour turning messy notes into flashcards first. Quiz AI
+                closes that gap: upload your notes and it hands back clean
+                summaries and self-scoring quizzes in one step, so the actual
+                studying finally happens.
               </p>
             </div>
             <div className="quizai-context-item" ref={contextMyRoleRef}>
@@ -357,21 +359,21 @@ const QuizAICaseStudy = () => {
                 Key Insights &amp; Problem Definition
               </CaseStudyStatementHeadline>
               <CaseStudyStatementBody>
-                Users highlighted common pain points such as time-consuming
-                quiz creation, information overload, and difficulty tracking
-                learning progress. They also expressed a strong need for
-                personalized learning experiences and meaningful feedback to
-                improve retention.
+                A few things came up again and again: making quizzes by hand
+                takes forever, notes pile up into overwhelm, and no one could
+                tell whether they were actually getting better. What students
+                wanted wasn't more features — it was studying that felt personal,
+                and feedback that told them they were making progress.
               </CaseStudyStatementBody>
               <CaseStudyStatementHeadline as="h4">
                 Design Impact &amp; Feature Direction
               </CaseStudyStatementHeadline>
               <CaseStudyStatementBody>
-                These findings directly influenced the development of
-                AI-powered quizzes, automated summaries, study groups, and
-                progress tracking features. Every design decision was guided
-                by the goal of creating a seamless, engaging, and
-                personalized learning experience.
+                Those conversations shaped everything that followed — the
+                one-click quizzes, the auto-summaries, the study groups, the
+                progress you can actually see. Every call came back to the same
+                gut check: does this make studying feel lighter, or just add one
+                more thing to do?
               </CaseStudyStatementBody>
             </CaseStudyStatement>
             <div
@@ -616,20 +618,22 @@ const QuizAICaseStudy = () => {
               both product design and development.
             </h4>
             <p className="quizai-reflection-description">
-              Working in this application has really pushed my limits on how
-              to execute a Web Application from the most early stages of
-              designing to execution.
+              Being the only designer — and the one writing the code — meant
+              there was nowhere to hand a problem off. It pushed me to carry an
+              idea the whole way, from a rough sketch to something you can
+              actually click and use, and to make peace with shipping before it
+              felt perfect.
             </p>
             <p className="quizai-reflection-subheading">
-              Universal Learning, Not Just Equal Learning
+              Universal learning, not just equal learning
             </p>
             <p className="quizai-reflection-description">
-              This project deepened my understanding of equity in education
-              technology. QuizAI isn&apos;t just built for everyone—it&apos;s
-              built to support individual learning styles, especially for
-              those who may not thrive in traditional environments. This
-              balance between universal access and personalized engagement
-              shaped the core of my design choices.
+              The biggest lesson wasn&apos;t technical. Building QuizAI made me
+              think hard about who education tech actually leaves out. Good
+              design here isn&apos;t giving everyone the same thing — it&apos;s
+              meeting people where they learn, especially the ones who never
+              clicked with the traditional way. That idea quietly shaped every
+              choice I made.
             </p>
           </div>
         </div>
