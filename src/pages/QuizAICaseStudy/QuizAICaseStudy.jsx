@@ -15,17 +15,6 @@ import {
 } from "../../components/CaseStudyStatement/CaseStudyStatement";
 import "./QuizAICaseStudy.css";
 
-const DS_BASE = "/work/quizai/QuizAI%20Design%20System";
-const QUIZAI_DS_CARDS = [
-  { name: "Brand Mark", src: `${DS_BASE}/components/brand/brand.card.html`, height: 120 },
-  { name: "ASU Primary Colors", src: `${DS_BASE}/guidelines/colors-brand.card.html`, height: 180 },
-  { name: "ASU Grayscale", src: `${DS_BASE}/guidelines/colors-grayscale.card.html`, height: 150 },
-  { name: "Semantic Colors", src: `${DS_BASE}/guidelines/colors-semantic.card.html`, height: 110 },
-  { name: "Neutral Surfaces", src: `${DS_BASE}/guidelines/colors-neutral-surfaces.card.html`, height: 150 },
-  { name: "Font Family", src: `${DS_BASE}/guidelines/type-family.card.html`, height: 90 },
-  { name: "Elevation", src: `${DS_BASE}/guidelines/brand-elevation.card.html`, height: 160 },
-];
-
 const QUIZAI_SOLUTIONS = [
   {
     video: "/work/quizai/Landing.mp4",
@@ -84,7 +73,6 @@ const QuizAICaseStudy = () => {
   const designApproach2ContentRef = useRef(null);
   const designApproach2Image1Ref = useRef(null);
   const lofiWireframesFrameRef = useRef(null);
-  const designApproachDsRef = useRef(null);
   const solutionTitleRef = useRef(null);
   const solutionIntroRef = useRef(null);
   const solutionItemRefs = useRef([]);
@@ -144,7 +132,6 @@ const QuizAICaseStudy = () => {
     reveal(designApproach2TitleRef);
     reveal(designApproach2ContentRef, 0.1);
     reveal(designApproach2Image1Ref, 0.2);
-    reveal(designApproachDsRef, 0.1);
 
     // Solution Section
     reveal(solutionTitleRef);
@@ -524,35 +511,6 @@ const QuizAICaseStudy = () => {
             </div>
           </div>
 
-          {/* Design System — Visual Identity */}
-          <div
-            className="quizai-design-approach-item"
-            ref={designApproachDsRef}
-          >
-            <h4 className="quizai-visual-identity-subtitle">Visual Identity</h4>
-            <p className="quizai-visual-identity-description">
-              QuizAI&apos;s visual language follows Arizona State University&apos;s
-              brand system — ASU Maroon (#8C1D40) and Gold (#FFC627) against
-              clean white surfaces, Arial typography, and hairline-bordered
-              cards instead of heavy shadows. Every color, type, spacing, and
-              component token was codified into a living design system so the
-              product stays cohesive from landing to quiz history.
-            </p>
-            <div className="quizai-ds-cards">
-              {QUIZAI_DS_CARDS.map((card) => (
-                <div key={card.src} className="quizai-ds-card">
-                  <p className="quizai-ds-card-label">{card.name}</p>
-                  <iframe
-                    src={card.src}
-                    title={card.name}
-                    className="quizai-ds-card-frame"
-                    style={{ height: `${card.height}px` }}
-                    scrolling="no"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
 
         </div>
       </section>
