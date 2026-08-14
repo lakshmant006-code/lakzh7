@@ -102,6 +102,28 @@ const QuizAICaseStudy = () => {
     });
   };
 
+  // The lo-fi wireframe (same-origin) forwards its wheel/touch to us via
+  // postMessage. Re-dispatch it as a native wheel event so the page's own
+  // Lenis pipeline scrolls it — seamless and smooth — while the embed stays
+  // clickable (tab switching, buttons).
+  useEffect(() => {
+    const onMessage = (event) => {
+      const d = event.data;
+      if (!d || d.source !== "quizai-embed" || d.type !== "wheel") return;
+      if (typeof d.deltaY !== "number") return;
+      window.dispatchEvent(
+        new WheelEvent("wheel", {
+          deltaY: d.deltaY,
+          deltaMode: typeof d.deltaMode === "number" ? d.deltaMode : 0,
+          bubbles: true,
+          cancelable: true,
+        }),
+      );
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
+
   // Scroll-triggered reveals — GSAP-free (IntersectionObserver + WAAPI)
   useEffect(() => {
     const cleanups = [];
@@ -506,7 +528,7 @@ const QuizAICaseStudy = () => {
                 src="/work/quizai/lofi-wireframes/index.html"
                 title="Lo-Fi Wireframes – QuizAI"
                 className="quizai-design-approach-image quizai-wireframe-frame quizai-lofi-frame"
-                data-lenis-prevent
+                scrolling="no"
               />
             </div>
           </div>
