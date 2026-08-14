@@ -696,6 +696,8 @@
   overflow: hidden;
   border-radius: 8px;
   border: 1px solid rgba(15, 15, 15, 0.08);
+  /* Interactive prototype — clicks/scroll go to the embed (tabs, buttons). */
+  pointer-events: auto;
 }
 
 @media (max-width: 767px) {

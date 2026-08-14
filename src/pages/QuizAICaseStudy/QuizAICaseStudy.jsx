@@ -506,7 +506,7 @@ const QuizAICaseStudy = () => {
                 src="/work/quizai/lofi-wireframes/index.html"
                 title="Lo-Fi Wireframes – QuizAI"
                 className="quizai-design-approach-image quizai-wireframe-frame quizai-lofi-frame"
-                scrolling="no"
+                data-lenis-prevent
               />
             </div>
           </div>
