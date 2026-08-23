@@ -33,6 +33,7 @@ const workProjects = [
     shortSummary: "Notes pile up; studying doesn't. QuizAI turns uploads into quizzes.",
     video: "/work/quizai/thumbnail.mp4",
     thumbnailImage: "/work/quizai/thumbnail-frame.jpg",
+    liveUrl: "https://quizai.help",
     category: "case-study",
   },
   {
@@ -172,6 +173,28 @@ function WorkCard({
           />
         )
       )}
+      {project.liveUrl ? (
+        <button
+          type="button"
+          className="work-bento-live-link"
+          aria-label={`Open the ${project.title} live site in a new tab`}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            window.open(project.liveUrl, "_blank", "noopener,noreferrer");
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M7 17L17 7M17 7H9M17 7V15"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      ) : null}
       {compactLayout && project.awardLine ? (
         <span className="work-bento-compact-award-pill">
           {project.awardLine}
