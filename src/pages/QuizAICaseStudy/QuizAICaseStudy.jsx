@@ -17,7 +17,7 @@ import "./QuizAICaseStudy.css";
 
 const QUIZAI_SOLUTIONS = [
   {
-    video: "/work/quizai/pdf%20uploading.mp4",
+    video: "/work/quizai/sol-upload.mp4",
     title: "Solution #1: Uploading a PDF",
     headlineLead: "It starts with one drop — ",
     headlineHighlight: "upload a PDF and you're already studying.",
@@ -25,7 +25,7 @@ const QUIZAI_SOLUTIONS = [
       "The whole point was to kill the setup work. Drop in a lecture PDF and QuizAI takes it from there — no formatting, no copy-pasting, no deciding where to start. The upload flow is designed to feel like the easiest first step, so nothing stands between a student and their notes.",
   },
   {
-    video: "/work/quizai/quiz%20making.mp4",
+    video: "/work/quizai/sol-quiz.mp4",
     title: "Solution #2: Generating a Quiz",
     headlineLead: "One tap turns that PDF into a ",
     headlineHighlight: "self-scoring quiz.",
@@ -33,7 +33,7 @@ const QUIZAI_SOLUTIONS = [
       "Most students skip self-testing because building quizzes by hand takes too long. Here it's automatic — QuizAI reads the upload and generates questions with instant, encouraging feedback, making active recall feel quick and almost game-like instead of a chore.",
   },
   {
-    video: "/work/quizai/summares%20making.mp4",
+    video: "/work/quizai/sol-summaries.mp4",
     title: "Solution #3: Summaries",
     headlineLead: "The same upload becomes a summary that keeps ",
     headlineHighlight: "only what matters.",
@@ -41,7 +41,7 @@ const QUIZAI_SOLUTIONS = [
       "Students capture about a third of a lecture, then drown in notes they never reopen. The summary pulls the essentials forward from any upload and lays them out in clean, easy-to-scan cards — so review starts from the important bits, not the full page count.",
   },
   {
-    video: "/work/quizai/folder%20making.mp4",
+    video: "/work/quizai/sol-folders.mp4",
     title: "Solution #4: Making Folders",
     headlineLead: "And it all stays organized — ",
     headlineHighlight: "folders keep every subject in its place.",
