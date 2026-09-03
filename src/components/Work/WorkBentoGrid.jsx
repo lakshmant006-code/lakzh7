@@ -31,8 +31,7 @@ const workProjects = [
     summary:
       "Students capture a third of a lecture, then never reopen the notes. QuizAI turns any upload into instant summaries and self-scoring quizzes — so studying actually happens.",
     shortSummary: "Notes pile up; studying doesn't. QuizAI turns uploads into quizzes.",
-    video: "/work/quizai/landing%20page.mp4",
-    thumbnailImage: "/work/quizai/thumbnail-frame.jpg",
+    video: "/work/quizai/quizai-thumb.mp4",
     liveUrl: "https://quizai.help",
     category: "case-study",
   },

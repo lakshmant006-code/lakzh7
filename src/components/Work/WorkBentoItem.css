@@ -149,6 +149,9 @@
 
 .work-bento-item[data-project-id="quizai-approval-flow"] .work-bento-image {
   background-color: #e7d7d9;
+  /* Full-bleed: fill the whole card, cropping as needed */
+  object-fit: cover;
+  object-position: center;
 }
 .work-bento-item[data-project-id="hiku-bio-smart-wearable"] .work-bento-image {
   background-color: #8ecbb0;
