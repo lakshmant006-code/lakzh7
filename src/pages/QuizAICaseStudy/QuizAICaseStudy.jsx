@@ -17,36 +17,36 @@ import "./QuizAICaseStudy.css";
 
 const QUIZAI_SOLUTIONS = [
   {
-    video: "/work/quizai/Landing.mp4",
-    title: "Solution #1: Landing",
-    headlineLead: "A brand-first landing shows the whole upload-to-quiz loop ",
-    headlineHighlight: "before students ever sign up.",
+    video: "/work/quizai/pdf%20uploading.mp4",
+    title: "Solution #1: Uploading a PDF",
+    headlineLead: "It starts with one drop — ",
+    headlineHighlight: "upload a PDF and you're already studying.",
     caption:
-      "Drop-off started with not knowing what QuizAI did. The landing leads with the brand promise — upload, summarize, quiz — in ASU's maroon-and-gold system, so students arrive oriented and invited in rather than guessing. The first screen is designed to earn trust and make the value obvious at a glance.",
+      "The whole point was to kill the setup work. Drop in a lecture PDF and QuizAI takes it from there — no formatting, no copy-pasting, no deciding where to start. The upload flow is designed to feel like the easiest first step, so nothing stands between a student and their notes.",
   },
   {
-    video: "/work/quizai/Summarize.mp4",
-    title: "Solution #2: Summary",
-    headlineLead: "Auto-summaries turn a wall of notes into ",
-    headlineHighlight: "the parts that actually matter.",
+    video: "/work/quizai/quiz%20making.mp4",
+    title: "Solution #2: Generating a Quiz",
+    headlineLead: "One tap turns that PDF into a ",
+    headlineHighlight: "self-scoring quiz.",
     caption:
-      "Students capture only about a third of lecture material, then drown in notes they never reopen. The summary component pulls the essentials forward from any upload and presents them in clean, hairline-bordered cards — designed to feel effortless and rewarding, so review becomes something students want to open instead of avoid.",
+      "Most students skip self-testing because building quizzes by hand takes too long. Here it's automatic — QuizAI reads the upload and generates questions with instant, encouraging feedback, making active recall feel quick and almost game-like instead of a chore.",
   },
   {
-    video: "/work/quizai/Quizes.mp4",
-    title: "Solution #3: Quiz",
-    headlineLead: "One-click quizzes make active recall ",
-    headlineHighlight: "the path of least resistance.",
+    video: "/work/quizai/summares%20making.mp4",
+    title: "Solution #3: Summaries",
+    headlineLead: "The same upload becomes a summary that keeps ",
+    headlineHighlight: "only what matters.",
     caption:
-      "Most students skip self-testing because building quizzes across separate tools takes too long. Turning any upload into a self-scoring quiz — with immediate, encouraging feedback — makes active recall feel quick and game-like. The component is designed to pull students back for one more round instead of closing the app.",
+      "Students capture about a third of a lecture, then drown in notes they never reopen. The summary pulls the essentials forward from any upload and lays them out in clean, easy-to-scan cards — so review starts from the important bits, not the full page count.",
   },
   {
-    video: "/work/quizai/Tasks.mp4",
-    title: "Solution #4: Tasks",
-    headlineLead: "Visible study tasks and progress keep students ",
-    headlineHighlight: "coming back to review.",
+    video: "/work/quizai/folder%20making.mp4",
+    title: "Solution #4: Making Folders",
+    headlineLead: "And it all stays organized — ",
+    headlineHighlight: "folders keep every subject in its place.",
     caption:
-      "Learners couldn't tell what they had mastered or when to review before it faded. Task flows surface the next step and make momentum visible with progress cues in the brand palette — designed to motivate through small, satisfying wins, so studying turns into a habit rather than a one-off.",
+      "As uploads pile up, things get messy fast. Folders let students group notes, quizzes, and summaries by class or topic, so everything for an exam lives in one spot — designed to make coming back the easy, obvious thing to do.",
   },
 ];
 
