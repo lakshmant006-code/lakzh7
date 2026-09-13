@@ -790,7 +790,7 @@ const ArcadiaCaseStudy = () => {
                     />
                   </div>
                   <h4 className="arcadia-see-next-card-title">
-                    QuizAI: AI Powered Notetaking Application
+                    Quizzy: AI Powered Notetaking Application
                   </h4>
                   <p className="arcadia-see-next-card-description">
                     Helping students turn uploaded notes into personalized

@@ -19,18 +19,18 @@ const QUIZAI_SOLUTIONS = [
   {
     video: "/work/quizai/sol-upload.mp4",
     title: "Solution #1: Uploading a PDF",
-    headlineLead: "It starts with one drop — ",
+    headlineLead: "It starts with one drop, ",
     headlineHighlight: "upload a PDF and you're already studying.",
     caption:
-      "The whole point was to kill the setup work. Drop in a lecture PDF and QuizAI takes it from there — no formatting, no copy-pasting, no deciding where to start. The upload flow is designed to feel like the easiest first step, so nothing stands between a student and their notes.",
+      "The whole point was to kill the setup work. Drop in a lecture PDF and Quizzy takes it from there, no formatting, no copy pasting, no deciding where to start. The upload flow is designed to feel like the easiest first step, so nothing stands between a student and their notes.",
   },
   {
     video: "/work/quizai/sol-quiz.mp4",
     title: "Solution #2: Generating a Quiz",
     headlineLead: "One tap turns that PDF into a ",
-    headlineHighlight: "self-scoring quiz.",
+    headlineHighlight: "self scoring quiz.",
     caption:
-      "Most students skip self-testing because building quizzes by hand takes too long. Here it's automatic — QuizAI reads the upload and generates questions with instant, encouraging feedback, making active recall feel quick and almost game-like instead of a chore.",
+      "Most students skip self testing because building quizzes by hand takes too long. Here it's automatic, Quizzy reads the upload and generates questions with instant, encouraging feedback, making active recall feel quick and almost game like instead of a chore.",
   },
   {
     video: "/work/quizai/sol-summaries.mp4",
@@ -38,15 +38,15 @@ const QUIZAI_SOLUTIONS = [
     headlineLead: "The same upload becomes a summary that keeps ",
     headlineHighlight: "only what matters.",
     caption:
-      "Students capture about a third of a lecture, then drown in notes they never reopen. The summary pulls the essentials forward from any upload and lays them out in clean, easy-to-scan cards — so review starts from the important bits, not the full page count.",
+      "Students capture about a third of a lecture, then drown in notes they never reopen. The summary pulls the essentials forward from any upload and lays them out in clean, easy to scan cards, so review starts from the important bits, not the full page count.",
   },
   {
     video: "/work/quizai/sol-folders.mp4",
     title: "Solution #4: Making Folders",
-    headlineLead: "And it all stays organized — ",
+    headlineLead: "And it all stays organized, ",
     headlineHighlight: "folders keep every subject in its place.",
     caption:
-      "As uploads pile up, things get messy fast. Folders let students group notes, quizzes, and summaries by class or topic, so everything for an exam lives in one spot — designed to make coming back the easy, obvious thing to do.",
+      "As uploads pile up, things get messy fast. Folders let students group notes, quizzes, and summaries by class or topic, so everything for an exam lives in one spot, designed to make coming back the easy, obvious thing to do.",
   },
 ];
 
@@ -65,6 +65,7 @@ const QuizAICaseStudy = () => {
   const researchOverviewSubtitleRef = useRef(null);
   const researchOverviewImageRef = useRef(null);
   const researchFindingImageRef = useRef(null);
+  const testingEffectRef = useRef(null);
   const designApproachTitleRef = useRef(null);
   const designApproach1TitleRef = useRef(null);
   const designApproach1ContentRef = useRef(null);
@@ -104,7 +105,7 @@ const QuizAICaseStudy = () => {
 
   // The lo-fi wireframe (same-origin) forwards its wheel/touch to us via
   // postMessage. Re-dispatch it as a native wheel event so the page's own
-  // Lenis pipeline scrolls it — seamless and smooth — while the embed stays
+  // Lenis pipeline scrolls it, seamless and smooth, while the embed stays
   // clickable (tab switching, buttons).
   useEffect(() => {
     const onMessage = (event) => {
@@ -124,7 +125,7 @@ const QuizAICaseStudy = () => {
     return () => window.removeEventListener("message", onMessage);
   }, []);
 
-  // Scroll-triggered reveals — GSAP-free (IntersectionObserver + WAAPI)
+  // Scroll-triggered reveals, GSAP-free (IntersectionObserver + WAAPI)
   useEffect(() => {
     const cleanups = [];
     const reveal = (ref, delay = 0) => {
@@ -145,6 +146,7 @@ const QuizAICaseStudy = () => {
     reveal(researchOverviewSubtitleRef, 0.1);
     reveal(researchOverviewImageRef, 0.2);
     reveal(researchFindingImageRef);
+    reveal(testingEffectRef, 0.1);
 
     // Design Approach Section
     reveal(designApproachTitleRef);
@@ -190,7 +192,7 @@ const QuizAICaseStudy = () => {
             />
             <img
               src="/work/quizai/hero-before-1024.jpg"
-              alt="QuizAI landing page mockup on a laptop screen"
+              alt="Quizzy landing page mockup on a laptop screen"
               className="quizai-hero-image"
               loading="eager"
               decoding="async"
@@ -216,7 +218,7 @@ const QuizAICaseStudy = () => {
               <div className="quizai-hero-detail-item">
                 <div className="quizai-hero-detail-label">DURATION</div>
                 <div className="quizai-hero-detail-value">
-                  September — November 2024 (10 weeks)
+                  September, November 2024 (10 weeks)
                 </div>
               </div>
               <div className="quizai-hero-detail-item">
@@ -271,7 +273,7 @@ const QuizAICaseStudy = () => {
         <div className="quizai-hero-image-container quizai-hero-after">
           <img
             src="/work/quizai/hero-new.png"
-            alt="QuizAI landing page, dashboard, and AI study assistant screens"
+            alt="Quizzy landing page, dashboard, and AI study assistant screens"
             className="quizai-hero-image"
           />
         </div>
@@ -283,273 +285,41 @@ const QuizAICaseStudy = () => {
           {/* Top Row - Two Columns */}
           <div className="quizai-context-top">
             <div className="quizai-context-item" ref={contextWhatIsQuizAIRef}>
-              <h2 className="quizai-context-title">What is Quiz AI?</h2>
+              <h2 className="quizai-context-title">What is Quizzy?</h2>
               <p className="quizai-context-description">
-                Most students want to study smarter — they just don't want to
-                spend an hour turning messy notes into flashcards first. Quiz AI
+                Most students want to study smarter, they just don't want to
+                spend an hour turning messy notes into flashcards first. Quizzy
                 closes that gap: upload your notes and it hands back clean
-                summaries and self-scoring quizzes in one step, so the actual
+                summaries and self scoring quizzes in one step, so the actual
                 studying finally happens.
               </p>
             </div>
             <div className="quizai-context-item" ref={contextMyRoleRef}>
               <h2 className="quizai-context-title">My Role</h2>
               <p className="quizai-context-description">
-                I wore multiple hats across this project — conducting user
+                I wore multiple hats across this project, conducting user
                 research with students, translating findings into interaction
-                patterns, and building the full-stack implementation. I owned
-                the end-to-end experience from early sketches through shipped
+                patterns, and building the full stack implementation. I owned
+                the end to end experience from early sketches through shipped
                 code, collaborating closely with stakeholders to shape both the
                 product vision and its technical execution.
               </p>
             </div>
           </div>
-
-          <div className="quizai-context-impact" ref={impactSectionRef}>
-            <div
-              className="quizai-production-status"
-              ref={(el) => (contextImpactMetricsRefs.current[0] = el)}
-            >
-              <span className="quizai-production-status-badge">
-                <span
-                  className="quizai-production-status-dot"
-                  aria-hidden="true"
-                />
-                RESULTS
-              </span>
-              <p className="quizai-production-status-text">
-                Still in production and will be launching soon.
-              </p>
-            </div>
-          </div>
-
         </div>
       </section>
 
-      {/* Research Section */}
-      <section id="quizai-research" className="quizai-research-section">
-        <div className="quizai-research-content">
-          <h3 className="quizai-research-title" ref={researchTitleRef}>
-            RESEARCH
-          </h3>
-
-          <div className="quizai-research-overview">
-            <CaseStudyStatement ref={researchOverviewSubtitleRef}>
-              <CaseStudyStatementHeadline as="h4">
-                What's <span className="quizai-accent-text">really</span> going
-                on?
-              </CaseStudyStatementHeadline>
-              <CaseStudyStatementHeadline as="h4">
-                Research &amp; User Discovery
-              </CaseStudyStatementHeadline>
-              <CaseStudyStatementBody>
-                Sit in on any lecture and watch what happens afterward —
-                notes get scribbled down, filed away, and rarely opened
-                again. The research backs that up: students capture only
-                about a third of the important material, miss close to 40% of
-                the key points, and more than half say they struggle to stay
-                engaged or hold onto what they learned.
-              </CaseStudyStatementBody>
-              <CaseStudyStatementBody>
-                The real gap isn't note-taking, it's what comes next. Active
-                recall and self-testing are what actually move ideas into
-                long-term memory, but building that habit today means hopping
-                between separate tools — one for notes, another for study
-                docs, another for quizzes. So most students simply skip it.
-              </CaseStudyStatementBody>
-              <CaseStudyStatementBody>
-                That's the gap QuizAI is built to close. It takes a student's
-                raw notes and, in a single step, turns them into organized
-                study materials and auto-generated, self-scoring quizzes — so
-                real studying becomes the easy default instead of one more
-                chore to put off.
-              </CaseStudyStatementBody>
-              <CaseStudyStatementHeadline as="h4">
-                Key Insights &amp; Problem Definition
-              </CaseStudyStatementHeadline>
-              <CaseStudyStatementBody>
-                A few things came up again and again: making quizzes by hand
-                takes forever, notes pile up into overwhelm, and no one could
-                tell whether they were actually getting better. What students
-                wanted wasn't more features — it was studying that felt personal,
-                and feedback that told them they were making progress.
-              </CaseStudyStatementBody>
-              <CaseStudyStatementHeadline as="h4">
-                Design Impact &amp; Feature Direction
-              </CaseStudyStatementHeadline>
-              <CaseStudyStatementBody>
-                Those conversations shaped everything that followed — the
-                one-click quizzes, the auto-summaries, the study groups, the
-                progress you can actually see. Every call came back to the same
-                gut check: does this make studying feel lighter, or just add one
-                more thing to do?
-              </CaseStudyStatementBody>
-            </CaseStudyStatement>
-            <div
-              className="quizai-research-image-container"
-              ref={researchOverviewImageRef}
-            >
-              <img
-                src="/work/quizai/user-journey.png"
-                alt="User Journey"
-                className="quizai-research-image"
-              />
-            </div>
-          </div>
-
-          {/* Research Finding */}
-          <div className="quizai-research-finding">
-            <div
-              className="quizai-research-image-container"
-              ref={researchFindingImageRef}
-            >
-              <iframe
-                src="/work/quizai/design-process/index.html"
-                title="Design Process – QuizAI"
-                className="quizai-research-image quizai-wireframe-frame"
-                style={{ height: "700px" }}
-                scrolling="no"
-              />
-            </div>
-          </div>
-
-          <div className="cs-hmw" style={{ "--hmw-accent": "#695b4d" }}>
-            <h3 className="cs-hmw-heading">HOW MIGHT WE</h3>
-            <div className="cs-hmw-grid">
-              <div className="cs-hmw-card">
-                <p className="cs-hmw-question">
-                  How might we turn dense notes into study-ready material
-                  without the busywork?
-                </p>
-                <p className="cs-hmw-solution">
-                  <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
-                  Auto-generate quizzes and summaries from any uploaded
-                  document, so students spend their time learning instead of
-                  formatting.
-                </p>
-              </div>
-              <div className="cs-hmw-card">
-                <p className="cs-hmw-question">
-                  How might we keep learners aware of their progress and
-                  motivated to review?
-                </p>
-                <p className="cs-hmw-solution">
-                  <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
-                  A progress dashboard tracks mastery by topic and nudges
-                  timely review before knowledge fades.
-                </p>
-              </div>
-              <div className="cs-hmw-card">
-                <p className="cs-hmw-question">
-                  How might we make studying feel less isolating?
-                </p>
-                <p className="cs-hmw-solution">
-                  <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
-                  Study groups let students share decks and quiz each other,
-                  turning solo prep into a shared routine.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Design Approach Section */}
-      <section id="quizai-design-approach" className="quizai-design-approach-section">
-        <div className="quizai-design-approach-content">
-          <h3
-            className="quizai-design-approach-title"
-            ref={designApproachTitleRef}
-          >
-            DESIGN APPROACH
-          </h3>
-
-          {/* Design Approach #1 */}
-          <div className="quizai-design-approach-item">
-            <CaseStudyStatement
-              ref={designApproach1ContentRef}
-              variant="narrow"
-              className="quizai-design-approach-statement"
-            >
-              <CaseStudyStatementHeadline
-                as="h4"
-                ref={designApproach1TitleRef}
-              >
-                Streamlining the Upload-to-Quiz Flow
-              </CaseStudyStatementHeadline>
-              <CaseStudyStatementBody>
-                Research showed students were dropping off after uploading —
-                the path from document to quiz wasn't clear. The redesigned
-                flow makes each step explicit:{" "}
-                <span style={{ fontWeight: 600 }}>upload, process, generate</span>
-                {" "}— so students always know where they are and what comes next.
-              </CaseStudyStatementBody>
-            </CaseStudyStatement>
-            <div
-              className="quizai-design-approach-image-container"
-              ref={designApproach1ImageRef}
-            >
-              <img
-                src="/work/quizai/user-journey-mapping-frame-1.svg"
-                alt="QuizAI User Flow"
-                className="quizai-design-approach-image"
-              />
-            </div>
-          </div>
-
-          {/* Design Approach #2 */}
-          <div className="quizai-design-approach-item">
-            <CaseStudyStatement
-              ref={designApproach2ContentRef}
-              className="quizai-design-approach-statement"
-            >
-              <CaseStudyStatementHeadline
-                as="h4"
-                ref={designApproach2TitleRef}
-              >
-                From Research to Design
-              </CaseStudyStatementHeadline>
-              <CaseStudyStatementBody>
-                To address the information overload students described, I pulled
-                frequently-accessed materials to the front of the dashboard and
-                placed AI-generated summaries and quizzes{" "}
-                <span style={{ fontWeight: 600 }}>
-                  one click away from any uploaded document
-                </span>
-                .
-              </CaseStudyStatementBody>
-            </CaseStudyStatement>
-            <div
-              className="quizai-design-approach-image-container"
-              ref={designApproach2Image1Ref}
-            >
-              <iframe
-                ref={lofiWireframesFrameRef}
-                src="/work/quizai/lofi-wireframes/index.html"
-                title="Lo-Fi Wireframes – QuizAI"
-                className="quizai-design-approach-image quizai-wireframe-frame quizai-lofi-frame"
-                scrolling="no"
-              />
-            </div>
-          </div>
-
-
-        </div>
-      </section>
-
-      {/* Solution Section */}
+      {/* Final Product, the shipped work, shown up front */}
       <section id="solution-section" className="quizai-solution-section">
         <div className="quizai-solution-content">
           <h3 className="quizai-solution-title" ref={solutionTitleRef}>
-            SOLUTION
+            THE FINAL PRODUCT
           </h3>
           <p className="quizai-solution-intro" ref={solutionIntroRef}>
-            Every solution started from one question: what makes a student
-            actually want to open QuizAI? I designed each component to carry the
-            brand&apos;s promise — clear, trustworthy, and effortless — in ASU&apos;s
-            maroon-and-gold system, so the product feels credible and inviting.
-            The goal was to pull students in and make real studying the easy
-            default instead of another chore to put off.
+            Here is what Quizzy actually does. Every screen was built around one
+            question: what makes a student want to open the app instead of
+            putting studying off? You drop in a PDF and it comes back as
+            summaries, quizzes, and neatly filed notes in a few taps.
           </p>
           {QUIZAI_SOLUTIONS.map((solution, index) => (
             <div
@@ -586,19 +356,279 @@ const QuizAICaseStudy = () => {
         </div>
       </section>
 
+      {/* Research Section */}
+      <section id="quizai-research" className="quizai-research-section">
+        <div className="quizai-research-content">
+          <h3 className="quizai-research-title" ref={researchTitleRef}>
+            KEY DESIGN MOMENTS
+          </h3>
+
+          <div className="quizai-research-overview">
+            <CaseStudyStatement ref={researchOverviewSubtitleRef}>
+              <CaseStudyStatementHeadline as="h4">
+                What's <span className="quizai-accent-text">really</span> going
+                on?
+              </CaseStudyStatementHeadline>
+              <CaseStudyStatementHeadline as="h4">
+                Research &amp; User Discovery
+              </CaseStudyStatementHeadline>
+              <CaseStudyStatementBody>
+                Sit in on any lecture and watch what happens afterward,
+                notes get scribbled down, filed away, and rarely opened
+                again. The research backs that up: students capture only
+                about a third of the important material, miss close to 40% of
+                the key points, and more than half say they struggle to stay
+                engaged or hold onto what they learned.
+              </CaseStudyStatementBody>
+              <CaseStudyStatementBody>
+                The real gap isn't note taking, it's what comes next. Active
+                recall and self testing are what actually move ideas into
+                long term memory, but building that habit today means hopping
+                between separate tools, one for notes, another for study
+                docs, another for quizzes. So most students simply skip it.
+              </CaseStudyStatementBody>
+              <CaseStudyStatementBody>
+                That's the gap Quizzy is built to close. It takes a student's
+                raw notes and, in a single step, turns them into organized
+                study materials and auto generated, self scoring quizzes, so
+                real studying becomes the easy default instead of one more
+                chore to put off.
+              </CaseStudyStatementBody>
+              <CaseStudyStatementHeadline as="h4">
+                Key Insights &amp; Problem Definition
+              </CaseStudyStatementHeadline>
+              <CaseStudyStatementBody>
+                A few things came up again and again: making quizzes by hand
+                takes forever, notes pile up into overwhelm, and no one could
+                tell whether they were actually getting better. What students
+                wanted wasn't more features, it was studying that felt personal,
+                and feedback that told them they were making progress.
+              </CaseStudyStatementBody>
+              <CaseStudyStatementHeadline as="h4">
+                Design Impact &amp; Feature Direction
+              </CaseStudyStatementHeadline>
+              <CaseStudyStatementBody>
+                Those conversations shaped everything that followed, the
+                one click quizzes, the auto summaries, the study groups, the
+                progress you can actually see. Every call came back to the same
+                gut check: does this make studying feel lighter, or just add one
+                more thing to do?
+              </CaseStudyStatementBody>
+            </CaseStudyStatement>
+            <div
+              className="quizai-research-image-container"
+              ref={researchOverviewImageRef}
+            >
+              <img
+                src="/work/quizai/user-journey.png"
+                alt="User Journey"
+                className="quizai-research-image"
+              />
+            </div>
+          </div>
+
+          {/* Research Finding */}
+          <div className="quizai-research-finding">
+            <div
+              className="quizai-research-image-container"
+              ref={researchFindingImageRef}
+            >
+              <iframe
+                src="/work/quizai/design-process/index.html"
+                title="Design Process, Quizzy"
+                className="quizai-research-image quizai-wireframe-frame"
+                style={{ height: "700px" }}
+                scrolling="no"
+              />
+            </div>
+          </div>
+
+          <div className="cs-hmw" style={{ "--hmw-accent": "#695b4d" }}>
+            <h3 className="cs-hmw-heading">HOW MIGHT WE</h3>
+            <div className="cs-hmw-grid">
+              <div className="cs-hmw-card">
+                <p className="cs-hmw-question">
+                  How might we turn dense notes into study ready material
+                  without the busywork?
+                </p>
+                <p className="cs-hmw-solution">
+                  <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
+                  Auto generate quizzes and summaries from any uploaded
+                  document, so students spend their time learning instead of
+                  formatting.
+                </p>
+              </div>
+              <div className="cs-hmw-card">
+                <p className="cs-hmw-question">
+                  How might we keep learners aware of their progress and
+                  motivated to review?
+                </p>
+                <p className="cs-hmw-solution">
+                  <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
+                  A progress dashboard tracks mastery by topic and nudges
+                  timely review before knowledge fades.
+                </p>
+              </div>
+              <div className="cs-hmw-card">
+                <p className="cs-hmw-question">
+                  How might we make studying feel less isolating?
+                </p>
+                <p className="cs-hmw-solution">
+                  <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
+                  Study groups let students share decks and quiz each other,
+                  turning solo prep into a shared routine.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Signature moment: the testing effect */}
+          <div className="quizai-testing-effect" ref={testingEffectRef}>
+            <CaseStudyStatement>
+              <CaseStudyStatementHeadline as="h4">
+                The one thing testing kept asking for
+              </CaseStudyStatementHeadline>
+              <CaseStudyStatementBody>
+                The strongest signal from user testing wasn't a feature request,
+                it was a feeling. People loved being quizzed. That is the testing
+                effect: you hold onto something far better after you try to
+                recall it than after you simply read it again. In an era where
+                everyone wants to remember more in less time, that felt like the
+                real heart of Quizzy, and it came straight out of asking what the
+                one thing Quizzy could not live without.
+              </CaseStudyStatementBody>
+              <CaseStudyStatementBody>
+                So the direction became a gentle reminder system. Before an exam
+                you choose the days you want Quizzy to check in, and at each
+                moment it does more than remind you. It hands you a quick quiz on
+                the very flashcards you were trying to remember. You set your own
+                intervals, so recall practice slips into your day instead of
+                piling up the night before.
+              </CaseStudyStatementBody>
+            </CaseStudyStatement>
+          </div>
+        </div>
+      </section>
+
+      {/* Design Approach Section */}
+      <section id="quizai-design-approach" className="quizai-design-approach-section">
+        <div className="quizai-design-approach-content">
+          <h3
+            className="quizai-design-approach-title"
+            ref={designApproachTitleRef}
+          >
+            DESIGN APPROACH
+          </h3>
+
+          {/* Design Approach #1 */}
+          <div className="quizai-design-approach-item">
+            <CaseStudyStatement
+              ref={designApproach1ContentRef}
+              variant="narrow"
+              className="quizai-design-approach-statement"
+            >
+              <CaseStudyStatementHeadline
+                as="h4"
+                ref={designApproach1TitleRef}
+              >
+                Streamlining the Upload to Quiz Flow
+              </CaseStudyStatementHeadline>
+              <CaseStudyStatementBody>
+                Research showed students were dropping off after uploading,
+                the path from document to quiz wasn't clear. The redesigned
+                flow makes each step explicit:{" "}
+                <span style={{ fontWeight: 600 }}>upload, process, generate</span>
+                , so students always know where they are and what comes next.
+              </CaseStudyStatementBody>
+            </CaseStudyStatement>
+            <div
+              className="quizai-design-approach-image-container"
+              ref={designApproach1ImageRef}
+            >
+              <img
+                src="/work/quizai/user-journey-mapping-frame-1.svg"
+                alt="Quizzy User Flow"
+                className="quizai-design-approach-image"
+              />
+            </div>
+          </div>
+
+          {/* Design Approach #2 */}
+          <div className="quizai-design-approach-item">
+            <CaseStudyStatement
+              ref={designApproach2ContentRef}
+              className="quizai-design-approach-statement"
+            >
+              <CaseStudyStatementHeadline
+                as="h4"
+                ref={designApproach2TitleRef}
+              >
+                From Research to Design
+              </CaseStudyStatementHeadline>
+              <CaseStudyStatementBody>
+                To address the information overload students described, I pulled
+                frequently accessed materials to the front of the dashboard and
+                placed AI generated summaries and quizzes{" "}
+                <span style={{ fontWeight: 600 }}>
+                  one click away from any uploaded document
+                </span>
+                .
+              </CaseStudyStatementBody>
+            </CaseStudyStatement>
+            <div
+              className="quizai-design-approach-image-container"
+              ref={designApproach2Image1Ref}
+            >
+              <iframe
+                ref={lofiWireframesFrameRef}
+                src="/work/quizai/lofi-wireframes/index.html"
+                title="Lo-Fi Wireframes, Quizzy"
+                className="quizai-design-approach-image quizai-wireframe-frame quizai-lofi-frame"
+                scrolling="no"
+              />
+            </div>
+          </div>
+
+
+        </div>
+      </section>
+
+      {/* Impact Section */}
+      <section id="quizai-impact" className="quizai-solution-section">
+        <div className="quizai-solution-content">
+          <h3 className="quizai-solution-title" ref={impactSectionRef}>
+            IMPACT
+          </h3>
+          <div
+            className="quizai-production-status"
+            ref={(el) => (contextImpactMetricsRefs.current[0] = el)}
+          >
+            <span className="quizai-production-status-badge">
+              <span className="quizai-production-status-dot" aria-hidden="true" />
+              RESULTS
+            </span>
+            <p className="quizai-production-status-text">
+              Still in production and launching soon. The real proof will be
+              students actually keeping up with their studying, and that is the
+              number I care about once it ships.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Reflection Section */}
       <section id="quizai-reflection" className="quizai-reflection-section">
         <div className="quizai-reflection-content">
           <h3 className="quizai-reflection-title" ref={reflectionTitleRef}>
-            REFLECTION
+            REFLECTIONS
           </h3>
           <div className="quizai-reflection-item" ref={reflectionContentRef}>
             <h4 className="quizai-reflection-title-text">
-              This was my first design role as Quiz AI's only designer, handling
+              This was my first design role as Quizzy's only designer, handling
               both product design and development.
             </h4>
             <p className="quizai-reflection-description">
-              Being the only designer — and the one writing the code — meant
+              Being the only designer, and the one writing the code, meant
               there was nowhere to hand a problem off. It pushed me to carry an
               idea the whole way, from a rough sketch to something you can
               actually click and use, and to make peace with shipping before it
@@ -608,9 +638,9 @@ const QuizAICaseStudy = () => {
               Universal learning, not just equal learning
             </p>
             <p className="quizai-reflection-description">
-              The biggest lesson wasn&apos;t technical. Building QuizAI made me
+              The biggest lesson wasn&apos;t technical. Building Quizzy made me
               think hard about who education tech actually leaves out. Good
-              design here isn&apos;t giving everyone the same thing — it&apos;s
+              design here isn&apos;t giving everyone the same thing, it&apos;s
               meeting people where they learn, especially the ones who never
               clicked with the traditional way. That idea quietly shaped every
               choice I made.
@@ -679,7 +709,7 @@ const QuizAICaseStudy = () => {
                     loop
                     muted
                     playsInline
-                    aria-label="Revolution Steel: Construction Workflow Optimisation — preview"
+                    aria-label="Revolution Steel: Construction Workflow Optimisation, preview"
                   />
                 </div>
                 <h4 className="quizai-see-next-card-title">
@@ -710,7 +740,7 @@ const QuizAICaseStudy = () => {
                     loop
                     muted
                     playsInline
-                    aria-label="Hiku: A Mobile Application for Hiking Enthusiasts — preview"
+                    aria-label="Hiku: A Mobile Application for Hiking Enthusiasts, preview"
                   />
                 </div>
                 <h4 className="quizai-see-next-card-title">
