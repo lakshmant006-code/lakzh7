@@ -375,11 +375,18 @@ const QuizAICaseStudy = () => {
               <CaseStudyStatementBody>
                 Sit in on any lecture and watch what happens afterward,
                 notes get scribbled down, filed away, and rarely opened
-                again. The research backs that up: students capture only
-                about a third of the important material, miss close to 40% of
-                the key points, and more than half say they struggle to stay
-                engaged or hold onto what they learned.
+                again. The research backs that up:
               </CaseStudyStatementBody>
+              <ul className="quizai-stat-list">
+                <li>
+                  Students capture only about a third of the important material.
+                </li>
+                <li>They miss close to 40% of the key points.</li>
+                <li>
+                  More than half struggle to stay engaged or hold onto what
+                  they learned.
+                </li>
+              </ul>
               <CaseStudyStatementBody>
                 The real gap isn't note taking, it's what comes next. Active
                 recall and self testing are what actually move ideas into
@@ -398,11 +405,19 @@ const QuizAICaseStudy = () => {
                 Key Insights &amp; Problem Definition
               </CaseStudyStatementHeadline>
               <CaseStudyStatementBody>
-                A few things came up again and again: making quizzes by hand
-                takes forever, notes pile up into overwhelm, and no one could
-                tell whether they were actually getting better. What students
-                wanted wasn't more features, it was studying that felt personal,
-                and feedback that told them they were making progress.
+                A few things came up again and again:
+              </CaseStudyStatementBody>
+              <ul className="quizai-stat-list">
+                <li>Making quizzes by hand takes forever.</li>
+                <li>Notes pile up into overwhelm.</li>
+                <li>
+                  No one could tell whether they were actually getting better.
+                </li>
+              </ul>
+              <CaseStudyStatementBody>
+                What students wanted wasn't more features, it was studying that
+                felt personal, and feedback that told them they were making
+                progress.
               </CaseStudyStatementBody>
               <CaseStudyStatementHeadline as="h4">
                 Design Impact &amp; Feature Direction
