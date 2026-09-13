@@ -297,12 +297,11 @@ const QuizAICaseStudy = () => {
             <div className="quizai-context-item" ref={contextMyRoleRef}>
               <h2 className="quizai-context-title">My Role</h2>
               <p className="quizai-context-description">
-                I wore multiple hats across this project, conducting user
-                research with students, translating findings into interaction
-                patterns, and building the full stack implementation. I owned
-                the end to end experience from early sketches through shipped
-                code, collaborating closely with stakeholders to shape both the
-                product vision and its technical execution.
+                I wore a few hats on this one. I ran the user research with
+                students, turned what I heard into the interaction patterns, and
+                wrote the full stack code. I owned it from the first sketches
+                through what shipped, and worked with stakeholders along the way
+                on both the product direction and how it was built.
               </p>
             </div>
           </div>
@@ -316,7 +315,7 @@ const QuizAICaseStudy = () => {
             THE FINAL PRODUCT
           </h3>
           <p className="quizai-solution-intro" ref={solutionIntroRef}>
-            Here is what Quizzy actually does. Every screen was built around one
+            Here is what Quizzy does. Every screen was built around one
             question: what makes a student want to open the app instead of
             putting studying off? You drop in a PDF and it comes back as
             summaries, quizzes, and neatly filed notes in a few taps.
@@ -388,11 +387,11 @@ const QuizAICaseStudy = () => {
                 </li>
               </ul>
               <CaseStudyStatementBody>
-                The real gap isn't note taking, it's what comes next. Active
-                recall and self testing are what actually move ideas into
-                long term memory, but building that habit today means hopping
-                between separate tools, one for notes, another for study
-                docs, another for quizzes. So most students simply skip it.
+                The harder part is what comes after the notes. Active recall and
+                self testing are what move ideas into long term memory, but
+                building that habit today means hopping between separate tools,
+                one for notes, another for study docs, another for quizzes. So
+                most students skip it.
               </CaseStudyStatementBody>
               <CaseStudyStatementBody>
                 That's the gap Quizzy is built to close. It takes a student's
@@ -415,19 +414,17 @@ const QuizAICaseStudy = () => {
                 </li>
               </ul>
               <CaseStudyStatementBody>
-                What students wanted wasn't more features, it was studying that
-                felt personal, and feedback that told them they were making
-                progress.
+                What students wanted was studying that felt personal, with
+                feedback that showed them they were making progress.
               </CaseStudyStatementBody>
               <CaseStudyStatementHeadline as="h4">
                 Design Impact &amp; Feature Direction
               </CaseStudyStatementHeadline>
               <CaseStudyStatementBody>
-                Those conversations shaped everything that followed, the
-                one click quizzes, the auto summaries, the study groups, the
-                progress you can actually see. Every call came back to the same
-                gut check: does this make studying feel lighter, or just add one
-                more thing to do?
+                Those conversations shaped what came next: the one click
+                quizzes, the auto summaries, the study groups, and progress you
+                can see at a glance. Each one had to pass the same test, does it
+                make studying feel lighter, or just add one more thing to do?
               </CaseStudyStatementBody>
             </CaseStudyStatement>
             <div
@@ -504,13 +501,12 @@ const QuizAICaseStudy = () => {
                 The one thing testing kept asking for
               </CaseStudyStatementHeadline>
               <CaseStudyStatementBody>
-                The strongest signal from user testing wasn't a feature request,
-                it was a feeling. People loved being quizzed. That is the testing
-                effect: you hold onto something far better after you try to
-                recall it than after you simply read it again. In an era where
-                everyone wants to remember more in less time, that felt like the
-                real heart of Quizzy, and it came straight out of asking what the
-                one thing Quizzy could not live without.
+                The strongest signal from user testing was simple: people loved
+                being quizzed. That is the testing effect. You hold onto
+                something far better after you try to recall it than after you
+                read it again. With everyone trying to remember more in less
+                time, that felt like the center of Quizzy, and it came straight
+                out of asking what the one thing Quizzy could not live without.
               </CaseStudyStatementBody>
               <CaseStudyStatementBody>
                 So the direction became a gentle reminder system. Before an exam
@@ -623,9 +619,9 @@ const QuizAICaseStudy = () => {
               RESULTS
             </span>
             <p className="quizai-production-status-text">
-              Still in production and launching soon. The real proof will be
-              students actually keeping up with their studying, and that is the
-              number I care about once it ships.
+              Still in production and launching soon. Once it ships, the thing I
+              want to see is students keeping up with their studying, and that is
+              the number I will watch.
             </p>
           </div>
         </div>
