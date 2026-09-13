@@ -70,11 +70,11 @@ const ArcadiaCaseStudy = () => {
     });
   };
 
-  // KPI framework — metrics grouped by journey phase and mapped solution.
+  // KPI framework, metrics grouped by journey phase and mapped solution.
   const kpiGroups = [
     {
-      phase: "Program-level",
-      solution: "S0 Pain-Point Tracker + S7 TaskFlow",
+      phase: "Program level",
+      solution: "S0 Pain Point Tracker + S7 TaskFlow",
       rows: [
         { metric: "Weekly update rate", mapped: "S7 TaskFlow", target: "≥ 90%", dir: "up" },
         { metric: "Average task progress", mapped: "S7 TaskFlow", target: "Steady rise", dir: "up" },
@@ -92,18 +92,18 @@ const ArcadiaCaseStudy = () => {
     },
     {
       phase: "Fabrication",
-      solution: "S5 Model-change sign-off gate",
+      solution: "S5 Model change sign off gate",
       rows: [
-        { metric: "Sign-off compliance", mapped: "S5 Gate", target: "100%", dir: "up" },
+        { metric: "Sign off compliance", mapped: "S5 Gate", target: "100%", dir: "up" },
         { metric: "Rework rate", mapped: "S5 Gate", target: "Downward", dir: "down" },
       ],
     },
     {
       phase: "Field / Delivery",
-      solution: "S6 EOD check + same-day alerts",
+      solution: "S6 EOD check + same day alerts",
       rows: [
-        { metric: "End-of-day check rate", mapped: "S6 Field", target: "≥ 95%", dir: "up" },
-        { metric: "Change-alert latency", mapped: "S6 Field", target: "Same day", dir: "down" },
+        { metric: "End of day check rate", mapped: "S6 Field", target: "≥ 95%", dir: "up" },
+        { metric: "Change alert latency", mapped: "S6 Field", target: "Same day", dir: "down" },
       ],
     },
   ];
@@ -213,7 +213,7 @@ const ArcadiaCaseStudy = () => {
               <p className="arcadia-hero-subtitle">
                 Tasked with untangling how work moves through Revolution Steel,
                 a steel-production shop within Arcadia Custom Builders, I led an
-                embedded qualitative study that mapped the quote-to-fabrication
+                embedded qualitative study that mapped the quote to fabrication
                 journey and turned scattered, verbal friction into a clear,
                 owned workflow, cutting process time by 30% and lifting team
                 effectiveness by 20%.
@@ -254,7 +254,7 @@ const ArcadiaCaseStudy = () => {
           <div className="arcadia-hero-image-container arcadia-hero-after">
             <img
               src="/work/arcadia/Revolution Steel Shop.jpg"
-              alt="Revolution Steel shop floor — the team working across steel framing stations"
+              alt="Revolution Steel shop floor, the team working across steel framing stations"
               className="arcadia-hero-image"
               style={{ aspectRatio: "3983 / 1754", objectPosition: "center" }}
             />
@@ -268,13 +268,13 @@ const ArcadiaCaseStudy = () => {
               <div className="arcadia-context-item" ref={contextGoalRef}>
                 <h2 className="arcadia-context-title">Goal</h2>
                 <p className="arcadia-context-description">
-                  On the shop floor, everyone was working hard — the problem was
+                  On the shop floor, everyone was working hard, the problem was
                   that nobody could see who owned what, or where a job actually
                   stood. Work stalled and doubled up in the gaps between people.
                   I ran the study end to end, from planning the questions to
                   presenting what I found, and turned all that scattered, verbal
-                  friction into one workflow the team could actually follow —
-                  which ended up making the whole process 30% faster.
+                  friction into one workflow the team could follow, which ended
+                  up making the whole process 30% faster.
                 </p>
               </div>
               <div className="arcadia-context-item" ref={contextRoleRef}>
@@ -322,9 +322,8 @@ const ArcadiaCaseStudy = () => {
                     LATE FIELD COMMUNICATION
                   </span>
                   <br />
-                  Field crews hear about changes late, and with no end-of-day
-                  completion check, no one has visibility into what was
-                  actually finished.
+                  Field crews hear about changes late, and with no end of day
+                  completion check, no one can see what got finished.
                 </CaseStudyStatementBody>
               </CaseStudyStatement>
               <div className="arcadia-painpoints-tags">
@@ -349,10 +348,10 @@ const ArcadiaCaseStudy = () => {
               <CaseStudyStatementBody>
                 I treated this as an embedded piece of{" "}
                 <span style={{ fontWeight: 600 }}>qualitative research</span>.
-                I ran semi-structured interviews with the leads who own each
+                I ran loosely structured interviews with the leads who own each
                 stage and the operators who model and build, sat in on the
                 team's recurring meetings where problems surface out loud, and
-                mapped the whole quote-to-fabrication journey in{" "}
+                mapped the whole quote to fabrication journey in{" "}
                 <span style={{ fontWeight: 600 }}>TheyDo</span>.
               </CaseStudyStatementBody>
               <CaseStudyStatementBody>
@@ -483,9 +482,9 @@ const ArcadiaCaseStudy = () => {
               </h4>
               <p className="arcadia-ideation-text">
                 In an affinity mapping workshop with the client, I clustered
-                the raw observations by theme and re-ordered them by what
+                the raw observations by theme and reordered them by what
                 stakeholders said was costing the most rework and delay.
-                Distilled down, the 7 coded pain points pointed to three core
+                Distilled down, the 7 coded pain points pointed to three
                 insights that shaped the solution set.
               </p>
               <CaseStudyStatement variant="wide">
@@ -526,10 +525,10 @@ const ArcadiaCaseStudy = () => {
                     VISIBILITY, NOT EFFORT
                   </span>
                   <br />
-                  Work suffers less from a lack of effort than from the
-                  absence of shared, up-front visibility. When the day's
-                  tasks, owners, and completion bar aren't set before work
-                  begins, people optimize locally and the sequence drifts.
+                  When work slips here, it usually isn't because people
+                  aren't trying. It's that no one has shared, upfront, what
+                  the day's tasks, owners, and completion bar are. Without
+                  that, people optimize locally and the sequence drifts.
                 </CaseStudyStatementBody>
               </CaseStudyStatement>
             </div>
@@ -560,7 +559,7 @@ const ArcadiaCaseStudy = () => {
                   </div>
                 </div>
                 <div className="arcadia-pair-card">
-                  <div className="arcadia-pair-phase">PRE-MODELING</div>
+                  <div className="arcadia-pair-phase">PRE MODELING</div>
                   <div className="arcadia-pair-problem">
                     No predefined daily tasks, so each modeler decides ad hoc
                     what to work on.
@@ -580,19 +579,19 @@ const ArcadiaCaseStudy = () => {
                 <div className="arcadia-pair-card">
                   <div className="arcadia-pair-phase">FIELD / DELIVERY</div>
                   <div className="arcadia-pair-problem">
-                    Field crews hear about changes late, with no end-of-day
+                    Field crews hear about changes late, with no end of day
                     completion check.
                   </div>
                   <div className="arcadia-pair-insight">
-                    No one has visibility into what was actually finished on
+                    No one can see what got finished on
                     site each day.
                   </div>
                   <div className="arcadia-pair-solution">
                     <span className="arcadia-pair-solution-label">
                       SOLUTION
                     </span>{" "}
-                    Run an end-of-day completion check with field crews to
-                    confirm what was actually completed.
+                    Run an end of day completion check with field crews to
+                    confirm what got completed.
                   </div>
                 </div>
               </div>
@@ -644,11 +643,11 @@ const ArcadiaCaseStudy = () => {
             </div>
 
             <p className="arcadia-ideation-text">
-              With the workflow flowing seamlessly and no duplicated builds,
-              the shop saved the company a meaningful amount of money, the
-              time and material that used to disappear into rework and
-              repeated effort. Each gain is tracked against the KPI framework
-              below, so the improvement holds instead of drifting back.
+              With the workflow moving cleanly and no duplicated builds, the
+              shop saved the company real money, the time and material that
+              used to disappear into rework and repeated effort. Each gain is
+              tracked against the KPI framework below, so the improvement
+              holds instead of drifting back.
             </p>
 
             <div
@@ -714,9 +713,9 @@ const ArcadiaCaseStudy = () => {
               ))}
 
               <p className="arcadia-kpi-foot">
-                KPI index for the quote-to-fabrication workflow study. Targets
+                KPI index for the quote to fabrication workflow study. Targets
                 are baselining goals; values are collected via TaskFlow and
-                the Pain-Point Tracker.
+                the Pain Point Tracker.
               </p>
             </div>
 
@@ -756,7 +755,7 @@ const ArcadiaCaseStudy = () => {
                       loop
                       muted
                       playsInline
-                      aria-label="Hiku: A Mobile Application for Hiking Enthusiasts — preview"
+                      aria-label="Hiku: A Mobile Application for Hiking Enthusiasts, preview"
                     />
                   </div>
                   <h4 className="arcadia-see-next-card-title">
@@ -824,7 +823,7 @@ const ArcadiaCaseStudy = () => {
                   </h4>
                   <p className="arcadia-see-next-card-description">
                     Helping a company track employee productivity through an
-                    intuitive, easy-to-navigate dashboard.
+                    intuitive, easy to navigate dashboard.
                   </p>
                 </div>
               </Link>

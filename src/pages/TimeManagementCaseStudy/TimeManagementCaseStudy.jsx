@@ -103,7 +103,7 @@ const TimeManagementCaseStudy = () => {
   useEffect(() => {
     const cleanups = [];
 
-    // Reveal helper — GSAP-free (IntersectionObserver + WAAPI)
+    // Reveal helper, GSAP-free (IntersectionObserver + WAAPI)
     const createScrollAnimation = (ref, delay = 0) => {
       if (!ref || !ref.current) return;
       cleanups.push(revealOnScroll(ref.current, { delay }));
@@ -190,7 +190,7 @@ const TimeManagementCaseStudy = () => {
                 <div className="time-management-hero-detail-item">
                   <div className="time-management-hero-detail-label">TIMELINE</div>
                   <div className="time-management-hero-detail-value">
-                    Feb — March 2024
+                    Feb to March 2024
                   </div>
                 </div>
                 <div className="time-management-hero-detail-item">
@@ -280,7 +280,7 @@ const TimeManagementCaseStudy = () => {
                 <h2 className="time-management-context-title">Goal</h2>
                 <p className="time-management-context-description">
                   A company had no real sense of where the workday actually
-                  went — who was logged in, who was buried, who had room to
+                  went, who was logged in, who was buried, who had room to
                   take more on. The goal was simple to say and harder to do:
                   make that whole picture easy to see at a glance, without
                   turning it into one more dashboard nobody opens.
@@ -432,13 +432,13 @@ const TimeManagementCaseStudy = () => {
                 <div className="cs-hmw-grid">
                   <div className="cs-hmw-card">
                     <p className="cs-hmw-question">
-                      How might we give managers real-time visibility into
+                      How might we give managers real time visibility into
                       attendance and productivity?
                     </p>
                     <p className="cs-hmw-solution">
                       <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
-                      Role-based dashboards surface clock-ins, task progress,
-                      and performance at a glance, cutting manual check-ins.
+                      Role based dashboards surface clock ins, task progress,
+                      and performance at a glance, cutting manual check ins.
                     </p>
                   </div>
                   <div className="cs-hmw-card">
@@ -448,13 +448,13 @@ const TimeManagementCaseStudy = () => {
                     </p>
                     <p className="cs-hmw-solution">
                       <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
-                      A one-tap clock-in and a simple daily view keep logging
+                      A one tap clock in and a simple daily view keep logging
                       quick, so adoption sticks with 50+ employees.
                     </p>
                   </div>
                   <div className="cs-hmw-card">
                     <p className="cs-hmw-question">
-                      How might we help employees grow, not just get tracked?
+                      How might we help employees grow, not only get tracked?
                     </p>
                     <p className="cs-hmw-solution">
                       <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
@@ -582,7 +582,7 @@ const TimeManagementCaseStudy = () => {
                   designing applications
                 </span>{" "}
                 and seeing them come alive. But I'll tell you, development is
-                something out of my league—at least that's what I thought
+                something out of my league, at least that's what I thought
                 until I worked on this project. I learned how databases
                 work, and how to code while still maintaining the UI, so it
                 doesn't compromise the client's vision.
@@ -605,7 +605,7 @@ const TimeManagementCaseStudy = () => {
               <div className="time-management-wireframe-container">
                 <iframe
                   src="/work/time-management/wireframe-lofi-prototypes.html"
-                  title="Lo-Fi Wireframes – Time Management"
+                  title="Lo-Fi Wireframes, Time Management"
                   className="time-management-wireframe-frame"
                   style={{ height: "1130px" }}
                   scrolling="no"
@@ -650,11 +650,11 @@ const TimeManagementCaseStudy = () => {
                 />
               </div>
               <p className="time-management-hifi-caption">
-                These high-fidelity screens show the final, coded product: a
+                These high fidelity screens show the final, coded product: a
                 branded login gate, two variations of the Register New Client
                 form that capture company details, billing, and portal
-                access, and role-specific dashboards for Users and Admins.
-                The User Dashboard surfaces day-to-day tools like client and
+                access, and role specific dashboards for Users and Admins.
+                The User Dashboard surfaces day to day tools like client and
                 project registration, while the Admin Dashboard streamlines
                 navigation down to Clients, Time Tracking, and Settings for
                 higher-level oversight. Together they reflect the clean,
@@ -772,7 +772,7 @@ const TimeManagementCaseStudy = () => {
               <p className="time-management-takeaways-description">
                 This one taught me that "simple" is the hard part. The client
                 kept pulling me back from clever features toward something
-                genuinely easy to use — and building it end to end, from the
+                genuinely easy to use, and building it end to end, from the
                 first Figma frame to working code, showed me how much restraint
                 good design really takes.
               </p>
@@ -809,7 +809,7 @@ const TimeManagementCaseStudy = () => {
                       loop
                       muted
                       playsInline
-                      aria-label="Revolution Steel: Construction Workflow Optimisation — preview"
+                      aria-label="Revolution Steel: Construction Workflow Optimisation, preview"
                     />
                   </div>
                   <h4 className="time-management-see-next-card-title">
@@ -869,7 +869,7 @@ const TimeManagementCaseStudy = () => {
                       loop
                       muted
                       playsInline
-                      aria-label="Hiku: A Mobile Application for Hiking Enthusiasts — preview"
+                      aria-label="Hiku: A Mobile Application for Hiking Enthusiasts, preview"
                     />
                   </div>
                   <h4 className="time-management-see-next-card-title">

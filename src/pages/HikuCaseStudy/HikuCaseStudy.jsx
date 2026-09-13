@@ -21,7 +21,7 @@ const HIKU_DS_CARDS = [
   { name: "Neutrals & Ink",                 src: `${DS_BASE}/guidelines/color-neutral.card.html`,        height: 150 },
   { name: "Semantic Roles",                 src: `${DS_BASE}/guidelines/color-semantic.card.html`,       height: 150 },
   { name: "Buttons & Icon Buttons",         src: `${DS_BASE}/components/core/buttons.card.html`,         height: 210 },
-  { name: "Content — Rows, Cards, Avatars", src: `${DS_BASE}/components/core/content.card.html`,         height: 300 },
+  { name: "Content, Rows, Cards, Avatars", src: `${DS_BASE}/components/core/content.card.html`,         height: 300 },
   { name: "Search & Filters",              src: `${DS_BASE}/components/core/search.card.html`,           height: 260 },
   { name: "Elevation",                      src: `${DS_BASE}/guidelines/elevation.card.html`,            height: 150 },
   { name: "Type Scale",                     src: `${DS_BASE}/guidelines/type-scale.card.html`,           height: 180 },
@@ -35,7 +35,7 @@ const HIKU_FEATURES = [
     headlineLead: "One login, ",
     headlineHighlight: "every trail open.",
     caption:
-      "A clean, simple login and explore screen gets users from sign-in to discovering nearby trails in seconds — no clutter, no friction.",
+      "A clean, simple login and explore screen gets users from sign in to discovering nearby trails in seconds, no clutter, no friction.",
   },
   {
     video: "/work/Hiku/sol2.mp4",
@@ -49,9 +49,9 @@ const HIKU_FEATURES = [
     video: "/work/Hiku/sol3.mp4",
     title: "Mobile View 3: Communities",
     headlineLead: "Find your people, ",
-    headlineHighlight: "not just your path.",
+    headlineHighlight: "and your path.",
     caption:
-      "Campus clubs like the ASU Outdoors Club get a home inside the app — members, trip plans, and shared experiences all in one place.",
+      "Campus clubs like the ASU Outdoors Club get a home inside the app, members, trip plans, and shared experiences all in one place.",
   },
   {
     video: "/work/Hiku/sol4.mp4",
@@ -154,7 +154,7 @@ const HikuCaseStudy = () => {
         <div className="hiku-hero-image-container hiku-hero-before">
           <img
             src="/work/Hiku/HIKU-SET.png"
-            alt="Hiku — a mobile application for hiking enthusiasts"
+            alt="Hiku, a mobile application for hiking enthusiasts"
             className="hiku-hero-image"
           />
         </div>
@@ -175,7 +175,7 @@ const HikuCaseStudy = () => {
               </div>
               <div className="hiku-hero-detail-item">
                 <div className="hiku-hero-detail-label">DURATION</div>
-                <div className="hiku-hero-detail-value">Nov – Mar 2024</div>
+                <div className="hiku-hero-detail-value">Nov to Mar 2024</div>
               </div>
               <div className="hiku-hero-detail-item">
                 <div className="hiku-hero-detail-label">TOOLS</div>
@@ -227,7 +227,7 @@ const HikuCaseStudy = () => {
         <div className="hiku-hero-image-container hiku-hero-after">
           <img
             src="/work/Hiku/HIKU- HERO.png"
-            alt="Hiku — a mobile application for hiking enthusiasts"
+            alt="Hiku, a mobile application for hiking enthusiasts"
             className="hiku-hero-image"
           />
         </div>
@@ -245,8 +245,8 @@ const HikuCaseStudy = () => {
                 What is Hiku?
               </h3>
               <p className="hiku-context-description">
-                The best hikes are the ones you share — but finding people to go
-                with, and gearing up without a last-minute scramble, is harder
+                The best hikes are the ones you share, but finding people to go
+                with, and gearing up without a last minute scramble, is harder
                 than it should be. Hiku is a mobile app that fixes both: it
                 connects hikers and campers around shared trails and communities,
                 and makes buying or renting gear simple, so you show up ready for
@@ -258,8 +258,8 @@ const HikuCaseStudy = () => {
               <p className="hiku-context-description">
                 As UX Researcher and Designer, I led user interviews and a
                 quantitative survey to understand hikers&apos; needs, then
-                translated those findings into wireframes and high-fidelity
-                screens — focusing on simple, intuitive navigation from the
+                translated those findings into wireframes and high fidelity
+                screens, focusing on simple, intuitive navigation from the
                 very first screen.
               </p>
             </div>
@@ -312,17 +312,17 @@ const HikuCaseStudy = () => {
           >
             The process also included a quantitative assessment, where
             students were asked whether they&apos;d use the app&apos;s
-            planned features and products —{" "}
+            planned features and products,{" "}
             <span className="hiku-accent-text">
-              giving further clarity on their preferences and needs.
+              which gave us a clearer read on what they preferred and needed.
             </span>
           </p>
           <p
             className="hiku-where-we-began-body hiku-where-we-began-body--closing"
             ref={whereWeBeganText3Ref}
           >
-            Combined with the interviews, this ensured a well-rounded
-            understanding of what the target audience actually wanted.
+            Combined with the interviews, this gave us a fuller picture of
+            what the target audience wanted.
           </p>
 
           <div className="cs-hmw" style={{ "--hmw-accent": "#3A9269" }}>
@@ -385,7 +385,7 @@ const HikuCaseStudy = () => {
             <CaseStudyStatementHeadline>
               Hiku&apos;s core audience spans{" "}
               <span className="hiku-accent-text">18 to 55</span> year
-              olds — young adults and lifelong hiking enthusiasts alike.
+              olds, young adults and lifelong hiking enthusiasts alike.
             </CaseStudyStatementHeadline>
           </CaseStudyStatement>
           <div className="hiku-what-we-found-stats" ref={whatWeFoundStatsRef}>
@@ -435,7 +435,7 @@ const HikuCaseStudy = () => {
             ref={whatWeFoundBodyRef}
           >
             Many are students living in dorms, looking for activities and
-            clubs that are active on campus — plus community members who
+            clubs that are active on campus, plus community members who
             already love hiking and want{" "}
             <span className="hiku-accent-text">
               like-minded people to share it with.
@@ -464,7 +464,7 @@ const HikuCaseStudy = () => {
           >
             <h4 className="hiku-visual-identity-subtitle">Visual Identity</h4>
             <p className="hiku-visual-identity-description">
-              Hiku's visual language is earthy and vibrant — brand greens
+              Hiku's visual language is earthy and vibrant, brand greens
               anchored at #8DCAAF, #4FB889, and #349369, carried by Satoshi
               across five weights. Every token, component, and spacing rule
               was codified into a living design system so the whole app feels
@@ -492,14 +492,14 @@ const HikuCaseStudy = () => {
             </h4>
             <p className="hiku-visual-identity-description">
               Early low-fidelity wireframes mapped out the splash, filtering,
-              map, registration, shop, and community screens — quick
+              map, registration, shop, and community screens, quick
               grayscale sketches used to test flow and structure before any
               visual design began.
             </p>
             <div className="hiku-wireframe-container">
               <iframe
                 src="/work/Hiku/wireframe-lofi-prototypes.html"
-                title="Lo-Fi Wireframes – Hiking App"
+                title="Lo-Fi Wireframes, Hiking App"
                 className="hiku-wireframe-frame"
                 scrolling="no"
               />
@@ -512,7 +512,7 @@ const HikuCaseStudy = () => {
             </h4>
             <p className="hiku-visual-identity-description">
               From onboarding to community, every screen was designed
-              end-to-end in Figma. Swipe through the intro, sign in, and
+              end to end in Figma. Swipe through the intro, sign in, and
               explore the app just like you would on your phone.
             </p>
             <div className="hiku-wireframe-container hiku-app-screens-container">
@@ -595,8 +595,8 @@ const HikuCaseStudy = () => {
             <p className="hiku-takeaways-description">
               Hiku stretched me. Taking one small idea all the way from a hunch
               to screens someone could actually navigate taught me how much of
-              design lives in the unglamorous middle — the wireframes, the
-              re-dos, the tiny navigation calls — and how good it feels when it
+              design lives in the unglamorous middle, the wireframes, the
+              redos, the tiny navigation calls, and how good it feels when it
               finally clicks into something real.
             </p>
           </div>
@@ -671,7 +671,7 @@ const HikuCaseStudy = () => {
                 </h4>
                 <p className="hiku-see-next-card-description">
                   Helping a company track employee productivity through an
-                  intuitive, easy-to-navigate time management dashboard.
+                  intuitive, easy to navigate time management dashboard.
                 </p>
               </div>
             </Link>
@@ -695,7 +695,7 @@ const HikuCaseStudy = () => {
                     loop
                     muted
                     playsInline
-                    aria-label="Revolution Steel: Construction Workflow Optimisation — preview"
+                    aria-label="Revolution Steel: Construction Workflow Optimisation, preview"
                   />
                 </div>
                 <h4 className="hiku-see-next-card-title">
