@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 200" width="380" height="200" role="img" aria-label="Summer">
-  <rect width="380" height="200" fill="#F5820A"/>
-  <circle cx="190" cy="240" r="215" fill="#0B0B0B"/>
-  <text x="190" y="160" text-anchor="middle"
-        font-family="'Arial Narrow', 'Helvetica Neue', Helvetica, Arial, sans-serif"
-        font-weight="700" font-size="34" letter-spacing="7" fill="#FFFFFF">SUMMER</text>
-</svg>
