@@ -697,7 +697,7 @@ const QuizAICaseStudy = () => {
                   />
                 </div>
                 <h4 className="quizai-see-next-card-title">
-                  Time Management: A Productivity Tracking Web App
+                  Summer: A Productivity Tracking Web App
                 </h4>
                 <p className="quizai-see-next-card-description">
                   Helping a company track employee productivity through an

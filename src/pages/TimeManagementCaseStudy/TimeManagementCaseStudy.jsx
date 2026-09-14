@@ -182,7 +182,7 @@ const TimeManagementCaseStudy = () => {
           <div className="time-management-hero-content">
             {/* Left Column */}
             <div className="time-management-hero-left">
-              <h1 className="time-management-hero-title">Time Management</h1>
+              <h1 className="time-management-hero-title">Summer</h1>
               <p className="time-management-hero-category">
                 Time tracking Web Application
               </p>
@@ -190,7 +190,7 @@ const TimeManagementCaseStudy = () => {
                 <div className="time-management-hero-detail-item">
                   <div className="time-management-hero-detail-label">TIMELINE</div>
                   <div className="time-management-hero-detail-value">
-                    Summer 2024
+                    Feb to March 2024
                   </div>
                 </div>
                 <div className="time-management-hero-detail-item">

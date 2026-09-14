@@ -49,7 +49,7 @@ const workProjects = [
   },
   {
     id: "time-management-pain-detection",
-    title: "Time Management: A Productivity Tracking Web App",
+    title: "Summer: A Productivity Tracking Web App",
     role: "UX Researcher, Full Stack Developer",
     tags: ["UX Research", "Web Development"],
     summary:

@@ -819,7 +819,7 @@ const ArcadiaCaseStudy = () => {
                     />
                   </div>
                   <h4 className="arcadia-see-next-card-title">
-                    Time Management: A Productivity Tracking Web App
+                    Summer: A Productivity Tracking Web App
                   </h4>
                   <p className="arcadia-see-next-card-description">
                     Helping a company track employee productivity through an
