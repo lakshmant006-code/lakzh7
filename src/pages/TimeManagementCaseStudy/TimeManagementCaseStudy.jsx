@@ -468,108 +468,11 @@ const TimeManagementCaseStudy = () => {
           </div>
         </section>
 
-        {/* Research Section */}
-        <section id="time-management-research" className="time-management-research-section">
-          <div className="time-management-research-content">
-            <h3 className="time-management-research-title" ref={researchTitleRef}>
-              IDEATION
-            </h3>
-
-            <CaseStudyStatement ref={researchOverviewSubtitleRef}>
-              <CaseStudyStatementBody>
-                During the ideation process, I came up with different types
-                of screens, but{" "}
-                <span style={{ fontWeight: 600 }}>the client</span> wanted
-                the most{" "}
-                <span style={{ fontWeight: 600 }}>
-                  simplistic and easy to navigate
-                </span>{" "}
-                and intuitive design.
-              </CaseStudyStatementBody>
-              <CaseStudyStatementBody>
-                So I followed Apple's guidelines to provide the best
-                experience for the client.
-              </CaseStudyStatementBody>
-              <CaseStudyStatementBody>
-                But one interesting feature was to give our different{" "}
-                <span style={{ fontWeight: 600 }}>
-                  skillsets to employees
-                </span>{" "}
-                to improve the skill that they select over time. It helped
-                the employees a lot to{" "}
-                <span style={{ fontWeight: 600 }}>
-                  focus on what they were actually lacking
-                </span>{" "}
-                in.
-              </CaseStudyStatementBody>
-            </CaseStudyStatement>
-
-            <div className="time-management-ideation-subsection">
-              <h4 className="time-management-ideation-subheading">Color Palette</h4>
-              <p className="time-management-ideation-text">
-                This project adopted a minimalistic visual style, using
-                primary blue and white to build the brand and also convey
-                trust. I also followed the 60-30-10 rule to maintain a
-                better visual balance.
-              </p>
-              <div className="time-management-swatch-row">
-                <div className="time-management-swatch">
-                  <div
-                    className="time-management-swatch-block"
-                    style={{ background: "#1A56DB" }}
-                  />
-                  <div className="time-management-swatch-hex">#1A56DB</div>
-                  <div className="time-management-swatch-label">PRIMARY</div>
-                </div>
-                <div className="time-management-swatch">
-                  <div
-                    className="time-management-swatch-block time-management-swatch-block-bordered"
-                    style={{ background: "#FFFFFF" }}
-                  />
-                  <div className="time-management-swatch-hex">#FFFFFF</div>
-                  <div className="time-management-swatch-label">PRIMARY</div>
-                </div>
-                <div className="time-management-swatch">
-                  <div
-                    className="time-management-swatch-block"
-                    style={{ background: "#000000" }}
-                  />
-                  <div className="time-management-swatch-hex">#000000</div>
-                  <div className="time-management-swatch-label">SECONDARY</div>
-                </div>
-                <div className="time-management-swatch">
-                  <div
-                    className="time-management-swatch-block"
-                    style={{ background: "#D9D9D9" }}
-                  />
-                  <div className="time-management-swatch-hex">#D9D9D9</div>
-                  <div className="time-management-swatch-label">SECONDARY</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="time-management-ideation-subsection">
-              <h4 className="time-management-ideation-subheading">Typography</h4>
-              <p className="time-management-ideation-text">
-                I used San Serif for this web application for its easy to
-                understand, approachable design that aligns with the
-                application's clean and emerging aesthetic.
-              </p>
-              <img
-                src="/work/time-management/frame-156.png"
-                alt="Time Management Typography"
-                className="time-management-type-sample-image"
-                style={{ aspectRatio: "807 / 575" }}
-              />
-            </div>
-          </div>
-        </section>
-
         {/* Development Section */}
         <section id="solution-section" className="time-management-solution-section">
           <div className="time-management-solution-content">
             <h3 className="time-management-solution-title" ref={solutionTitleRef}>
-              DEVELOPMENT
+              FINAL PRODUCT
             </h3>
 
             <div
@@ -759,11 +662,108 @@ const TimeManagementCaseStudy = () => {
           </div>
         </section>
 
+        {/* Research Section */}
+        <section id="time-management-research" className="time-management-research-section">
+          <div className="time-management-research-content">
+            <h3 className="time-management-research-title" ref={researchTitleRef}>
+              KEY DESIGN MOMENTS
+            </h3>
+
+            <CaseStudyStatement ref={researchOverviewSubtitleRef}>
+              <CaseStudyStatementBody>
+                During the ideation process, I came up with different types
+                of screens, but{" "}
+                <span style={{ fontWeight: 600 }}>the client</span> wanted
+                the most{" "}
+                <span style={{ fontWeight: 600 }}>
+                  simplistic and easy to navigate
+                </span>{" "}
+                and intuitive design.
+              </CaseStudyStatementBody>
+              <CaseStudyStatementBody>
+                So I followed Apple's guidelines to provide the best
+                experience for the client.
+              </CaseStudyStatementBody>
+              <CaseStudyStatementBody>
+                But one interesting feature was to give our different{" "}
+                <span style={{ fontWeight: 600 }}>
+                  skillsets to employees
+                </span>{" "}
+                to improve the skill that they select over time. It helped
+                the employees a lot to{" "}
+                <span style={{ fontWeight: 600 }}>
+                  focus on what they were actually lacking
+                </span>{" "}
+                in.
+              </CaseStudyStatementBody>
+            </CaseStudyStatement>
+
+            <div className="time-management-ideation-subsection">
+              <h4 className="time-management-ideation-subheading">Color Palette</h4>
+              <p className="time-management-ideation-text">
+                This project adopted a minimalistic visual style, using
+                primary blue and white to build the brand and also convey
+                trust. I also followed the 60-30-10 rule to maintain a
+                better visual balance.
+              </p>
+              <div className="time-management-swatch-row">
+                <div className="time-management-swatch">
+                  <div
+                    className="time-management-swatch-block"
+                    style={{ background: "#1A56DB" }}
+                  />
+                  <div className="time-management-swatch-hex">#1A56DB</div>
+                  <div className="time-management-swatch-label">PRIMARY</div>
+                </div>
+                <div className="time-management-swatch">
+                  <div
+                    className="time-management-swatch-block time-management-swatch-block-bordered"
+                    style={{ background: "#FFFFFF" }}
+                  />
+                  <div className="time-management-swatch-hex">#FFFFFF</div>
+                  <div className="time-management-swatch-label">PRIMARY</div>
+                </div>
+                <div className="time-management-swatch">
+                  <div
+                    className="time-management-swatch-block"
+                    style={{ background: "#000000" }}
+                  />
+                  <div className="time-management-swatch-hex">#000000</div>
+                  <div className="time-management-swatch-label">SECONDARY</div>
+                </div>
+                <div className="time-management-swatch">
+                  <div
+                    className="time-management-swatch-block"
+                    style={{ background: "#D9D9D9" }}
+                  />
+                  <div className="time-management-swatch-hex">#D9D9D9</div>
+                  <div className="time-management-swatch-label">SECONDARY</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="time-management-ideation-subsection">
+              <h4 className="time-management-ideation-subheading">Typography</h4>
+              <p className="time-management-ideation-text">
+                I used San Serif for this web application for its easy to
+                understand, approachable design that aligns with the
+                application's clean and emerging aesthetic.
+              </p>
+              <img
+                src="/work/time-management/frame-156.png"
+                alt="Time Management Typography"
+                className="time-management-type-sample-image"
+                style={{ aspectRatio: "807 / 575" }}
+              />
+            </div>
+          </div>
+        </section>
+
         {/* Key Takeaways Section */}
         <section id="time-management-takeaways" className="time-management-takeaways-section">
           <div className="time-management-takeaways-content">
             <h3 className="time-management-takeaways-title" ref={takeawaysTitleRef}>
-              PROJECT TAKEAWAYS
+              REFLECTIONS
             </h3>
             <div
               className="time-management-takeaways-item"

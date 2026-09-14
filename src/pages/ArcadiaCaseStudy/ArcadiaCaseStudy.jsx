@@ -337,104 +337,11 @@ const ArcadiaCaseStudy = () => {
           </div>
         </section>
 
-        {/* Research Section */}
-        <section id="arcadia-research" className="arcadia-research-section">
-          <div className="arcadia-research-content">
-            <h3 className="arcadia-research-title" ref={researchTitleRef}>
-              RESEARCH
-            </h3>
-
-            <CaseStudyStatement ref={researchOverviewRef}>
-              <CaseStudyStatementBody>
-                I treated this as an embedded piece of{" "}
-                <span style={{ fontWeight: 600 }}>qualitative research</span>.
-                I ran loosely structured interviews with the leads who own each
-                stage and the operators who model and build, sat in on the
-                team's recurring meetings where problems surface out loud, and
-                mapped the whole quote to fabrication journey in{" "}
-                <span style={{ fontWeight: 600 }}>TheyDo</span>.
-              </CaseStudyStatementBody>
-              <CaseStudyStatementBody>
-                Working the way the tool encourages, I coded what I heard into{" "}
-                <span style={{ fontWeight: 600 }}>insights</span>, framed each
-                as an <span style={{ fontWeight: 600 }}>opportunity</span>, and
-                tied it to a concrete{" "}
-                <span style={{ fontWeight: 600 }}>solution</span>, keeping
-                every pain point anchored to the phase and the person it hits.
-              </CaseStudyStatementBody>
-            </CaseStudyStatement>
-
-            <div className="arcadia-research-image-container" ref={researchKpiImageRef}>
-              <img
-                src="/work/arcadia/They Do User Journey.png"
-                alt="TheyDo journey map showing phases, opportunities, pain-point insights, and solutions across the team's workflow"
-                className="arcadia-userflow-image"
-                style={{ aspectRatio: "1297 / 720" }}
-              />
-            </div>
-
-            <div className="arcadia-quantitize" ref={researchQuantitizeRef}>
-              <p className="arcadia-ideation-text">
-                To keep the study from ending at opinion, I quantitized the
-                coded data,{" "}
-                <span style={{ fontWeight: 600 }}>7 pain points</span> mapped
-                across <span style={{ fontWeight: 600 }}>6 journey phases</span>{" "}
-                and{" "}
-                <span style={{ fontWeight: 600 }}>
-                  5 thematic categories
-                </span>
-                . Communication and ownership carried the heaviest weight, and
-                both cluster at the handoffs between phases rather than inside
-                any one person's work.
-              </p>
-              <div className="arcadia-coding-breakdown">
-                <span className="arcadia-coding-chip">
-                  Communication{" "}
-                  <span className="arcadia-coding-chip-count">×2</span>
-                </span>
-                <span className="arcadia-coding-chip">
-                  Ownership{" "}
-                  <span className="arcadia-coding-chip-count">×2</span>
-                </span>
-                <span className="arcadia-coding-chip">
-                  Information currency{" "}
-                  <span className="arcadia-coding-chip-count">×1</span>
-                </span>
-                <span className="arcadia-coding-chip">
-                  Tracking &amp; accountability{" "}
-                  <span className="arcadia-coding-chip-count">×1</span>
-                </span>
-                <span className="arcadia-coding-chip">
-                  Visibility &amp; planning{" "}
-                  <span className="arcadia-coding-chip-count">×1</span>
-                </span>
-              </div>
-            </div>
-
-            <CaseStudyStatement ref={researchMethodologyRef}>
-              <CaseStudyStatementBody>
-                After understanding the pain points, I ran a{" "}
-                <span style={{ fontWeight: 600 }}>competitive audit</span> of
-                what other companies in the space are doing, observing
-                patterns and figuring out what needed to change to make the
-                team more effective.
-              </CaseStudyStatementBody>
-            </CaseStudyStatement>
-
-            <div className="arcadia-research-image-container" ref={researchAuditImageRef}>
-              <ArcadiaPlaceholder
-                label="Competitive audit findings"
-                aspectRatio="1360 / 500"
-              />
-            </div>
-          </div>
-        </section>
-
         {/* Solution Section */}
         <section id="solution-section" className="arcadia-solution-section">
           <div className="arcadia-solution-content">
             <h3 className="arcadia-solution-title" ref={solutionTitleRef}>
-              SOLUTION
+              FINAL PRODUCT
             </h3>
 
             <div
@@ -442,18 +349,18 @@ const ArcadiaCaseStudy = () => {
               ref={solutionIntroRef}
             >
               <p className="arcadia-solution-visual-identity-text">
-                Once the research was synthesized, I organized the trends
-                into an{" "}
+                Here is where the work landed. I pulled everything the study
+                surfaced into an{" "}
                 <span className="arcadia-solution-visual-identity-medium-bold">
                   affinity map
                 </span>
-                , grouped by what mattered most to{" "}
+                , grouped around what mattered most to the{" "}
                 <span className="arcadia-solution-visual-identity-medium-bold">
                   stakeholders
-                </span>
-                , who had invested a lot of time into this project, so
-                keeping their priorities front and center in how the insights
-                were organized was important.
+                </span>{" "}
+                who had put real time into this project, then shaped it into
+                one workflow the whole team could follow. The research and the
+                moments that got me here come right after.
               </p>
             </div>
 
@@ -595,6 +502,99 @@ const ArcadiaCaseStudy = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Research Section */}
+        <section id="arcadia-research" className="arcadia-research-section">
+          <div className="arcadia-research-content">
+            <h3 className="arcadia-research-title" ref={researchTitleRef}>
+              KEY DESIGN MOMENTS
+            </h3>
+
+            <CaseStudyStatement ref={researchOverviewRef}>
+              <CaseStudyStatementBody>
+                I treated this as an embedded piece of{" "}
+                <span style={{ fontWeight: 600 }}>qualitative research</span>.
+                I ran loosely structured interviews with the leads who own each
+                stage and the operators who model and build, sat in on the
+                team's recurring meetings where problems surface out loud, and
+                mapped the whole quote to fabrication journey in{" "}
+                <span style={{ fontWeight: 600 }}>TheyDo</span>.
+              </CaseStudyStatementBody>
+              <CaseStudyStatementBody>
+                Working the way the tool encourages, I coded what I heard into{" "}
+                <span style={{ fontWeight: 600 }}>insights</span>, framed each
+                as an <span style={{ fontWeight: 600 }}>opportunity</span>, and
+                tied it to a concrete{" "}
+                <span style={{ fontWeight: 600 }}>solution</span>, keeping
+                every pain point anchored to the phase and the person it hits.
+              </CaseStudyStatementBody>
+            </CaseStudyStatement>
+
+            <div className="arcadia-research-image-container" ref={researchKpiImageRef}>
+              <img
+                src="/work/arcadia/They Do User Journey.png"
+                alt="TheyDo journey map showing phases, opportunities, pain-point insights, and solutions across the team's workflow"
+                className="arcadia-userflow-image"
+                style={{ aspectRatio: "1297 / 720" }}
+              />
+            </div>
+
+            <div className="arcadia-quantitize" ref={researchQuantitizeRef}>
+              <p className="arcadia-ideation-text">
+                To keep the study from ending at opinion, I quantitized the
+                coded data,{" "}
+                <span style={{ fontWeight: 600 }}>7 pain points</span> mapped
+                across <span style={{ fontWeight: 600 }}>6 journey phases</span>{" "}
+                and{" "}
+                <span style={{ fontWeight: 600 }}>
+                  5 thematic categories
+                </span>
+                . Communication and ownership carried the heaviest weight, and
+                both cluster at the handoffs between phases rather than inside
+                any one person's work.
+              </p>
+              <div className="arcadia-coding-breakdown">
+                <span className="arcadia-coding-chip">
+                  Communication{" "}
+                  <span className="arcadia-coding-chip-count">×2</span>
+                </span>
+                <span className="arcadia-coding-chip">
+                  Ownership{" "}
+                  <span className="arcadia-coding-chip-count">×2</span>
+                </span>
+                <span className="arcadia-coding-chip">
+                  Information currency{" "}
+                  <span className="arcadia-coding-chip-count">×1</span>
+                </span>
+                <span className="arcadia-coding-chip">
+                  Tracking &amp; accountability{" "}
+                  <span className="arcadia-coding-chip-count">×1</span>
+                </span>
+                <span className="arcadia-coding-chip">
+                  Visibility &amp; planning{" "}
+                  <span className="arcadia-coding-chip-count">×1</span>
+                </span>
+              </div>
+            </div>
+
+            <CaseStudyStatement ref={researchMethodologyRef}>
+              <CaseStudyStatementBody>
+                After understanding the pain points, I ran a{" "}
+                <span style={{ fontWeight: 600 }}>competitive audit</span> of
+                what other companies in the space are doing, observing
+                patterns and figuring out what needed to change to make the
+                team more effective.
+              </CaseStudyStatementBody>
+            </CaseStudyStatement>
+
+            <div className="arcadia-research-image-container" ref={researchAuditImageRef}>
+              <ArcadiaPlaceholder
+                label="Competitive audit findings"
+                aspectRatio="1360 / 500"
+              />
             </div>
           </div>
         </section>

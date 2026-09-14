@@ -268,6 +268,144 @@ const HikuCaseStudy = () => {
       </section>
 
       <section
+        id="solution-section"
+        className="hiku-solution-section"
+        aria-labelledby="hiku-solution-heading"
+      >
+        <div className="hiku-solution-content">
+          <h3
+            id="hiku-solution-heading"
+            className="hiku-solution-title"
+            ref={solutionTitleRef}
+          >
+            FINAL PRODUCT
+          </h3>
+
+          <div
+            className="hiku-visual-identity-overview"
+            ref={visualIdentityRef}
+          >
+            <h4 className="hiku-visual-identity-subtitle">Visual Identity</h4>
+            <p className="hiku-visual-identity-description">
+              Hiku's visual language is earthy and vibrant, brand greens
+              anchored at #8DCAAF, #4FB889, and #349369, carried by Satoshi
+              across five weights. Every token, component, and spacing rule
+              was codified into a living design system so the whole app feels
+              cohesive from splash screen to community feed.
+            </p>
+            <div className="hiku-ds-cards">
+              {HIKU_DS_CARDS.map((card) => (
+                <div key={card.src} className="hiku-ds-card">
+                  <p className="hiku-ds-card-label">{card.name}</p>
+                  <iframe
+                    src={card.src}
+                    title={card.name}
+                    className="hiku-ds-card-frame"
+                    style={{ height: `${card.height}px` }}
+                    scrolling="no"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="hiku-physical-component" ref={lofiWireframesRef}>
+            <h4 className="hiku-visual-identity-subtitle">
+              Wire Frames (Low Fidelity)
+            </h4>
+            <p className="hiku-visual-identity-description">
+              Early low-fidelity wireframes mapped out the splash, filtering,
+              map, registration, shop, and community screens, quick
+              grayscale sketches used to test flow and structure before any
+              visual design began.
+            </p>
+            <div className="hiku-wireframe-container">
+              <iframe
+                src="/work/Hiku/wireframe-lofi-prototypes.html"
+                title="Lo-Fi Wireframes, Hiking App"
+                className="hiku-wireframe-frame"
+                scrolling="no"
+              />
+            </div>
+          </div>
+
+          <div className="hiku-physical-component" ref={physicalComponentRef}>
+            <h4 className="hiku-visual-identity-subtitle">
+              App Screens
+            </h4>
+            <p className="hiku-visual-identity-description">
+              From onboarding to community, every screen was designed
+              end to end in Figma. Swipe through the intro, sign in, and
+              explore the app just like you would on your phone.
+            </p>
+            <div className="hiku-wireframe-container hiku-app-screens-container">
+              <div className="hiku-app-screens-wrapper">
+                <iframe
+                  src="/work/Hiku/Hiku%20Design%20System/ui_kits/hiku-app/index.html"
+                  title="Hiku Mobile App Screens"
+                  className="hiku-wireframe-frame hiku-app-screens-frame"
+                  scrolling="no"
+                  data-lenis-prevent
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="hiku-physical-component" ref={onboardingIllusRef}>
+            <h4 className="hiku-visual-identity-subtitle">
+              Onboarding Illustrations
+            </h4>
+            <p className="hiku-visual-identity-description">
+              The onboarding screens are hand-painted. Each illustration was
+              built up from first sketch to final art: community, gear, and
+              food.
+            </p>
+            <div className="hiku-onboarding-vids">
+              <figure className="hiku-onboarding-vid">
+                <LazyVideo
+                  src="/work/Hiku/onboarding-community.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  aria-label="Community onboarding illustration being painted"
+                />
+                <figcaption className="hiku-onboarding-vid-caption">
+                  Community
+                </figcaption>
+              </figure>
+              <figure className="hiku-onboarding-vid">
+                <LazyVideo
+                  src="/work/Hiku/onboarding-gear.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  aria-label="Gear onboarding illustration being painted"
+                />
+                <figcaption className="hiku-onboarding-vid-caption">
+                  Gear
+                </figcaption>
+              </figure>
+              <figure className="hiku-onboarding-vid">
+                <LazyVideo
+                  src="/work/Hiku/onboarding-food.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  aria-label="Food onboarding illustration being painted"
+                />
+                <figcaption className="hiku-onboarding-vid-caption">
+                  Food
+                </figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
         id="hiku-where-we-began"
         className="hiku-where-we-began-section"
         aria-labelledby="hiku-where-we-began-heading"
@@ -278,7 +416,7 @@ const HikuCaseStudy = () => {
             className="hiku-impact-title hiku-where-we-began-heading"
             ref={whereWeBeganTitleRef}
           >
-            User Research
+            Key Design Moments
           </h2>
           <p
             className="hiku-where-we-began-body hiku-where-we-began-body--above-video"
@@ -444,149 +582,11 @@ const HikuCaseStudy = () => {
         </div>
       </section>
 
-      <section
-        id="solution-section"
-        className="hiku-solution-section"
-        aria-labelledby="hiku-solution-heading"
-      >
-        <div className="hiku-solution-content">
-          <h3
-            id="hiku-solution-heading"
-            className="hiku-solution-title"
-            ref={solutionTitleRef}
-          >
-            FEATURES
-          </h3>
-
-          <div
-            className="hiku-visual-identity-overview"
-            ref={visualIdentityRef}
-          >
-            <h4 className="hiku-visual-identity-subtitle">Visual Identity</h4>
-            <p className="hiku-visual-identity-description">
-              Hiku's visual language is earthy and vibrant, brand greens
-              anchored at #8DCAAF, #4FB889, and #349369, carried by Satoshi
-              across five weights. Every token, component, and spacing rule
-              was codified into a living design system so the whole app feels
-              cohesive from splash screen to community feed.
-            </p>
-            <div className="hiku-ds-cards">
-              {HIKU_DS_CARDS.map((card) => (
-                <div key={card.src} className="hiku-ds-card">
-                  <p className="hiku-ds-card-label">{card.name}</p>
-                  <iframe
-                    src={card.src}
-                    title={card.name}
-                    className="hiku-ds-card-frame"
-                    style={{ height: `${card.height}px` }}
-                    scrolling="no"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="hiku-physical-component" ref={lofiWireframesRef}>
-            <h4 className="hiku-visual-identity-subtitle">
-              Wire Frames (Low Fidelity)
-            </h4>
-            <p className="hiku-visual-identity-description">
-              Early low-fidelity wireframes mapped out the splash, filtering,
-              map, registration, shop, and community screens, quick
-              grayscale sketches used to test flow and structure before any
-              visual design began.
-            </p>
-            <div className="hiku-wireframe-container">
-              <iframe
-                src="/work/Hiku/wireframe-lofi-prototypes.html"
-                title="Lo-Fi Wireframes, Hiking App"
-                className="hiku-wireframe-frame"
-                scrolling="no"
-              />
-            </div>
-          </div>
-
-          <div className="hiku-physical-component" ref={physicalComponentRef}>
-            <h4 className="hiku-visual-identity-subtitle">
-              App Screens
-            </h4>
-            <p className="hiku-visual-identity-description">
-              From onboarding to community, every screen was designed
-              end to end in Figma. Swipe through the intro, sign in, and
-              explore the app just like you would on your phone.
-            </p>
-            <div className="hiku-wireframe-container hiku-app-screens-container">
-              <div className="hiku-app-screens-wrapper">
-                <iframe
-                  src="/work/Hiku/Hiku%20Design%20System/ui_kits/hiku-app/index.html"
-                  title="Hiku Mobile App Screens"
-                  className="hiku-wireframe-frame hiku-app-screens-frame"
-                  scrolling="no"
-                  data-lenis-prevent
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="hiku-physical-component" ref={onboardingIllusRef}>
-            <h4 className="hiku-visual-identity-subtitle">
-              Onboarding Illustrations
-            </h4>
-            <p className="hiku-visual-identity-description">
-              The onboarding screens are hand-painted. Each illustration was
-              built up from first sketch to final art: community, gear, and
-              food.
-            </p>
-            <div className="hiku-onboarding-vids">
-              <figure className="hiku-onboarding-vid">
-                <LazyVideo
-                  src="/work/Hiku/onboarding-community.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  aria-label="Community onboarding illustration being painted"
-                />
-                <figcaption className="hiku-onboarding-vid-caption">
-                  Community
-                </figcaption>
-              </figure>
-              <figure className="hiku-onboarding-vid">
-                <LazyVideo
-                  src="/work/Hiku/onboarding-gear.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  aria-label="Gear onboarding illustration being painted"
-                />
-                <figcaption className="hiku-onboarding-vid-caption">
-                  Gear
-                </figcaption>
-              </figure>
-              <figure className="hiku-onboarding-vid">
-                <LazyVideo
-                  src="/work/Hiku/onboarding-food.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  aria-label="Food onboarding illustration being painted"
-                />
-                <figcaption className="hiku-onboarding-vid-caption">
-                  Food
-                </figcaption>
-              </figure>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Key Takeaway Section */}
       <section id="hiku-takeaways" className="hiku-takeaways-section">
         <div className="hiku-takeaways-content">
           <h3 className="hiku-solution-title" ref={takeawaysTitleRef}>
-            PROJECT TAKEAWAYS
+            REFLECTIONS
           </h3>
           <div className="hiku-takeaways-item" ref={takeawaysItemRef}>
             <h4 className="hiku-takeaways-title-text">
