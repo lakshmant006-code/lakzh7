@@ -190,7 +190,7 @@ const TimeManagementCaseStudy = () => {
                 <div className="time-management-hero-detail-item">
                   <div className="time-management-hero-detail-label">TIMELINE</div>
                   <div className="time-management-hero-detail-value">
-                    Feb to March 2024
+                    Summer 2024
                   </div>
                 </div>
                 <div className="time-management-hero-detail-item">
