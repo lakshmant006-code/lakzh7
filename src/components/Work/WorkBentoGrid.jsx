@@ -56,7 +56,7 @@ const workProjects = [
       "A company couldn't see where the workday went. A clean tracking dashboard turned scattered hours into clear productivity insights the team could act on.",
     shortSummary: "Where did the workday go? A dashboard makes it visible.",
     video: "/work/time-management/thumbnail.mp4",
-    thumbnailImage: "/work/time-management/thumbnail-frame.jpg",
+    thumbnailImage: "/work/time-management/summer-logo.svg",
     category: "case-study",
   },
 ];
