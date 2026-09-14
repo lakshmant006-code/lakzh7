@@ -616,12 +616,16 @@ const QuizAICaseStudy = () => {
           >
             <span className="quizai-production-status-badge">
               <span className="quizai-production-status-dot" aria-hidden="true" />
-              RESULTS
+              MOVING FORWARD
             </span>
             <p className="quizai-production-status-text">
-              Still in production and launching soon. Once it ships, the thing I
-              want to see is students keeping up with their studying, and that is
-              the number I will watch.
+              Rather than stop at a tool for uploading notes, I'm moving forward
+              and building Quizzy into a full application around the testing
+              effect. The point is to help people remember faster: you set your
+              own intervals, Quizzy asks you questions on its own and surfaces
+              your flashcards, and you review right after you answer, while the
+              recall is still fresh. The number I want to watch is students
+              keeping up with their studying instead of cramming.
             </p>
           </div>
         </div>
