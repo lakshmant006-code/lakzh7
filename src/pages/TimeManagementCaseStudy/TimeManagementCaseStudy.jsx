@@ -792,37 +792,6 @@ const TimeManagementCaseStudy = () => {
               data-case-study-nav-boundary
             >
               <Link
-                to="/arcadia-custom-builders"
-                className="time-management-see-next-card-link"
-                onMouseEnter={() => setIsHoveringSeeNextCard(true)}
-                onMouseLeave={() => setIsHoveringSeeNextCard(false)}
-              >
-                <div
-                  className="time-management-see-next-card"
-                  ref={(el) => (seeNextCardsRefs.current[0] = el)}
-                >
-                  <div className="time-management-see-next-image-container">
-                    <LazyVideo
-                      src="/work/arcadia/arcadia custom.mp4"
-                      className="time-management-see-next-image"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      aria-label="Revolution Steel: Construction Workflow Optimisation, preview"
-                    />
-                  </div>
-                  <h4 className="time-management-see-next-card-title">
-                    Revolution Steel: Construction Workflow Optimisation
-                  </h4>
-                  <p className="time-management-see-next-card-description">
-                    Helping Revolution Steel formulate a user workflow so work
-                    gets distributed clearly and tasks are streamlined across
-                    the team.
-                  </p>
-                </div>
-              </Link>
-              <Link
                 to="/quizai"
                 className="time-management-see-next-card-link"
                 onMouseEnter={() => setIsHoveringSeeNextCard(true)}
@@ -830,7 +799,7 @@ const TimeManagementCaseStudy = () => {
               >
                 <div
                   className="time-management-see-next-card"
-                  ref={(el) => (seeNextCardsRefs.current[1] = el)}
+                  ref={(el) => (seeNextCardsRefs.current[0] = el)}
                 >
                   <div className="time-management-see-next-image-container">
                     <LazyVideo
@@ -859,7 +828,7 @@ const TimeManagementCaseStudy = () => {
               >
                 <div
                   className="time-management-see-next-card"
-                  ref={(el) => (seeNextCardsRefs.current[2] = el)}
+                  ref={(el) => (seeNextCardsRefs.current[1] = el)}
                 >
                   <div className="time-management-see-next-image-container">
                     <LazyVideo

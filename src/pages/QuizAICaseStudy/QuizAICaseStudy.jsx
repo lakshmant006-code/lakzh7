@@ -706,38 +706,6 @@ const QuizAICaseStudy = () => {
               </div>
             </Link>
             <Link
-              to="/arcadia-custom-builders"
-              className="quizai-see-next-card-link"
-              onMouseEnter={() => setIsHoveringSeeNextCard(true)}
-              onMouseLeave={() => setIsHoveringSeeNextCard(false)}
-            >
-              <div
-                className="quizai-see-next-card"
-                ref={(el) => (seeNextCardsRefs.current[1] = el)}
-              >
-                <div className="quizai-see-next-image-container">
-                  <LazyVideo
-                    src="/work/arcadia/arcadia custom.mp4"
-                    className="quizai-see-next-image"
-                    style={{ aspectRatio: "1920 / 1080" }}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    aria-label="Revolution Steel: Construction Workflow Optimisation, preview"
-                  />
-                </div>
-                <h4 className="quizai-see-next-card-title">
-                  Revolution Steel: Construction Workflow Optimisation
-                </h4>
-                <p className="quizai-see-next-card-description">
-                  Helping Revolution Steel formulate a user workflow so work
-                  gets distributed clearly and tasks are streamlined across the
-                  team.
-                </p>
-              </div>
-            </Link>
-            <Link
               to="/hiku"
               className="quizai-see-next-card-link"
               onMouseEnter={() => setIsHoveringSeeNextCard(true)}
@@ -745,7 +713,7 @@ const QuizAICaseStudy = () => {
             >
               <div
                 className="quizai-see-next-card"
-                ref={(el) => (seeNextCardsRefs.current[2] = el)}
+                ref={(el) => (seeNextCardsRefs.current[1] = el)}
               >
                 <div className="quizai-see-next-image-container">
                   <LazyVideo

@@ -89,13 +89,12 @@ body.dg-scroll-lock {
   overflow: hidden;
 }
 
-/* See Next cards: single column through 1024px, three-up above */
+/* See Next cards: single column through 1024px, two-up above */
 @media (min-width: 1025px) {
   .quizai-see-next-grid,
   .time-management-see-next-grid,
-  .hiku-see-next-grid,
-  .arcadia-see-next-grid {
-    grid-template-columns: repeat(3, 1fr);
+  .hiku-see-next-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 

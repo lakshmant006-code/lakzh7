@@ -675,39 +675,6 @@ const HikuCaseStudy = () => {
                 </p>
               </div>
             </Link>
-            <Link
-              to="/arcadia-custom-builders"
-              className="hiku-see-next-card-link"
-              onMouseEnter={() => setIsHoveringSeeNextCard(true)}
-              onMouseLeave={() => setIsHoveringSeeNextCard(false)}
-            >
-              <div
-                className="hiku-see-next-card"
-                ref={(el) => {
-                  seeNextCardsRefs.current[2] = el;
-                }}
-              >
-                <div className="hiku-see-next-image-container">
-                  <LazyVideo
-                    src="/work/arcadia/arcadia custom.mp4"
-                    className="hiku-see-next-image"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    aria-label="Revolution Steel: Construction Workflow Optimisation, preview"
-                  />
-                </div>
-                <h4 className="hiku-see-next-card-title">
-                  Revolution Steel: Construction Workflow Optimisation
-                </h4>
-                <p className="hiku-see-next-card-description">
-                  Helping Revolution Steel formulate a user workflow so work
-                  gets distributed clearly and tasks are streamlined across the
-                  team.
-                </p>
-              </div>
-            </Link>
           </div>
         </div>
       </section>

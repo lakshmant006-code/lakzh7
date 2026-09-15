@@ -8,17 +8,6 @@ import "./WorkBentoItem.css";
 // thumbnailImage: used as thumbnail in mobile view instead of video
 const workProjects = [
   {
-    id: "arcadia-custom-builders",
-    title: "Revolution Steel - Construction Workflow Optimisation",
-    role: "UX Researcher",
-    tags: ["UX Research", "Workflow Design"],
-    summary:
-      "Work stalled and duplicated at every handoff. One clear workflow gave the steel shop owners, tasks, and visibility — and a 30% faster process.",
-    shortSummary: "Work stalled at every handoff — one workflow made it 30% faster.",
-    video: "/work/arcadia/arcadia custom.mp4",
-    category: "case-study",
-  },
-  {
     id: "quizai-approval-flow",
     title: "AI Powered Notetaking Application",
     role: "Product Designer",
@@ -65,7 +54,6 @@ const routeMap = {
   "time-management-pain-detection": "/time-management",
   "quizai-approval-flow": "/quizai",
   "hiku-bio-smart-wearable": "/hiku",
-  "arcadia-custom-builders": "/arcadia-custom-builders",
 };
 
 /** Single work card (full layout on Work page; compact footer on Home) */
@@ -95,8 +83,7 @@ function WorkCard({
   const isClickable =
     project.id === "time-management-pain-detection" ||
     project.id === "quizai-approval-flow" ||
-    project.id === "hiku-bio-smart-wearable" ||
-    project.id === "arcadia-custom-builders";
+    project.id === "hiku-bio-smart-wearable";
 
   const videoSource = project.video;
   const useThumbnailImage = isMobile && project.thumbnailImage;
