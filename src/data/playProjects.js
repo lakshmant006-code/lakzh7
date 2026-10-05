@@ -4,6 +4,23 @@
 
 export const playProjects = [
   {
+    id: "f1",
+    size: "short",
+    theme: "black",
+    tags: ["Creative Coding"],
+    category: "digital",
+    media: {
+      image: "/projects/f1/thumbnail.jpg",
+    },
+    actions: [
+      {
+        type: "live",
+        tooltip: "View App",
+        url: "https://www.celestera.online/?utm_source=portfolio&utm_medium=playground",
+      },
+    ],
+  },
+  {
     id: "concentrix",
     size: "tall",
     theme: "white",

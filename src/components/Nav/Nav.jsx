@@ -35,7 +35,7 @@ const Nav = () => {
     { label: "work", href: "/", isLink: true },
     { label: "playground", href: "/", isLink: true },
     { label: "about", href: "/about", isLink: true },
-    { label: "particles", href: "/particles", isLink: true },
+    { label: "celestera", href: "https://www.celestera.online/?utm_source=portfolio&utm_medium=nav", isLink: true, external: true },
   ];
 
   const handleLogoClick = (e) => {
@@ -58,16 +58,15 @@ const Nav = () => {
       if (item.label === "about") return false;
     }
     if (item.label === "about") return path === "/about";
-    if (item.label === "particles") return path === "/particles";
     return false;
   };
 
   const renderPillLabel = (item) => {
-    if (item.label === "particles") {
+    if (item.label === "celestera") {
       return (
         <img
           src={spiralIcon}
-          alt="Particles"
+          alt="Celestera"
           className="nav-spiral-icon"
         />
       );
@@ -469,15 +468,9 @@ const Nav = () => {
             />
           </Link>
           <ul className="pill-list desktop-only" ref={navItemsRef}>
-            {navItems.map((item, i) => (
-              <li key={item.label}>
-                <Link
-                  to={item.href}
-                  className={`pill${isNavItemActive(item) ? " pill-active" : ""}`}
-                  onMouseEnter={() => handleEnter(i)}
-                  onMouseLeave={() => handleLeave(i)}
-                  onClick={item.label === "work" ? handleWorkClick : item.label === "playground" ? handlePlaygroundClick : undefined}
-                >
+            {navItems.map((item, i) => {
+              const pillInner = (
+                <>
                   <span
                     className="hover-circle"
                     aria-hidden="true"
@@ -487,9 +480,36 @@ const Nav = () => {
                   />
                   <span className="pill-active-dot" aria-hidden="true" />
                   <span className="label-stack">{renderPillLabel(item)}</span>
-                </Link>
-              </li>
-            ))}
+                </>
+              );
+              const pillClassName = `pill${isNavItemActive(item) ? " pill-active" : ""}`;
+              return (
+                <li key={item.label}>
+                  {item.external ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={pillClassName}
+                      onMouseEnter={() => handleEnter(i)}
+                      onMouseLeave={() => handleLeave(i)}
+                    >
+                      {pillInner}
+                    </a>
+                  ) : (
+                    <Link
+                      to={item.href}
+                      className={pillClassName}
+                      onMouseEnter={() => handleEnter(i)}
+                      onMouseLeave={() => handleLeave(i)}
+                      onClick={item.label === "work" ? handleWorkClick : item.label === "playground" ? handlePlaygroundClick : undefined}
+                    >
+                      {pillInner}
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
           </ul>
           <button
             className={`mobile-menu-button ${
@@ -506,30 +526,52 @@ const Nav = () => {
       </div>
       <div className="mobile-menu-popover" ref={mobileMenuRef}>
         <ul className="mobile-menu-list">
-          {navItems.map((item, i) => (
-            <li key={`mobile-${item.label}`}>
-              <Link
-                to={item.href}
-                className={`mobile-menu-link${isNavItemActive(item) ? " mobile-menu-link-active" : ""}`}
-                onClick={(e) => {
-                  if (item.label === "work") {
-                    handleWorkClick(e);
-                  } else if (item.label === "playground") {
-                    handlePlaygroundClick(e);
-                  }
-                  setIsMobileMenuOpen(false);
-                  toggleMobileMenu();
-                }}
-              >
-                {item.label === "particles" ? (
-                  <span className="mobile-particles-link">
-                    <img src={spiralIcon} alt="" className="nav-spiral-icon" aria-hidden="true" />
-                    particles
-                  </span>
-                ) : item.label}
-              </Link>
-            </li>
-          ))}
+          {navItems.map((item, i) => {
+            const mobileInner =
+              item.label === "celestera" ? (
+                <span className="mobile-particles-link">
+                  <img src={spiralIcon} alt="" className="nav-spiral-icon" aria-hidden="true" />
+                  celestera
+                </span>
+              ) : (
+                item.label
+              );
+            const mobileClassName = `mobile-menu-link${isNavItemActive(item) ? " mobile-menu-link-active" : ""}`;
+            return (
+              <li key={`mobile-${item.label}`}>
+                {item.external ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={mobileClassName}
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      toggleMobileMenu();
+                    }}
+                  >
+                    {mobileInner}
+                  </a>
+                ) : (
+                  <Link
+                    to={item.href}
+                    className={mobileClassName}
+                    onClick={(e) => {
+                      if (item.label === "work") {
+                        handleWorkClick(e);
+                      } else if (item.label === "playground") {
+                        handlePlaygroundClick(e);
+                      }
+                      setIsMobileMenuOpen(false);
+                      toggleMobileMenu();
+                    }}
+                  >
+                    {mobileInner}
+                  </Link>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </div>
     </nav>
