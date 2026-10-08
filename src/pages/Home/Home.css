@@ -29,6 +29,145 @@
   z-index: 1;
 }
 
+/* Hero illustration card: edges feather softly into the page background */
+.home-hero-card {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: clamp(2rem, 6vw, 5.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(
+    62% 64% at 50% 46%,
+    #f0e8db 0%,
+    rgba(240, 232, 219, 0.7) 38%,
+    rgba(240, 232, 219, 0.28) 60%,
+    rgba(240, 232, 219, 0) 78%
+  );
+  animation: home-hero-card-in 0.9s ease both;
+}
+
+.home-hero-stage {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  aspect-ratio: 2000 / 1390;
+}
+
+.home-hero-card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 2;
+}
+
+/* Slow drifting clouds in the sky, behind the house lines */
+.home-hero-clouds {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 48%;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+}
+.home-hero-clouds-track {
+  display: flex;
+  width: 200%;
+  height: 100%;
+  animation: home-cloud-drift 90s linear infinite;
+}
+.home-hero-clouds-field {
+  position: relative;
+  flex: 0 0 50%;
+  width: 50%;
+  height: 100%;
+}
+.home-cloud {
+  position: absolute;
+  height: auto;
+  opacity: 0.9;
+}
+.home-cloud-a {
+  width: 26%;
+  top: 14%;
+  left: 5%;
+}
+.home-cloud-b {
+  width: 19%;
+  top: 44%;
+  left: 38%;
+}
+.home-cloud-c {
+  width: 23%;
+  top: 6%;
+  left: 68%;
+}
+@keyframes home-cloud-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Speech bubble above the person's head with typewriter welcome text */
+.home-hero-speech {
+  position: absolute;
+  z-index: 4;
+  left: 55%;
+  top: 15%;
+  width: 30%;
+  transform: translateX(-50%);
+}
+.home-hero-speech-bubble {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.home-hero-speech-text {
+  position: absolute;
+  top: 14%;
+  left: 11%;
+  right: 11%;
+  bottom: 34%;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: "Courier New", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: clamp(0.58rem, 1.35vw, 0.95rem);
+  line-height: 1.3;
+  color: #1a1a1a;
+}
+.home-type-caret {
+  margin-left: 1px;
+  animation: home-caret-blink 1s steps(1) infinite;
+}
+@keyframes home-caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes home-hero-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Grid: left = title/subtitle, right = game (column on small). */
 .home-landing-grid {
   display: grid;

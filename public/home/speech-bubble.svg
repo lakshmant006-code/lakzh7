@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 120" width="340" height="120" fill="none">
+  <defs>
+    <filter id="bubbleRough" x="-6%" y="-10%" width="112%" height="125%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="3" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4"/>
+    </filter>
+  </defs>
+  <g filter="url(#bubbleRough)">
+    <path
+      d="M16,30 C14,16 26,12 48,13 L300,9 C322,8 332,15 330,30 L332,78 C333,92 320,97 300,96 L150,99 L120,116 L122,98 L46,100 C24,101 12,95 14,80 Z"
+      fill="#ffffff" stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+</svg>

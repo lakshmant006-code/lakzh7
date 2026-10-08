@@ -4,19 +4,55 @@ import { isGoogleCreativePath, isDefaultHomePath } from "../../constants/homeRou
 import { useLenisScroll } from "../../hooks/useLenisScroll";
 import Footer from "../../components/Footer/Footer";
 import WorkBentoGrid from "../../components/Work/WorkBentoGrid";
-import PlayBentoGridNatural from "../../components/Work/PlayBentoGrid";
 import PokemonIntro from "../../components/PokemonIntro/PokemonIntro";
-import MarioGame from "../../components/MarioGame/MarioGame";
 import "./Home.css";
-
-const HERO_BIO_LINE =
-  "I'm Lakshman, a UX researcher and designer who turns messy problems into tested, interactive prototypes, across custom residential-build clients and university digital systems.";
 
 const LANDING_FADE_DURATION = 1;
 const LANDING_EASE = "power2.out";
 // Pixel cat rises in with nav (matches Nav.jsx)
 export const LANDING_NAV_DELAY = 0.85;
 export const LANDING_NAV_DURATION = 0.7;
+
+// Warm welcome lines for the speech bubble. No hyphens, no dashes.
+const WELCOME_LINES = [
+  "hello, welcome to my portfolio",
+  "i'm Lakshman, a UX designer",
+  "i make tricky things feel simple",
+  "i run on curiosity and good coffee",
+  "stay a while, i'm glad you're here",
+];
+
+/** Typewriter that types a line, holds, erases, then moves to the next, looping. */
+function Typewriter({ lines, typingSpeed = 55, erasingSpeed = 26, holdTime = 1800 }) {
+  const [lineIdx, setLineIdx] = useState(0);
+  const [text, setText] = useState("");
+  const [mode, setMode] = useState("typing");
+
+  useEffect(() => {
+    const full = lines[lineIdx % lines.length];
+    let timer;
+    if (mode === "typing") {
+      if (text.length < full.length) {
+        timer = setTimeout(() => setText(full.slice(0, text.length + 1)), typingSpeed);
+      } else {
+        timer = setTimeout(() => setMode("erasing"), holdTime);
+      }
+    } else if (text.length > 0) {
+      timer = setTimeout(() => setText(full.slice(0, text.length - 1)), erasingSpeed);
+    } else {
+      setLineIdx((i) => (i + 1) % lines.length);
+      setMode("typing");
+    }
+    return () => clearTimeout(timer);
+  }, [text, mode, lineIdx, lines, typingSpeed, erasingSpeed, holdTime]);
+
+  return (
+    <>
+      <span className="home-type-text">{text}</span>
+      <span className="home-type-caret" aria-hidden="true">|</span>
+    </>
+  );
+}
 
 /** Placeholder grid matching .home-case-study-grid layout for skeleton state */
 function SkeletonWorkGrid() {
@@ -161,23 +197,6 @@ const Home = () => {
     </section>
   );
 
-  const playSection = (
-    <section id="play" className="home-play">
-      <div className="home-play-inner page-content-shell">
-        <PlayBentoGridNatural
-          sectionIntro={
-            <div className="home-play-section-intro">
-              <h2 className="home-play-title">Playground</h2>
-              <p className="home-play-subtitle">
-                Side projects I build for fun using Figma and Cursor.
-              </p>
-            </div>
-          }
-        />
-      </div>
-    </section>
-  );
-
   return (
     <>
       {isGoogleCreative && !pokemonIntroDone ? (
@@ -194,44 +213,39 @@ const Home = () => {
       >
         <section id="landing" className="home-landing">
           <div className="home-landing-content page-content-shell">
-            <div className="home-landing-grid">
-              <h1 ref={heroTitleRef} className="home-hero">
-                <span className="home-hero-line">
-                  <span className="home-hero-line-inner">
-                    Good design isn&apos;t a guess.
-                  </span>
-                </span>
-                <span className="home-hero-line">
-                  <span className="home-hero-line-inner">
-                    It&apos;s a problem, <em>solved.</em>
-                  </span>
-                </span>
-              </h1>
-              <p ref={bioRef} className="home-bio">
-                <span className="home-bio-line">
-                  <span className="home-bio-line-inner">
-                    {isGoogleCreative ? (
-                      <>
-                        I love building and experimenting — asking{" "}
-                        <strong>'what if?'</strong> through tools, artifacts,
-                        and everything in between.
-                      </>
-                    ) : (
-                      HERO_BIO_LINE
-                    )}
-                  </span>
-                </span>
-              </p>
-              <div ref={landingCatRef} className="home-landing-cat">
-                <MarioGame />
+            <div ref={landingCatRef} className="home-hero-card">
+              <div className="home-hero-stage">
+                <div className="home-hero-clouds" aria-hidden="true">
+                  <div className="home-hero-clouds-track">
+                    <div className="home-hero-clouds-field">
+                      <img src="/home/cloud.svg" alt="" className="home-cloud home-cloud-a" />
+                      <img src="/home/cloud.svg" alt="" className="home-cloud home-cloud-b" />
+                      <img src="/home/cloud.svg" alt="" className="home-cloud home-cloud-c" />
+                    </div>
+                    <div className="home-hero-clouds-field">
+                      <img src="/home/cloud.svg" alt="" className="home-cloud home-cloud-a" />
+                      <img src="/home/cloud.svg" alt="" className="home-cloud home-cloud-b" />
+                      <img src="/home/cloud.svg" alt="" className="home-cloud home-cloud-c" />
+                    </div>
+                  </div>
+                </div>
+                <img
+                  src="/home/house-illustration.webp"
+                  alt="Isometric illustration of a small shop-house with a person sitting outside working on a laptop"
+                  className="home-hero-card-img"
+                />
+                <div className="home-hero-speech">
+                  <img src="/home/speech-bubble.svg" alt="" className="home-hero-speech-bubble" />
+                  <p className="home-hero-speech-text">
+                    <Typewriter lines={WELCOME_LINES} />
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         {workSection}
-
-        {playSection}
 
         <Footer />
       </main>

@@ -33,7 +33,6 @@ const Nav = () => {
 
   const navItems = [
     { label: "work", href: "/", isLink: true },
-    { label: "playground", href: "/", isLink: true },
     { label: "about", href: "/about", isLink: true },
     { label: "celestera", href: "https://www.celestera.online/?utm_source=portfolio&utm_medium=nav", isLink: true, external: true },
   ];
