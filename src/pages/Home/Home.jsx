@@ -5,7 +5,13 @@ import { useLenisScroll } from "../../hooks/useLenisScroll";
 import Footer from "../../components/Footer/Footer";
 import WorkBentoGrid from "../../components/Work/WorkBentoGrid";
 import PokemonIntro from "../../components/PokemonIntro/PokemonIntro";
+import EyeCursor from "../../components/EyeCursor/EyeCursor";
 import "./Home.css";
+
+// Full run time of the stitched intro gif (Frame 2 + F4), in ms.
+const INTRO_GIF_MS = 11100;
+// Black screen lifts over ~9 frames at F4's 90ms cadence.
+const INTRO_LIFT_MS = 810;
 
 const LANDING_FADE_DURATION = 1;
 const LANDING_EASE = "power2.out";
@@ -75,6 +81,8 @@ const Home = () => {
   const [isHoveringWorkCard, setIsHoveringWorkCard] = useState(false);
   const [isWorkLoading, setIsWorkLoading] = useState(true);
   const [introOpen, setIntroOpen] = useState(false);
+  const [introLifting, setIntroLifting] = useState(false);
+  const [eyeCursor, setEyeCursor] = useState({ visible: false, text: "" });
   const heroTitleRef = useRef(null);
   const bioRef = useRef(null);
   const landingCatRef = useRef(null);
@@ -84,18 +92,35 @@ const Home = () => {
     setPokemonIntroDone(!isGoogleCreative);
   }, [isGoogleCreative]);
 
-  // Close the intro overlay on Escape; lock body scroll while it is open.
+  const closeIntro = () => {
+    setIntroOpen(false);
+    setIntroLifting(false);
+  };
+
+  // Intro overlay: lock scroll, allow Escape, and run the
+  // play -> lift the black screen up -> reveal the work sequence.
   useEffect(() => {
     if (!introOpen) return;
     const onKey = (e) => {
-      if (e.key === "Escape") setIntroOpen(false);
+      if (e.key === "Escape") closeIntro();
     };
     window.addEventListener("keydown", onKey);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
+    // After the gif has played through, slide the black screen up, then reveal.
+    const liftTimer = setTimeout(() => setIntroLifting(true), INTRO_GIF_MS);
+    const doneTimer = setTimeout(() => {
+      closeIntro();
+      const work = document.getElementById("work");
+      if (work) work.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, INTRO_GIF_MS + INTRO_LIFT_MS);
+
     return () => {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
+      clearTimeout(liftTimer);
+      clearTimeout(doneTimer);
     };
   }, [introOpen]);
 
@@ -167,7 +192,12 @@ const Home = () => {
   }, [location.pathname]);
 
   const workSection = (
-    <section id="work" className="home-work">
+    <section
+      id="work"
+      className="home-work"
+      onMouseEnter={() => setEyeCursor({ visible: true, text: "View the case study." })}
+      onMouseLeave={() => setEyeCursor({ visible: false, text: "" })}
+    >
       <div className="home-work-inner page-content-shell">
         {isGoogleCreative ? (
           <div className="home-work-section-intro">
@@ -236,6 +266,8 @@ const Home = () => {
               tabIndex={0}
               aria-label="Play the intro animation"
               onClick={() => setIntroOpen(true)}
+              onMouseEnter={() => setEyeCursor({ visible: true, text: "view" })}
+              onMouseLeave={() => setEyeCursor({ visible: false, text: "" })}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
@@ -269,10 +301,6 @@ const Home = () => {
                     <Typewriter lines={WELCOME_LINES} />
                   </p>
                 </div>
-                <span className="home-hero-eye" aria-hidden="true">
-                  <img src="/home/eye.webp" alt="" className="home-hero-eye-img" />
-                  <span className="home-hero-eye-label">take a look</span>
-                </span>
               </div>
             </div>
           </div>
@@ -285,20 +313,22 @@ const Home = () => {
 
       {introOpen ? (
         <div
-          className="home-intro-overlay"
+          className={`home-intro-overlay${introLifting ? " home-intro-overlay--lifting" : ""}`}
           role="dialog"
           aria-modal="true"
           aria-label="Intro animation"
-          onClick={() => setIntroOpen(false)}
+          onClick={closeIntro}
         >
-          <button
-            type="button"
-            className="home-intro-close"
-            aria-label="Close"
-            onClick={() => setIntroOpen(false)}
-          >
-            ×
-          </button>
+          {!introLifting ? (
+            <button
+              type="button"
+              className="home-intro-close"
+              aria-label="Skip"
+              onClick={closeIntro}
+            >
+              ×
+            </button>
+          ) : null}
           <img
             src="/home/intro-stitched.gif"
             alt="Intro animation"
@@ -307,6 +337,8 @@ const Home = () => {
           />
         </div>
       ) : null}
+
+      <EyeCursor visible={eyeCursor.visible} text={eyeCursor.text} />
     </>
   );
 };
