@@ -32,10 +32,10 @@
 /* Hero illustration card: edges feather softly into the page background */
 .home-hero-card {
   width: 100%;
-  max-width: 980px;
+  max-width: 1120px;
   margin: 0 auto;
   box-sizing: border-box;
-  padding: clamp(2rem, 6vw, 5.5rem);
+  padding: clamp(1.5rem, 4vw, 3.5rem);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -52,7 +52,7 @@
 .home-hero-stage {
   position: relative;
   width: 100%;
-  max-width: 640px;
+  max-width: 880px;
   aspect-ratio: 2000 / 1390;
 }
 
@@ -123,7 +123,7 @@
   z-index: 4;
   left: 55%;
   top: 15%;
-  width: 30%;
+  width: 24%;
   transform: translateX(-50%);
 }
 .home-hero-speech-bubble {
