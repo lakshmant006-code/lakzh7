@@ -32,7 +32,7 @@
 /* Hero illustration card: edges feather softly into the page background */
 .home-hero-card {
   width: 100%;
-  max-width: 1120px;
+  max-width: 980px;
   margin: 0 auto;
   box-sizing: border-box;
   padding: clamp(1.5rem, 4vw, 3.5rem);
@@ -52,7 +52,7 @@
 .home-hero-stage {
   position: relative;
   width: 100%;
-  max-width: 980px;
+  max-width: 740px;
   aspect-ratio: 2000 / 1390;
 }
 
@@ -143,7 +143,7 @@
   justify-content: center;
   text-align: center;
   font-family: "Courier New", ui-monospace, "SFMono-Regular", Menlo, monospace;
-  font-size: clamp(0.58rem, 1.35vw, 0.95rem);
+  font-size: clamp(0.45rem, 0.92vw, 0.72rem);
   line-height: 1.3;
   color: #1a1a1a;
 }
