@@ -52,7 +52,7 @@
 .home-hero-stage {
   position: relative;
   width: 100%;
-  max-width: 880px;
+  max-width: 980px;
   aspect-ratio: 2000 / 1390;
 }
 
@@ -123,7 +123,7 @@
   z-index: 4;
   left: 64%;
   top: 43%;
-  width: 24%;
+  width: 21.5%;
   transform: translateX(-50%);
 }
 .home-hero-speech-bubble {
