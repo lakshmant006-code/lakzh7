@@ -17,9 +17,9 @@ export const LANDING_NAV_DURATION = 0.7;
 const WELCOME_LINES = [
   "hello, welcome to my portfolio",
   "i'm Lakshman, a UX designer",
-  "i make tricky things feel simple",
-  "i run on curiosity and good coffee",
-  "stay a while, i'm glad you're here",
+  "i make tricky things simple",
+  "i run on curiosity and coffee",
+  "glad you're here, stay a while",
 ];
 
 /** Typewriter that types a line, holds, erases, then moves to the next, looping. */
