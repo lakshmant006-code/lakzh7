@@ -168,6 +168,96 @@
   }
 }
 
+/* Click-to-play affordance on the hero card */
+.home-hero-card {
+  cursor: pointer;
+}
+.home-hero-eye {
+  position: absolute;
+  z-index: 5;
+  right: 3%;
+  bottom: 1%;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+}
+.home-hero-eye-img {
+  width: clamp(26px, 3.6vw, 44px);
+  height: auto;
+  animation: home-eye-pulse 2.6s ease-in-out infinite;
+}
+.home-hero-eye-label {
+  font-family: "Courier New", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: clamp(0.5rem, 0.85vw, 0.68rem);
+  color: #4a4a4a;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.home-hero-card:hover .home-hero-eye-label {
+  opacity: 1;
+}
+@keyframes home-eye-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+}
+
+/* Fullscreen intro animation overlay */
+.home-intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(10, 10, 10, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4vmin;
+  cursor: zoom-out;
+  animation: home-intro-fade 0.25s ease both;
+}
+.home-intro-gif {
+  max-width: min(92vw, 1100px);
+  max-height: 88vh;
+  width: auto;
+  height: auto;
+  background: #fff;
+  border-radius: 10px;
+  cursor: default;
+}
+.home-intro-close {
+  position: fixed;
+  top: 18px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+.home-intro-close:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+@keyframes home-intro-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* Grid: left = title/subtitle, right = game (column on small). */
 .home-landing-grid {
   display: grid;

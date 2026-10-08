@@ -74,6 +74,7 @@ const Home = () => {
   const { scrollToTop } = useLenisScroll();
   const [isHoveringWorkCard, setIsHoveringWorkCard] = useState(false);
   const [isWorkLoading, setIsWorkLoading] = useState(true);
+  const [introOpen, setIntroOpen] = useState(false);
   const heroTitleRef = useRef(null);
   const bioRef = useRef(null);
   const landingCatRef = useRef(null);
@@ -82,6 +83,21 @@ const Home = () => {
   useEffect(() => {
     setPokemonIntroDone(!isGoogleCreative);
   }, [isGoogleCreative]);
+
+  // Close the intro overlay on Escape; lock body scroll while it is open.
+  useEffect(() => {
+    if (!introOpen) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") setIntroOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [introOpen]);
 
   // Landing: rise-from-baseline for title and bio (same style as Play), start on mount to avoid lag
   useEffect(() => {
@@ -213,7 +229,20 @@ const Home = () => {
       >
         <section id="landing" className="home-landing">
           <div className="home-landing-content page-content-shell">
-            <div ref={landingCatRef} className="home-hero-card">
+            <div
+              ref={landingCatRef}
+              className="home-hero-card"
+              role="button"
+              tabIndex={0}
+              aria-label="Play the intro animation"
+              onClick={() => setIntroOpen(true)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setIntroOpen(true);
+                }
+              }}
+            >
               <div className="home-hero-stage">
                 <div className="home-hero-clouds" aria-hidden="true">
                   <div className="home-hero-clouds-track">
@@ -240,6 +269,10 @@ const Home = () => {
                     <Typewriter lines={WELCOME_LINES} />
                   </p>
                 </div>
+                <span className="home-hero-eye" aria-hidden="true">
+                  <img src="/home/eye.webp" alt="" className="home-hero-eye-img" />
+                  <span className="home-hero-eye-label">take a look</span>
+                </span>
               </div>
             </div>
           </div>
@@ -249,6 +282,31 @@ const Home = () => {
 
         <Footer />
       </main>
+
+      {introOpen ? (
+        <div
+          className="home-intro-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Intro animation"
+          onClick={() => setIntroOpen(false)}
+        >
+          <button
+            type="button"
+            className="home-intro-close"
+            aria-label="Close"
+            onClick={() => setIntroOpen(false)}
+          >
+            ×
+          </button>
+          <img
+            src="/home/intro-stitched.gif"
+            alt="Intro animation"
+            className="home-intro-gif"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      ) : null}
     </>
   );
 };
