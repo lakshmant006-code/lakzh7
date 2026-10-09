@@ -115,6 +115,21 @@ body.dg-scroll-lock {
   z-index: 3;
 }
 
+/* Drop the card box on See Next: just the framed thumbnail and plain text. */
+.quizai-see-next-card,
+.hiku-see-next-card,
+.time-management-see-next-card {
+  border: none;
+  background-color: transparent;
+  border-radius: 0;
+  overflow: visible;
+}
+.quizai-see-next-card:hover,
+.hiku-see-next-card:hover,
+.time-management-see-next-card:hover {
+  box-shadow: none;
+}
+
 /* Shared "How Might We" block (research phase of the case studies).
    Per-page accent via the --hmw-accent custom property. */
 .cs-hmw {
