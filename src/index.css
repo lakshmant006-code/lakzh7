@@ -98,6 +98,23 @@ body.dg-scroll-lock {
   }
 }
 
+/* Hand-drawn frame around the See Next thumbnails, matching the home cards. */
+.quizai-see-next-image-container,
+.hiku-see-next-image-container,
+.time-management-see-next-image-container {
+  position: relative;
+}
+.quizai-see-next-image-container::after,
+.hiku-see-next-image-container::after,
+.time-management-see-next-image-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/home/frame.webp") center / 100% 100% no-repeat;
+  pointer-events: none;
+  z-index: 3;
+}
+
 /* Shared "How Might We" block (research phase of the case studies).
    Per-page accent via the --hmw-accent custom property. */
 .cs-hmw {
