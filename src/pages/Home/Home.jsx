@@ -11,7 +11,7 @@ import "./Home.css";
 // Full run time of the stitched intro gif (Frame 2 + F4), in ms.
 const INTRO_GIF_MS = 11100;
 // Black screen lifts over ~9 frames at F4's 90ms cadence.
-const INTRO_LIFT_MS = 810;
+const INTRO_LIFT_MS = 1400;
 
 const LANDING_FADE_DURATION = 1;
 const LANDING_EASE = "power2.out";
