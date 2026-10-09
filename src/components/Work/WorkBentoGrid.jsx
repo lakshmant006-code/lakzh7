@@ -18,8 +18,8 @@ const workProjects = [
       "Web Development",
     ],
     summary:
-      "Students capture a third of a lecture, then never reopen the notes. Quizzy turns any upload into instant summaries and self scoring quizzes, so studying actually happens.",
-    shortSummary: "Notes pile up; studying doesn't. Quizzy turns uploads into quizzes.",
+      "Students capture a third of a lecture, then never reopen the notes. QuizAI turns any upload into instant summaries and self-scoring quizzes — so studying actually happens.",
+    shortSummary: "Notes pile up; studying doesn't. QuizAI turns uploads into quizzes.",
     video: "/work/quizai/quizai-thumb.mp4",
     liveUrl: "https://quizai.help",
     category: "case-study",
@@ -300,7 +300,9 @@ const WorkBentoGrid = ({
 
   return (
     <div ref={containerRef} className={gridClassName} aria-label="Case studies">
-      <CursorPill isHovering={isHovering} text="View case study" />
+      {!compactLayout ? (
+        <CursorPill isHovering={isHovering} text="View case study" />
+      ) : null}
       {workProjects.map((project) => (
         <WorkCard
           key={project.id}

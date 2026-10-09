@@ -743,6 +743,26 @@
   border-radius: var(--bento-card-radius);
 }
 
+/* Hand-drawn frame around case study thumbnails */
+.work-bento-item.case-study-card .work-bento-image-container {
+  border-radius: 0;
+  background-color: transparent;
+  overflow: visible;
+}
+.work-bento-item.case-study-card .work-bento-image,
+.work-bento-item.case-study-card .work-bento-image-container video,
+.work-bento-item.case-study-card .work-bento-image-container img {
+  border-radius: 0;
+}
+.work-bento-item.case-study-card .work-bento-image-container::after {
+  content: "";
+  position: absolute;
+  inset: -3% -2.6%;
+  background: url("/home/frame.webp") center / 100% 100% no-repeat;
+  pointer-events: none;
+  z-index: 4;
+}
+
 @media (min-width: 1026px) and (hover: hover) {
   .work-bento-item.work-bento-item--compact:hover .work-bento-image-container {
     height: auto;

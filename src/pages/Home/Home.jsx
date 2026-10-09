@@ -195,7 +195,13 @@ const Home = () => {
     <section
       id="work"
       className="home-work"
-      onMouseEnter={() => setEyeCursor({ visible: true, text: "View the case study." })}
+      onMouseEnter={() =>
+        setEyeCursor({
+          visible: true,
+          text: "View the case study.",
+          img: "/home/eye-cursor.webp",
+        })
+      }
       onMouseLeave={() => setEyeCursor({ visible: false, text: "" })}
     >
       <div className="home-work-inner page-content-shell">
@@ -266,7 +272,9 @@ const Home = () => {
               tabIndex={0}
               aria-label="Play the intro animation"
               onClick={() => setIntroOpen(true)}
-              onMouseEnter={() => setEyeCursor({ visible: true, text: "view" })}
+              onMouseEnter={() =>
+                setEyeCursor({ visible: true, text: "view", img: "/home/eye-cursor.webp" })
+              }
               onMouseLeave={() => setEyeCursor({ visible: false, text: "" })}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
@@ -338,7 +346,7 @@ const Home = () => {
         </div>
       ) : null}
 
-      <EyeCursor visible={eyeCursor.visible} text={eyeCursor.text} />
+      <EyeCursor visible={eyeCursor.visible} text={eyeCursor.text} img={eyeCursor.img} />
     </>
   );
 };

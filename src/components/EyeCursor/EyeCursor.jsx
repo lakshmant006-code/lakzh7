@@ -5,7 +5,7 @@ import "./EyeCursor.css";
  * A custom cursor that shows a small animated eye with a caption, following
  * the pointer. Only active on devices that actually have a hover pointer.
  */
-export default function EyeCursor({ visible, text = "" }) {
+export default function EyeCursor({ visible, text = "", img = "/home/eye-cursor.webp" }) {
   const ref = useRef(null);
   const rafRef = useRef(null);
 
@@ -35,7 +35,7 @@ export default function EyeCursor({ visible, text = "" }) {
       className={`eye-cursor${visible ? " eye-cursor--visible" : ""}`}
       aria-hidden="true"
     >
-      <img src="/home/eye-cursor.gif" alt="" className="eye-cursor-img" />
+      <img src={img} alt="" className="eye-cursor-img" />
       <span className="eye-cursor-text">{text}</span>
     </div>
   );
