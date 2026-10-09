@@ -97,8 +97,9 @@ const Home = () => {
     setIntroLifting(false);
   };
 
-  // Intro overlay: lock scroll, allow Escape, and run the
-  // play -> lift the black screen up -> reveal the work sequence.
+  // Intro overlay: lock scroll and allow Escape. The curtain lift is driven by
+  // the video's 'ended' event (so it freezes on the last frame first); this
+  // fallback only fires if the video never reports ending.
   useEffect(() => {
     if (!introOpen) return;
     const onKey = (e) => {
@@ -108,21 +109,25 @@ const Home = () => {
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    // After the gif has played through, slide the black screen up, then reveal.
-    const liftTimer = setTimeout(() => setIntroLifting(true), INTRO_GIF_MS);
-    const doneTimer = setTimeout(() => {
-      closeIntro();
-      const work = document.getElementById("work");
-      if (work) work.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, INTRO_GIF_MS + INTRO_LIFT_MS);
+    const fallback = setTimeout(() => setIntroLifting(true), INTRO_GIF_MS + 2000);
 
     return () => {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
-      clearTimeout(liftTimer);
-      clearTimeout(doneTimer);
+      clearTimeout(fallback);
     };
   }, [introOpen]);
+
+  // Once the black screen starts lifting, reveal the content when it finishes.
+  useEffect(() => {
+    if (!introLifting) return;
+    const done = setTimeout(() => {
+      closeIntro();
+      const work = document.getElementById("work");
+      if (work) work.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, INTRO_LIFT_MS);
+    return () => clearTimeout(done);
+  }, [introLifting]);
 
   // Landing: rise-from-baseline for title and bio (same style as Play), start on mount to avoid lag
   useEffect(() => {
@@ -337,12 +342,17 @@ const Home = () => {
               ×
             </button>
           ) : null}
-          <img
-            src="/home/intro-stitched.gif"
-            alt="Intro animation"
+          <video
             className="home-intro-gif"
+            autoPlay
+            muted
+            playsInline
+            onEnded={() => setIntroLifting(true)}
             onClick={(e) => e.stopPropagation()}
-          />
+          >
+            <source src="/home/intro.webm" type="video/webm" />
+            <source src="/home/intro.mp4" type="video/mp4" />
+          </video>
         </div>
       ) : null}
 
