@@ -66,7 +66,23 @@ const HIKU_FEATURES = [
 const HikuCaseStudy = () => {
   useScrollReset();
   const [isHoveringSeeNextCard, setIsHoveringSeeNextCard] = useState(false);
+  const [protoOpen, setProtoOpen] = useState(false);
   const { scrollToElement } = useLenisScroll();
+
+  // Lock scroll and allow Escape while the full-screen prototype is open.
+  useEffect(() => {
+    if (!protoOpen) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") setProtoOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [protoOpen]);
 
   const contextWhatIsRef = useRef(null);
   const contextMyRoleRef = useRef(null);
@@ -348,6 +364,16 @@ const HikuCaseStudy = () => {
                   data-lenis-prevent
                 />
               </div>
+              <button
+                type="button"
+                className="hiku-proto-launch"
+                onClick={() => setProtoOpen(true)}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Open full screen prototype
+              </button>
             </div>
           </div>
 
@@ -681,6 +707,28 @@ const HikuCaseStudy = () => {
 
       </CaseStudyLayout>
       <Footer />
+
+      {protoOpen ? (
+        <div className="hiku-proto-overlay" role="dialog" aria-modal="true" aria-label="Hiku interactive prototype">
+          <div className="hiku-proto-bar">
+            <span className="hiku-proto-bar-label">Hiku — interactive prototype</span>
+            <button
+              type="button"
+              className="hiku-proto-close"
+              aria-label="Close prototype"
+              onClick={() => setProtoOpen(false)}
+            >
+              ×
+            </button>
+          </div>
+          <iframe
+            src="/work/Hiku/Hiku%20Design%20System/ui_kits/hiku-app/prototype.html"
+            title="Hiku interactive prototype"
+            className="hiku-proto-frame"
+            data-lenis-prevent
+          />
+        </div>
+      ) : null}
     </div>
   );
 };
