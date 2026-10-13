@@ -306,6 +306,11 @@ const Home = () => {
                   aria-hidden="true"
                   className="home-layer home-layer-house"
                 />
+                <img
+                  src="/home/character.webp"
+                  alt="A person sitting outside the shop working on a laptop"
+                  className="home-layer home-layer-character"
+                />
                 <div className="home-hero-clouds" aria-hidden="true">
                   <div className="home-hero-clouds-track">
                     <img src="/home/clouds-strip.webp" alt="" className="home-clouds-copy" />

@@ -74,7 +74,7 @@
   z-index: 3;
 }
 .home-layer-character {
-  z-index: 3;
+  z-index: 4;
 }
 @keyframes home-auto-drive {
   0% {
@@ -93,7 +93,7 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  z-index: 4;
+  z-index: 5;
   pointer-events: none;
 }
 .home-hero-clouds-track {
