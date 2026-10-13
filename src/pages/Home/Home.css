@@ -72,7 +72,7 @@
 /* The auto drives in from the right, slips behind the house, pauses there
    (hidden), then the loop restarts. Back layer, so the house covers it. */
 .home-layer-auto {
-  z-index: 3;
+  z-index: 1;
   animation: home-auto-drive 10s linear infinite;
   will-change: transform;
 }
