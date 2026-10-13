@@ -69,21 +69,25 @@
 .home-layer-bg {
   z-index: 2;
 }
-/* The auto drives along the road, right to left, in a loop — behind everything. */
+/* The auto drives in from the right, slips behind the house, pauses there
+   (hidden), then the loop restarts. Back layer, so the house covers it. */
 .home-layer-auto {
   z-index: 1;
-  animation: home-auto-drive 11s linear infinite;
+  animation: home-auto-drive 10s linear infinite;
   will-change: transform;
 }
 .home-layer-character {
   z-index: 3;
 }
 @keyframes home-auto-drive {
-  from {
-    transform: translateX(30%);
+  0% {
+    transform: translateX(32%);
   }
-  to {
-    transform: translateX(-85%);
+  78% {
+    transform: translateX(-22%);
+  }
+  100% {
+    transform: translateX(-22%);
   }
 }
 
