@@ -306,6 +306,12 @@ const Home = () => {
                   aria-hidden="true"
                   className="home-layer home-layer-house"
                 />
+                <div className="home-hero-clouds" aria-hidden="true">
+                  <div className="home-hero-clouds-track">
+                    <img src="/home/clouds-strip.webp" alt="" className="home-clouds-copy" />
+                    <img src="/home/clouds-strip.webp" alt="" className="home-clouds-copy" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
