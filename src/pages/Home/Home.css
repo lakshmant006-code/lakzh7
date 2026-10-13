@@ -52,78 +52,76 @@
 .home-hero-stage {
   position: relative;
   width: 100%;
-  max-width: 740px;
-  aspect-ratio: 2000 / 1390;
-  /* The house drawing sits right of center in the canvas; nudge it back to center. */
-  transform: translateX(-7%);
+  max-width: 820px;
+  aspect-ratio: 2360 / 1640;
+  overflow: hidden;
 }
 
-.home-hero-card-img {
+/* Stacked composition layers, all sharing the same canvas. */
+.home-layer {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
+  pointer-events: none;
+}
+.home-layer-bg {
+  z-index: 1;
+}
+/* The auto drives along the road, right to left, in a loop. */
+.home-layer-auto {
   z-index: 2;
+  animation: home-auto-drive 11s linear infinite;
+  will-change: transform;
+}
+.home-layer-character {
+  z-index: 3;
+}
+@keyframes home-auto-drive {
+  from {
+    transform: translateX(30%);
+  }
+  to {
+    transform: translateX(-85%);
+  }
 }
 
-/* Slow drifting clouds in the sky, behind the house lines */
+/* Clouds drift left to right, in a loop, on top of everything. */
 .home-hero-clouds {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 48%;
+  inset: 0;
   overflow: hidden;
-  z-index: 3;
+  z-index: 4;
   pointer-events: none;
 }
 .home-hero-clouds-track {
   display: flex;
   width: 200%;
   height: 100%;
-  animation: home-cloud-drift 90s linear infinite;
+  animation: home-cloud-drift 55s linear infinite;
+  will-change: transform;
 }
-.home-hero-clouds-field {
-  position: relative;
+.home-clouds-copy {
   flex: 0 0 50%;
   width: 50%;
   height: 100%;
-}
-.home-cloud {
-  position: absolute;
-  height: auto;
-  opacity: 1;
-}
-.home-cloud-a {
-  width: 26%;
-  top: 14%;
-  left: 5%;
-}
-.home-cloud-b {
-  width: 19%;
-  top: 44%;
-  left: 38%;
-}
-.home-cloud-c {
-  width: 23%;
-  top: 6%;
-  left: 68%;
+  object-fit: contain;
 }
 @keyframes home-cloud-drift {
   from {
-    transform: translateX(0);
+    transform: translateX(-50%);
   }
   to {
-    transform: translateX(-50%);
+    transform: translateX(0);
   }
 }
 
 /* Speech bubble above the person's head with typewriter welcome text */
 .home-hero-speech {
   position: absolute;
-  z-index: 4;
-  left: 64%;
+  z-index: 5;
+  left: 61%;
   top: 43%;
   width: 21.5%;
   transform: translateX(-50%);
