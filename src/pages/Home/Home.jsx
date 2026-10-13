@@ -300,6 +300,12 @@ const Home = () => {
                   aria-hidden="true"
                   className="home-layer home-layer-auto"
                 />
+                <img
+                  src="/home/house-front.webp"
+                  alt=""
+                  aria-hidden="true"
+                  className="home-layer home-layer-house"
+                />
               </div>
             </div>
           </div>
