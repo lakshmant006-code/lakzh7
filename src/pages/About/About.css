@@ -4,7 +4,7 @@
   overflow: visible;
   position: relative;
   min-height: 100vh;
-  background-color: #fafafa;
+  background-color: #ffffff;
   padding-top: 4rem; /* nav clearance only (~64px); section gaps live on polaroid/how padding */
 }
 

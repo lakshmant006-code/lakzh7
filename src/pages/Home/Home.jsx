@@ -266,7 +266,7 @@ const Home = () => {
       ) : null}
       <main
         className={`home${isGoogleCreative ? " home-google-creative" : ""}`}
-        style={{ backgroundColor: "#fafafa" }}
+        style={{ backgroundColor: "#ffffff" }}
       >
         <section id="landing" className="home-landing">
           <div className="home-landing-content page-content-shell">

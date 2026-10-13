@@ -29,7 +29,7 @@
 }
 
 .site-nav {
-  background: rgba(250, 250, 250, 0.7);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   border-top: none;
@@ -44,7 +44,7 @@
 
 /* Light background mode (when bento grid is visible) */
 .site-nav.nav-light-bg {
-  background: rgba(250, 250, 250, 0.7);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .logo-link {

@@ -20,7 +20,7 @@
   position: relative;
   width: 100%;
   min-height: 0;
-  background-color: #fafafa;
+  background-color: #ffffff;
   padding: clamp(5rem, 14vh, 10rem) 0 calc(var(--home-section-gap) / 2);
 }
 
@@ -29,7 +29,7 @@
   z-index: 1;
 }
 
-/* Hero illustration card: edges feather softly into the page background */
+/* Hero illustration card: plain white, no tint */
 .home-hero-card {
   width: 100%;
   max-width: 980px;
@@ -39,13 +39,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(
-    62% 64% at 50% 46%,
-    #f0e8db 0%,
-    rgba(240, 232, 219, 0.7) 38%,
-    rgba(240, 232, 219, 0.28) 60%,
-    rgba(240, 232, 219, 0) 78%
-  );
+  background: #ffffff;
   animation: home-hero-card-in 0.9s ease both;
 }
 
