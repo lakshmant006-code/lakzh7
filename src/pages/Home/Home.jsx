@@ -291,32 +291,9 @@ const Home = () => {
               <div className="home-hero-stage">
                 <img
                   src="/home/bg-scene.webp"
-                  alt="Isometric illustration of a small shop-house with a tree, dog, and road"
+                  alt="Isometric illustration of a small shop-house with a tree and dog"
                   className="home-layer home-layer-bg"
                 />
-                <img
-                  src="/home/auto.webp"
-                  alt=""
-                  aria-hidden="true"
-                  className="home-layer home-layer-auto"
-                />
-                <img
-                  src="/home/character.webp"
-                  alt="A person sitting outside the shop working on a laptop"
-                  className="home-layer home-layer-character"
-                />
-                <div className="home-hero-clouds" aria-hidden="true">
-                  <div className="home-hero-clouds-track">
-                    <img src="/home/clouds-strip.webp" alt="" className="home-clouds-copy" />
-                    <img src="/home/clouds-strip.webp" alt="" className="home-clouds-copy" />
-                  </div>
-                </div>
-                <div className="home-hero-speech">
-                  <img src="/home/speech-bubble.svg" alt="" className="home-hero-speech-bubble" />
-                  <p className="home-hero-speech-text">
-                    <Typewriter lines={WELCOME_LINES} />
-                  </p>
-                </div>
               </div>
             </div>
           </div>
