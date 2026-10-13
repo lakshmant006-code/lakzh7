@@ -9,7 +9,7 @@ import "./WorkBentoItem.css";
 const workProjects = [
   {
     id: "quizai-approval-flow",
-    title: "AI Powered Notetaking Application",
+    title: "Reef: AI Powered Notetaking Application",
     role: "Product Designer",
     tags: [
       "Human Interface Design",
@@ -18,9 +18,9 @@ const workProjects = [
       "Web Development",
     ],
     summary:
-      "Students capture a third of a lecture, then never reopen the notes. QuizAI turns any upload into instant summaries and self-scoring quizzes — so studying actually happens.",
-    shortSummary: "Notes pile up; studying doesn't. QuizAI turns uploads into quizzes.",
-    video: "/work/quizai/quizai-thumb.mp4",
+      "Students capture a third of a lecture, then never reopen the notes. Reef turns any upload into instant summaries and self-scoring quizzes — so studying actually happens.",
+    shortSummary: "Notes pile up; studying doesn't. Reef turns uploads into quizzes.",
+    video: "/work/reef/reef-thumb.mp4",
     liveUrl: "https://quizai.help",
     category: "case-study",
   },

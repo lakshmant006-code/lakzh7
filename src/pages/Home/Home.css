@@ -69,13 +69,22 @@
 .home-layer-bg {
   z-index: 2;
 }
-/* The auto sits parked halfway behind the house (back layer, no motion). */
+/* The auto drives along the road, right to left, in a loop — behind everything. */
 .home-layer-auto {
   z-index: 1;
-  transform: translateX(-9%);
+  animation: home-auto-drive 11s linear infinite;
+  will-change: transform;
 }
 .home-layer-character {
   z-index: 3;
+}
+@keyframes home-auto-drive {
+  from {
+    transform: translateX(30%);
+  }
+  to {
+    transform: translateX(-85%);
+  }
 }
 
 /* Clouds drift left to right, in a loop, on top of everything. */
