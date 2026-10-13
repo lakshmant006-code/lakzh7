@@ -294,6 +294,12 @@ const Home = () => {
                   alt="Isometric illustration of a small shop-house with a tree and dog"
                   className="home-layer home-layer-bg"
                 />
+                <img
+                  src="/home/auto.webp"
+                  alt=""
+                  aria-hidden="true"
+                  className="home-layer home-layer-auto"
+                />
               </div>
             </div>
           </div>
