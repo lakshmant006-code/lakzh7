@@ -32,8 +32,8 @@ const workProjects = [
     summary:
       "Great trails are no fun alone, and gear is a hassle to track down. Hiku connects hikers around shared routes and makes buying or renting outdoor gear effortless.",
     shortSummary: "Trails are better shared — Hiku connects hikers and their gear.",
-    video: "/work/Hiku/thumbnail.mp4",
-    thumbnailImage: "/work/Hiku/thumbnail-frame.png",
+    video: "/work/Hiku/hiku-promo.mp4",
+    thumbnailImage: "/work/Hiku/hiku-promo-frame.jpg",
     category: "case-study",
   },
   {
