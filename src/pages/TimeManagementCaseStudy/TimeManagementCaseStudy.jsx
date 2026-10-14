@@ -1,863 +1,356 @@
-﻿import React, { useRef, useMemo, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
 import useScrollReset from "../../hooks/useScrollReset";
-import { useLenisScroll } from "../../hooks/useLenisScroll";
-import { useCountupAnimation } from "../../hooks/useCountupAnimation";
-import { useCardUnfurling } from "../../hooks/useCardUnfurling";
-import { revealOnScroll } from "../../utils/revealOnScroll";
-import Footer from "../../components/Footer/Footer";
-import LazyVideo from "../../components/LazyVideo/LazyVideo";
-import CursorPill from "../../components/CursorPill/CursorPill";
-import CaseStudyLayout from "../../components/CaseStudyLayout/CaseStudyLayout";
 import {
-  CaseStudyStatement,
-  CaseStudyStatementBody,
-  CaseStudyStatementHeadline,
-} from "../../components/CaseStudyStatement/CaseStudyStatement";
-import "./TimeManagementCaseStudy.css";
+  CsPage,
+  CsBreadcrumb,
+  CsHero,
+  CsIntro,
+  CsSection,
+  CsH3,
+  CsText,
+  CsCallout,
+  CsPanel,
+  CsStats,
+  CsChips,
+  CsHmw,
+  CsImg,
+  CsVideo,
+  CsEmbed,
+  CsSeeNext,
+} from "../../components/CsKit/CsKit";
+
+const SWATCHES = [
+  { hex: "#1A56DB", label: "PRIMARY" },
+  { hex: "#FFFFFF", label: "PRIMARY" },
+  { hex: "#000000", label: "SECONDARY" },
+  { hex: "#D9D9D9", label: "SECONDARY" },
+];
+
+const HIFI_SCREENS = [
+  { src: "/work/time-management/final-login.png", alt: "High-fidelity Login screen" },
+  { src: "/work/time-management/final-client-registration.png", alt: "High-fidelity Register New Client screen" },
+  { src: "/work/time-management/final-admin-client-registration.png", alt: "High-fidelity Register New Client screen, admin variant" },
+  { src: "/work/time-management/final-user-dashboard.png", alt: "High-fidelity User Dashboard screen" },
+  { src: "/work/time-management/final-admin-dashboard.png", alt: "High-fidelity Admin Dashboard screen" },
+];
 
 const TimeManagementCaseStudy = () => {
   useScrollReset();
-  const [isHoveringSeeNextCard, setIsHoveringSeeNextCard] = useState(false);
-  const { scrollToElement } = useLenisScroll();
-
-  const impactSectionRef = useRef(null);
-  const metricRefs = useRef([]);
-
-  // Refs for scroll animations
-  const contextWhatIsTimeManagementRef = useRef(null);
-  const contextMyRoleRef = useRef(null);
-  const userFlowImageRef = useRef(null);
-  const contextImpactTitleRef = useRef(null);
-  const contextImpactMetricsRefs = useRef([]);
-  const contextStatementTitleRef = useRef(null);
-  const contextStatementContentRef = useRef(null);
-  const researchTitleRef = useRef(null);
-  const researchOverviewSubtitleRef = useRef(null);
-  const solutionTitleRef = useRef(null);
-  const solutionVisualIdentityContentRef = useRef(null);
-  const solutionItem1TitleRef = useRef(null);
-  const solutionItem1ContentRef = useRef(null);
-  const solutionItem1VideoRef = useRef(null);
-  const solutionItem1CaptionRef = useRef(null);
-  const solutionItem2TitleRef = useRef(null);
-  const solutionItem2ContentRef = useRef(null);
-  const solutionItem2VideoRef = useRef(null);
-  const solutionItem2CaptionRef = useRef(null);
-  const takeawaysTitleRef = useRef(null);
-  const takeawaysItemsRefs = useRef([]);
-  const seeNextTitleRef = useRef(null);
-  const seeNextGridRef = useRef(null);
-  const seeNextCardsRefs = useRef([]);
-
-  const handleSkipToSolution = () => {
-    scrollToElement(document.getElementById("time-management-solutions"), {
-      duration: 1.2,
-    });
-  };
-
-  // Countup animation for metrics - memoize to prevent hook re-runs
-  const metrics = useMemo(
-    () => [
-      {
-        value: 50,
-        prefix: "",
-        suffix: "+",
-        elementRef: metricRefs,
-        index: 0,
-      },
-      {
-        value: 20,
-        prefix: "",
-        suffix: "%",
-        elementRef: metricRefs,
-        index: 1,
-      },
-      {
-        value: 30,
-        prefix: "",
-        suffix: "%",
-        elementRef: metricRefs,
-        index: 2,
-      },
-    ],
-    [],
-  );
-
-  useCountupAnimation(impactSectionRef, metrics);
-
-  // Use card unfurling hook for See Next section
-  useCardUnfurling({
-    gridRef: seeNextGridRef,
-    cardRefs: seeNextCardsRefs,
-    options: {
-      peekOffset: 40,
-      start: "top 70%",
-      end: "top 20%",
-      minWidth: 768,
-      layoutDelay: 100,
-    },
-  });
-
-  // Scroll-triggered animations for context section
-  useEffect(() => {
-    const cleanups = [];
-
-    // Reveal helper, GSAP-free (IntersectionObserver + WAAPI)
-    const createScrollAnimation = (ref, delay = 0) => {
-      if (!ref || !ref.current) return;
-      cleanups.push(revealOnScroll(ref.current, { delay }));
-    };
-
-    // Context Section
-    createScrollAnimation(contextWhatIsTimeManagementRef);
-    createScrollAnimation(contextMyRoleRef, 0.1);
-    createScrollAnimation(userFlowImageRef, 0.1);
-    createScrollAnimation(contextImpactTitleRef, 0.2);
-    // Impact metrics with stagger
-    contextImpactMetricsRefs.current.forEach((ref, index) => {
-      if (ref) cleanups.push(revealOnScroll(ref, { delay: 0.3 + index * 0.1 }));
-    });
-    createScrollAnimation(contextStatementTitleRef);
-    createScrollAnimation(contextStatementContentRef, 0.1);
-
-    // Research Section
-    createScrollAnimation(researchTitleRef);
-    createScrollAnimation(researchOverviewSubtitleRef, 0.1);
-
-    // Development Section
-    createScrollAnimation(solutionTitleRef);
-    createScrollAnimation(solutionVisualIdentityContentRef, 0.1);
-
-    createScrollAnimation(solutionItem1TitleRef);
-    createScrollAnimation(solutionItem1ContentRef, 0.1);
-    createScrollAnimation(solutionItem1VideoRef, 0.2);
-    createScrollAnimation(solutionItem1CaptionRef, 0.3);
-
-    createScrollAnimation(solutionItem2TitleRef);
-    createScrollAnimation(solutionItem2ContentRef, 0.1);
-    createScrollAnimation(solutionItem2VideoRef, 0.2);
-    createScrollAnimation(solutionItem2CaptionRef, 0.3);
-
-    // Key Takeaways Section
-    createScrollAnimation(takeawaysTitleRef);
-    takeawaysItemsRefs.current.forEach((ref, index) => {
-      if (ref) cleanups.push(revealOnScroll(ref, { delay: index * 0.1 }));
-    });
-
-    // See Next Section
-    createScrollAnimation(seeNextTitleRef);
-
-    return () => {
-      cleanups.forEach((fn) => fn());
-    };
-  }, []);
 
   return (
-    <div className="time-management-case-study">
-      <CursorPill isHovering={isHoveringSeeNextCard} text="View case study" />
-      <CaseStudyLayout projectId="time-management">
-        {/* Hero Section */}
-        <section className="time-management-hero-section">
-          {/* Hero Before Image - Visual welcome */}
-          <div className="time-management-hero-image-container time-management-hero-before">
-            <picture>
-              <source
-                type="image/webp"
-                srcSet="/work/time-management/iMac_Mockup_3-640.webp 640w, /work/time-management/iMac_Mockup_3-1024.webp 1024w, /work/time-management/iMac_Mockup_3-1600.webp 1600w"
-                sizes="100vw"
-              />
-              <img
-                src="/work/time-management/iMac_Mockup_3-1024.jpg"
-                alt="Time Management"
-                className="time-management-hero-image"
-                style={{ height: "450px" }}
-                loading="eager"
-                decoding="async"
-              />
-            </picture>
+    <CsPage project="time-management" accent="#1A56DB" tint="#E8EEFC">
+      <CsBreadcrumb current="Summer" />
+      <CsHero>
+        <picture>
+          <source
+            type="image/webp"
+            srcSet="/work/time-management/iMac_Mockup_3-640.webp 640w, /work/time-management/iMac_Mockup_3-1024.webp 1024w, /work/time-management/iMac_Mockup_3-1600.webp 1600w"
+            sizes="(min-width: 1104px) 1040px, 100vw"
+          />
+          <img
+            src="/work/time-management/iMac_Mockup_3-1024.jpg"
+            alt="Time Management"
+            loading="eager"
+            decoding="async"
+          />
+        </picture>
+      </CsHero>
+
+      <CsIntro
+        title="Summer: Time tracking Web Application"
+        lead="This is a web application that allows the company to track their employees' productivity and helps analyze the insights and increase employees' productivity."
+        meta={[
+          {
+            label: "Role",
+            value: [
+              "UX Researcher",
+              "UX Designer",
+              "Interaction Designer",
+              "Full Stack Developer",
+            ],
+          },
+          { label: "Timeline", value: "Feb to March 2024" },
+          {
+            label: "Tools",
+            value: ["Figma", "VS Code", "Cursor AI", "Supabase SQL"],
+          },
+          {
+            label: "Scope",
+            value: [
+              "Human Interface Design",
+              "UX Research",
+              "Data Application",
+              "Web Development",
+            ],
+          },
+        ]}
+      />
+
+      <CsSection id="time-management-context" label="Overview" title="Goal">
+        <CsText>
+          A company had no real sense of where the workday actually went, who
+          was logged in, who was buried, who had room to take more on. The goal
+          was simple to say and harder to do: make that whole picture easy to
+          see at a glance, without turning it into one more dashboard nobody
+          opens.
+        </CsText>
+        <CsPanel title="The finished product">
+          <CsImg src="/work/time-management/hero.png" alt="Time Management" />
+        </CsPanel>
+        <CsH3>User Research</CsH3>
+        <CsText>
+          The application was something I was pretty confident of from the
+          start. The client gave me all the requirements, and I immediately
+          started giving him ideas, but he wanted a{" "}
+          <strong>simple, not sophisticated and easy to navigate</strong> and
+          intuitive design. So I made sure to apply minimalist principles in
+          designing the web application and started designing in Figma.
+        </CsText>
+        <CsText>
+          But before that, I had to decide the different roles of employees
+          that would be using the application. Then I defined the user flow and
+          came up with a development plan for <strong>over 3 weeks</strong>.
+        </CsText>
+        <CsPanel title="Requirements, user flow, and roles" wide>
+          <CsImg
+            src="/work/time-management/user-flow.png"
+            alt="Time Management Requirements, User Flow, and Roles Diagram"
+          />
+        </CsPanel>
+        <CsH3>Impact</CsH3>
+        <CsStats
+          items={[
+            { value: "50+", label: "Employees supported" },
+            { value: "20%", label: "Increase in workforce efficiency" },
+            { value: "30%", label: "Reduction in admin effort" },
+          ]}
+        />
+      </CsSection>
+
+      <CsSection label="Requirements & users" title="Who it was for, and what they needed">
+        <CsPanel title="Requirements">
+          <CsImg
+            src="/work/time-management/frame-145.png"
+            alt="Time Management Requirements"
+          />
+        </CsPanel>
+        <CsPanel title="Users">
+          <CsImg
+            src="/work/time-management/frame-147.png"
+            alt="Time Management Users"
+          />
+        </CsPanel>
+        <CsH3>Motivations</CsH3>
+        <CsText>
+          A platform that can handle multiple functions within a single
+          application to save time.
+        </CsText>
+        <CsH3>Painpoints</CsH3>
+        <CsChips
+          items={[
+            "Lack of good UX",
+            "Better user flow",
+            "Save time",
+            "Security concerns",
+          ]}
+        />
+        <CsHmw
+          items={[
+            {
+              question:
+                "How might we give managers real time visibility into attendance and productivity?",
+              solution:
+                "Role based dashboards surface clock ins, task progress, and performance at a glance, cutting manual check ins.",
+            },
+            {
+              question:
+                "How might we make clocking in and tracking time effortless across the team?",
+              solution:
+                "A one tap clock in and a simple daily view keep logging quick, so adoption sticks with 50+ employees.",
+            },
+            {
+              question:
+                "How might we help employees grow, not only get tracked?",
+              solution:
+                "A skills feature lets employees select and track job competencies, tying daily work to personal development.",
+            },
+          ]}
+        />
+      </CsSection>
+
+      <CsSection id="solution-section" label="Final product" title="Designing it, then building it">
+        <CsText>
+          I love <strong>designing applications</strong> and seeing them come
+          alive. But I&apos;ll tell you, development is something out of my
+          league, at least that&apos;s what I thought until I worked on this
+          project. I learned how databases work, and how to code while still
+          maintaining the UI, so it doesn&apos;t compromise the client&apos;s
+          vision.
+        </CsText>
+        <CsText>
+          In this process I also learned how to <strong>vibe code</strong>.
+          Although I don&apos;t use AI for idea generation, using it as a tool
+          to build a more functional web application was something I enjoyed
+          experimenting with.
+        </CsText>
+
+        <CsH3>Low Fidelity Prototypes</CsH3>
+        <CsPanel title="Lo-fi wireframes" wide>
+          <CsEmbed
+            src="/work/time-management/wireframe-lofi-prototypes.html"
+            title="Lo-Fi Wireframes, Time Management"
+            height="1130px"
+          />
+        </CsPanel>
+
+        <CsH3>High Fidelity Prototypes</CsH3>
+        <CsPanel title="Login, client registration, and dashboards">
+          <div className="cs-panel-stack">
+            {HIFI_SCREENS.map((screen) => (
+              <CsImg key={screen.src} src={screen.src} alt={screen.alt} />
+            ))}
           </div>
+        </CsPanel>
+        <CsText>
+          These high fidelity screens show the final, coded product: a branded
+          login gate, two variations of the Register New Client form that
+          capture company details, billing, and portal access, and role
+          specific dashboards for Users and Admins. The User Dashboard surfaces
+          day to day tools like client and project registration, while the
+          Admin Dashboard streamlines navigation down to Clients, Time
+          Tracking, and Settings for higher-level oversight. Together they
+          reflect the clean, minimal visual language defined earlier in the
+          style guide, carried through from wireframe to working interface.
+        </CsText>
 
-          {/* Hero Text Content */}
-          <div className="time-management-hero-content">
-            {/* Left Column */}
-            <div className="time-management-hero-left">
-              <h1 className="time-management-hero-title">Summer</h1>
-              <p className="time-management-hero-category">
-                Time tracking Web Application
-              </p>
-              <div className="time-management-hero-details">
-                <div className="time-management-hero-detail-item">
-                  <div className="time-management-hero-detail-label">TIMELINE</div>
-                  <div className="time-management-hero-detail-value">
-                    Feb to March 2024
-                  </div>
-                </div>
-                <div className="time-management-hero-detail-item">
-                  <div className="time-management-hero-detail-label">ROLE</div>
-                  <div className="time-management-hero-detail-value">
-                    UX Researcher
-                    <br />
-                    UX Designer
-                    <br />
-                    Interaction Designer
-                    <br />
-                    Full Stack Developer
-                  </div>
-                </div>
-                <div className="time-management-hero-detail-item">
-                  <div className="time-management-hero-detail-label">TOOLS</div>
-                  <div className="time-management-hero-detail-value">
-                    Figma
-                    <br />
-                    VS Code
-                    <br />
-                    Cursor AI
-                    <br />
-                    Supabase SQL
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div id="time-management-solutions">
+          <CsH3>Solution #1: Centralized Organization &amp; User Management</CsH3>
+          <CsCallout>
+            Organization details and the full team roster live in{" "}
+            <span className="cs-accent">one admin view</span>.
+          </CsCallout>
+          <CsPanel title="Organization and user management">
+            <CsVideo src="/work/time-management/organization-user-management.mp4" />
+          </CsPanel>
+          <CsText>
+            Admins can edit organization details and manage the entire user
+            roster from one screen, with the table{" "}
+            <strong>updating live</strong> as records change. This pulled what
+            used to be scattered admin tasks into the single application the
+            client asked for, saving time on everyday account management.
+          </CsText>
 
-            {/* Right Column */}
-            <div className="time-management-hero-right">
-              <p className="time-management-hero-subtitle">
-                This is a web application that allows the company to track
-                their employees' productivity and helps analyze the insights
-                and increase employees' productivity.
-              </p>
-              <div className="time-management-hero-tags">
-                <span className="time-management-hero-tag">Human Interface Design</span>
-                <span className="time-management-hero-tag">UX Research</span>
-                <span className="time-management-hero-tag">Data Application</span>
-                <span className="time-management-hero-tag">Web Development</span>
-              </div>
-              <button
-                className="time-management-skip-to-solution-btn"
-                onClick={handleSkipToSolution}
-              >
-                <div className="time-management-skip-icon-container">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="time-management-skip-arrow"
-                  >
-                    <path
-                      d="M10 5V15M10 15L5 10M10 15L15 10"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
-                <span className="time-management-skip-text">SKIP TO SOLUTIONS</span>
-              </button>
-            </div>
-          </div>
+          <CsH3>Solution #2: Employee Skill Tracking</CsH3>
+          <CsCallout>
+            Every employee profile tracks{" "}
+            <span className="cs-accent">real skills and proficiency</span>.
+          </CsCallout>
+          <CsPanel title="Employee skill tracking">
+            <CsVideo src="/work/time-management/employee-skill-tracking.mp4" />
+          </CsPanel>
+          <CsText>
+            Every user profile includes a Skills section where admins can add a
+            skill and set a proficiency level, alongside address and employment
+            details in the same form. This was one of the more interesting
+            ideas to come out of ideation:{" "}
+            <strong>giving employees a clear view of where they stood</strong>{" "}
+            so they could focus on what they were actually lacking.
+          </CsText>
+        </div>
+      </CsSection>
 
-          {/* Hero After Image - After all text */}
-          <div className="time-management-hero-image-container time-management-hero-after">
-            <img
-              src="/work/time-management/hero.png"
-              alt="Time Management"
-              className="time-management-hero-image"
-              style={{ height: "400px" }}
-            />
-          </div>
-        </section>
+      <CsSection
+        id="time-management-research"
+        label="Key design moments"
+        title="Keeping it simple"
+      >
+        <CsText>
+          During the ideation process, I came up with different types of
+          screens, but <strong>the client</strong> wanted the most{" "}
+          <strong>simplistic and easy to navigate</strong> and intuitive
+          design.
+        </CsText>
+        <CsText>
+          So I followed Apple&apos;s guidelines to provide the best experience
+          for the client.
+        </CsText>
+        <CsText>
+          But one interesting feature was to give our different{" "}
+          <strong>skillsets to employees</strong> to improve the skill that
+          they select over time. It helped the employees a lot to{" "}
+          <strong>focus on what they were actually lacking</strong> in.
+        </CsText>
 
-        {/* Context Section */}
-        <section id="time-management-context" className="time-management-context-section">
-          <div className="time-management-context-content">
-            {/* Top Row - Two Columns */}
-            <div className="time-management-context-top">
-              <div className="time-management-context-item" ref={contextWhatIsTimeManagementRef}>
-                <h2 className="time-management-context-title">Goal</h2>
-                <p className="time-management-context-description">
-                  A company had no real sense of where the workday actually
-                  went, who was logged in, who was buried, who had room to
-                  take more on. The goal was simple to say and harder to do:
-                  make that whole picture easy to see at a glance, without
-                  turning it into one more dashboard nobody opens.
-                </p>
-              </div>
-              <div className="time-management-context-item" ref={contextMyRoleRef}>
-                <h2 className="time-management-context-title">User Research</h2>
-                <p className="time-management-context-description">
-                  The application was something I was pretty confident of
-                  from the start. The client gave me all the requirements,
-                  and I immediately started giving him ideas, but he wanted a{" "}
-                  <span style={{ fontWeight: 600 }}>
-                    simple, not sophisticated and easy to navigate
-                  </span>{" "}
-                  and intuitive design. So I made sure to apply minimalist
-                  principles in designing the web application and started
-                  designing in Figma.
-                </p>
-                <p className="time-management-context-description">
-                  But before that, I had to decide the different roles of
-                  employees that would be using the application. Then I
-                  defined the user flow and came up with a development plan
-                  for{" "}
-                  <span style={{ fontWeight: 600 }}>over 3 weeks</span>.
-                </p>
-              </div>
-            </div>
-
-            {/* User Flow Diagram */}
-            <div className="time-management-userflow-image-container" ref={userFlowImageRef}>
-              <img
-                src="/work/time-management/user-flow.png"
-                alt="Time Management Requirements, User Flow, and Roles Diagram"
-                className="time-management-userflow-image"
-                style={{ aspectRatio: "1360 / 438" }}
-              />
-            </div>
-
-            {/* Bottom Row - Impact Metrics */}
-            <div className="time-management-context-impact" ref={impactSectionRef}>
-              <h3 className="time-management-impact-title" ref={contextImpactTitleRef}>
-                Impact
-              </h3>
-              <div className="time-management-impact-metrics">
+        <CsH3>Color Palette</CsH3>
+        <CsText>
+          This project adopted a minimalistic visual style, using primary blue
+          and white to build the brand and also convey trust. I also followed
+          the 60-30-10 rule to maintain a better visual balance.
+        </CsText>
+        <CsPanel title="Palette">
+          <div className="cs-swatches">
+            {SWATCHES.map((swatch) => (
+              <div key={swatch.hex}>
                 <div
-                  className="time-management-impact-metric"
-                  ref={(el) => (contextImpactMetricsRefs.current[0] = el)}
-                >
-                  <div
-                    className="time-management-impact-value"
-                    ref={(el) => (metricRefs.current[0] = el)}
-                  >
-                    50+
-                  </div>
-                  <div className="time-management-impact-label">
-                    EMPLOYEES SUPPORTED
-                  </div>
-                </div>
-                <div
-                  className="time-management-impact-metric"
-                  ref={(el) => (contextImpactMetricsRefs.current[1] = el)}
-                >
-                  <div
-                    className="time-management-impact-value"
-                    ref={(el) => (metricRefs.current[1] = el)}
-                  >
-                    20%
-                  </div>
-                  <div className="time-management-impact-label">
-                    INCREASE IN WORKFORCE EFFICIENCY
-                  </div>
-                </div>
-                <div
-                  className="time-management-impact-metric"
-                  ref={(el) => (contextImpactMetricsRefs.current[2] = el)}
-                >
-                  <div
-                    className="time-management-impact-value"
-                    ref={(el) => (metricRefs.current[2] = el)}
-                  >
-                    30%
-                  </div>
-                  <div className="time-management-impact-label">
-                    REDUCTION IN ADMIN EFFORT
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Context Statement Section */}
-            <div className="time-management-context-statement">
-              <h3
-                className="time-management-context-statement-title"
-                ref={contextStatementTitleRef}
-              >
-                REQUIREMENTS & USERS
-              </h3>
-              <CaseStudyStatement
-                ref={contextStatementContentRef}
-                variant="wide"
-              >
-                <CaseStudyStatementBody>
-                  <span className="time-management-requirements-label">
-                    REQUIREMENTS
-                  </span>
-                  <img
-                    src="/work/time-management/frame-145.png"
-                    alt="Time Management Requirements"
-                    className="time-management-requirements-image"
-                    style={{ aspectRatio: "1336 / 400" }}
-                  />
-                </CaseStudyStatementBody>
-                <CaseStudyStatementBody>
-                  <span className="time-management-requirements-label">USERS</span>
-                  <img
-                    src="/work/time-management/frame-147.png"
-                    alt="Time Management Users"
-                    className="time-management-requirements-image"
-                    style={{ aspectRatio: "1460 / 340" }}
-                  />
-                </CaseStudyStatementBody>
-                <CaseStudyStatementBody>
-                  <span className="time-management-requirements-label">
-                    MOTIVATIONS
-                  </span>
-                  <br />
-                  A platform that can handle multiple functions within a
-                  single application to save time.
-                </CaseStudyStatementBody>
-                <CaseStudyStatementBody>
-                  <span className="time-management-requirements-label">
-                    PAINPOINTS
-                  </span>
-                </CaseStudyStatementBody>
-              </CaseStudyStatement>
-              <div className="time-management-painpoints-tags">
-                <span className="time-management-painpoint-tag">Lack of good UX</span>
-                <span className="time-management-painpoint-tag">
-                  Better user flow
-                </span>
-                <span className="time-management-painpoint-tag">Save time</span>
-                <span className="time-management-painpoint-tag">
-                  Security concerns
-                </span>
-              </div>
-
-              <div className="cs-hmw" style={{ "--hmw-accent": "#1900FF" }}>
-                <h3 className="cs-hmw-heading">HOW MIGHT WE</h3>
-                <div className="cs-hmw-grid">
-                  <div className="cs-hmw-card">
-                    <p className="cs-hmw-question">
-                      How might we give managers real time visibility into
-                      attendance and productivity?
-                    </p>
-                    <p className="cs-hmw-solution">
-                      <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
-                      Role based dashboards surface clock ins, task progress,
-                      and performance at a glance, cutting manual check ins.
-                    </p>
-                  </div>
-                  <div className="cs-hmw-card">
-                    <p className="cs-hmw-question">
-                      How might we make clocking in and tracking time
-                      effortless across the team?
-                    </p>
-                    <p className="cs-hmw-solution">
-                      <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
-                      A one tap clock in and a simple daily view keep logging
-                      quick, so adoption sticks with 50+ employees.
-                    </p>
-                  </div>
-                  <div className="cs-hmw-card">
-                    <p className="cs-hmw-question">
-                      How might we help employees grow, not only get tracked?
-                    </p>
-                    <p className="cs-hmw-solution">
-                      <span className="cs-hmw-solution-label">SOLUTION</span>{" "}
-                      A skills feature lets employees select and track job
-                      competencies, tying daily work to personal development.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Development Section */}
-        <section id="solution-section" className="time-management-solution-section">
-          <div className="time-management-solution-content">
-            <h3 className="time-management-solution-title" ref={solutionTitleRef}>
-              FINAL PRODUCT
-            </h3>
-
-            <div
-              className="time-management-solution-visual-identity-content"
-              ref={solutionVisualIdentityContentRef}
-            >
-              <p className="time-management-solution-visual-identity-text">
-                I love{" "}
-                <span className="time-management-solution-visual-identity-medium-bold">
-                  designing applications
-                </span>{" "}
-                and seeing them come alive. But I'll tell you, development is
-                something out of my league, at least that's what I thought
-                until I worked on this project. I learned how databases
-                work, and how to code while still maintaining the UI, so it
-                doesn't compromise the client's vision.
-              </p>
-              <p className="time-management-solution-visual-identity-text">
-                In this process I also learned how to{" "}
-                <span className="time-management-solution-visual-identity-medium-bold">
-                  vibe code
-                </span>
-                . Although I don't use AI for idea generation, using it as a
-                tool to build a more functional web application was
-                something I enjoyed experimenting with.
-              </p>
-            </div>
-
-            <div className="time-management-solution-subsection">
-              <h4 className="time-management-solution-subheading">
-                Low Fidelity Prototypes
-              </h4>
-              <div className="time-management-wireframe-container">
-                <iframe
-                  src="/work/time-management/wireframe-lofi-prototypes.html"
-                  title="Lo-Fi Wireframes, Time Management"
-                  className="time-management-wireframe-frame"
-                  style={{ height: "1130px" }}
-                  scrolling="no"
+                  className="cs-swatch-block"
+                  style={{ background: swatch.hex }}
                 />
+                <div className="cs-swatch-hex">{swatch.hex}</div>
+                <div className="cs-swatch-label">{swatch.label}</div>
               </div>
-            </div>
-
-            <div className="time-management-solution-subsection">
-              <h4 className="time-management-solution-subheading">
-                High Fidelity Prototypes
-              </h4>
-              <div className="time-management-hifi-gallery">
-                <img
-                  src="/work/time-management/final-login.png"
-                  alt="High-fidelity Login screen"
-                  className="time-management-hifi-image"
-                  style={{ aspectRatio: "1440 / 1024" }}
-                />
-                <img
-                  src="/work/time-management/final-client-registration.png"
-                  alt="High-fidelity Register New Client screen"
-                  className="time-management-hifi-image"
-                  style={{ aspectRatio: "1440 / 1668" }}
-                />
-                <img
-                  src="/work/time-management/final-admin-client-registration.png"
-                  alt="High-fidelity Register New Client screen, admin variant"
-                  className="time-management-hifi-image"
-                  style={{ aspectRatio: "1440 / 1484" }}
-                />
-                <img
-                  src="/work/time-management/final-user-dashboard.png"
-                  alt="High-fidelity User Dashboard screen"
-                  className="time-management-hifi-image"
-                  style={{ aspectRatio: "1440 / 1024" }}
-                />
-                <img
-                  src="/work/time-management/final-admin-dashboard.png"
-                  alt="High-fidelity Admin Dashboard screen"
-                  className="time-management-hifi-image"
-                  style={{ aspectRatio: "1440 / 1024" }}
-                />
-              </div>
-              <p className="time-management-hifi-caption">
-                These high fidelity screens show the final, coded product: a
-                branded login gate, two variations of the Register New Client
-                form that capture company details, billing, and portal
-                access, and role specific dashboards for Users and Admins.
-                The User Dashboard surfaces day to day tools like client and
-                project registration, while the Admin Dashboard streamlines
-                navigation down to Clients, Time Tracking, and Settings for
-                higher-level oversight. Together they reflect the clean,
-                minimal visual language defined earlier in the style guide,
-                carried through from wireframe to working interface.
-              </p>
-            </div>
-
-            <div id="time-management-solutions">
-            <div className="time-management-solution-item">
-              <h4
-                className="time-management-solution-item-title"
-                ref={solutionItem1TitleRef}
-              >
-                Solution #1: Centralized Organization & User Management
-              </h4>
-              <CaseStudyStatement ref={solutionItem1ContentRef}>
-                <CaseStudyStatementHeadline>
-                  Organization details and the full team roster live in{" "}
-                  <span className="time-management-accent-text">one admin view</span>.
-                </CaseStudyStatementHeadline>
-              </CaseStudyStatement>
-              <div className="time-management-solution-media">
-                <div
-                  className="time-management-solution-video-container"
-                  ref={solutionItem1VideoRef}
-                >
-                  <LazyVideo
-                    src="/work/time-management/organization-user-management.mp4"
-                    className="time-management-solution-video"
-                    style={{ aspectRatio: "1920 / 1080" }}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                  />
-                </div>
-                <p
-                  className="time-management-solution-caption"
-                  ref={solutionItem1CaptionRef}
-                >
-                  Admins can edit organization details and manage the entire
-                  user roster from one screen, with the table{" "}
-                  <span className="time-management-solution-caption-semi-bold">
-                    updating live
-                  </span>{" "}
-                  as records change. This pulled what used to be scattered
-                  admin tasks into the single application the client asked
-                  for, saving time on everyday account management.
-                </p>
-              </div>
-            </div>
-
-            <div className="time-management-solution-item">
-              <h4
-                className="time-management-solution-item-title"
-                ref={solutionItem2TitleRef}
-              >
-                Solution #2: Employee Skill Tracking
-              </h4>
-              <CaseStudyStatement ref={solutionItem2ContentRef}>
-                <CaseStudyStatementHeadline>
-                  Every employee profile tracks{" "}
-                  <span className="time-management-accent-text">
-                    real skills and proficiency
-                  </span>
-                  .
-                </CaseStudyStatementHeadline>
-              </CaseStudyStatement>
-              <div className="time-management-solution-media">
-                <div
-                  className="time-management-solution-video-container"
-                  ref={solutionItem2VideoRef}
-                >
-                  <LazyVideo
-                    src="/work/time-management/employee-skill-tracking.mp4"
-                    className="time-management-solution-video"
-                    style={{ aspectRatio: "1892 / 864" }}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                  />
-                </div>
-                <p
-                  className="time-management-solution-caption"
-                  ref={solutionItem2CaptionRef}
-                >
-                  Every user profile includes a Skills section where admins
-                  can add a skill and set a proficiency level, alongside
-                  address and employment details in the same form. This was
-                  one of the more interesting ideas to come out of
-                  ideation:{" "}
-                  <span className="time-management-solution-caption-semi-bold">
-                    giving employees a clear view of where they stood
-                  </span>{" "}
-                  so they could focus on what they were actually lacking.
-                </p>
-              </div>
-            </div>
-            </div>
+            ))}
           </div>
-        </section>
+        </CsPanel>
 
-        {/* Research Section */}
-        <section id="time-management-research" className="time-management-research-section">
-          <div className="time-management-research-content">
-            <h3 className="time-management-research-title" ref={researchTitleRef}>
-              KEY DESIGN MOMENTS
-            </h3>
+        <CsH3>Typography</CsH3>
+        <CsText>
+          I used San Serif for this web application for its easy to understand,
+          approachable design that aligns with the application&apos;s clean and
+          emerging aesthetic.
+        </CsText>
+        <CsPanel title="Type specimen">
+          <CsImg
+            src="/work/time-management/frame-156.png"
+            alt="Time Management Typography"
+          />
+        </CsPanel>
+      </CsSection>
 
-            <CaseStudyStatement ref={researchOverviewSubtitleRef}>
-              <CaseStudyStatementBody>
-                During the ideation process, I came up with different types
-                of screens, but{" "}
-                <span style={{ fontWeight: 600 }}>the client</span> wanted
-                the most{" "}
-                <span style={{ fontWeight: 600 }}>
-                  simplistic and easy to navigate
-                </span>{" "}
-                and intuitive design.
-              </CaseStudyStatementBody>
-              <CaseStudyStatementBody>
-                So I followed Apple's guidelines to provide the best
-                experience for the client.
-              </CaseStudyStatementBody>
-              <CaseStudyStatementBody>
-                But one interesting feature was to give our different{" "}
-                <span style={{ fontWeight: 600 }}>
-                  skillsets to employees
-                </span>{" "}
-                to improve the skill that they select over time. It helped
-                the employees a lot to{" "}
-                <span style={{ fontWeight: 600 }}>
-                  focus on what they were actually lacking
-                </span>{" "}
-                in.
-              </CaseStudyStatementBody>
-            </CaseStudyStatement>
+      <CsSection
+        id="time-management-takeaways"
+        label="Reflections"
+        title="Simple is the hard part"
+      >
+        <CsText>
+          This one taught me that &quot;simple&quot; is the hard part. The
+          client kept pulling me back from clever features toward something
+          genuinely easy to use, and building it end to end, from the first
+          Figma frame to working code, showed me how much restraint good design
+          really takes.
+        </CsText>
+      </CsSection>
 
-            <div className="time-management-ideation-subsection">
-              <h4 className="time-management-ideation-subheading">Color Palette</h4>
-              <p className="time-management-ideation-text">
-                This project adopted a minimalistic visual style, using
-                primary blue and white to build the brand and also convey
-                trust. I also followed the 60-30-10 rule to maintain a
-                better visual balance.
-              </p>
-              <div className="time-management-swatch-row">
-                <div className="time-management-swatch">
-                  <div
-                    className="time-management-swatch-block"
-                    style={{ background: "#1A56DB" }}
-                  />
-                  <div className="time-management-swatch-hex">#1A56DB</div>
-                  <div className="time-management-swatch-label">PRIMARY</div>
-                </div>
-                <div className="time-management-swatch">
-                  <div
-                    className="time-management-swatch-block time-management-swatch-block-bordered"
-                    style={{ background: "#FFFFFF" }}
-                  />
-                  <div className="time-management-swatch-hex">#FFFFFF</div>
-                  <div className="time-management-swatch-label">PRIMARY</div>
-                </div>
-                <div className="time-management-swatch">
-                  <div
-                    className="time-management-swatch-block"
-                    style={{ background: "#000000" }}
-                  />
-                  <div className="time-management-swatch-hex">#000000</div>
-                  <div className="time-management-swatch-label">SECONDARY</div>
-                </div>
-                <div className="time-management-swatch">
-                  <div
-                    className="time-management-swatch-block"
-                    style={{ background: "#D9D9D9" }}
-                  />
-                  <div className="time-management-swatch-hex">#D9D9D9</div>
-                  <div className="time-management-swatch-label">SECONDARY</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="time-management-ideation-subsection">
-              <h4 className="time-management-ideation-subheading">Typography</h4>
-              <p className="time-management-ideation-text">
-                I used San Serif for this web application for its easy to
-                understand, approachable design that aligns with the
-                application's clean and emerging aesthetic.
-              </p>
-              <img
-                src="/work/time-management/frame-156.png"
-                alt="Time Management Typography"
-                className="time-management-type-sample-image"
-                style={{ aspectRatio: "807 / 575" }}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* Key Takeaways Section */}
-        <section id="time-management-takeaways" className="time-management-takeaways-section">
-          <div className="time-management-takeaways-content">
-            <h3 className="time-management-takeaways-title" ref={takeawaysTitleRef}>
-              REFLECTIONS
-            </h3>
-            <div
-              className="time-management-takeaways-item"
-              ref={(el) => (takeawaysItemsRefs.current[0] = el)}
-            >
-              <p className="time-management-takeaways-description">
-                This one taught me that "simple" is the hard part. The client
-                kept pulling me back from clever features toward something
-                genuinely easy to use, and building it end to end, from the
-                first Figma frame to working code, showed me how much restraint
-                good design really takes.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* See Next Section */}
-        <section id="time-management-see-next" className="time-management-see-next-section">
-          <div className="time-management-see-next-content">
-            <h3 className="time-management-see-next-title" ref={seeNextTitleRef}>
-              SEE NEXT
-            </h3>
-            <div
-              className="time-management-see-next-grid"
-              ref={seeNextGridRef}
-              data-case-study-nav-boundary
-            >
-              <Link
-                to="/quizai"
-                className="time-management-see-next-card-link"
-                onMouseEnter={() => setIsHoveringSeeNextCard(true)}
-                onMouseLeave={() => setIsHoveringSeeNextCard(false)}
-              >
-                <div
-                  className="time-management-see-next-card"
-                  ref={(el) => (seeNextCardsRefs.current[0] = el)}
-                >
-                  <div className="time-management-see-next-image-container">
-                    <LazyVideo
-                      src="/work/quizai/thumbnail.mp4"
-                      className="time-management-see-next-image"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                    />
-                  </div>
-                  <h4 className="time-management-see-next-card-title">
-                    Quizzy: AI Powered Notetaking Application
-                  </h4>
-                  <p className="time-management-see-next-card-description">
-                    Helping students turn uploaded notes into personalized
-                    quizzes and summaries through a centralized study dashboard.
-                  </p>
-                </div>
-              </Link>
-              <Link
-                to="/hiku"
-                className="time-management-see-next-card-link"
-                onMouseEnter={() => setIsHoveringSeeNextCard(true)}
-                onMouseLeave={() => setIsHoveringSeeNextCard(false)}
-              >
-                <div
-                  className="time-management-see-next-card"
-                  ref={(el) => (seeNextCardsRefs.current[1] = el)}
-                >
-                  <div className="time-management-see-next-image-container">
-                    <LazyVideo
-                      src="/work/Hiku/thumbnail.mp4"
-                      className="time-management-see-next-image"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      aria-label="Hiku: A Mobile Application for Hiking Enthusiasts, preview"
-                    />
-                  </div>
-                  <h4 className="time-management-see-next-card-title">
-                    Hiku: A Mobile Application for Hiking Enthusiasts
-                  </h4>
-                  <p className="time-management-see-next-card-description">
-                    Connecting hiking enthusiasts through community, shared
-                    experiences, and a convenient way to buy or rent outdoor gear.
-                  </p>
-                </div>
-              </Link>
-            </div>
-          </div>
-        </section>
-      </CaseStudyLayout>
-      <Footer />
-    </div>
+      <CsSeeNext
+        id="time-management-see-next"
+        items={[
+          {
+            to: "/quizai",
+            video: "/work/quizai/thumbnail.mp4",
+            title: "Quizzy: AI Powered Notetaking Application",
+            description:
+              "Helping students turn uploaded notes into personalized quizzes and summaries through a centralized study dashboard.",
+          },
+          {
+            to: "/hiku",
+            video: "/work/Hiku/thumbnail.mp4",
+            title: "Hiku: A Mobile Application for Hiking Enthusiasts",
+            description:
+              "Connecting hiking enthusiasts through community, shared experiences, and a convenient way to buy or rent outdoor gear.",
+          },
+        ]}
+      />
+    </CsPage>
   );
 };
 
 export default TimeManagementCaseStudy;
-

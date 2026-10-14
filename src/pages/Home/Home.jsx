@@ -86,6 +86,8 @@ const Home = () => {
   // opened, the projects stay visible for the rest of the browser session.
   const [workRevealed, setWorkRevealed] = useState(() => {
     if (isGoogleCreativePath(location.pathname)) return true;
+    // Coming back via a case study's "Work" breadcrumb.
+    if (location.state?.showWork) return true;
     try {
       return sessionStorage.getItem("home-work-revealed") === "1";
     } catch {
@@ -147,6 +149,14 @@ const Home = () => {
     const done = setTimeout(closeIntro, INTRO_LIFT_MS);
     return () => clearTimeout(done);
   }, [introLifting]);
+
+  // "Work" breadcrumb from a case study: show the projects and jump to them.
+  useEffect(() => {
+    if (!location.state?.showWork) return;
+    revealWork();
+    scrollToWorkPending.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.key]);
 
   // After the intro closes (finished or skipped), bring the projects into view.
   useEffect(() => {
