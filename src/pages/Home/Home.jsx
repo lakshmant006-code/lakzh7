@@ -82,6 +82,24 @@ const Home = () => {
   const [isWorkLoading, setIsWorkLoading] = useState(true);
   const [introOpen, setIntroOpen] = useState(false);
   const [introLifting, setIntroLifting] = useState(false);
+  // The home page shows only the hero until the visitor clicks it. Once
+  // opened, the projects stay visible for the rest of the browser session.
+  const [workRevealed, setWorkRevealed] = useState(() => {
+    if (isGoogleCreativePath(location.pathname)) return true;
+    try {
+      return sessionStorage.getItem("home-work-revealed") === "1";
+    } catch {
+      return false;
+    }
+  });
+  const revealWork = () => {
+    setWorkRevealed(true);
+    try {
+      sessionStorage.setItem("home-work-revealed", "1");
+    } catch {
+      /* storage unavailable: reveal for this visit only */
+    }
+  };
   const [eyeCursor, setEyeCursor] = useState({ visible: false, text: "" });
   const heroTitleRef = useRef(null);
   const bioRef = useRef(null);
@@ -92,7 +110,10 @@ const Home = () => {
     setPokemonIntroDone(!isGoogleCreative);
   }, [isGoogleCreative]);
 
+  const scrollToWorkPending = useRef(false);
   const closeIntro = () => {
+    revealWork();
+    scrollToWorkPending.current = true;
     setIntroOpen(false);
     setIntroLifting(false);
   };
@@ -121,13 +142,21 @@ const Home = () => {
   // Once the black screen starts lifting, reveal the content when it finishes.
   useEffect(() => {
     if (!introLifting) return;
-    const done = setTimeout(() => {
-      closeIntro();
-      const work = document.getElementById("work");
-      if (work) work.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, INTRO_LIFT_MS);
+    // Render the projects under the curtain so they are there when it lifts.
+    revealWork();
+    const done = setTimeout(closeIntro, INTRO_LIFT_MS);
     return () => clearTimeout(done);
   }, [introLifting]);
+
+  // After the intro closes (finished or skipped), bring the projects into view.
+  useEffect(() => {
+    if (introOpen || !workRevealed || !scrollToWorkPending.current) return;
+    scrollToWorkPending.current = false;
+    requestAnimationFrame(() => {
+      const work = document.getElementById("work");
+      if (work) work.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }, [introOpen, workRevealed]);
 
   // Landing: rise-from-baseline for title and bio (same style as Play), start on mount to avoid lag
   useEffect(() => {
@@ -322,9 +351,12 @@ const Home = () => {
           </div>
         </section>
 
-        {workSection}
-
-        <Footer />
+        {workRevealed ? (
+          <>
+            {workSection}
+            <Footer />
+          </>
+        ) : null}
       </main>
 
       {introOpen ? (
