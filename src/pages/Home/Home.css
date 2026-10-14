@@ -118,35 +118,42 @@
   }
 }
 
-/* Speech bubble above the person's head with typewriter welcome text */
-.home-hero-speech {
+/* Typed caption in the card's bottom-right corner, framed like the
+   project thumbnails (same hand-drawn box). */
+.home-hero-caption {
   position: absolute;
-  z-index: 5;
-  left: 61%;
-  top: 43%;
-  width: 21.5%;
-  transform: translateX(-50%);
-}
-.home-hero-speech-bubble {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-.home-hero-speech-text {
-  position: absolute;
-  top: 14%;
-  left: 8%;
-  right: 8%;
-  bottom: 34%;
-  margin: 0;
+  z-index: 6;
+  right: 4%;
+  bottom: 5%;
+  width: 34%;
+  min-height: 11%;
+  box-sizing: border-box;
+  padding: 0.7em 0.9em;
+  background: #ffffff;
   display: flex;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-family: "Courier New", ui-monospace, "SFMono-Regular", Menlo, monospace;
-  font-size: clamp(0.45rem, 0.92vw, 0.72rem);
-  line-height: 1.3;
+  margin: 0;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, "Courier New", monospace;
+  font-size: clamp(0.62rem, 1.15vw, 0.9rem);
+  line-height: 1.45;
   color: #1a1a1a;
+}
+@media (max-width: 640px) {
+  .home-hero-caption {
+    width: 62%;
+    right: 2%;
+    bottom: 2%;
+    min-height: 0;
+    padding: 0.5em 0.7em;
+    font-size: 0.56rem;
+  }
+}
+.home-hero-caption::after {
+  content: "";
+  position: absolute;
+  inset: -1.76% -1.5% -6.67% -3.97%;
+  background: url("/home/frame-box.webp") center / 100% 100% no-repeat;
+  pointer-events: none;
 }
 .home-type-caret {
   margin-left: 1px;

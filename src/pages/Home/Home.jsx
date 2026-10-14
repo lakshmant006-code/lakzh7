@@ -356,6 +356,11 @@ const Home = () => {
                     <img src="/home/clouds-strip.webp" alt="" className="home-clouds-copy" />
                   </div>
                 </div>
+                <p className="home-hero-caption">
+                  <span>
+                    <Typewriter lines={WELCOME_LINES} />
+                  </span>
+                </p>
               </div>
             </div>
           </div>
