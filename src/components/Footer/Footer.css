@@ -1,32 +1,94 @@
-/* Footer Styles — horizontal width matches navbar via .page-content-shell */
+/* Footer: hand-drawn mountain scene with drifting clouds; the statement,
+   icon links, and clock sit in the open space on the left. */
 
 .footer {
-  background: #1a1a1a;
-  --footer-padding-y: clamp(56px, 7vw, 80px);
-  padding: var(--footer-padding-y) 0;
   position: relative;
   z-index: 30;
+  background: #ffffff;
+  color: #1b1b1b;
+  overflow: hidden;
 }
 
-.footer-container {
-  text-align: left;
+/* Scene keeps the drawing's proportions (4096 x 1714). */
+.footer-scene {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4096 / 1714;
+  pointer-events: none;
+}
+.footer-scene-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right bottom;
+  display: block;
 }
 
-.footer-left-col {
+/* Clouds: the top band of the scene, scrolling right to left. A soft mask
+   fades them out on the left so they drift off and re-enter from the right. */
+.footer-clouds {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  aspect-ratio: 4096 / 393;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 38%,
+    #000 92%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 38%,
+    #000 92%,
+    transparent 100%
+  );
+}
+.footer-clouds-track {
   display: flex;
-  flex-direction: column;
-  gap: clamp(32px, 8vw, 48px);
-  min-width: 0;
+  width: 200%;
+  height: 100%;
+  animation: footer-cloud-drift 70s linear infinite;
+  will-change: transform;
 }
-
-@media (min-width: 1024px) {
-  .footer {
-    --footer-padding-y: clamp(64px, 8vw, 96px);
+.footer-clouds-copy {
+  flex: 0 0 50%;
+  width: 50%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+}
+@keyframes footer-cloud-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
   }
 }
 
-.footer-blurb {
-  min-width: 0;
+/* Text and links over the empty left side of the scene */
+.footer-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(16px, 2vw, 28px);
+  padding-top: 4%;
+  padding-bottom: 10%;
+  pointer-events: none;
+}
+.footer-content > * {
+  pointer-events: auto;
+  max-width: 40%;
 }
 
 .footer-line {
@@ -36,215 +98,105 @@
   width: fit-content;
   max-width: 100%;
 }
-
 .footer-line-inner {
   display: block;
-  line-height: inherit;
-}
-
-.footer .footer-line-inner {
-  transform: translateY(100%);
-}
-
-.social-link .footer-line {
-  width: auto;
-  max-width: none;
-}
-
-.social-link .footer-line-inner {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  will-change: transform;
 }
 
 .footer-title {
-  font-size: clamp(28px, 3.2vw, 44px);
-  font-weight: 300;
-  color: #f5f5f5;
-  line-height: 1.15;
-  margin: 0 0 14px;
-  letter-spacing: -0.04em;
-  font-family: "Crimson Pro", serif;
-  max-width: none;
-  white-space: nowrap;
+  font-family: "Crimson Pro", Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(1.75rem, 3.4vw, 3.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: #1b1b1b;
 }
-
-.footer-title .footer-line {
-  line-height: 1.15;
-  padding-bottom: 0.08em;
-}
-
 .footer-title-em {
   font-style: italic;
-  color: #4a934a;
 }
 
-.footer-subtitle {
-  font-size: clamp(13px, 1.1vw, 15px);
-  color: #999;
-  margin: 0 0 18px;
-  font-weight: 400;
-  font-family: "Satoshi", sans-serif;
-  line-height: 1.55;
-  max-width: none;
-  white-space: nowrap;
+.footer-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.footer-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid #1b1b1b;
+  border-radius: 50%;
+  color: #1b1b1b;
+  background: #ffffff;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+.footer-icon-link:hover,
+.footer-icon-link:focus-visible {
+  background: #1b1b1b;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+.footer-icon-link:focus-visible {
+  outline: 2px solid #1b1b1b;
+  outline-offset: 3px;
 }
 
 .footer-bio {
   margin: 0;
-  font-size: 12px;
-  color: #666;
-  font-weight: 400;
-  font-variant-numeric: tabular-nums;
   font-family: "Satoshi", sans-serif;
-  white-space: nowrap;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: #8a8a8a;
 }
 
-.footer-links-col {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.social-links-heading {
-  margin: 0 0 14px;
-  font-weight: 500;
-  width: 100%;
-  text-align: left;
-}
-
-.social-links {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px 14px;
-}
-
-@media (min-width: 481px) and (max-width: 1023px) {
-  .social-links {
-    flex-direction: column;
-    align-items: flex-start;
-    flex-wrap: nowrap;
-    gap: 10px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .social-links {
-    gap: 10px 20px;
-  }
-}
-
-.social-link {
-  color: #f5f5f5;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transition: color 0.25s ease;
-  font-family: "Satoshi", sans-serif;
-}
-
-.social-link:hover {
-  color: #ffffff;
-}
-
-.social-link .arrow {
-  font-size: 13px;
-  transition: transform 0.25s ease;
-}
-
-.social-link:hover .arrow {
-  transform: translateX(2px) translateY(-2px);
-}
-
-@media (min-width: 1280px) {
-  .footer {
-    --footer-padding-y: clamp(72px, 8vw, 104px);
-  }
-}
-
-@media (max-width: 1024px) {
-  .footer-title {
-    font-size: clamp(28px, 5vw, 44px);
-    white-space: normal;
-  }
-
-  .footer-subtitle {
-    white-space: normal;
-  }
-
-  .footer-bio {
-    white-space: normal;
-  }
-
-  .footer-title .footer-line,
-  .footer-subtitle .footer-line,
-  .footer-bio .footer-line {
-    white-space: normal;
-  }
-}
-
+/* Phones and small tablets: text block on top, scene underneath. */
 @media (max-width: 768px) {
-  .footer-title {
-    font-size: clamp(26px, 6.5vw, 38px);
+  .footer {
+    display: flex;
+    flex-direction: column-reverse;
   }
-
-  .footer-subtitle {
-    font-size: clamp(12px, 1.4vw, 15px);
-    margin-bottom: 16px;
+  .footer-content {
+    position: static;
+    width: 100%;
+    box-sizing: border-box;
+    padding-top: 48px;
+    padding-bottom: 8px;
   }
-
-  .footer-bio {
-    font-size: 11px;
+  .footer-content > * {
+    max-width: 100%;
   }
-
-  .social-link {
-    font-size: 12px;
+  .footer-scene {
+    aspect-ratio: auto;
+    height: 240px;
   }
-
-  .footer-left-col {
-    gap: clamp(24px, 6vw, 36px);
+  .footer-clouds {
+    aspect-ratio: auto;
+    height: 23%;
+    /* The scene is cropped to its right side here, so stretch the strip to
+       the same scale as the drawing. */
   }
-}
-
-@media (max-width: 480px) {
-  .footer-title {
-    font-size: clamp(22px, 7.5vw, 32px);
-    margin-bottom: 10px;
+  .footer-clouds-track {
+    width: calc(240px * 4096 / 1714 * 2);
   }
-
-  .footer-subtitle {
-    font-size: 12px;
-    margin-bottom: 12px;
-  }
-
-  .footer-bio {
-    font-size: 11px;
-  }
-
-  .social-links-heading {
-    margin-bottom: 8px;
-  }
-
-  .social-link {
-    font-size: 11px;
-  }
-
-  .footer-left-col {
-    gap: 20px;
+  .footer-clouds-copy {
+    flex-basis: 50%;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .footer .footer-line-inner {
-    transform: none;
+    transform: none !important;
   }
-
-  .social-link,
-  .social-link .arrow {
+  .footer-clouds-track {
+    animation: none;
+  }
+  .footer-icon-link {
     transition: none;
   }
 }

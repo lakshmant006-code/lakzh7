@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { Linkedin, Github, Mail, FileText, Globe } from "lucide-react";
 import "./Footer.css";
 
 const FOOTER_RISE_DURATION = 1;
@@ -16,12 +17,32 @@ const SOCIAL_LINKS = [
   {
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/lakshman-thota/",
+    icon: Linkedin,
+    external: true,
+  },
+  {
+    label: "GitHub",
+    href: "https://github.com/lakshmant006-code",
+    icon: Github,
     external: true,
   },
   {
     label: "Email",
     href: "mailto:lakshmant006@gmail.com",
+    icon: Mail,
     external: false,
+  },
+  {
+    label: "Resume",
+    href: "https://drive.google.com/file/d/1t8BBP__xqK7TDSD1hLv0WFaMLLgeufTK/view?usp=sharing",
+    icon: FileText,
+    external: true,
+  },
+  {
+    label: "Celestera",
+    href: "https://www.celestera.online/?utm_source=portfolio&utm_medium=footer",
+    icon: Globe,
+    external: true,
   },
 ];
 
@@ -95,60 +116,49 @@ const Footer = () => {
 
   return (
     <footer ref={footerRef} id="contact" className="footer">
-      <div className="footer-container page-content-shell">
-        <div className="footer-left-col">
-          <div className="footer-blurb">
-            <h2 className="footer-title">
-              <FooterLine>
-                Crafting digital experiences{" "}
-                <span className="footer-title-em">from scratch.</span>
-              </FooterLine>
-            </h2>
-
-            <p className="footer-subtitle">
-              <FooterLine>
-                Thoughtfully designed. Custom coded.
-              </FooterLine>
-            </p>
-
-            <p
-              className="footer-bio"
-              aria-label={`© Lakshman Thota. Current time in Eastern Time: ${timeString}`}
-            >
-              <FooterLine>© Lakshman Thota | {timeString} ET</FooterLine>
-            </p>
-          </div>
-
-          <div className="footer-links-col">
-            <p className="footer-bio social-links-heading">
-              <FooterLine>SAY HI</FooterLine>
-            </p>
-            <div
-              className="social-links"
-              role="navigation"
-              aria-label="Social links"
-            >
-              {SOCIAL_LINKS.map(({ label, href, external }) => (
-                <a
-                  key={label}
-                  href={href}
-                  {...(external
-                    ? { target: "_blank", rel: "noopener noreferrer" }
-                    : {})}
-                  className="social-link"
-                  aria-label={external ? `${label} (opens in new tab)` : label}
-                >
-                  <FooterLine>
-                    {label}
-                    <span className="arrow" aria-hidden>
-                      ↗
-                    </span>
-                  </FooterLine>
-                </a>
-              ))}
-            </div>
+      {/* Hand-drawn scene: the mountain sits behind, clouds drift across on
+          top and fade out on the left before coming back in from the right. */}
+      <div className="footer-scene" aria-hidden="true">
+        <img src="/footer/scene.webp" alt="" className="footer-scene-img" />
+        <div className="footer-clouds">
+          <div className="footer-clouds-track">
+            <img src="/footer/clouds.webp" alt="" className="footer-clouds-copy" />
+            <img src="/footer/clouds.webp" alt="" className="footer-clouds-copy" />
           </div>
         </div>
+      </div>
+
+      <div className="footer-content page-content-shell">
+        <h2 className="footer-title">
+          <FooterLine>Coded with love</FooterLine>
+          <FooterLine>
+            <span className="footer-title-em">and intentionality.</span>
+          </FooterLine>
+        </h2>
+
+        <nav className="footer-icons" aria-label="Social links">
+          {SOCIAL_LINKS.map(({ label, href, icon: Icon, external }) => (
+            <a
+              key={label}
+              href={href}
+              {...(external
+                ? { target: "_blank", rel: "noopener noreferrer" }
+                : {})}
+              className="footer-icon-link"
+              aria-label={external ? `${label} (opens in new tab)` : label}
+              title={label}
+            >
+              <Icon size={18} strokeWidth={1.75} aria-hidden="true" />
+            </a>
+          ))}
+        </nav>
+
+        <p
+          className="footer-bio"
+          aria-label={`© Lakshman Thota. Current time in Eastern Time: ${timeString}`}
+        >
+          <FooterLine>© Lakshman Thota | {timeString} ET</FooterLine>
+        </p>
       </div>
     </footer>
   );
