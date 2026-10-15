@@ -757,10 +757,10 @@
 .work-bento-item.case-study-card .work-bento-image-container::after {
   content: "";
   position: absolute;
-  /* Box frame: the opening matches the thumbnail; the thick shadow edge
-     sits outside on the left and bottom. */
-  inset: -1.76% -1.5% -6.67% -3.97%;
-  background: url("/home/frame-box.webp") center / 100% 100% no-repeat;
+  /* Box frame: the opening matches the thumbnail; the drawn line sits
+     just outside it. */
+  inset: -2.35% -1.92% -3.73% -2.19%;
+  background: url("/home/frame-plain.webp") center / 100% 100% no-repeat;
   pointer-events: none;
   z-index: 4;
 }

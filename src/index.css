@@ -109,8 +109,8 @@ body.dg-scroll-lock {
 .time-management-see-next-image-container::after {
   content: "";
   position: absolute;
-  inset: -1.76% -1.5% -6.67% -3.97%;
-  background: url("/home/frame-box.webp") center / 100% 100% no-repeat;
+  inset: -2.35% -1.92% -3.73% -2.19%;
+  background: url("/home/frame-plain.webp") center / 100% 100% no-repeat;
   pointer-events: none;
   z-index: 3;
 }
