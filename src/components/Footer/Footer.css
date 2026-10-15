@@ -36,6 +36,7 @@
   right: 0;
   aspect-ratio: 4096 / 393;
   overflow: hidden;
+  opacity: 0.45;
   -webkit-mask-image: linear-gradient(
     to right,
     transparent 0%,
