@@ -24,9 +24,12 @@
   object-fit: cover;
   object-position: right bottom;
   display: block;
+  /* In front of the clouds: only the sky in this image is transparent, so
+     the clouds pass behind the mountain and the person. */
+  z-index: 2;
 }
 
-/* Clouds: the top band of the scene, scrolling right to left. The mask keeps
+/* Clouds: the back layer, in the top band of the scene, scrolling right to left. The mask keeps
    the text column clear: clouds fade out at the edge of the text column
    (about 36% across) and re-enter from the right. */
 .footer-clouds {
@@ -37,6 +40,7 @@
   aspect-ratio: 4096 / 393;
   overflow: hidden;
   opacity: 0.45;
+  z-index: 1;
   -webkit-mask-image: linear-gradient(
     to right,
     transparent 0%,
