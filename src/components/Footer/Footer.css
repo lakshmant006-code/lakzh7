@@ -26,8 +26,9 @@
   display: block;
 }
 
-/* Clouds: the top band of the scene, scrolling right to left. A soft mask
-   fades them out on the left so they drift off and re-enter from the right. */
+/* Clouds: the top band of the scene, scrolling right to left. The mask keeps
+   the text column clear: clouds fade out at the edge of the text column
+   (about 36% across) and re-enter from the right. */
 .footer-clouds {
   position: absolute;
   top: 0;
@@ -38,15 +39,17 @@
   -webkit-mask-image: linear-gradient(
     to right,
     transparent 0%,
-    #000 38%,
-    #000 92%,
+    transparent 35%,
+    #000 46%,
+    #000 94%,
     transparent 100%
   );
   mask-image: linear-gradient(
     to right,
     transparent 0%,
-    #000 38%,
-    #000 92%,
+    transparent 35%,
+    #000 46%,
+    #000 94%,
     transparent 100%
   );
 }
@@ -178,6 +181,20 @@
   .footer-clouds {
     aspect-ratio: auto;
     height: 23%;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 35%,
+      #000 92%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 35%,
+      #000 92%,
+      transparent 100%
+    );
     /* The scene is cropped to its right side here, so stretch the strip to
        the same scale as the drawing. */
   }
