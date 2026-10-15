@@ -40,7 +40,17 @@
   align-items: center;
   justify-content: center;
   background: #ffffff;
+  position: relative;
   animation: home-hero-card-in 0.9s ease both;
+}
+/* Hand-drawn box around the hero, matching the project card frames */
+.home-hero-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/home/frame-plain.webp") center / 100% 100% no-repeat;
+  pointer-events: none;
+  z-index: 7;
 }
 
 .home-hero-stage {
