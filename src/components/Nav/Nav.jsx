@@ -448,15 +448,6 @@ const Nav = () => {
         transform: "translateY(-100px)",
       }}
     >
-      {!(
-        location.pathname === "/work" ||
-        CASE_STUDY_PATHS.includes(location.pathname)
-      ) && (
-        <picture className="nav-hang-video" aria-hidden="true">
-          <source srcSet="/nav-hang.webp" type="image/webp" />
-          <img src="/nav-hang.png" alt="" />
-        </picture>
-      )}
       <div className="page-content-shell">
         <div className="flex items-center justify-between py-5 z-[1000] gap-6 lg:h-16 relative min-h-[32px]">
           <Link to="/" onClick={handleLogoClick} className="logo-link">
