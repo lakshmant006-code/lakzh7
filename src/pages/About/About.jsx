@@ -5,7 +5,6 @@ import ExperienceTimeline from "../../components/ExperienceTimeline/ExperienceTi
 import ExpandingPhotoRow from "../../components/ExpandingPhotoRow/ExpandingPhotoRow";
 import useScrollReset from "../../hooks/useScrollReset";
 import useRiseUpOnScroll from "../../hooks/useRiseUpOnScroll";
-import hiVideo from "../../assets/img/about-pictures/hi.mp4";
 import "./About.css";
 
 const HI_CAPTION_TEXT =
@@ -47,7 +46,8 @@ const About = () => {
         >
           <LazyVideo
             className="about-sandbox-hi-video"
-            src={hiVideo}
+            src="/about/diary-fall.mp4"
+            aria-label="Hand-drawn animation of Lakshman in a notebook"
             autoPlay
             loop
             muted

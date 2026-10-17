@@ -27,8 +27,8 @@
 .about-sandbox-hi-video {
   display: block;
   width: 100%;
-  max-width: 360px;
-  aspect-ratio: 640 / 480;
+  max-width: 720px;
+  aspect-ratio: 1280 / 624;
   height: auto;
   margin: 0 auto;
   object-fit: cover;
