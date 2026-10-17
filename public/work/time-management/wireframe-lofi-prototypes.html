@@ -2,30 +2,34 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<title>Lo-Fi Wireframes – Time Management</title>
+<title>Lo-Fi Wireframes – Summer</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     background: #d9d9d9;
     font-family: sans-serif;
     padding: 24px;
-    min-height: 100vh;
   }
 
   /* ── Tabs ── */
   .tabs {
     display: flex; gap: 8px;
     justify-content: center;
-    margin-bottom: 24px;
+    align-items: center;
+    margin-bottom: 20px;
     flex-wrap: wrap;
   }
+  .tab-group {
+    font-size: 10px; color: #777; text-transform: uppercase;
+    letter-spacing: .06em; margin: 0 0 0 6px;
+  }
   .tab-btn {
-    padding: 8px 20px;
+    padding: 6px 12px;
     border-radius: 20px;
     border: 1.5px solid #bbb;
     background: #f0f0f0;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 12px;
     color: #555;
   }
   .tab-btn.active { background: #333; color: #fff; border-color: #333; }
@@ -33,533 +37,425 @@
   /* ── Browser shell ── */
   .browser {
     width: 100%;
-    max-width: 860px;
+    max-width: 900px;
     margin: 0 auto;
-    background: #f2f2f2;
+    background: #f7f7f7;
     border-radius: 10px;
     border: 1.5px solid #bbb;
     overflow: hidden;
   }
-
   .top-bar {
-    background: #555;
-    height: 34px;
-    display: flex; align-items: center; justify-content: center;
+    background: #555; height: 30px;
+    display: flex; align-items: center; gap: 6px; padding: 0 12px;
   }
-  .top-bar-label { width: 140px; height: 12px; background: #888; border-radius: 3px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #888; }
+  .url { flex: 1; max-width: 260px; height: 12px; margin: 0 auto; background: #888; border-radius: 3px; }
+  .viewport { height: 540px; overflow: hidden; position: relative; }
 
   /* ── Pages ── */
-  .page { display: none; }
+  .page { display: none; height: 100%; }
   .page.active { display: block; }
 
-  /* ── Shared primitives ── */
-  .bar { border-radius: 3px; background: #ccc; }
-
-  /* Field */
-  .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
-  .field-label { height: 9px; background: #d0d0d0; border-radius: 2px; }
-  .field-input { height: 30px; border: 1.5px solid #d0d0d0; border-radius: 5px; background: #fafafa; }
-  .field-textarea { height: 56px; border: 1.5px solid #d0d0d0; border-radius: 5px; background: #fafafa; }
-  .field-select {
-    height: 30px; border: 1.5px solid #d0d0d0; border-radius: 5px;
-    background: #fafafa; display: flex; align-items: center;
-    justify-content: flex-end; padding-right: 10px;
+  /* ── Primitives ── */
+  .bar { height: 9px; background: #cfcfcf; border-radius: 3px; }
+  .bar.dark { background: #555; }
+  .bar.lite { background: #e0e0e0; }
+  .bar.h12 { height: 12px; } .bar.h16 { height: 16px; } .bar.h24 { height: 24px; }
+  .w20{width:20%}.w25{width:25%}.w30{width:30%}.w35{width:35%}.w40{width:40%}.w50{width:50%}.w60{width:60%}.w70{width:70%}.w80{width:80%}.w100{width:100%}
+  .pill { height: 26px; border-radius: 6px; background: #555; }
+  .pill.outline { background: #fafafa; border: 1.5px solid #c8c8c8; }
+  .pill.round { border-radius: 14px; }
+  .chip { height: 16px; width: 54px; border-radius: 8px; background: #e2e2e2; }
+  .chip.dark { background: #9a9a9a; }
+  .card {
+    background: #fff; border: 1.5px solid #dcdcdc; border-radius: 8px; padding: 14px;
   }
-  .chevron { width: 8px; height: 8px; background: #ccc; border-radius: 1px; }
+  .row { display: flex; align-items: center; gap: 10px; }
+  .col { display: flex; flex-direction: column; gap: 6px; }
+  .spread { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .grid { display: grid; gap: 12px; }
+  .g2 { grid-template-columns: repeat(2, 1fr); }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g4 { grid-template-columns: repeat(4, 1fr); }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .input { height: 28px; border: 1.5px solid #d0d0d0; border-radius: 5px; background: #fafafa; }
+  .textarea { height: 52px; border: 1.5px solid #d0d0d0; border-radius: 5px; background: #fafafa; }
+  .select { height: 28px; border: 1.5px solid #d0d0d0; border-radius: 5px; background: #fafafa; display:flex; align-items:center; justify-content:flex-end; padding-right:9px; }
+  .chev { width: 7px; height: 7px; background: #c4c4c4; border-radius: 1px; }
+  .toggle { width: 30px; height: 16px; border-radius: 8px; background: #d4d4d4; position: relative; flex-shrink: 0; }
+  .toggle::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; }
+  .toggle.on { background: #555; }
+  .toggle.on::after { left: 16px; }
+  .seg { display: inline-flex; align-self: flex-start; gap: 4px; padding: 3px; border-radius: 7px; background: #e6e6e6; }
+  .seg span { width: 58px; height: 20px; border-radius: 5px; background: transparent; }
+  .seg span.on { background: #555; }
+  .tabline { display: flex; gap: 16px; border-bottom: 1.5px solid #e2e2e2; padding-bottom: 8px; }
+  .tabline span { width: 36px; height: 8px; border-radius: 2px; background: #d0d0d0; }
+  .tabline span.on { background: #555; }
+  .avatar { width: 22px; height: 22px; border-radius: 50%; background: #d6d6d6; flex-shrink: 0; }
+  .mono { height: 26px; width: 150px; border-radius: 4px; background: #bdbdbd; }
 
-  /* Toggle */
-  .toggle { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-  .toggle-track {
-    width: 36px; height: 18px; border-radius: 9px; background: #555;
-    position: relative; flex-shrink: 0;
+  /* ── App shell: sidebar + main ── */
+  .app { display: grid; grid-template-columns: 168px 1fr; height: 100%; }
+  .side {
+    background: #fff; border-right: 1.5px solid #e0e0e0; padding: 12px 10px;
+    display: flex; flex-direction: column; gap: 6px;
   }
-  .toggle-thumb {
-    width: 13px; height: 13px; background: #fff; border-radius: 50%;
-    position: absolute; top: 2.5px; right: 3px;
+  .logo { width: 22px; height: 22px; border-radius: 5px; background: #555; margin-bottom: 4px; }
+  .side .search { height: 22px; border-radius: 5px; background: #efefef; margin-bottom: 6px; }
+  .side .label { height: 6px; width: 60px; background: #d8d8d8; border-radius: 2px; margin: 8px 4px 2px; }
+  .nav { display: flex; align-items: center; gap: 7px; height: 22px; padding: 0 6px; border-radius: 5px; }
+  .nav i { width: 10px; height: 10px; border-radius: 2px; background: #c8c8c8; }
+  .nav b { height: 7px; background: #d2d2d2; border-radius: 2px; }
+  .nav.on { background: #555; } .nav.on i, .nav.on b { background: #bbb; }
+  .side .spacer { flex: 1; }
+  .side .help { border: 1.5px solid #e2e2e2; border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 5px; }
+  .main { display: flex; flex-direction: column; min-width: 0; }
+  .topstrip {
+    height: 40px; border-bottom: 1.5px solid #e6e6e6; background: #fff;
+    display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
   }
-  .toggle-label { height: 9px; width: 50px; background: #d4d4d4; border-radius: 2px; }
+  .topstrip .q { width: 150px; height: 20px; border-radius: 10px; background: #efefef; }
+  .body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+  .head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .table .tr { display: grid; align-items: center; gap: 10px; padding: 9px 4px; border-bottom: 1.5px solid #eee; }
+  .table .tr:last-child { border-bottom: 0; }
+  .table .th { padding-bottom: 6px; }
+  .entry { background: #f3f3f3; border-radius: 7px; padding: 11px 12px; }
 
-  /* Buttons */
-  .btn-dark { height: 34px; background: #333; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
-  .btn-dark .btn-bar { height: 9px; background: #888; border-radius: 2px; }
-  .btn-outline { height: 34px; border: 1.5px solid #ccc; border-radius: 6px; background: #f4f4f4; }
+  /* ── Landing ── */
+  .landing { height: 100%; background: linear-gradient(160deg, #cfcfcf, #a9a9a9 55%, #e9e9e9); position: relative; }
+  .lnav { display: flex; align-items: center; justify-content: space-between; padding: 14px 22px; }
+  .lnav .links { display: flex; gap: 16px; }
+  .lnav .links span { width: 46px; height: 8px; background: #8f8f8f; border-radius: 2px; }
+  .hero { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 46px; }
+  .float { position: absolute; background: #fff; border-radius: 7px; border: 1.5px solid #d6d6d6; padding: 9px; display: flex; flex-direction: column; gap: 5px; }
+  .stats { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 72%; background: #fff; border: 1.5px solid #d6d6d6; border-bottom: 0; border-radius: 9px 9px 0 0; padding: 12px 14px; }
 
-  /* Section heading */
-  .section-head { height: 13px; background: #aaa; border-radius: 3px; margin-bottom: 16px; }
-
-  /* Grid helpers */
-  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-  .row-split { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 14px; }
-
-  /* ══════════════════════════════
-     PAGE 1 — LOGIN
-  ══════════════════════════════ */
-  #page-login {
-    background: #f7f7f7;
-    padding: 32px 24px 28px;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-  }
-  #page-login.active { display: flex; }
-
-  .login-logo-block {
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-    margin-bottom: 22px;
-  }
-  .login-logo-box {
-    width: 160px; height: 44px;
-    border: 1.5px solid #ccc; border-radius: 6px; background: #eee;
-  }
-
-  .login-heading { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 24px; }
-  .login-h { width: 320px; height: 16px; background: #bbb; border-radius: 4px; }
-  .login-sub { width: 230px; height: 9px; background: #d8d8d8; border-radius: 2px; }
-  .login-sub2 { width: 190px; height: 9px; background: #d8d8d8; border-radius: 2px; }
-
-  .login-card {
-    width: 420px;
-    background: #fff;
-    border: 1.5px solid #ccc;
-    border-radius: 10px;
-    padding: 28px 28px 22px;
-  }
-
-  .password-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-  .pw-label { height: 9px; width: 70px; background: #d0d0d0; border-radius: 2px; }
-  .pw-forgot { height: 9px; width: 90px; background: #d8d8d8; border-radius: 2px; }
-
-  .login-footer { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 28px; }
-  .footer-links { display: flex; gap: 20px; }
-  .footer-bar { height: 8px; background: #d4d4d4; border-radius: 2px; }
-
-  /* ══════════════════════════════
-     PAGE 2 — ADMIN DASHBOARD
-  ══════════════════════════════ */
-  #page-dashboard { display: none; }
-  #page-dashboard.active { display: flex; }
-
-  .dash-layout { display: flex; width: 100%; min-height: 520px; }
-
-  .dash-sidebar {
-    width: 180px; flex-shrink: 0;
-    background: #ececec;
-    border-right: 1.5px solid #d8d8d8;
-    padding: 18px 14px;
-    display: flex; flex-direction: column; justify-content: space-between;
-  }
-  .sidebar-logo { width: 52px; height: 52px; border: 2px solid #bbb; border-radius: 6px; margin-bottom: 22px; }
-
-  .nav-items { display: flex; flex-direction: column; gap: 10px; }
-  .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 10px; border-radius: 6px;
-  }
-  .nav-item.active { background: #e0e0e0; border: 1.5px solid #ccc; }
-  .nav-icon { width: 13px; height: 13px; background: #bbb; border-radius: 2px; flex-shrink: 0; }
-  .nav-label { height: 10px; background: #ccc; border-radius: 2px; flex: 1; }
-  .nav-item.active .nav-label { background: #aaa; }
-
-  .sidebar-logout { display: flex; align-items: center; gap: 8px; padding: 6px 10px; }
-  .logout-icon { width: 12px; height: 12px; background: #bbb; border-radius: 2px; }
-  .logout-label { height: 9px; width: 46px; background: #ccc; border-radius: 2px; }
-
-  .dash-main { flex: 1; padding: 22px 24px; background: #f7f7f7; }
-
-  .dash-title-bar { height: 18px; width: 200px; background: #bbb; border-radius: 4px; margin-bottom: 8px; }
-  .dash-sub-bar { height: 9px; width: 280px; background: #d8d8d8; border-radius: 2px; margin-bottom: 24px; }
-
-  .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .dash-card {
-    background: #fff; border: 1.5px solid #ccc; border-radius: 8px;
-    padding: 16px; display: flex; flex-direction: column; gap: 10px;
-  }
-  .card-header { display: flex; justify-content: space-between; align-items: center; }
-  .card-title { height: 12px; width: 80px; background: #bbb; border-radius: 3px; }
-  .card-icon { width: 16px; height: 16px; background: #d4d4d4; border-radius: 3px; }
-  .card-desc { display: flex; flex-direction: column; gap: 6px; flex: 1; }
-  .card-line { height: 8px; background: #e4e4e4; border-radius: 2px; }
-  .card-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
-
-  .btn-dark-card {
-    height: 30px; background: #333; border-radius: 6px;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-  }
-  .btn-dark-card .plus { width: 10px; height: 10px; background: #777; border-radius: 50%; }
-  .btn-dark-card .lbl { height: 8px; width: 100px; background: #777; border-radius: 2px; }
-
-  /* ══════════════════════════════
-     PAGE 3 — CLIENT REGISTRATION
-  ══════════════════════════════ */
-  #page-register { background: #f7f7f7; padding: 20px 32px 32px; display: none; }
-  #page-register.active { display: block; }
-
-  .back-link { display: flex; align-items: center; gap: 6px; margin-bottom: 18px; }
-  .back-arrow { width: 14px; height: 10px; background: #ccc; border-radius: 2px; }
-  .back-text { width: 100px; height: 9px; background: #ccc; border-radius: 2px; }
-
-  .reg-header { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 18px; }
-  .reg-logo { width: 60px; height: 26px; border: 1.5px solid #bbb; border-radius: 4px; background: #eee; }
-  .reg-badge { height: 18px; width: 80px; background: #888; border-radius: 9px; align-self: center; }
-  .reg-title { height: 18px; width: 220px; background: #bbb; border-radius: 4px; align-self: center; }
-  .reg-sub { height: 9px; width: 180px; background: #d8d8d8; border-radius: 2px; align-self: center; }
-
-  .form-card {
-    background: #fff; border: 1.5px solid #ccc;
-    border-radius: 8px; padding: 20px; margin-bottom: 12px;
-  }
-
-  .add-header { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
-  .add-label { height: 9px; width: 70px; background: #d0d0d0; border-radius: 2px; }
-  .add-btn { height: 22px; width: 66px; background: #ddd; border-radius: 4px; }
-
-  .action-row { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
-  .btn-cancel { height: 32px; width: 80px; border: 1.5px solid #ccc; border-radius: 6px; background: #f4f4f4; }
-  .btn-submit { height: 32px; width: 130px; background: #333; border-radius: 6px; }
-
-  .dash-footer { margin-top: 32px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  /* ── Sign in ── */
+  .signin { height: 100%; background: linear-gradient(170deg, #bdbdbd, #7d7d7d 60%, #4d4d4d); display: flex; flex-direction: column; align-items: center; padding-top: 30px; gap: 10px; }
+  .dome { width: 110px; height: 55px; border-radius: 110px 110px 0 0; background: #f2f2f2; }
+  .glass { width: 300px; background: rgba(255,255,255,.18); border: 1.5px solid rgba(255,255,255,.45); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 11px; margin-top: 6px; }
+  .glass .input { background: rgba(255,255,255,.25); border-color: rgba(255,255,255,.35); }
+  .glass .bar { background: rgba(255,255,255,.6); }
 </style>
 </head>
 <body>
 
-<!-- Tabs -->
-<div class="tabs">
-  <button class="tab-btn active" onclick="showTab('login',this)">1. Login</button>
-  <button class="tab-btn" onclick="showTab('dashboard',this)">2. Admin Dashboard</button>
-  <button class="tab-btn" onclick="showTab('register',this)">3. Register New Client</button>
+<div class="tabs" role="tablist" aria-label="Wireframe screens">
+  <button class="tab-btn active" onclick="showTab('landing', this)">Landing</button>
+  <button class="tab-btn" onclick="showTab('signin', this)">Sign in</button>
+  <span class="tab-group">Employee</span>
+  <button class="tab-btn" onclick="showTab('emp-home', this)">Home</button>
+  <button class="tab-btn" onclick="showTab('timesheet', this)">Timesheet</button>
+  <button class="tab-btn" onclick="showTab('skills', this)">Skills</button>
+  <span class="tab-group">Admin</span>
+  <button class="tab-btn" onclick="showTab('admin-home', this)">Dashboard</button>
+  <button class="tab-btn" onclick="showTab('clients', this)">Clients</button>
+  <button class="tab-btn" onclick="showTab('client', this)">Client profile</button>
+  <button class="tab-btn" onclick="showTab('roles', this)">Roles</button>
+  <button class="tab-btn" onclick="showTab('add-role', this)">Add role</button>
 </div>
 
 <div class="browser">
-  <!-- Top bar -->
-  <div class="top-bar"><div class="top-bar-label"></div></div>
+  <div class="top-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url"></span></div>
+  <div class="viewport">
 
-  <!-- ══ PAGE 1: LOGIN ══ -->
-  <div class="page active" id="page-login">
-
-    <!-- Logo block -->
-    <div class="login-logo-block">
-      <div class="login-logo-box"></div>
-    </div>
-
-    <!-- Heading -->
-    <div class="login-heading">
-      <div class="login-h"></div>
-      <div class="login-sub"></div>
-      <div class="login-sub2"></div>
-    </div>
-
-    <!-- Card -->
-    <div class="login-card">
-      <!-- Employee ID -->
-      <div class="field">
-        <div class="field-label" style="width:70px"></div>
-        <div class="field-input"></div>
-      </div>
-
-      <!-- Password + Forgot -->
-      <div class="password-row">
-        <div class="pw-label"></div>
-        <div class="pw-forgot"></div>
-      </div>
-      <div class="field-input" style="margin-bottom:16px"></div>
-
-      <!-- Sign In -->
-      <div class="btn-dark" style="margin-bottom:10px">
-        <div class="btn-bar" style="width:60px"></div>
-      </div>
-
-      <!-- Request Account -->
-      <div class="btn-outline" style="display:flex;align-items:center;justify-content:center;">
-        <div class="bar" style="height:9px;width:110px;background:#ccc"></div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="login-footer">
-      <div class="footer-links">
-        <div class="footer-bar" style="width:70px"></div>
-        <div class="footer-bar" style="width:90px"></div>
-      </div>
-      <div class="footer-bar" style="width:200px"></div>
-    </div>
-  </div>
-
-  <!-- ══ PAGE 2: ADMIN DASHBOARD ══ -->
-  <div class="page" id="page-dashboard">
-    <div class="dash-layout">
-
-      <!-- Sidebar -->
-      <div class="dash-sidebar">
-        <div>
-          <div class="sidebar-logo"></div>
-          <div class="nav-items">
-            <div class="nav-item active">
-              <div class="nav-icon"></div>
-              <div class="nav-label"></div>
-            </div>
-            <div class="nav-item">
-              <div class="nav-icon"></div>
-              <div class="nav-label" style="width:55px"></div>
-            </div>
-            <div class="nav-item">
-              <div class="nav-icon"></div>
-              <div class="nav-label" style="width:80px"></div>
-            </div>
-            <div class="nav-item">
-              <div class="nav-icon"></div>
-              <div class="nav-label" style="width:60px"></div>
-            </div>
-          </div>
+    <!-- Landing -->
+    <div class="page active" id="page-landing">
+      <div class="landing">
+        <div class="lnav">
+          <div class="dome" style="width:34px;height:17px"></div>
+          <div class="links"><span></span><span></span><span></span><span></span></div>
+          <div class="row"><span class="bar" style="width:40px;background:#8f8f8f"></span><span class="pill" style="width:72px"></span></div>
         </div>
-        <div class="sidebar-logout">
-          <div class="logout-icon"></div>
-          <div class="logout-label"></div>
+        <div class="hero">
+          <div class="pill round outline" style="width:130px;height:22px"></div>
+          <div class="bar dark h24" style="width:360px"></div>
+          <div class="bar dark h24" style="width:320px"></div>
+          <div class="bar" style="width:300px;background:#8f8f8f;margin-top:6px"></div>
+          <div class="bar" style="width:220px;background:#8f8f8f"></div>
+          <div class="row" style="margin-top:10px"><span class="pill" style="width:92px;height:30px"></span><span class="pill outline" style="width:76px;height:30px"></span></div>
+        </div>
+        <div class="float" style="left:26px;top:70px;width:118px"><div class="bar w80"></div><div class="bar w60 lite"></div><div class="bar dark w70" style="height:5px"></div></div>
+        <div class="float" style="right:26px;top:62px;width:128px"><div class="bar w70 lite"></div><div class="input"></div><div class="input" style="border-color:#777"></div><div class="input"></div></div>
+        <div class="float" style="left:26px;top:300px;width:118px"><div class="bar w60 lite"></div><div class="bar h12 w80"></div><div class="row"><span class="chip"></span><span class="chip"></span></div></div>
+        <div class="float" style="right:30px;top:320px;width:120px;flex-direction:row;align-items:center"><span class="avatar" style="width:30px;height:30px;border:3px solid #777;background:#fff"></span><div class="col" style="flex:1"><div class="bar w80"></div><div class="bar lite w60"></div></div></div>
+        <div class="stats">
+          <div class="spread" style="margin-bottom:10px"><div class="bar w25"></div><div class="bar lite w20"></div></div>
+          <div class="grid g3"><div class="entry col"><div class="bar h16 w30 dark"></div><div class="bar w60"></div></div><div class="entry col"><div class="bar h16 w40 dark"></div><div class="bar w70"></div></div><div class="entry col"><div class="bar h16 w30 dark"></div><div class="bar w50"></div></div></div>
         </div>
       </div>
+    </div>
 
-      <!-- Main -->
-      <div class="dash-main">
-        <div class="dash-title-bar"></div>
-        <div class="dash-sub-bar"></div>
+    <!-- Sign in -->
+    <div class="page" id="page-signin">
+      <div class="signin">
+        <div class="dome"></div>
+        <div class="bar" style="width:230px;background:rgba(255,255,255,.7)"></div>
+        <div class="bar" style="width:160px;background:rgba(255,255,255,.55)"></div>
+        <div class="glass">
+          <div class="bar w25"></div>
+          <div class="seg" style="background:rgba(255,255,255,.2)"><span class="on" style="background:rgba(0,0,0,.55)"></span><span style="background:rgba(255,255,255,.25)"></span></div>
+          <div class="field"><div class="bar w20"></div><div class="input"></div></div>
+          <div class="field"><div class="spread"><div class="bar w25"></div><div class="bar w30"></div></div><div class="input"></div></div>
+          <div class="pill" style="height:30px;background:#222"></div>
+          <div class="pill" style="height:30px;background:rgba(255,255,255,.3)"></div>
+        </div>
+      </div>
+    </div>
 
-        <div class="cards-grid">
-          <!-- Clients card -->
-          <div class="dash-card">
-            <div class="card-header">
-              <div class="card-title"></div>
-              <div class="card-icon"></div>
+    <!-- Employee: Home -->
+    <div class="page" id="page-emp-home">
+      <div class="app">
+        <aside class="side" data-side="employee" data-on="0"></aside>
+        <div class="main">
+          <div class="topstrip"><span class="q"></span><span class="pill" style="width:56px;height:22px"></span></div>
+          <div class="body">
+            <div class="col"><div class="bar lite w20"></div><div class="bar dark h16 w35"></div><div class="bar w25"></div></div>
+            <div class="grid g3">
+              <div class="card col"><div class="bar w40"></div><div class="bar dark h16 w25"></div></div>
+              <div class="card col"><div class="bar w50"></div><div class="bar dark h16 w20"></div></div>
+              <div class="card col"><div class="bar w40"></div><div class="bar dark h16 w20"></div></div>
             </div>
-            <div class="card-desc">
-              <div class="card-line" style="width:100%"></div>
-              <div class="card-line" style="width:90%"></div>
-              <div class="card-line" style="width:80%"></div>
-            </div>
-            <div class="card-btns">
-              <div class="btn-dark-card">
-                <div class="plus"></div>
-                <div class="lbl"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Projects card -->
-          <div class="dash-card">
-            <div class="card-header">
-              <div class="card-title"></div>
-              <div class="card-icon"></div>
-            </div>
-            <div class="card-desc">
-              <div class="card-line" style="width:100%"></div>
-              <div class="card-line" style="width:85%"></div>
-            </div>
-            <div class="card-btns">
-              <div class="btn-dark-card">
-                <div class="plus"></div>
-                <div class="lbl"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Users card -->
-          <div class="dash-card">
-            <div class="card-header">
-              <div class="card-title"></div>
-              <div class="card-icon"></div>
-            </div>
-            <div class="card-desc">
-              <div class="card-line" style="width:100%"></div>
-              <div class="card-line" style="width:90%"></div>
-              <div class="card-line" style="width:75%"></div>
-            </div>
-            <div class="card-btns">
-              <div class="btn-dark-card" style="margin-bottom:2px">
-                <div class="lbl" style="width:70px"></div>
-              </div>
-              <div class="btn-dark-card">
-                <div class="plus"></div>
-                <div class="lbl"></div>
+            <div class="grid g2">
+              <div class="card col" style="align-items:center;gap:12px;padding:20px"><div class="bar w30" style="align-self:flex-start"></div><div class="mono"></div><span class="pill" style="width:84px"></span></div>
+              <div class="card col" style="gap:10px"><div class="spread"><div class="bar w40"></div><span class="pill outline" style="width:50px;height:20px"></span></div>
+                <div class="spread"><div class="col" style="flex:1"><div class="bar w70"></div><div class="bar lite w50"></div></div><div class="col" style="width:70px;align-items:flex-end"><div class="bar w70"></div><div class="bar lite w100"></div></div></div>
+                <div class="spread"><div class="col" style="flex:1"><div class="bar w60"></div><div class="bar lite w40"></div></div><div class="col" style="width:70px;align-items:flex-end"><div class="bar w70"></div><div class="bar lite w100"></div></div></div>
               </div>
             </div>
           </div>
         </div>
-
-        <div class="dash-footer">
-          <div class="bar" style="height:8px;width:80px;background:#d4d4d4"></div>
-          <div class="bar" style="height:8px;width:180px;background:#d4d4d4"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ PAGE 3: REGISTER NEW CLIENT ══ -->
-  <div class="page" id="page-register">
-
-    <!-- Back link -->
-    <div class="back-link">
-      <div class="back-arrow"></div>
-      <div class="back-text"></div>
-    </div>
-
-    <!-- Header -->
-    <div class="reg-header">
-      <div class="reg-logo"></div>
-      <div class="reg-badge"></div>
-      <div class="reg-title"></div>
-      <div class="reg-sub"></div>
-    </div>
-
-    <!-- ── Company Information ── -->
-    <div class="form-card">
-      <div class="section-head" style="width:160px"></div>
-
-      <!-- Client ID + Full Name -->
-      <div class="row-2" style="margin-bottom:12px">
-        <div class="field" style="margin-bottom:0">
-          <div class="field-label" style="width:55%"></div>
-          <div class="field-input"></div>
-        </div>
-        <div class="field" style="margin-bottom:0">
-          <div class="field-label" style="width:60%"></div>
-          <div class="field-input"></div>
-        </div>
-      </div>
-
-      <!-- Company Name + Contact 1 + Contact 2 -->
-      <div class="row-3" style="margin-bottom:12px">
-        <div class="field" style="margin-bottom:0">
-          <div class="field-label" style="width:75%"></div>
-          <div class="field-input"></div>
-        </div>
-        <div class="field" style="margin-bottom:0">
-          <div class="field-label" style="width:65%"></div>
-          <div class="field-input"></div>
-        </div>
-        <div class="field" style="margin-bottom:0">
-          <div class="field-label" style="width:60%"></div>
-          <div class="field-input"></div>
-        </div>
-      </div>
-
-      <!-- Email + Address -->
-      <div class="row-2" style="margin-bottom:12px">
-        <div class="field" style="margin-bottom:0">
-          <div class="field-label" style="width:45%"></div>
-          <div class="field-input"></div>
-        </div>
-        <div class="field" style="margin-bottom:0">
-          <div class="field-label" style="width:55%"></div>
-          <div class="field-textarea"></div>
-        </div>
-      </div>
-
-      <!-- Company Website + Industry Type -->
-      <div class="row-2">
-        <div class="field" style="margin-bottom:0">
-          <div class="field-label" style="width:70%"></div>
-          <div class="field-input"></div>
-        </div>
-        <div class="field" style="margin-bottom:0">
-          <div class="field-label" style="width:65%"></div>
-          <div class="field-select"><div class="chevron"></div></div>
-        </div>
       </div>
     </div>
 
-    <!-- ── Subscription & Billing ── -->
-    <div class="form-card">
-      <div class="section-head" style="width:190px"></div>
-
-      <!-- Plan + Currency + Billable Status -->
-      <div class="row-split" style="margin-bottom:12px; align-items:end">
-        <div class="field" style="margin-bottom:0">
-          <div class="field-label" style="width:80%"></div>
-          <div class="field-select"><div class="chevron"></div></div>
-        </div>
-        <div class="field" style="margin-bottom:0">
-          <div class="field-label" style="width:80%"></div>
-          <div class="field-select"><div class="chevron"></div></div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:5px">
-          <div class="field-label" style="width:70%"></div>
-          <div class="toggle">
-            <div class="toggle-track"><div class="toggle-thumb"></div></div>
-            <div class="toggle-label"></div>
+    <!-- Employee: Timesheet -->
+    <div class="page" id="page-timesheet">
+      <div class="app">
+        <aside class="side" data-side="employee" data-on="1"></aside>
+        <div class="main">
+          <div class="topstrip"><span class="q"></span><span class="pill" style="width:56px;height:22px"></span></div>
+          <div class="body">
+            <div class="head"><div class="col" style="flex:1"><div class="bar dark h16 w25"></div><div class="bar w40"></div></div><span class="pill" style="width:86px"></span></div>
+            <div class="card col" style="gap:10px">
+              <div class="bar w25"></div>
+              <div class="entry spread"><div class="col" style="flex:1"><div class="bar w50"></div><div class="bar lite w30"></div></div><div class="col" style="width:110px;align-items:flex-end"><div class="bar w60 dark"></div><div class="bar lite w100"></div></div></div>
+              <div class="entry spread"><div class="col" style="flex:1"><div class="bar w40"></div><div class="bar lite w25"></div></div><div class="col" style="width:110px;align-items:flex-end"><div class="bar w60 dark"></div><div class="bar lite w100"></div></div></div>
+            </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Budget + Hourly Rate -->
-      <div class="row-2">
-        <div class="field" style="margin-bottom:0">
-          <div class="field-label" style="width:75%"></div>
-          <div class="field-input"></div>
-        </div>
-        <div class="field" style="margin-bottom:0">
-          <div class="field-label" style="width:65%"></div>
-          <div class="field-input"></div>
+    <!-- Employee: Skills -->
+    <div class="page" id="page-skills">
+      <div class="app">
+        <aside class="side" data-side="employee" data-on="2"></aside>
+        <div class="main">
+          <div class="topstrip"><span class="q"></span><span class="pill" style="width:56px;height:22px"></span></div>
+          <div class="body">
+            <div class="col"><div class="bar dark h16 w20"></div><div class="bar w40"></div></div>
+            <div class="card col" style="gap:8px">
+              <div class="bar w20" style="margin-bottom:2px"></div>
+              <div class="entry spread" style="padding:9px 12px"><div class="bar w30"></div><span class="chip dark"></span></div>
+              <div class="entry spread" style="padding:9px 12px"><div class="bar w35"></div><span class="chip"></span></div>
+              <div class="entry spread" style="padding:9px 12px"><div class="bar w25"></div><span class="chip dark"></span></div>
+              <div class="entry spread" style="padding:9px 12px"><div class="bar w20"></div><span class="chip"></span></div>
+              <div class="entry spread" style="padding:9px 12px"><div class="bar w20"></div><span class="chip"></span></div>
+              <div class="bar dark w20" style="margin-top:8px"></div>
+              <div class="row" style="align-items:flex-end">
+                <div class="field" style="flex:2"><div class="bar w20"></div><div class="input"></div></div>
+                <div class="field" style="flex:1"><div class="bar w25"></div><div class="select"><span class="chev"></span></div></div>
+                <span class="pill" style="width:74px;height:28px"></span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- ── Portal Access ── -->
-    <div class="form-card">
-      <div class="section-head" style="width:120px"></div>
-
-      <!-- Portal Access toggle + Portal Password -->
-      <div class="row-2" style="margin-bottom:12px; align-items:start">
-        <div>
-          <div class="field-label" style="width:65%; margin-bottom:6px"></div>
-          <div class="toggle">
-            <div class="toggle-track"><div class="toggle-thumb"></div></div>
-            <div class="toggle-label"></div>
+    <!-- Admin: Dashboard -->
+    <div class="page" id="page-admin-home">
+      <div class="app">
+        <aside class="side" data-side="admin" data-on="0"></aside>
+        <div class="main">
+          <div class="topstrip"><span class="q"></span><div class="row"><span class="bar" style="width:48px"></span><span class="pill" style="width:56px;height:22px"></span></div></div>
+          <div class="body">
+            <div class="col"><div class="bar lite w20"></div><div class="bar dark h16 w35"></div><div class="bar w30"></div></div>
+            <div class="grid g4">
+              <div class="card col"><div class="bar w60"></div><div class="bar dark h16 w20"></div></div>
+              <div class="card col"><div class="bar w50"></div><div class="bar dark h16 w20"></div></div>
+              <div class="card col"><div class="bar w70"></div><div class="bar dark h16 w35"></div></div>
+              <div class="card col"><div class="bar w60"></div><div class="bar dark h16 w20"></div></div>
+            </div>
+            <div class="grid g3">
+              <div class="card col" style="gap:8px"><div class="bar w40"></div>
+                <div class="entry row" style="padding:7px 9px;background:#fff;border:1.5px solid #e6e6e6"><span class="avatar" style="width:14px;height:14px"></span><div class="bar w40"></div></div>
+                <div class="entry row" style="padding:7px 9px;background:#fff;border:1.5px solid #e6e6e6"><span class="avatar" style="width:14px;height:14px"></span><div class="bar w40"></div></div>
+                <div class="entry row" style="padding:7px 9px;background:#fff;border:1.5px solid #e6e6e6"><span class="avatar" style="width:14px;height:14px"></span><div class="bar w30"></div></div>
+                <div class="entry row" style="padding:7px 9px;background:#fff;border:1.5px solid #e6e6e6"><span class="avatar" style="width:14px;height:14px"></span><div class="bar w30"></div></div>
+              </div>
+              <div class="card col" style="gap:9px"><div class="bar w40"></div>
+                <div class="col"><div class="bar w80"></div><div class="bar lite w30"></div></div>
+                <div class="col"><div class="bar w70"></div><div class="bar lite w25"></div></div>
+                <div class="col"><div class="bar w80"></div><div class="bar lite w30"></div></div>
+                <div class="col"><div class="bar w60"></div><div class="bar lite w25"></div></div>
+              </div>
+              <div class="card col" style="gap:10px"><div class="spread"><div class="bar w30"></div><div class="bar lite w20"></div></div>
+                <div class="spread"><div class="bar w50"></div><span class="chip"></span></div>
+                <div class="spread"><div class="bar w40"></div><span class="chip"></span></div>
+                <div class="spread"><div class="bar w60"></div><span class="chip dark"></span></div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="field" style="margin-bottom:0">
-          <div class="field-label" style="width:70%"></div>
-          <div class="field-input"></div>
-        </div>
-      </div>
-
-      <!-- Active Status -->
-      <div style="margin-bottom:16px">
-        <div class="field-label" style="width:55%; margin-bottom:6px"></div>
-        <div class="toggle">
-          <div class="toggle-track"><div class="toggle-thumb"></div></div>
-          <div class="toggle-label"></div>
-        </div>
-      </div>
-
-      <!-- Softwares + Machines -->
-      <div class="row-2">
-        <div>
-          <div class="add-header">
-            <div class="add-label"></div>
-            <div class="add-btn"></div>
-          </div>
-          <div class="field-select"><div class="chevron"></div></div>
-        </div>
-        <div>
-          <div class="add-header">
-            <div class="add-label"></div>
-            <div class="add-btn"></div>
-          </div>
-          <div class="field-select"><div class="chevron"></div></div>
         </div>
       </div>
     </div>
 
-    <!-- Action buttons -->
-    <div class="action-row">
-      <div class="btn-cancel"></div>
-      <div class="btn-submit"></div>
+    <!-- Admin: Clients -->
+    <div class="page" id="page-clients">
+      <div class="app">
+        <aside class="side" data-side="admin" data-on="2"></aside>
+        <div class="main">
+          <div class="topstrip"><span class="q"></span><div class="row"><span class="bar" style="width:48px"></span><span class="pill" style="width:56px;height:22px"></span></div></div>
+          <div class="body">
+            <div class="head"><div class="bar dark h16 w20"></div><div class="row"><span class="chip"></span><span class="pill" style="width:84px"></span></div></div>
+            <div class="card col" style="gap:12px">
+              <div class="tabline"><span class="on"></span><span></span><span></span></div>
+              <div class="spread"><span></span><div class="input" style="width:190px"></div></div>
+              <div class="table" data-rows="3" data-cols="60px 1.4fr 1fr 2fr 50px 92px"></div>
+              <div class="spread"><span class="pill outline" style="width:22px;height:20px"></span><div class="bar lite w30"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin: Client profile -->
+    <div class="page" id="page-client">
+      <div class="app">
+        <aside class="side" data-side="admin" data-on="2"></aside>
+        <div class="main">
+          <div class="topstrip"><span class="q"></span><div class="row"><span class="bar" style="width:48px"></span><span class="pill" style="width:56px;height:22px"></span></div></div>
+          <div class="body">
+            <div class="head"><div class="col" style="flex:1"><div class="bar dark h16 w30"></div><div class="bar lite w20"></div></div><span class="chip"></span></div>
+            <div class="card col" style="gap:12px">
+              <div class="bar w20"></div>
+              <div class="seg"><span class="on"></span><span></span><span></span></div>
+              <div class="col" style="gap:0" data-kv="6"></div>
+              <span class="pill outline" style="width:96px;height:24px"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin: Roles -->
+    <div class="page" id="page-roles">
+      <div class="app">
+        <aside class="side" data-side="admin" data-on="10"></aside>
+        <div class="main">
+          <div class="topstrip"><span class="q"></span><div class="row"><span class="bar" style="width:48px"></span><span class="pill" style="width:56px;height:22px"></span></div></div>
+          <div class="body">
+            <div class="head"><div class="bar dark h16 w20"></div><span class="pill" style="width:80px"></span></div>
+            <div class="card col" style="gap:12px">
+              <div class="tabline"><span class="on"></span><span></span><span></span></div>
+              <div class="spread"><span></span><div class="input" style="width:170px"></div></div>
+              <div class="table" data-rows="3" data-cols="1fr 2fr 60px 80px 52px" data-roles="1"></div>
+              <div class="spread"><span class="pill outline" style="width:22px;height:20px"></span><div class="bar lite w30"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin: Add role -->
+    <div class="page" id="page-add-role">
+      <div class="app">
+        <aside class="side" data-side="admin" data-on="10"></aside>
+        <div class="main">
+          <div class="topstrip"><span class="q"></span><div class="row"><span class="bar" style="width:48px"></span><span class="pill" style="width:56px;height:22px"></span></div></div>
+          <div class="body">
+            <div class="head"><div class="col" style="flex:1"><div class="bar dark h16 w20"></div><div class="bar w40"></div></div><span class="chip"></span></div>
+            <div class="card col" style="gap:10px">
+              <div class="bar w20"></div>
+              <div class="field" style="width:50%"><div class="bar w30"></div><div class="input"></div></div>
+              <div class="field"><div class="bar w20"></div><div class="textarea"></div></div>
+              <div class="bar dark w20" style="margin-top:4px"></div>
+              <div class="col" style="gap:5px" data-modules="Organization,on;Manage Clients,on;Manage Roles,;Manage Teams,;Manage Projects,on"></div>
+              <div class="row" style="justify-content:flex-end;border-top:1.5px solid #eee;padding-top:10px"><span class="pill outline" style="width:66px"></span><span class="pill" style="width:86px"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
-
 </div>
 
 <script>
+  // Fill in the repeated pieces: sidebars, table rows, key-value rows,
+  // and module toggles.
+  const SIDES = {
+    employee: [["Home"], ["Timesheet"], ["Skills"], ["Profile"]],
+    admin: [
+      ["Home"], ["label"], ["Organization"], ["Clients"], ["Projects"], ["Activities"],
+      ["Skills"], ["Time Tracking"], ["Reports"], ["label"], ["Employees"], ["Teams"], ["Roles"],
+    ],
+  };
+  const ADMIN_ON = { 0: 0, 2: 3, 10: 12 };
+  document.querySelectorAll(".side").forEach((side) => {
+    const kind = side.dataset.side;
+    const on = Number(side.dataset.on);
+    const onIndex = kind === "admin" ? ADMIN_ON[on] : on;
+    let html = '<div class="logo"></div><div class="search"></div>';
+    if (kind === "employee") html += '<div class="label"></div>';
+    SIDES[kind].forEach((item, i) => {
+      if (item[0] === "label") { html += '<div class="label"></div>'; return; }
+      const w = 30 + ((item[0].length * 7) % 45);
+      html += `<div class="nav${i === onIndex ? " on" : ""}"><i></i><b style="width:${w}%"></b></div>`;
+    });
+    html += '<div class="spacer"></div><div class="help"><div class="bar w60"></div><div class="bar lite w80"></div><span class="pill" style="height:18px"></span></div>';
+    side.innerHTML = html;
+  });
+
+  document.querySelectorAll(".table").forEach((t) => {
+    const cols = t.dataset.cols;
+    const n = Number(t.dataset.rows);
+    const roles = !!t.dataset.roles;
+    const widths = cols.split(" ");
+    let html = `<div class="tr th" style="grid-template-columns:${cols}">` +
+      widths.map(() => '<div class="bar lite w60"></div>').join("") + "</div>";
+    for (let r = 0; r < n; r++) {
+      html += `<div class="tr" style="grid-template-columns:${cols}">`;
+      widths.forEach((_, c) => {
+        if (!roles && c === widths.length - 2) html += `<span class="toggle${r < 2 ? " on" : ""}"></span>`;
+        else if (!roles && c === widths.length - 1) html += '<div class="row"><span class="pill outline" style="width:38px;height:20px"></span><span class="pill" style="width:42px;height:20px"></span></div>';
+        else if (roles && (c === 2 || c === 3)) html += '<span class="chip" style="width:24px"></span>';
+        else if (roles && c === widths.length - 1) html += '<span class="pill" style="width:40px;height:20px"></span>';
+        else html += `<div class="bar w${[60, 80, 70, 50][(r + c) % 4]}"></div>`;
+      });
+      html += "</div>";
+    }
+    t.innerHTML = html;
+  });
+
+  document.querySelectorAll("[data-kv]").forEach((el) => {
+    let html = "";
+    for (let i = 0; i < Number(el.dataset.kv); i++) {
+      html += `<div class="spread" style="padding:9px 0;border-bottom:1.5px solid #eee"><div class="bar w20"></div><div class="bar" style="width:${[40, 30, 50, 35, 45, 60][i]}%;margin-right:auto;margin-left:60px"></div></div>`;
+    }
+    el.innerHTML = html;
+  });
+
+  document.querySelectorAll("[data-modules]").forEach((el) => {
+    el.innerHTML = el.dataset.modules.split(";").map((m) => {
+      const on = m.split(",")[1] === "on";
+      return `<div class="entry spread" style="padding:7px 12px"><div class="bar w25"></div><span class="toggle${on ? " on" : ""}"></span></div>`;
+    }).join("");
+  });
+
   function showTab(name, btn) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));

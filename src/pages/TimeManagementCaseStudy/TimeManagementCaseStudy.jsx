@@ -207,8 +207,8 @@ const TimeManagementCaseStudy = () => {
         <CsPanel title="Lo-fi wireframes" wide>
           <CsEmbed
             src="/work/time-management/wireframe-lofi-prototypes.html"
-            title="Lo-Fi Wireframes, Time Management"
-            height="1130px"
+            title="Lo-Fi Wireframes, Summer"
+            height="700px"
           />
         </CsPanel>
 
