@@ -18,6 +18,7 @@ import {
   CsEmbed,
   CsSeeNext,
 } from "../../components/CsKit/CsKit";
+import "./SummerTypography.css";
 
 // From the app's design tokens (time-manager src/styles/colors.css).
 const SWATCHES = [
@@ -369,15 +370,40 @@ const TimeManagementCaseStudy = () => {
 
         <CsH3>Typography</CsH3>
         <CsText>
-          I used San Serif for this web application for its easy to understand,
-          approachable design that aligns with the application&apos;s clean and
-          emerging aesthetic.
+          I paired two sans serifs. Avant Gothic carries the big headlines and
+          the wordmark, and Inter handles everything in the interface, from
+          labels and buttons to tables. Both are easy to read and
+          approachable, which suits the app&apos;s clean, minimal look.
         </CsText>
         <CsPanel title="Type specimen">
-          <CsImg
-            src="/work/time-management/frame-156.png"
-            alt="Time Management Typography"
-          />
+          <div className="summer-type">
+            <div className="summer-type-row">
+              <div className="summer-type-aa summer-type--display" aria-hidden="true">
+                Aa
+              </div>
+              <div>
+                <p className="summer-type-name">Avant Gothic, Medium</p>
+                <p className="summer-type-use">Headlines and the wordmark</p>
+                <p className="summer-type-sample summer-type--display">
+                  Manage Projects Smarter
+                </p>
+              </div>
+            </div>
+            <div className="summer-type-row">
+              <div className="summer-type-aa summer-type--ui" aria-hidden="true">
+                Aa
+              </div>
+              <div>
+                <p className="summer-type-name">Inter, 400 to 700</p>
+                <p className="summer-type-use">
+                  Labels, buttons, and tables across the app
+                </p>
+                <p className="summer-type-sample summer-type--ui">
+                  Timesheet&nbsp;&nbsp;·&nbsp;&nbsp;Start Timer&nbsp;&nbsp;·&nbsp;&nbsp;02:14:37
+                </p>
+              </div>
+            </div>
+          </div>
         </CsPanel>
       </CsSection>
 

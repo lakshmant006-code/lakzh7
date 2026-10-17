@@ -1,0 +1,71 @@
+/* Summer's own typefaces, used only for the type specimen on this page. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap");
+
+@font-face {
+  font-family: "Summer Avant Gothic";
+  src: url("/work/time-management/app/avant-gothic.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+.summer-type {
+  display: grid;
+  gap: 0;
+}
+.summer-type-row {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 20px;
+  align-items: center;
+  padding: 22px 20px;
+  border-bottom: 1px solid var(--cs-line);
+}
+.summer-type-row:last-child {
+  border-bottom: 0;
+}
+.summer-type-aa {
+  font-size: 64px;
+  line-height: 1;
+  color: #212d5c;
+}
+.summer-type--display {
+  font-family: "Summer Avant Gothic", "Inter", sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.summer-type--ui {
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 600;
+}
+.summer-type-name {
+  font: 500 0.95rem/1.4 var(--cs-sans);
+  color: var(--cs-ink);
+  margin: 0;
+}
+.summer-type-use {
+  font: 400 0.85rem/1.4 var(--cs-sans);
+  color: var(--cs-muted);
+  margin: 2px 0 10px;
+}
+.summer-type-sample {
+  margin: 0;
+  color: #000000;
+  font-size: 1.6rem;
+  line-height: 1.15;
+}
+.summer-type-sample.summer-type--ui {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #374151;
+}
+
+@media (max-width: 640px) {
+  .summer-type-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .summer-type-aa {
+    font-size: 48px;
+  }
+}
