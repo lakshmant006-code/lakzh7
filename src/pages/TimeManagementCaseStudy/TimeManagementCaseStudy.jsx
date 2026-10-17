@@ -242,20 +242,23 @@ const TimeManagementCaseStudy = () => {
         </CsText>
 
         <div id="time-management-solutions">
-          <CsH3>Solution #1: Centralized Organization &amp; User Management</CsH3>
+          <CsH3>Solution #1: Centralized Client Management</CsH3>
           <CsCallout>
-            Organization details and the full team roster live in{" "}
-            <span className="cs-accent">one admin view</span>.
+            Every client, their projects, and their invoices live in{" "}
+            <span className="cs-accent">one place</span>.
           </CsCallout>
-          <CsPanel title="Organization and user management">
-            <CsVideo src="/work/time-management/organization-user-management.mp4" />
+          <CsPanel title="Clients">
+            <CsVideo
+              src={`${APP}/sol-clients.mp4`}
+              label="Searching the client list and opening a client's contact, projects, and invoices"
+            />
           </CsPanel>
           <CsText>
-            Admins can edit organization details and manage the entire user
-            roster from one screen, with the table{" "}
-            <strong>updating live</strong> as records change. This pulled what
-            used to be scattered admin tasks into the single application the
-            client asked for, saving time on everyday account management.
+            Admins search the client list and open any client to see their
+            contact details, the projects underway with hours logged, and
+            invoices with what is <strong>paid or still outstanding</strong>.
+            This pulled what used to be scattered admin tasks into the single
+            application the client asked for.
           </CsText>
 
           <CsH3>Solution #2: Employee Skill Tracking</CsH3>
@@ -263,16 +266,56 @@ const TimeManagementCaseStudy = () => {
             Every employee profile tracks{" "}
             <span className="cs-accent">real skills and proficiency</span>.
           </CsCallout>
-          <CsPanel title="Employee skill tracking">
-            <CsVideo src="/work/time-management/employee-skill-tracking.mp4" />
+          <CsPanel title="Skills">
+            <CsVideo
+              src={`${APP}/sol-skills.mp4`}
+              label="An employee adding Revit MEP as an Expert level skill"
+            />
           </CsPanel>
           <CsText>
-            Every user profile includes a Skills section where admins can add a
-            skill and set a proficiency level, alongside address and employment
-            details in the same form. This was one of the more interesting
-            ideas to come out of ideation:{" "}
+            Employees add a skill and set their level, from Beginner to
+            Certified, right on their Skills page, alongside the skills they
+            already hold. This was one of the more interesting ideas to come
+            out of ideation:{" "}
             <strong>giving employees a clear view of where they stood</strong>{" "}
             so they could focus on what they were actually lacking.
+          </CsText>
+
+          <CsH3>Solution #3: Roles and Module Access</CsH3>
+          <CsCallout>
+            Admins decide exactly{" "}
+            <span className="cs-accent">who can see what</span>.
+          </CsCallout>
+          <CsPanel title="Roles and access">
+            <CsVideo
+              src={`${APP}/sol-roles.mp4`}
+              label="Viewing a role's permissions, then creating a Project Manager role and switching on its modules"
+            />
+          </CsPanel>
+          <CsText>
+            Each role lists its permissions and the people assigned to it.
+            Creating a role means naming it and{" "}
+            <strong>switching on only the modules it needs</strong>, from
+            clients and projects to time tracking, so access stays deliberate
+            as the team grows.
+          </CsText>
+
+          <CsH3>Solution #4: One Tap Time Tracking</CsH3>
+          <CsCallout>
+            Clocking in takes{" "}
+            <span className="cs-accent">one tap</span>.
+          </CsCallout>
+          <CsPanel title="Time tracking">
+            <CsVideo
+              src={`${APP}/sol-timer.mp4`}
+              label="Starting a timer on a client project and activity, then stopping it"
+            />
+          </CsPanel>
+          <CsText>
+            Employees pick the client, project, and activity, start the timer,
+            and stop it when they are done, and the entry lands in their
+            timesheet. Keeping it this quick is what{" "}
+            <strong>made logging stick</strong> across a team of 50+ people.
           </CsText>
         </div>
       </CsSection>
