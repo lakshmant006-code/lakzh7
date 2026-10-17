@@ -26,12 +26,21 @@ const SWATCHES = [
   { hex: "#D9D9D9", label: "SECONDARY" },
 ];
 
-const HIFI_SCREENS = [
-  { src: "/work/time-management/final-login.png", alt: "High-fidelity Login screen" },
-  { src: "/work/time-management/final-client-registration.png", alt: "High-fidelity Register New Client screen" },
-  { src: "/work/time-management/final-admin-client-registration.png", alt: "High-fidelity Register New Client screen, admin variant" },
-  { src: "/work/time-management/final-user-dashboard.png", alt: "High-fidelity User Dashboard screen" },
-  { src: "/work/time-management/final-admin-dashboard.png", alt: "High-fidelity Admin Dashboard screen" },
+// Screens captured from the shipped app (the time-manager repo).
+const APP = "/work/time-management/app";
+const EMPLOYEE_SCREENS = [
+  { src: `${APP}/login.webp`, label: "Sign in as Employee or Admin" },
+  { src: `${APP}/emp-dashboard.webp`, label: "Employee home" },
+  { src: `${APP}/emp-timesheet.webp`, label: "Timesheet" },
+  { src: `${APP}/emp-skills.webp`, label: "Skills and certifications" },
+];
+const ADMIN_SCREENS = [
+  { src: `${APP}/admin-dashboard.webp`, label: "Admin dashboard" },
+  { src: `${APP}/clients.webp`, label: "Clients" },
+  { src: `${APP}/client-profile.webp`, label: "Client profile" },
+  { src: `${APP}/client-new.webp`, label: "Add client" },
+  { src: `${APP}/roles.webp`, label: "Roles" },
+  { src: `${APP}/role-new.webp`, label: "Add role and module access" },
 ];
 
 const TimeManagementCaseStudy = () => {
@@ -41,19 +50,12 @@ const TimeManagementCaseStudy = () => {
     <CsPage project="time-management" accent="#1A56DB" tint="#E8EEFC">
       <CsBreadcrumb current="Summer" />
       <CsHero>
-        <picture>
-          <source
-            type="image/webp"
-            srcSet="/work/time-management/iMac_Mockup_3-640.webp 640w, /work/time-management/iMac_Mockup_3-1024.webp 1024w, /work/time-management/iMac_Mockup_3-1600.webp 1600w"
-            sizes="(min-width: 1104px) 1040px, 100vw"
-          />
-          <img
-            src="/work/time-management/iMac_Mockup_3-1024.jpg"
-            alt="Time Management"
-            loading="eager"
-            decoding="async"
-          />
-        </picture>
+        <img
+          src={`${APP}/landing.webp`}
+          alt="Summer landing page: Manage projects smarter and track time efficiently"
+          loading="eager"
+          decoding="async"
+        />
       </CsHero>
 
       <CsIntro
@@ -95,7 +97,10 @@ const TimeManagementCaseStudy = () => {
           opens.
         </CsText>
         <CsPanel title="The finished product">
-          <CsImg src="/work/time-management/hero.png" alt="Time Management" />
+          <CsImg
+            src={`${APP}/admin-dashboard.webp`}
+            alt="Summer admin dashboard with active clients, open projects, and team activity"
+          />
         </CsPanel>
         <CsH3>User Research</CsH3>
         <CsText>
@@ -204,23 +209,36 @@ const TimeManagementCaseStudy = () => {
         </CsPanel>
 
         <CsH3>High Fidelity Prototypes</CsH3>
-        <CsPanel title="Login, client registration, and dashboards">
-          <div className="cs-panel-stack">
-            {HIFI_SCREENS.map((screen) => (
-              <CsImg key={screen.src} src={screen.src} alt={screen.alt} />
+        <CsPanel title="Employee area" wide>
+          <div className="cs-shot-grid">
+            {EMPLOYEE_SCREENS.map((screen) => (
+              <figure key={screen.src} className="cs-shot">
+                <CsImg src={screen.src} alt={`Summer ${screen.label} screen`} />
+                <figcaption>{screen.label}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </CsPanel>
+        <CsPanel title="Admin area" wide>
+          <div className="cs-shot-grid">
+            {ADMIN_SCREENS.map((screen) => (
+              <figure key={screen.src} className="cs-shot">
+                <CsImg src={screen.src} alt={`Summer ${screen.label} screen`} />
+                <figcaption>{screen.label}</figcaption>
+              </figure>
             ))}
           </div>
         </CsPanel>
         <CsText>
-          These high fidelity screens show the final, coded product: a branded
-          login gate, two variations of the Register New Client form that
-          capture company details, billing, and portal access, and role
-          specific dashboards for Users and Admins. The User Dashboard surfaces
-          day to day tools like client and project registration, while the
-          Admin Dashboard streamlines navigation down to Clients, Time
-          Tracking, and Settings for higher-level oversight. Together they
-          reflect the clean, minimal visual language defined earlier in the
-          style guide, carried through from wireframe to working interface.
+          These are the screens from the coded product. Sign in splits into two
+          workflows. Employees get a flat, three screen area with no sidebar:
+          a timesheet with a start and stop timer, their skills and
+          certifications, and their profile. Admins get a sidebar dashboard
+          for running the business: a searchable client list with a profile
+          for each client (contact, projects, and invoices), an add client
+          flow, and roles with a per module access checklist. Together they
+          carry the clean, minimal visual language from wireframe to working
+          interface.
         </CsText>
 
         <div id="time-management-solutions">
