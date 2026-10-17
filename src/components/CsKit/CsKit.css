@@ -462,3 +462,57 @@
     padding: 12px;
   }
 }
+
+/* Section menu, fixed to the left of the reading column */
+.cs-sidenav {
+  display: none;
+}
+@media (min-width: 1180px) {
+  .cs-sidenav {
+    display: block;
+    position: fixed;
+    top: 112px;
+    left: max(24px, calc(50% - var(--cs-col) / 2 - 220px));
+    width: 180px;
+    z-index: 20;
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .cs-sidenav.is-shown {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+  .cs-sidenav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-left: 1px solid var(--cs-line);
+  }
+  .cs-sidenav a {
+    display: block;
+    margin-left: -1px;
+    padding: 6px 0 6px 14px;
+    border-left: 2px solid transparent;
+    font: 400 0.9rem/1.35 var(--cs-sans);
+    color: var(--cs-faint);
+    text-decoration: none;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .cs-sidenav a:hover {
+    color: var(--cs-ink);
+  }
+  .cs-sidenav a.is-active {
+    color: var(--cs-ink);
+    border-left-color: var(--cs-accent);
+  }
+  .cs-sidenav a:focus-visible {
+    outline: 2px solid var(--cs-ink);
+    outline-offset: 2px;
+  }
+}

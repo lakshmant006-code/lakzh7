@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { revealOnScroll } from "../../utils/revealOnScroll";
+import { useLenisScroll } from "../../hooks/useLenisScroll";
 import LazyVideo from "../LazyVideo/LazyVideo";
 import CursorPill from "../CursorPill/CursorPill";
 import Footer from "../Footer/Footer";
@@ -28,9 +29,82 @@ export function CsPage({ project, accent, tint, children }) {
       className={`cs-page cs-page--${project}`}
       style={{ "--cs-accent": accent, "--cs-tint": tint }}
     >
+      <CsSideNav />
       <main className="cs-main">{children}</main>
       <Footer />
     </div>
+  );
+}
+
+/*
+ * Section menu fixed beside the reading column. It reads the page's labeled
+ * sections, highlights the one in view, and scrolls to a section on click.
+ * Shown once the hero has scrolled away, on screens wide enough to fit it.
+ */
+const NAV_OFFSET = 96;
+
+function CsSideNav() {
+  const [sections, setSections] = useState([]);
+  const [active, setActive] = useState(null);
+  const [shown, setShown] = useState(false);
+  const { scrollToElement } = useLenisScroll();
+
+  useEffect(() => {
+    const els = [...document.querySelectorAll(".cs-main .cs-section[data-nav-label][id]")];
+    setSections(els.map((el) => ({ id: el.id, label: el.dataset.navLabel })));
+
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const intro = document.querySelector(".cs-main .cs-intro");
+      setShown(intro ? intro.getBoundingClientRect().top < NAV_OFFSET : true);
+      // Active = last section whose top has passed a line a third down the screen.
+      const line = window.innerHeight * 0.33;
+      let current = els[0]?.id ?? null;
+      for (const el of els) {
+        if (el.getBoundingClientRect().top <= line) current = el.id;
+      }
+      setActive(current);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  if (!sections.length) return null;
+
+  return (
+    <nav
+      className={`cs-sidenav${shown ? " is-shown" : ""}`}
+      aria-label="Case study sections"
+    >
+      <ul>
+        {sections.map((section) => (
+          <li key={section.id}>
+            <a
+              href={`#${section.id}`}
+              className={section.id === active ? "is-active" : undefined}
+              aria-current={section.id === active ? "true" : undefined}
+              onClick={(e) => {
+                e.preventDefault();
+                const el = document.getElementById(section.id);
+                if (el) scrollToElement(el, { offset: -NAV_OFFSET + 24, duration: 1.1 });
+              }}
+            >
+              {section.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 }
 
@@ -76,9 +150,16 @@ export function CsIntro({ title, lead, meta = [] }) {
   );
 }
 
+const slug = (text) =>
+  String(text).toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
 export function CsSection({ id, label, title, children }) {
   return (
-    <section id={id} className="cs-section cs-col">
+    <section
+      id={id || (label ? `cs-${slug(label)}` : undefined)}
+      className="cs-section cs-col"
+      data-nav-label={label || undefined}
+    >
       {label ? <p className="cs-label">{label}</p> : null}
       {title ? (
         <Reveal as="h2" className="cs-h2">
@@ -240,7 +321,7 @@ export function CsEmbed({ src, title, height }) {
 export function CsSeeNext({ id, items }) {
   const [hovering, setHovering] = useState(false);
   return (
-    <section id={id} className="cs-section cs-col cs-next">
+    <section id={id} className="cs-section cs-col cs-next" data-nav-label="See next">
       <CursorPill isHovering={hovering} text="View case study" />
       <p className="cs-label">See next</p>
       <div className="cs-next-grid">
