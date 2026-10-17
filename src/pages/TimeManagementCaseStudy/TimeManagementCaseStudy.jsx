@@ -19,11 +19,14 @@ import {
   CsSeeNext,
 } from "../../components/CsKit/CsKit";
 
+// From the app's design tokens (time-manager src/styles/colors.css).
 const SWATCHES = [
-  { hex: "#1A56DB", label: "PRIMARY" },
-  { hex: "#FFFFFF", label: "PRIMARY" },
-  { hex: "#000000", label: "SECONDARY" },
-  { hex: "#D9D9D9", label: "SECONDARY" },
+  { hex: "#1900FF", label: "BRAND BLUE" },
+  { hex: "#212D5C", label: "BRAND NAVY" },
+  { hex: "#000000", label: "INK" },
+  { hex: "#FFFFFF", label: "WHITE" },
+  { hex: "#F8F9FA", label: "APP SURFACE" },
+  { hex: "#6B7280", label: "SECONDARY TEXT" },
 ];
 
 // Screens captured from the shipped app (the time-manager repo).
@@ -344,9 +347,10 @@ const TimeManagementCaseStudy = () => {
 
         <CsH3>Color Palette</CsH3>
         <CsText>
-          This project adopted a minimalistic visual style, using primary blue
-          and white to build the brand and also convey trust. I also followed
-          the 60-30-10 rule to maintain a better visual balance.
+          This project adopted a minimalistic visual style: an electric brand
+          blue and a deep navy against black and white to build the brand and
+          convey trust, with a soft gray surface behind the app. I also
+          followed the 60-30-10 rule to maintain a better visual balance.
         </CsText>
         <CsPanel title="Palette">
           <div className="cs-swatches">
