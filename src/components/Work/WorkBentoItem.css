@@ -78,11 +78,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
+  gap: 6px;
   height: 34px;
-  padding: 0;
+  padding: 0 14px;
   border: none;
   border-radius: 999px;
+  font-family: "Satoshi", sans-serif;
+  font-size: 0.9rem;
+  white-space: nowrap;
   background: rgba(255, 255, 255, 0.92);
   color: #1a1a1a;
   cursor: pointer;
@@ -104,6 +107,25 @@
 .work-bento-live-link:focus-visible {
   outline: 2px solid #ffffff;
   outline-offset: 2px;
+}
+
+/* "Visit <site>" appears when the card is hovered (or the button focused);
+   on touch screens it is always shown. */
+@media (hover: hover) {
+  .work-bento-live-link {
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      background 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  .work-bento-item:hover .work-bento-live-link,
+  .work-bento-live-link:focus-visible {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* Case study view: thumbnail gets more height than text section */

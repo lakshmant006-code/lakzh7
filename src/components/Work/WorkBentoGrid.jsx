@@ -163,13 +163,16 @@ function WorkCard({
         <button
           type="button"
           className="work-bento-live-link"
-          aria-label={`Open the ${project.title} live site in a new tab`}
+          aria-label={`Visit the ${project.title.split(":")[0]} website (opens in a new tab)`}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             window.open(project.liveUrl, "_blank", "noopener,noreferrer");
           }}
         >
+          <span className="work-bento-live-link-text">
+            Visit {project.title.split(":")[0]}
+          </span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path
               d="M7 17L17 7M17 7H9M17 7V15"
