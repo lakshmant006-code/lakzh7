@@ -48,6 +48,19 @@ const workProjects = [
     thumbnailImage: "/work/time-management/summer-launch-frame.jpg",
     category: "case-study",
   },
+  {
+    id: "promove-svsd-hackathon",
+    title: "pro-move by Procreate: A Motion Capture Concept",
+    role: "SVSD Design Competition",
+    tags: ["SVSD Hackathon", "Interaction Design", "AI Prototyping"],
+    summary:
+      "Drawings sit still until you animate them frame by frame. pro-move lets you perform on camera and your character copies your body and face, all on the device.",
+    shortSummary: "Perform on camera — your drawing moves with you.",
+    video: "/projects/promove/promove.mp4",
+    thumbnailImage: "/projects/promove/poster.jpg",
+    category: "hackathon",
+    wide: true,
+  },
 ];
 
 const routeMap = {
@@ -118,9 +131,10 @@ function WorkCard({
     };
   }, [videoSource, useThumbnailImage]);
 
-  const cardClassName = compactLayout
+  const wideClass = project.wide ? " work-bento-item--wide" : "";
+  const cardClassName = (compactLayout
     ? "work-bento-item group relative work-bento-item--compact case-study-card block no-underline text-inherit cursor-pointer"
-    : "work-bento-item group relative overflow-hidden rounded-[var(--bento-card-radius)] bg-[#1a1a1a] shadow-[0_2px_8px_rgba(0,0,0,0.3)] min-[1026px]:hover:shadow-[0_8px_24px_rgba(0,0,0,0.5)] transition-all duration-300 ease-out h-full min-h-[200px] flex flex-col case-study-card";
+    : "work-bento-item group relative overflow-hidden rounded-[var(--bento-card-radius)] bg-[#1a1a1a] shadow-[0_2px_8px_rgba(0,0,0,0.3)] min-[1026px]:hover:shadow-[0_8px_24px_rgba(0,0,0,0.5)] transition-all duration-300 ease-out h-full min-h-[200px] flex flex-col case-study-card") + wideClass;
 
   const mediaBlock = (
     <div
@@ -138,6 +152,7 @@ function WorkCard({
         <video
           ref={videoRef}
           src={videoSource}
+          poster={project.thumbnailImage}
           className="work-bento-image"
           loop
           muted
@@ -237,10 +252,13 @@ function WorkCard({
     </>
   );
 
-  const hoverProps = {
-    onMouseEnter: () => onHoverChange?.(true),
-    onMouseLeave: () => onHoverChange?.(false),
-  };
+  // Only case studies with a page get the "View case study" cursor pill.
+  const hoverProps = isClickable
+    ? {
+        onMouseEnter: () => onHoverChange?.(true),
+        onMouseLeave: () => onHoverChange?.(false),
+      }
+    : {};
 
   if (isClickable) {
     return (

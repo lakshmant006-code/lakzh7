@@ -20,3 +20,10 @@
 .work-bento-grid {
   grid-auto-rows: var(--work-bento-row-h);
 }
+
+/* Full-width card (e.g. the 16:9 hackathon video) on the 2-column desktop grid */
+@media (min-width: 1025px) {
+  .work-bento-grid .work-bento-item--wide {
+    grid-column: 1 / -1;
+  }
+}
