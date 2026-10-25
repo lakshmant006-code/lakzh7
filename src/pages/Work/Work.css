@@ -64,7 +64,7 @@
    their text never clips at the narrower width. */
 @media (min-width: 640px) and (max-width: 1279px) {
   .work-page-dots {
-    --dot-band: clamp(36px, 5vw, 64px);
+    --dot-band: clamp(48px, 7vw, 80px);
   }
 }
 @media (min-width: 640px) and (max-width: 1024px) {

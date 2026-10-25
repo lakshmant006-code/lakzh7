@@ -17,7 +17,7 @@ import React, { useEffect, useRef } from "react";
 const SPACING = 18; // px between dots
 const SPACING_SMALL = 15;
 const REACH = 150; // how far the pointer's influence reaches (px)
-const BASE_R = 1.25; // resting dot radius
+const BASE_R = 1.7; // resting dot radius
 const IDLE_MS = 2500; // pointer idle time before the ghost cursor takes over
 const ACTIVE_MS = 700; // how recently the pointer moved to count as "hovering"
 const BRIDGE = 0.7; // bridge thickness relative to the smaller dot
@@ -63,7 +63,7 @@ export default function DotField({ protectRef, onActiveChange }) {
     const pointer = { x: -9999, y: -9999, last: 0 };
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const box = canvas.parentElement.getBoundingClientRect();
       width = Math.max(1, Math.round(box.width));
       height = Math.max(1, Math.round(box.height));
@@ -210,7 +210,7 @@ export default function DotField({ protectRef, onActiveChange }) {
       for (let level = 1; level <= LEVELS; level++) {
         const lo = (level - 1) / LEVELS;
         const hi = level / LEVELS;
-        ctx.fillStyle = `rgba(${INK}, ${(0.22 * hi).toFixed(3)})`;
+        ctx.fillStyle = `rgba(${INK}, ${(0.4 * hi).toFixed(3)})`;
         ctx.beginPath();
         let any = false;
         for (let c = 0; c < cols; c++) {
@@ -298,7 +298,7 @@ export default function DotField({ protectRef, onActiveChange }) {
       for (let c = 0; c < cols; c++) {
         const w = colWeight[c];
         if (w < 0.03) continue;
-        ctx.fillStyle = `rgba(${INK}, ${(0.16 * w).toFixed(3)})`;
+        ctx.fillStyle = `rgba(${INK}, ${(0.32 * w).toFixed(3)})`;
         ctx.beginPath();
         for (let r = 0; r < rows; r++) {
           ctx.moveTo(c * spacing + BASE_R, r * spacing);
