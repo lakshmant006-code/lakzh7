@@ -17,7 +17,7 @@ const FILES = {
   type: "/sounds/type.mp3",
 };
 // Per-sound loudness (the files are peak-normalised).
-const GAIN = { pop: 0.35, tick: 0.2, press: 0.4, horn: 0.2, woof: 0.4, type: 0.09 };
+const GAIN = { pop: 0.35, tick: 0.2, press: 0.4, horn: 0.2, woof: 0.35, type: 0.09 };
 const MIN_GAP_MS = 70;
 // Typing clicks come fast, so they get a shorter gap.
 const GAP_MS = { type: 28 };
