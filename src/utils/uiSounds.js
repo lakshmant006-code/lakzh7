@@ -12,9 +12,11 @@ const FILES = {
   pop: "/sounds/hover-pop.mp3",
   tick: "/sounds/hover-tick.mp3",
   press: "/sounds/press.mp3",
+  horn: "/sounds/auto-horn.mp3",
+  woof: "/sounds/dog-woof.mp3",
 };
 // Per-sound loudness (the files are peak-normalised).
-const GAIN = { pop: 0.35, tick: 0.2, press: 0.4 };
+const GAIN = { pop: 0.35, tick: 0.2, press: 0.4, horn: 0.5, woof: 0.45 };
 const MIN_GAP_MS = 70;
 
 const CARD =
@@ -47,6 +49,7 @@ export function subscribeSound(fn) {
 
 let ctx = null;
 const buffers = {};
+const loading = {};
 const lastPlayed = {};
 
 function unlock() {
@@ -59,7 +62,7 @@ function unlock() {
   ctx = new AC();
   if (ctx.state === "suspended") ctx.resume();
   Object.entries(FILES).forEach(([name, url]) => {
-    fetch(url)
+    loading[name] = fetch(url)
       .then((r) => r.arrayBuffer())
       .then(
         (data) =>
@@ -70,6 +73,20 @@ function unlock() {
       })
       .catch(() => {});
   });
+}
+
+/**
+ * Play a sound the visitor asked for with a click (a horn, a woof). The very
+ * first click has to unlock audio and fetch the file, so wait for it.
+ */
+export function playSoundOnClick(name) {
+  if (!enabled) return;
+  unlock();
+  if (buffers[name]) {
+    playSound(name);
+    return;
+  }
+  loading[name]?.then(() => playSound(name));
 }
 
 export function playSound(name) {
@@ -93,9 +110,12 @@ export function initUiSounds() {
   const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
   if (!finePointer.matches) return () => {};
 
+  // A region marked data-sound="off" plays nothing by itself (it has its own).
+  const isOff = (target) => target.closest("[data-sound]")?.dataset.sound === "off";
+
   const onOver = (e) => {
     const target = e.target instanceof Element ? e.target : null;
-    if (!target) return;
+    if (!target || isOff(target)) return;
     const card = target.closest(CARD);
     const small = card ? null : target.closest(SMALL);
     const el = card || small;
@@ -104,7 +124,7 @@ export function initUiSounds() {
   };
   const onDown = (e) => {
     unlock();
-    if (e.button !== 0 || !(e.target instanceof Element)) return;
+    if (e.button !== 0 || !(e.target instanceof Element) || isOff(e.target)) return;
     if (e.target.closest(CARD) || e.target.closest(SMALL)) playSound("press");
   };
 

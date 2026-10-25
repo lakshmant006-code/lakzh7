@@ -6,12 +6,10 @@ import Footer from "../../components/Footer/Footer";
 import WorkBentoGrid from "../../components/Work/WorkBentoGrid";
 import PokemonIntro from "../../components/PokemonIntro/PokemonIntro";
 import EyeCursor from "../../components/EyeCursor/EyeCursor";
+import DudeAsk from "../../components/DudeAsk/DudeAsk";
+import { createHotspotDetector } from "../../utils/heroHotspots";
+import { playSoundOnClick } from "../../utils/uiSounds";
 import "./Home.css";
-
-// Full run time of the stitched intro gif (Frame 2 + F4), in ms.
-const INTRO_GIF_MS = 11100;
-// Black screen lifts over ~9 frames at F4's 90ms cadence.
-const INTRO_LIFT_MS = 1400;
 
 const LANDING_FADE_DURATION = 1;
 const LANDING_EASE = "power2.out";
@@ -80,93 +78,28 @@ const Home = () => {
   const { scrollToTop } = useLenisScroll();
   const [isHoveringWorkCard, setIsHoveringWorkCard] = useState(false);
   const [isWorkLoading, setIsWorkLoading] = useState(true);
-  const [introOpen, setIntroOpen] = useState(false);
-  const [introLifting, setIntroLifting] = useState(false);
-  // The home page shows only the hero until the visitor clicks it. Once
-  // opened, the projects stay visible for the rest of the browser session.
-  const [workRevealed, setWorkRevealed] = useState(() => {
-    if (isGoogleCreativePath(location.pathname)) return true;
-    // Coming back via a case study's "Work" breadcrumb.
-    if (location.state?.showWork) return true;
-    try {
-      return sessionStorage.getItem("home-work-revealed") === "1";
-    } catch {
-      return false;
-    }
-  });
-  const revealWork = () => {
-    setWorkRevealed(true);
-    try {
-      sessionStorage.setItem("home-work-revealed", "1");
-    } catch {
-      /* storage unavailable: reveal for this visit only */
-    }
-  };
+  const [askOpen, setAskOpen] = useState(false);
   const [eyeCursor, setEyeCursor] = useState({ visible: false, text: "" });
   const heroTitleRef = useRef(null);
   const bioRef = useRef(null);
   const landingCatRef = useRef(null);
+  const hotspotsRef = useRef(null);
+  const eyeLabelRef = useRef("");
+  const moveFrameRef = useRef(0);
   const workGridRef = useRef(null);
 
   useEffect(() => {
     setPokemonIntroDone(!isGoogleCreative);
   }, [isGoogleCreative]);
 
-  const scrollToWorkPending = useRef(false);
-  const closeIntro = () => {
-    revealWork();
-    scrollToWorkPending.current = true;
-    setIntroOpen(false);
-    setIntroLifting(false);
-  };
-
-  // Intro overlay: lock scroll and allow Escape. The curtain lift is driven by
-  // the video's 'ended' event (so it freezes on the last frame first); this
-  // fallback only fires if the video never reports ending.
-  useEffect(() => {
-    if (!introOpen) return;
-    const onKey = (e) => {
-      if (e.key === "Escape") closeIntro();
-    };
-    window.addEventListener("keydown", onKey);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    const fallback = setTimeout(() => setIntroLifting(true), INTRO_GIF_MS + 2000);
-
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prevOverflow;
-      clearTimeout(fallback);
-    };
-  }, [introOpen]);
-
-  // Once the black screen starts lifting, reveal the content when it finishes.
-  useEffect(() => {
-    if (!introLifting) return;
-    // Render the projects under the curtain so they are there when it lifts.
-    revealWork();
-    const done = setTimeout(closeIntro, INTRO_LIFT_MS);
-    return () => clearTimeout(done);
-  }, [introLifting]);
-
-  // "Work" breadcrumb from a case study: show the projects and jump to them.
+  // "Work" breadcrumb from a case study: jump to the projects.
   useEffect(() => {
     if (!location.state?.showWork) return;
-    revealWork();
-    scrollToWorkPending.current = true;
+    requestAnimationFrame(() => {
+      document.getElementById("work")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.key]);
-
-  // After the intro closes (finished or skipped), bring the projects into view.
-  useEffect(() => {
-    if (introOpen || !workRevealed || !scrollToWorkPending.current) return;
-    scrollToWorkPending.current = false;
-    requestAnimationFrame(() => {
-      const work = document.getElementById("work");
-      if (work) work.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  }, [introOpen, workRevealed]);
 
   // Landing: rise-from-baseline for title and bio (same style as Play), start on mount to avoid lag
   useEffect(() => {
@@ -293,6 +226,40 @@ const Home = () => {
     </section>
   );
 
+  // Click targets in the house illustration: the auto honks, the dog woofs,
+  // the person answers questions. Anywhere else does nothing.
+  const HERO_EYE = { dude: "ask me", auto: "honk", dog: "woof" };
+  const heroSpots = () => {
+    if (!hotspotsRef.current && landingCatRef.current) {
+      hotspotsRef.current = createHotspotDetector(landingCatRef.current);
+    }
+    return hotspotsRef.current;
+  };
+  const showEye = (text) => {
+    if (eyeLabelRef.current === text) return;
+    eyeLabelRef.current = text;
+    setEyeCursor(
+      text
+        ? { visible: true, text, img: "/home/eye-cursor.webp" }
+        : { visible: false, text: "" },
+    );
+  };
+  const handleHeroClick = (e) => {
+    if (e.target.closest(".dude-ask")) return;
+    const spot = heroSpots()?.detect(e.clientX, e.clientY);
+    if (spot === "auto") playSoundOnClick("horn");
+    else if (spot === "dog") playSoundOnClick("woof");
+    else if (spot === "dude") setAskOpen(true);
+  };
+  const handleHeroMove = (e) => {
+    const { clientX, clientY, target } = e;
+    cancelAnimationFrame(moveFrameRef.current);
+    moveFrameRef.current = requestAnimationFrame(() => {
+      if (target.closest && target.closest(".dude-ask")) return showEye("");
+      showEye(HERO_EYE[heroSpots()?.detect(clientX, clientY)] || "");
+    });
+  };
+
   return (
     <>
       {isGoogleCreative && !pokemonIntroDone ? (
@@ -313,20 +280,13 @@ const Home = () => {
             <div
               ref={landingCatRef}
               className="home-hero-card"
-              role="button"
-              tabIndex={0}
-              aria-label="Play the intro animation"
-              onClick={() => setIntroOpen(true)}
-              onMouseEnter={() =>
-                setEyeCursor({ visible: true, text: "view", img: "/home/eye-cursor.webp" })
-              }
-              onMouseLeave={() => setEyeCursor({ visible: false, text: "" })}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  setIntroOpen(true);
-                }
-              }}
+              role="group"
+              aria-label="Illustration: click the auto, the dog or the person"
+              data-sound="off"
+              onClick={handleHeroClick}
+              onMouseEnter={() => heroSpots()?.warm()}
+              onMouseMove={handleHeroMove}
+              onMouseLeave={() => showEye("")}
             >
               <div className="home-hero-stage">
                 <img
@@ -357,56 +317,27 @@ const Home = () => {
                     <img src="/home/clouds-strip.webp" alt="" className="home-clouds-copy" />
                   </div>
                 </div>
-                <p className="home-hero-caption">
-                  <span>
-                    <Typewriter lines={WELCOME_LINES} />
-                  </span>
-                </p>
+                {askOpen ? (
+                  <DudeAsk
+                    onClose={() => setAskOpen(false)}
+                    onHoverChange={() => showEye("")}
+                  />
+                ) : (
+                  <p className="home-hero-caption">
+                    <span>
+                      <Typewriter lines={WELCOME_LINES} />
+                    </span>
+                  </p>
+                )}
               </div>
             </div>
             </div>
           </div>
         </section>
 
-        {workRevealed ? (
-          <>
-            {workSection}
-            <Footer />
-          </>
-        ) : null}
+        {workSection}
+        <Footer />
       </main>
-
-      {introOpen ? (
-        <div
-          className={`home-intro-overlay${introLifting ? " home-intro-overlay--lifting" : ""}`}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Intro animation"
-          onClick={closeIntro}
-        >
-          {!introLifting ? (
-            <button
-              type="button"
-              className="home-intro-close"
-              aria-label="Skip"
-              onClick={closeIntro}
-            >
-              ×
-            </button>
-          ) : null}
-          <video
-            className="home-intro-gif"
-            autoPlay
-            muted
-            playsInline
-            onEnded={() => setIntroLifting(true)}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <source src="/home/intro.webm" type="video/webm" />
-            <source src="/home/intro.mp4" type="video/mp4" />
-          </video>
-        </div>
-      ) : null}
 
       <EyeCursor visible={eyeCursor.visible} text={eyeCursor.text} img={eyeCursor.img} />
     </>

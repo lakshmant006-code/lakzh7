@@ -219,62 +219,6 @@
   }
 }
 
-/* Fullscreen intro animation overlay */
-.home-intro-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: rgba(8, 8, 8, 0.96);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  cursor: zoom-out;
-  transform: translateY(0);
-  animation: home-intro-fade 0.25s ease both;
-}
-/* The black screen lifts up to reveal the work, ~9 frames at 90ms, eased. */
-.home-intro-overlay--lifting {
-  transform: translateY(-100%);
-  transition: transform 1400ms cubic-bezier(0.76, 0, 0.24, 1);
-  animation: none;
-}
-.home-intro-gif {
-  width: 100vw;
-  height: 100vh;
-  max-width: 100vw;
-  max-height: 100vh;
-  object-fit: contain;
-  background: #000;
-  cursor: default;
-}
-.home-intro-close {
-  position: fixed;
-  top: 18px;
-  right: 24px;
-  z-index: 2;
-  width: 44px;
-  height: 44px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  font-size: 28px;
-  line-height: 1;
-  cursor: pointer;
-}
-.home-intro-close:hover {
-  background: rgba(0, 0, 0, 0.72);
-}
-@keyframes home-intro-fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 /* Grid: left = title/subtitle, right = game (column on small). */
 .home-landing-grid {
   display: grid;
