@@ -515,8 +515,13 @@
 .home-case-study-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 2.5rem;
   width: 100%;
+  /* Smaller cards with air around them: capped width, centred, side padding */
+  max-width: 1080px;
+  margin-inline: auto;
+  padding-inline: clamp(0.75rem, 3vw, 2.5rem);
+  box-sizing: border-box;
   position: relative;
   grid-auto-rows: auto;
 }
@@ -544,7 +549,8 @@
 @media (min-width: 1025px) {
   .home-case-study-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 2.5rem;
+    column-gap: 4rem;
+    row-gap: 3.5rem;
   }
 }
 
