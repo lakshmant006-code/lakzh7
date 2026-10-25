@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/react";
 import Nav from "./components/Nav/Nav";
 import ScrollToTop from "./components/ScrollToTop";
 import BackToTop from "./components/BackToTop/BackToTop";
+import SoundToggle from "./components/SoundToggle/SoundToggle";
 import Home from "./pages/Home/Home";
 import About from "./pages/About/About";
 import Work from "./pages/Work/Work";
@@ -62,6 +63,7 @@ function App() {
         <LenisScrollTriggerIntegration />
         <ScrollToTop />
         <BackToTop />
+        <SoundToggle />
         <div className="app min-h-screen relative">
           <div
             className="fixed top-0 left-0 w-full"
