@@ -36,3 +36,13 @@
     margin-bottom: 2rem;
   }
 }
+
+/* The dot field fills the area behind the project grid. */
+.work-page-dots {
+  position: relative;
+  padding: 1.5rem 0;
+}
+.work-page-dots-inner {
+  position: relative;
+  z-index: 1;
+}

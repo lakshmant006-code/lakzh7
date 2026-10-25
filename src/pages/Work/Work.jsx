@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useLayoutEffect } from "react";
 import { useLenis } from "@studio-freight/react-lenis";
 import { gsap } from "gsap";
 import WorkBentoGrid from "../../components/Work/WorkBentoGrid";
+import DotField from "../../components/DotField/DotField";
 import Footer from "../../components/Footer/Footer";
 import "./Work.css";
 
@@ -190,7 +191,12 @@ const Work = () => {
                 Designs, Creative Experiments, <span className="work-page-title-accent">and more!</span>
               </span>
             </h1>
-            <WorkBentoGrid containerRef={workBentoGridContainerRef} />
+            <div className="work-page-dots">
+              <DotField />
+              <div className="work-page-dots-inner">
+                <WorkBentoGrid containerRef={workBentoGridContainerRef} />
+              </div>
+            </div>
           </div>
         </section>
         <Footer />
