@@ -27,7 +27,7 @@ const STIFFNESS = 170;
 const DAMPING = 15;
 const FADE = 0.75; // how far in behind the cards the dots reach (share of half-width)
 const LEVELS = 6; // resting dots are drawn in this many opacity steps
-const INK = "0, 0, 0";
+const INK = "168, 168, 172";
 
 // Small, stable pseudo-random value for a cell or an edge.
 const hash = (a, b, c = 0) => {
@@ -210,7 +210,7 @@ export default function DotField({ protectRef, onActiveChange }) {
       for (let level = 1; level <= LEVELS; level++) {
         const lo = (level - 1) / LEVELS;
         const hi = level / LEVELS;
-        ctx.fillStyle = `rgba(${INK}, ${(0.4 * hi).toFixed(3)})`;
+        ctx.fillStyle = `rgba(${INK}, ${(0.7 * hi).toFixed(3)})`;
         ctx.beginPath();
         let any = false;
         for (let c = 0; c < cols; c++) {
@@ -230,7 +230,7 @@ export default function DotField({ protectRef, onActiveChange }) {
 
       // Bridges (under the swollen dots).
       ctx.lineCap = "round";
-      ctx.strokeStyle = `rgba(${INK}, 0.88)`;
+      ctx.strokeStyle = `rgba(${INK}, 0.9)`;
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           const i = r * cols + c;
@@ -298,7 +298,7 @@ export default function DotField({ protectRef, onActiveChange }) {
       for (let c = 0; c < cols; c++) {
         const w = colWeight[c];
         if (w < 0.03) continue;
-        ctx.fillStyle = `rgba(${INK}, ${(0.32 * w).toFixed(3)})`;
+        ctx.fillStyle = `rgba(${INK}, ${(0.6 * w).toFixed(3)})`;
         ctx.beginPath();
         for (let r = 0; r < rows; r++) {
           ctx.moveTo(c * spacing + BASE_R, r * spacing);
