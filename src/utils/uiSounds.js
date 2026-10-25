@@ -38,6 +38,7 @@ const listeners = new Set();
 export const isSoundEnabled = () => enabled;
 export function setSoundEnabled(next) {
   enabled = next;
+  if (!next) Object.keys(LOOPS).forEach(stopLoop);
   try {
     localStorage.setItem(STORAGE_KEY, next ? "on" : "off");
   } catch {
@@ -107,6 +108,94 @@ export function playSound(name) {
   gain.gain.value = GAIN[name];
   source.connect(gain).connect(ctx.destination);
   source.start();
+}
+
+// ---- Looping music (plays while the pointer hovers the Work page dot field) ----
+const LOOPS = {
+  // Four bars at 100 bpm, cut to repeat seamlessly (generated with ElevenLabs Music).
+  dots: { url: "/sounds/dots-loop.mp3", length: 9.6, gain: 0.2 },
+};
+const FADE_IN_S = 0.3;
+const FADE_OUT_S = 0.6;
+const loopBuffers = {};
+const loopLoading = {};
+const loopState = {}; // name -> { wanted, source, gain, stopTimer }
+
+function loadLoop(name) {
+  if (loopBuffers[name]) return Promise.resolve(loopBuffers[name]);
+  if (!loopLoading[name]) {
+    loopLoading[name] = fetch(LOOPS[name].url)
+      .then((r) => r.arrayBuffer())
+      .then((data) => new Promise((res, rej) => ctx.decodeAudioData(data, res, rej)))
+      .then((buf) => (loopBuffers[name] = buf))
+      .catch(() => null);
+  }
+  return loopLoading[name];
+}
+
+function startLoop(name, buffer) {
+  const st = loopState[name];
+  const cfg = LOOPS[name];
+  clearTimeout(st.stopTimer);
+  const now = ctx.currentTime;
+  if (st.source) {
+    // Already playing (a short pause in hovering): just bring it back up.
+    st.gain.gain.cancelScheduledValues(now);
+    st.gain.gain.setValueAtTime(st.gain.gain.value, now);
+    st.gain.gain.linearRampToValueAtTime(cfg.gain, now + FADE_IN_S);
+    return;
+  }
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
+  source.loop = true;
+  source.loopStart = 0;
+  source.loopEnd = cfg.length; // drop the encoder's padding so the loop is gapless
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(cfg.gain, now + FADE_IN_S);
+  source.connect(gain).connect(ctx.destination);
+  source.start();
+  st.source = source;
+  st.gain = gain;
+}
+
+function stopLoop(name) {
+  const st = loopState[name];
+  if (!st) return;
+  st.wanted = false;
+  if (!st.source) return;
+  const now = ctx.currentTime;
+  st.gain.gain.cancelScheduledValues(now);
+  st.gain.gain.setValueAtTime(st.gain.gain.value, now);
+  st.gain.gain.linearRampToValueAtTime(0, now + FADE_OUT_S);
+  clearTimeout(st.stopTimer);
+  const { source } = st;
+  st.stopTimer = setTimeout(() => {
+    if (st.wanted) return;
+    try {
+      source.stop();
+    } catch {
+      /* already stopped */
+    }
+    if (st.source === source) {
+      st.source = null;
+      st.gain = null;
+    }
+  }, FADE_OUT_S * 1000 + 50);
+}
+
+/** Turn a looping track on (fades in) or off (fades out). Needs a prior click. */
+export function setLoopActive(name, active) {
+  const st = (loopState[name] ||= { wanted: false, source: null, gain: null, stopTimer: 0 });
+  if (!active || !enabled) {
+    if (ctx) stopLoop(name);
+    return;
+  }
+  st.wanted = true;
+  if (!ctx) return; // audio is still locked until the first click or key press
+  loadLoop(name).then((buf) => {
+    if (buf && st.wanted && enabled) startLoop(name, buf);
+  });
 }
 
 /** Attach the global hover and press listeners. Returns a cleanup function. */

@@ -3,6 +3,7 @@ import { useLenis } from "@studio-freight/react-lenis";
 import { gsap } from "gsap";
 import WorkBentoGrid from "../../components/Work/WorkBentoGrid";
 import DotField from "../../components/DotField/DotField";
+import { setLoopActive } from "../../utils/uiSounds";
 import Footer from "../../components/Footer/Footer";
 import "./Work.css";
 
@@ -15,6 +16,10 @@ const Work = () => {
   const navRef = useRef(null);
   const timelineRef = useRef(null);
   const workBentoGridContainerRef = useRef(null);
+  // The middle column (cards) stays clear; the dot field lives in the margins,
+  // and rhythmic music plays while the pointer moves over it.
+  const dotsInnerRef = useRef(null);
+  const handleDotsActive = (active) => setLoopActive("dots", active);
 
   useLayoutEffect(() => {
     if (!titleRef.current || !titleWrapperRef.current) return;
@@ -192,8 +197,8 @@ const Work = () => {
               </span>
             </h1>
             <div className="work-page-dots">
-              <DotField />
-              <div className="work-page-dots-inner">
+              <DotField protectRef={dotsInnerRef} onActiveChange={handleDotsActive} />
+              <div className="work-page-dots-inner" ref={dotsInnerRef}>
                 <WorkBentoGrid containerRef={workBentoGridContainerRef} />
               </div>
             </div>
