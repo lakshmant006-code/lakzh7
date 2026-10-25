@@ -72,3 +72,34 @@
   font: 400 0.95rem/1.55 var(--cs-sans);
   color: var(--cs-muted);
 }
+
+/* Pipeline: a row of steps with arrows between them. */
+.pm-flow {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 0;
+  align-items: center;
+}
+.pm-flow-step {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background: #ffffff;
+  border: 1px solid var(--cs-line);
+  border-radius: 4px;
+  font: 500 0.9rem/1.2 var(--cs-sans);
+  color: var(--cs-ink);
+}
+.pm-flow-step + .pm-flow-step {
+  margin-left: 26px;
+  position: relative;
+}
+.pm-flow-step + .pm-flow-step::before {
+  content: "→";
+  position: absolute;
+  left: -20px;
+  color: var(--cs-accent);
+}

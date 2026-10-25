@@ -75,6 +75,24 @@ const FEEL_PRESETS = [
   ["Bouncy", "Smoothing 50%, cloth bounce 85%, follow-through 50%", "Medium speed with a lively, swinging jacket and cuffs."],
 ];
 
+const PIPELINE = [
+  "Camera",
+  "Jitter filter",
+  "Bone angles",
+  "Springs",
+  "Mesh skinning",
+  "Cloth",
+  "Render",
+  "Export",
+];
+
+const SHIFTS = [
+  ["Does it move?", "How does it feel?", "We began by asking whether a drawing could follow a body. We ended up treating smoothness as the main design material."],
+  ["Redraw it", "Repair it", "AI first repainted whole frames and drifted off-model. It now touches only the joints that break."],
+  ["Fix what we see", "Measure first", "Instead of patching each artefact as it appeared, we planned a measuring step so every later fix is judged against numbers."],
+  ["A tool", "A story", "The prototype grew its own screens so the idea could be shown, not just used."],
+];
+
 const PAPERS = [
   ["As-Rigid-As-Possible shape manipulation", "2005", "Keeps neck, collar and knee patches from kinking where bones blend."],
   ["Bounded Biharmonic Weights", "2011", "Computes smooth joint weights from the drawing's shape, replacing hand-tuned bands."],
@@ -495,6 +513,63 @@ const ProMoveCaseStudy = () => {
           sleeves and hands clear of the body and the automatic cut comes out
           clean.
         </CsText>
+      </CsSection>
+
+      <CsSection
+        id="promove-thinking"
+        label="Thinking"
+        title="Thinking in systems, and how our design thinking shifted"
+      >
+        <CsH3>A character is a system, not a picture</CsH3>
+        <CsText>
+          Every stage hands its output to the next. A change in one place shows
+          up everywhere downstream, which is why so many of our problems were
+          really system problems.
+        </CsText>
+        <CsPanel title="The pipeline, from camera to export" padded>
+          <ol className="pm-flow">
+            {PIPELINE.map((step) => (
+              <li key={step} className="pm-flow-step">
+                {step}
+              </li>
+            ))}
+          </ol>
+        </CsPanel>
+        <CsText>
+          Smoothing could hide a broken joint, so we tuned the springs last.
+          Blending that shrinks an elbow shrinks every pose that bends it.
+          Weights depend only on where a point sits in the drawing, so pieces
+          that overlap always deform the same way. And the rig check closes a
+          loop: it finds where the mesh breaks, and the repair blends back in
+          live. Even our research plan is a dependency map, since better
+          weights alone don&apos;t fix volume loss and have to be paired with
+          another method.
+        </CsText>
+        <CsText>
+          One constraint ran through the whole system: everything stays on the
+          device. It decided the tracking models, the renderer and the AI, and
+          it is the reason repair beats redraw.
+        </CsText>
+
+        <CsH3>How our design thinking shifted</CsH3>
+        <CsText>
+          We started with the people the tool is for: doodle artists, not
+          technical animators. That led to building inside Procreate, then
+          prototyping, then testing against fixed poses and a real webcam.
+          Along the way the questions themselves changed.
+        </CsText>
+        <CsPanel title="From, to" padded>
+          <ul className="pm-papers">
+            {SHIFTS.map(([from, to, text]) => (
+              <li key={from} className="pm-paper">
+                <p className="pm-paper-name">
+                  {from} <span className="pm-paper-year">to</span> {to}
+                </p>
+                <p className="pm-paper-text">{text}</p>
+              </li>
+            ))}
+          </ul>
+        </CsPanel>
       </CsSection>
 
       <CsSection
