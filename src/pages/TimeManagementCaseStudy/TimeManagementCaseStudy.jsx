@@ -426,14 +426,14 @@ const TimeManagementCaseStudy = () => {
         items={[
           {
             to: "/quizai",
-            video: "/work/quizai/thumbnail.mp4",
-            title: "Quizzy: AI Powered Notetaking Application",
+            video: "/work/reef/reef-thumb.mp4",
+            title: "Reef: AI Powered Notetaking Application",
             description:
               "Helping students turn uploaded notes into personalized quizzes and summaries through a centralized study dashboard.",
           },
           {
             to: "/hiku",
-            video: "/work/Hiku/thumbnail.mp4",
+            video: "/work/Hiku/hiku-promo.mp4",
             title: "Hiku: A Mobile Application for Hiking Enthusiasts",
             description:
               "Connecting hiking enthusiasts through community, shared experiences, and a convenient way to buy or rent outdoor gear.",

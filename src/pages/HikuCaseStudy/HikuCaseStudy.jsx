@@ -265,14 +265,14 @@ const HikuCaseStudy = () => {
         items={[
           {
             to: "/quizai",
-            video: "/work/quizai/thumbnail.mp4",
-            title: "Quizzy: AI Powered Notetaking Application",
+            video: "/work/reef/reef-thumb.mp4",
+            title: "Reef: AI Powered Notetaking Application",
             description:
               "Helping students turn uploaded notes into personalized quizzes and summaries through a centralized study dashboard.",
           },
           {
             to: "/time-management",
-            video: "/work/time-management/thumbnail.mp4",
+            video: "/work/time-management/summer-launch.mp4",
             title: "Summer: A Productivity Tracking Web App",
             description:
               "Helping a company track employee productivity through an intuitive, easy to navigate time management dashboard.",
