@@ -30,63 +30,23 @@ const FEATURES = [
     lead: "You perform. ",
     highlight: "Your character copies you.",
     caption:
-      "Body and face are tracked right on the device. Thirty-three body joints (shoulders, elbows, wrists, hips, knees) and your face (blinks, mouth, smile, brows, head tilt) drive the drawing, and a One Euro filter removes jitter while keeping fast moves sharp. Nothing goes to the cloud.",
-  },
-  {
-    video: `${BASE}/addon.mp4`,
-    title: "Inside Procreate",
-    lead: "An add-on that lives ",
-    highlight: "inside Procreate.",
-    caption:
-      "pro-move adds one Rig tab to the Actions menu. The rest of Procreate stays exactly as it is, so an artist never has to leave the tool they already draw in.",
-  },
-  {
-    video: `${BASE}/live.mp4`,
-    title: "Live capture",
-    lead: "Tap the camera, ",
-    highlight: "and your character follows you live.",
-    caption:
-      "No camera handy? A demo performer moves for you, so the whole flow can be tried without a webcam.",
+      "pro-move is an add-on that lives inside Procreate, as one Rig tab in the Actions menu. Body and face are tracked right on the device: thirty-three body joints and your face (blinks, mouth, smile, brows, head tilt), smoothed so jitter disappears but fast moves stay sharp. Nothing goes to the cloud.",
   },
   {
     video: `${BASE}/capture.mp4`,
-    title: "Pose or Motion",
+    title: "Capture",
     lead: "Two ways to capture: ",
     highlight: "one pose, or a whole move.",
     caption:
-      "Pose gives you a three-second countdown to get into position, then keeps one drawing. Motion records up to ten seconds and keeps the drawings where you move the most.",
-  },
-  {
-    video: `${BASE}/filmstrip.mp4`,
-    title: "The filmstrip",
-    lead: "Every take lands ",
-    highlight: "in the filmstrip.",
-    caption:
-      "Reorder drawings, add in-betweens where the pose jumps, and play it back with onion skin. A jump note appears when two frames that weren't neighbours end up side by side.",
+      "Pose gives you a three-second countdown, then keeps one drawing. Motion records up to ten seconds and keeps the drawings where you move the most. Every take lands in a filmstrip where you can reorder, add in-betweens and play it back with onion skin.",
   },
   {
     video: `${BASE}/limb.mp4`,
-    title: "Turn or stretch",
+    title: "Refine",
     lead: "Tap a limb ",
     highlight: "to turn or stretch it.",
     caption:
-      "Animate changes only the current drawing. Rig changes every drawing in the take, like making a forearm longer for the whole animation.",
-  },
-  {
-    video: `${BASE}/feel.mp4`,
-    title: "Motion feel",
-    lead: "Pick how the motion ",
-    highlight: "feels.",
-    caption:
-      "Snappy holds, then moves quickly. Smooth is one flowing line. Floaty trails a little behind, then settles.",
-  },
-  {
-    video: `${BASE}/rigcheck.mp4`,
-    title: "Rig check",
-    lead: "Where the drawing tears, ",
-    highlight: "local AI patches it.",
-    caption:
-      "Six test poses find the joints that break. Only those spots are repainted, so every other pixel stays exactly as the artist drew it.",
+      "Animate changes only the current drawing, Rig changes every drawing in the take. Where a joint tears, a local AI repaints only that spot, so every other pixel stays as the artist drew it.",
   },
   {
     video: `${BASE}/export.mp4`,
@@ -192,8 +152,8 @@ const ProMoveCaseStudy = () => {
         title="Perform, capture, refine, take it back"
       >
         <CsText>
-          The submission video walks through the finished concept in nine
-          steps. Each one below is a clip from it.
+          The finished concept in four steps, each a clip from the submission
+          video.
         </CsText>
         {FEATURES.map((f) => (
           <CsSide
