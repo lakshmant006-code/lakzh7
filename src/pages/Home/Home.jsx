@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { isGoogleCreativePath, isDefaultHomePath } from "../../constants/homeRoutes";
 import { useLenisScroll } from "../../hooks/useLenisScroll";
 import Footer from "../../components/Footer/Footer";
@@ -101,14 +101,6 @@ const Home = () => {
     } catch {
       /* storage unavailable: reveal for this visit only */
     }
-  };
-  // "View projects" card: open the projects straight away, no intro video.
-  const showProjects = () => {
-    revealWork();
-    setTimeout(() => {
-      const work = document.getElementById("work");
-      if (work) work.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 60);
   };
   const [eyeCursor, setEyeCursor] = useState({ visible: false, text: "" });
   const heroTitleRef = useRef(null);
@@ -372,35 +364,6 @@ const Home = () => {
                 </p>
               </div>
             </div>
-
-            <article className="home-bento-card home-bento-about">
-              <p className="home-bento-label">About</p>
-              <div>
-                <h2 className="home-bento-title">Hi, I&apos;m Lakshman.</h2>
-                <p className="home-bento-text">
-                  A UX designer who started in architecture and now designs
-                  digital products.
-                </p>
-              </div>
-              <Link to="/about" className="home-bento-link">
-                More about me <span aria-hidden="true">→</span>
-              </Link>
-            </article>
-
-            <article className="home-bento-card home-bento-work">
-              <p className="home-bento-label">Work</p>
-              <div>
-                <h2 className="home-bento-title">3 case studies</h2>
-                <p className="home-bento-text">Reef, Hiku, and Summer</p>
-              </div>
-              <button
-                type="button"
-                className="home-bento-button"
-                onClick={showProjects}
-              >
-                View projects
-              </button>
-            </article>
             </div>
           </div>
         </section>
