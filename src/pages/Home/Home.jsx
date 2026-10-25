@@ -6,6 +6,7 @@ import Footer from "../../components/Footer/Footer";
 import WorkBentoGrid from "../../components/Work/WorkBentoGrid";
 import PokemonIntro from "../../components/PokemonIntro/PokemonIntro";
 import DudeAsk from "../../components/DudeAsk/DudeAsk";
+import DotField from "../../components/DotField/DotField";
 import { createHotspotDetector } from "../../utils/heroHotspots";
 import { playSoundOnClick } from "../../utils/uiSounds";
 import "./Home.css";
@@ -169,6 +170,7 @@ const Home = () => {
       id="work"
       className="home-work"
     >
+      <DotField />
       <div className="home-work-inner page-content-shell">
         {isGoogleCreative ? (
           <div className="home-work-section-intro">
