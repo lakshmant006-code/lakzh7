@@ -118,6 +118,10 @@ const ProMoveCaseStudy = () => {
         title="pro-move by Procreate: A Motion Capture Concept"
         lead="An add-on concept for Procreate where you perform in front of the camera and the character you drew copies your body and your face."
         meta={[
+          {
+            label: "Team",
+            value: ["Lakshman: Design Engineer", "Kalyan: UX Designer"],
+          },
           { label: "Competition", value: "SVSD Design Competition" },
           { label: "Timeline", value: "Oct 2026" },
           { label: "Tools", value: ["MediaPipe", "WebGL2", "ComfyUI"] },
