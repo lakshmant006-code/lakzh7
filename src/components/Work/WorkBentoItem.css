@@ -939,3 +939,9 @@
     padding: 0.45rem 0.875rem;
   }
 }
+
+/* Home cards sit on a white tile so the dots never run behind their text */
+.work-bento-item.work-bento-item--compact {
+  background-color: #ffffff;
+  border-radius: 18px;
+}
