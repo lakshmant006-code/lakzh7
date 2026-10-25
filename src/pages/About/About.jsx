@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import Footer from "../../components/Footer/Footer";
 import LazyVideo from "../../components/LazyVideo/LazyVideo";
 import ExperienceTimeline from "../../components/ExperienceTimeline/ExperienceTimeline";
@@ -8,12 +8,10 @@ import useRiseUpOnScroll from "../../hooks/useRiseUpOnScroll";
 import "./About.css";
 
 const HI_CAPTION_TEXT =
-  "Hi, I'm Lakshman, UX Researcher & Designer who loves translating user experiences using qualitative and quantitative data to effective design solutions";
+  "Hi, I'm Lakshman, a UX designer and researcher turning into a design engineer. I'm interested in interactions and experimenting with details.";
 
 const About = () => {
   useScrollReset();
-  const [typedHiCaption, setTypedHiCaption] = useState("");
-  const hiTypingIntervalRef = useRef(null);
   const whereTitleRef = useRef(null);
   const enjoyTitleRef = useRef(null);
   const enjoyDescRef = useRef(null);
@@ -23,27 +21,10 @@ const About = () => {
   useRiseUpOnScroll(enjoyDescRef);
   useRiseUpOnScroll(enjoyImagesRef, { delay: 0.5 });
 
-  useEffect(() => () => clearInterval(hiTypingIntervalRef.current), []);
-
-  const handleHiMouseEnter = () => {
-    clearInterval(hiTypingIntervalRef.current);
-    let charCount = 0;
-    hiTypingIntervalRef.current = setInterval(() => {
-      charCount += 1;
-      setTypedHiCaption(HI_CAPTION_TEXT.slice(0, charCount));
-      if (charCount >= HI_CAPTION_TEXT.length) {
-        clearInterval(hiTypingIntervalRef.current);
-      }
-    }, 30);
-  };
-
   return (
     <main className="about-sandbox">
       <section className="about-sandbox-polaroid">
-        <div
-          className="about-sandbox-hi-wrap"
-          onMouseEnter={handleHiMouseEnter}
-        >
+        <div className="about-sandbox-hi-wrap">
           <LazyVideo
             className="about-sandbox-hi-video"
             src="/about/diary-fall.mp4"
@@ -53,14 +34,7 @@ const About = () => {
             muted
             playsInline
           />
-          <p className="about-sandbox-hi-caption">
-            {typedHiCaption}
-            {typedHiCaption.length > 0 && (
-              <span className="about-sandbox-hi-cursor" aria-hidden="true">
-                |
-              </span>
-            )}
-          </p>
+          <p className="about-sandbox-hi-caption">{HI_CAPTION_TEXT}</p>
         </div>
       </section>
 

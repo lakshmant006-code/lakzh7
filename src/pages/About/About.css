@@ -37,25 +37,13 @@
 .about-sandbox-hi-caption {
   margin: 0.75rem 0 0;
   min-height: 2.9rem;
-  max-width: 440px;
+  max-width: 520px;
   font-family: "Courier New", Courier, monospace;
   font-size: 0.95rem;
   line-height: 1.5;
   color: #555;
   text-align: center;
   pointer-events: none;
-}
-
-.about-sandbox-hi-cursor {
-  display: inline-block;
-  margin-left: 1px;
-  animation: about-hi-cursor-blink 0.8s steps(1) infinite;
-}
-
-@keyframes about-hi-cursor-blink {
-  50% {
-    opacity: 0;
-  }
 }
 
 .about-sandbox-polaroid-wrapper {
