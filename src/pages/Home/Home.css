@@ -209,16 +209,6 @@
   }
 }
 
-/* The illustration card and the work section use the custom eye cursor. */
-@media (hover: hover) and (pointer: fine) {
-  .home-hero-card,
-  .home-hero-card *,
-  .home-work,
-  .home-work * {
-    cursor: none;
-  }
-}
-
 /* Grid: left = title/subtitle, right = game (column on small). */
 .home-landing-grid {
   display: grid;

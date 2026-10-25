@@ -1,6 +1,5 @@
 ﻿import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import CursorPill from "../CursorPill/CursorPill";
 import { playMutedVideo } from "../../utils/playMutedVideo";
 import "./WorkBentoGrid.css";
 import "./WorkBentoItem.css";
@@ -324,9 +323,6 @@ const WorkBentoGrid = ({
 
   return (
     <div ref={containerRef} className={gridClassName} aria-label="Case studies">
-      {!compactLayout ? (
-        <CursorPill isHovering={isHovering} text="View case study" />
-      ) : null}
       {workProjects.map((project) => (
         <WorkCard
           key={project.id}

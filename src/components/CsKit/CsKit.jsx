@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { revealOnScroll } from "../../utils/revealOnScroll";
 import { useLenisScroll } from "../../hooks/useLenisScroll";
 import LazyVideo from "../LazyVideo/LazyVideo";
-import CursorPill from "../CursorPill/CursorPill";
 import Footer from "../Footer/Footer";
 import "./CsKit.css";
 
@@ -319,10 +318,8 @@ export function CsEmbed({ src, title, height }) {
 }
 
 export function CsSeeNext({ id, items }) {
-  const [hovering, setHovering] = useState(false);
   return (
     <section id={id} className="cs-section cs-col cs-next" data-nav-label="See next">
-      <CursorPill isHovering={hovering} text="View case study" />
       <p className="cs-label">See next</p>
       <div className="cs-next-grid">
         {items.map((item) => (
@@ -330,8 +327,6 @@ export function CsSeeNext({ id, items }) {
             key={item.to}
             to={item.to}
             className="cs-next-card"
-            onMouseEnter={() => setHovering(true)}
-            onMouseLeave={() => setHovering(false)}
           >
             <div className="cs-next-media">
               <LazyVideo

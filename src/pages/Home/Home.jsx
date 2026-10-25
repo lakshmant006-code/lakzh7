@@ -5,7 +5,6 @@ import { useLenisScroll } from "../../hooks/useLenisScroll";
 import Footer from "../../components/Footer/Footer";
 import WorkBentoGrid from "../../components/Work/WorkBentoGrid";
 import PokemonIntro from "../../components/PokemonIntro/PokemonIntro";
-import EyeCursor from "../../components/EyeCursor/EyeCursor";
 import DudeAsk from "../../components/DudeAsk/DudeAsk";
 import { createHotspotDetector } from "../../utils/heroHotspots";
 import { playSoundOnClick } from "../../utils/uiSounds";
@@ -79,13 +78,10 @@ const Home = () => {
   const [isHoveringWorkCard, setIsHoveringWorkCard] = useState(false);
   const [isWorkLoading, setIsWorkLoading] = useState(true);
   const [askOpen, setAskOpen] = useState(false);
-  const [eyeCursor, setEyeCursor] = useState({ visible: false, text: "" });
   const heroTitleRef = useRef(null);
   const bioRef = useRef(null);
   const landingCatRef = useRef(null);
   const hotspotsRef = useRef(null);
-  const eyeLabelRef = useRef("");
-  const moveFrameRef = useRef(0);
   const workGridRef = useRef(null);
 
   useEffect(() => {
@@ -172,14 +168,6 @@ const Home = () => {
     <section
       id="work"
       className="home-work"
-      onMouseEnter={() =>
-        setEyeCursor({
-          visible: true,
-          text: "View the case study.",
-          img: "/home/eye-cursor.webp",
-        })
-      }
-      onMouseLeave={() => setEyeCursor({ visible: false, text: "" })}
     >
       <div className="home-work-inner page-content-shell">
         {isGoogleCreative ? (
@@ -228,36 +216,24 @@ const Home = () => {
 
   // Click targets in the house illustration: the auto honks, the dog woofs,
   // the person answers questions. Anywhere else does nothing.
-  const HERO_EYE = { dude: "ask me", auto: "honk", dog: "woof" };
   const heroSpots = () => {
     if (!hotspotsRef.current && landingCatRef.current) {
       hotspotsRef.current = createHotspotDetector(landingCatRef.current);
     }
     return hotspotsRef.current;
   };
-  const showEye = (text) => {
-    if (eyeLabelRef.current === text) return;
-    eyeLabelRef.current = text;
-    setEyeCursor(
-      text
-        ? { visible: true, text, img: "/home/eye-cursor.webp" }
-        : { visible: false, text: "" },
-    );
-  };
+  // Read the layers up front so the very first click or tap already works.
+  useEffect(() => {
+    const t = setTimeout(() => heroSpots()?.warm(), 400);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const handleHeroClick = (e) => {
     if (e.target.closest(".dude-ask")) return;
     const spot = heroSpots()?.detect(e.clientX, e.clientY);
     if (spot === "auto") playSoundOnClick("horn");
     else if (spot === "dog") playSoundOnClick("woof");
     else if (spot === "dude") setAskOpen(true);
-  };
-  const handleHeroMove = (e) => {
-    const { clientX, clientY, target } = e;
-    cancelAnimationFrame(moveFrameRef.current);
-    moveFrameRef.current = requestAnimationFrame(() => {
-      if (target.closest && target.closest(".dude-ask")) return showEye("");
-      showEye(HERO_EYE[heroSpots()?.detect(clientX, clientY)] || "");
-    });
   };
 
   return (
@@ -285,8 +261,6 @@ const Home = () => {
               data-sound="off"
               onClick={handleHeroClick}
               onMouseEnter={() => heroSpots()?.warm()}
-              onMouseMove={handleHeroMove}
-              onMouseLeave={() => showEye("")}
             >
               <div className="home-hero-stage">
                 <img
@@ -318,10 +292,7 @@ const Home = () => {
                   </div>
                 </div>
                 {askOpen ? (
-                  <DudeAsk
-                    onClose={() => setAskOpen(false)}
-                    onHoverChange={() => showEye("")}
-                  />
+                  <DudeAsk onClose={() => setAskOpen(false)} />
                 ) : (
                   <p className="home-hero-caption">
                     <span>
@@ -339,7 +310,6 @@ const Home = () => {
         <Footer />
       </main>
 
-      <EyeCursor visible={eyeCursor.visible} text={eyeCursor.text} img={eyeCursor.img} />
     </>
   );
 };
