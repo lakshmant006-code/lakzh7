@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { playSound } from "../../utils/uiSounds";
 import "./DudeAsk.css";
 
 const TYPE_MS = 32; // time between typed characters
@@ -41,7 +40,6 @@ export default function DudeAsk({ onClose, onHoverChange }) {
       count += 1;
       setShown(count);
       const char = item.answer[count - 1];
-      if (char && char !== " ") playSound("type");
       if (count >= item.answer.length) clearInterval(timerRef.current);
     }, TYPE_MS);
   };
