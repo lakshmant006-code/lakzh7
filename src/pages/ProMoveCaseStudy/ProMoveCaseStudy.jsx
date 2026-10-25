@@ -227,10 +227,10 @@ const ProMoveCaseStudy = () => {
           appears as its own layer, and the camera lives in the Reference
           window, where Procreate already puts reference material.
         </CsText>
-        <CsPanel title="The prototype, shown inside an iPad Pro mockup" wide>
+        <CsPanel title="The red beanie, the character we animate throughout" wide>
           <CsImg
-            src={`${BASE}/procreate-ui.jpg`}
-            alt="The pro-move prototype: a Procreate-style screen with the red beanie character standing in a playground scene"
+            src={`${BASE}/red-beanie.jpg`}
+            alt="The red beanie character, as drawn, standing with open arms in the playground scene"
           />
         </CsPanel>
 
