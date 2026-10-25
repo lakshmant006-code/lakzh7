@@ -108,6 +108,13 @@ const BUILD_LOG = [
   ["A real character", "The red beanie, built from an SVG turnaround, with flat-colour support, a better automatic cut and an open-arms front view."],
 ];
 
+const FEEL_PRESETS = [
+  ["Snappy", "Smoothing 20%, cloth bounce 15%, follow-through 10%", "Holds, then moves quickly. Reads as crisp and responsive."],
+  ["Smooth", "Smoothing 55%, cloth bounce 40%, follow-through 35%", "One flowing line. The default."],
+  ["Cinematic", "Smoothing 78%, cloth bounce 30%, follow-through 55%", "Slow, weighty and film-like, with limbs trailing their parents."],
+  ["Bouncy", "Smoothing 50%, cloth bounce 85%, follow-through 50%", "Medium speed with a lively, swinging jacket and cuffs."],
+];
+
 const PAPERS = [
   ["As-Rigid-As-Possible shape manipulation", "2005", "Keeps neck, collar and knee patches from kinking where bones blend."],
   ["Bounded Biharmonic Weights", "2011", "Computes smooth joint weights from the drawing's shape, replacing hand-tuned bands."],
@@ -325,6 +332,109 @@ const ProMoveCaseStudy = () => {
       </CsSection>
 
       <CsSection
+        id="promove-motion"
+        label="Motion"
+        title="The real problem: how smooth should it feel?"
+      >
+        <CsText>
+          Getting a drawing to follow a body was only the first half. The harder
+          question, and the one we kept coming back to, was how smooth the
+          result should be. Raw tracking jitters. Smooth it too little and the
+          character looks like a puppet on strings, smooth it too much and it
+          lags behind you like a bad video call. So we treated smoothness as a
+          design material with real physics behind it, not a single slider.
+        </CsText>
+
+        <CsH3>Three layers of smoothness</CsH3>
+        <CsText>
+          <strong>Clean the input.</strong> Every joint passes through a One
+          Euro filter, which removes shaking but keeps fast moves sharp.
+        </CsText>
+        <CsText>
+          <strong>Primary motion.</strong> Each bone rides on a critically
+          damped spring, stepped at a fixed 120 Hz. It eases in and out and
+          never overshoots. The smoothing control moves the spring from about
+          7.5 Hz at its snappiest to about 1.8 Hz at its floatiest. Forearms,
+          shins and the neck are sprung relative to their parent, so they trail
+          a little behind it, while blinks and the jaw use a faster spring so
+          they stay crisp.
+        </CsText>
+        <CsText>
+          <strong>Secondary motion.</strong> Loose clothing gets its own
+          springs. The jacket hem, the sleeve cuffs and the trouser cuffs swing
+          around where the skeleton puts them, lag on fast moves and settle.
+          The head, torso, upper arms, hands and shoes stay rigid. These
+          springs pull toward the animated pose, never toward raw camera
+          landmarks, so tracking noise can&apos;t turn into wobble.
+        </CsText>
+
+        <CsH3>Four feels, one arm lift</CsH3>
+        <CsText>
+          The settings are bundled into named feels. Here they are on the same
+          move: the red beanie lifting and lowering both arms.
+        </CsText>
+        <CsPanel title="Snappy, Smooth, Cinematic and Bouncy, side by side" wide>
+          <CsVideo
+            src={`${BASE}/feels.mp4`}
+            label="The red beanie character raising and lowering both arms four times at once, once for each motion feel"
+          />
+        </CsPanel>
+        <CsPanel title="What each feel changes" padded>
+          <ul className="pm-papers">
+            {FEEL_PRESETS.map(([name, values, text]) => (
+              <li key={name} className="pm-paper">
+                <p className="pm-paper-name">{name}</p>
+                <p className="pm-paper-text">
+                  {values}. {text}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </CsPanel>
+        <CsText>
+          We tuned in a fixed order, and it saved us from chasing the wrong
+          bug: turn the springs and the cloth off, fix the deformation, and
+          only then enable the secondary springs and tune their damping.
+          Smoothing can hide a broken joint, so we made it prove itself last.
+        </CsText>
+
+        <CsH3>One rig, many uses</CsH3>
+        <CsText>
+          Once smoothness was a dial, the same character could do more than
+          copy a performer. Two uses we explored:
+        </CsText>
+        <CsGrid3
+          items={[
+            {
+              media: (
+                <CsVideo
+                  src={`${BASE}/loader-walk.mp4`}
+                  label="The red beanie character walking in place in a loop"
+                />
+              ),
+              caption:
+                "A loading animation: a walk cycle is a loop that already eases in and out, so it can stand in for a spinner.",
+            },
+            {
+              media: (
+                <CsVideo
+                  src={`${BASE}/face-live.mp4`}
+                  label="Close-up of the red beanie character's face blinking and shifting its gaze"
+                />
+              ),
+              caption:
+                "Facial recognition feedback: eyelids, gaze, brows and mouth follow your face live, so the product can show it sees you.",
+            },
+          ]}
+        />
+        <CsText>
+          A slower feel could suit a loader, where calm matters more than
+          response. A snappier one could suit recognition, where lag between
+          your blink and the character&apos;s would break the illusion.
+        </CsText>
+      </CsSection>
+
+      <CsSection
         id="promove-problems"
         label="Problems"
         title="What broke, and what we did about it"
@@ -462,8 +572,10 @@ const ProMoveCaseStudy = () => {
           The biggest lesson was that a drawing is not a 3D model. Every trick
           for making it bend came with a visible cost, and the only way to
           choose between them was to test the same extreme poses over and over.
-          Keeping everything on the device shaped almost every decision, from
-          the tracking models to the AI that only repairs the broken spots.
+          Smoothness turned out to be a design decision as much as a technical
+          one. Keeping everything on the device shaped almost every other
+          choice, from the tracking models to the AI that only repairs the
+          broken spots.
         </CsText>
         <CsText>
           Next up are a working GPU, the side, back and three-quarter views for

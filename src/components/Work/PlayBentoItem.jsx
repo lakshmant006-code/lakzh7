@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
+import { playMutedVideo } from "../../utils/playMutedVideo";
 import {
   ExternalLink,
   Github,
@@ -179,7 +180,7 @@ const NaturalPlayBentoItem = React.forwardRef(function NaturalPlayBentoItem(
     // Eager videos: src is already set, just play immediately
     if (isEager) {
       const video = videoRef.current;
-      if (video) video.play().catch(() => {});
+      if (video) playMutedVideo(video);
       return;
     }
     const container = videoContainerRef.current;
@@ -196,7 +197,7 @@ const NaturalPlayBentoItem = React.forwardRef(function NaturalPlayBentoItem(
               video.src = video.dataset.src;
               video.load();
             }
-            video.play().catch(() => {});
+            playMutedVideo(video);
           } else {
             video.pause();
           }

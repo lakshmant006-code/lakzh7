@@ -1,6 +1,7 @@
 ﻿import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import CursorPill from "../CursorPill/CursorPill";
+import { playMutedVideo } from "../../utils/playMutedVideo";
 import "./WorkBentoGrid.css";
 import "./WorkBentoItem.css";
 
@@ -117,7 +118,7 @@ function WorkCard({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            video.play().catch(() => {});
+            playMutedVideo(video);
           } else {
             video.pause();
           }
