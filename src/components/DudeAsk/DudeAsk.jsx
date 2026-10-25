@@ -39,7 +39,6 @@ export default function DudeAsk({ onClose, onHoverChange }) {
     timerRef.current = setInterval(() => {
       count += 1;
       setShown(count);
-      const char = item.answer[count - 1];
       if (count >= item.answer.length) clearInterval(timerRef.current);
     }, TYPE_MS);
   };
