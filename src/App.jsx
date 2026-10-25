@@ -12,6 +12,7 @@ import Work from "./pages/Work/Work";
 import TimeManagementCaseStudy from "./pages/TimeManagementCaseStudy/TimeManagementCaseStudy";
 import QuizAICaseStudy from "./pages/QuizAICaseStudy/QuizAICaseStudy";
 import HikuCaseStudy from "./pages/HikuCaseStudy/HikuCaseStudy";
+import ProMoveCaseStudy from "./pages/ProMoveCaseStudy/ProMoveCaseStudy";
 import PixelCatPage from "./pages/PixelCat/PixelCat";
 import NotFound from "./pages/NotFound/NotFound";
 import "./App.css";
@@ -81,6 +82,7 @@ function App() {
             <Route path="/time-management" element={<TimeManagementCaseStudy />} />
             <Route path="/quizai" element={<QuizAICaseStudy />} />
             <Route path="/hiku" element={<HikuCaseStudy />} />
+            <Route path="/pro-move" element={<ProMoveCaseStudy />} />
             <Route path="/pixel-cat" element={<PixelCatPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -67,6 +67,7 @@ const routeMap = {
   "time-management-pain-detection": "/time-management",
   "quizai-approval-flow": "/quizai",
   "hiku-bio-smart-wearable": "/hiku",
+  "promove-svsd-hackathon": "/pro-move",
 };
 
 /** Single work card (full layout on Work page; compact footer on Home) */
@@ -96,7 +97,8 @@ function WorkCard({
   const isClickable =
     project.id === "time-management-pain-detection" ||
     project.id === "quizai-approval-flow" ||
-    project.id === "hiku-bio-smart-wearable";
+    project.id === "hiku-bio-smart-wearable" ||
+    project.id === "promove-svsd-hackathon";
 
   const videoSource = project.video;
   const useThumbnailImage = isMobile && project.thumbnailImage;
