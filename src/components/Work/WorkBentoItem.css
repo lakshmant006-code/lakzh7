@@ -863,12 +863,11 @@
   font-weight: 500;
   line-height: 1.15;
   font-size: calc(var(--compact-tag-size) * 0.82);
-  padding: calc(var(--compact-tag-pad-y) + 1px) calc(var(--compact-tag-pad-x) + 7px)
-    calc(var(--compact-tag-pad-y) + 7px);
-  background: url("/home/speech-bubble.svg") center / 100% 100% no-repeat;
+  padding: var(--compact-tag-pad-y) var(--compact-tag-pad-x);
+  background: #ffffff;
   color: #141414;
-  border: none;
-  border-radius: 0;
+  border: 1px solid rgba(20, 20, 20, 0.14);
+  border-radius: 4px;
   box-shadow: none;
   white-space: nowrap;
 }
