@@ -6,8 +6,9 @@ import React, { useEffect, useRef } from "react";
  * neighbours with rounded bridges into small circuit-like clumps, then spring
  * back, so nothing stays swollen for more than about a second.
  *
- * - protectRef: an element whose content box stays clear of dots, so the field
- *   only lives in the margins on either side of it.
+ * - protectRef: an element (the cards) whose content box the field fades out
+ *   across: full strength in the margins either side, fading to nothing toward
+ *   the middle, so dots flow in behind the cards.
  * - onActiveChange(bool): true while the pointer is moving over the field, for
  *   things like music.
  *
@@ -24,6 +25,8 @@ const BRIDGE = 0.7; // bridge thickness relative to the smaller dot
 // and settle in about half a second after the pointer leaves.
 const STIFFNESS = 170;
 const DAMPING = 15;
+const FADE = 0.75; // how far in behind the cards the dots reach (share of half-width)
+const LEVELS = 6; // resting dots are drawn in this many opacity steps
 const INK = "0, 0, 0";
 
 // Small, stable pseudo-random value for a cell or an edge.
@@ -84,18 +87,33 @@ export default function DotField({ protectRef, onActiveChange }) {
       pointer.last = performance.now();
     };
 
-    // The columns of dots that are covered by the protected content (kept clear).
-    const clearColumns = (box) => {
+    // How strongly each column of dots shows (1 in the margins, fading to 0 toward
+    // the middle of the protected content), and where its edges are.
+    let colWeight = new Float32Array(0);
+    const measure = (box) => {
+      if (colWeight.length !== cols) colWeight = new Float32Array(cols);
       const el = protectRef?.current;
-      if (!el) return [1, 0];
+      if (!el) {
+        colWeight.fill(1);
+        return [1, 0];
+      }
       const r = el.getBoundingClientRect();
       const cs = getComputedStyle(el);
       const left = r.left + parseFloat(cs.paddingLeft || 0) - box.left;
       const right = r.right - parseFloat(cs.paddingRight || 0) - box.left;
-      // Dots whose centre lies inside the content box (plus half a gap) are off.
-      const from = Math.ceil((left - spacing * 0.5) / spacing);
-      const to = Math.floor((right + spacing * 0.5) / spacing);
-      return [from, to];
+      const fadeLen = Math.max(1, ((right - left) / 2) * FADE);
+      for (let c = 0; c < cols; c++) {
+        const x = c * spacing;
+        if (x <= left || x >= right) {
+          colWeight[c] = 1;
+          continue;
+        }
+        const t = Math.min(1, Math.min(x - left, right - x) / fadeLen);
+        const smooth = t * t * (3 - 2 * t);
+        colWeight[c] = 1 - smooth;
+      }
+      // Margins (outside the content box), for the "hovering" test.
+      return [Math.ceil(left / spacing), Math.floor(right / spacing)];
     };
 
     // Stable decision whether the bridge between two neighbours exists, so the
@@ -116,7 +134,7 @@ export default function DotField({ protectRef, onActiveChange }) {
       lastTime = now;
 
       const box = canvas.getBoundingClientRect();
-      const [clearFrom, clearTo] = clearColumns(box);
+      const [clearFrom, clearTo] = measure(box);
 
       // Where the field is being "touched": the pointer, or a wandering ghost.
       let px = pointer.x - box.left;
@@ -152,7 +170,8 @@ export default function DotField({ protectRef, onActiveChange }) {
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           const i = r * cols + c;
-          if (c >= clearFrom && c <= clearTo) {
+          const w = colWeight[c];
+          if (w < 0.03) {
             energy[i] = 0;
             velocity[i] = 0;
             continue;
@@ -163,7 +182,7 @@ export default function DotField({ protectRef, onActiveChange }) {
           let target = 0;
           if (d2 < r2) {
             // Each dot has its own appetite, so clumps are uneven.
-            target = Math.exp(-d2 / (r2 * 0.45)) * (0.55 + 0.45 * hash(c, r));
+            target = Math.exp(-d2 / (r2 * 0.45)) * (0.55 + 0.45 * hash(c, r)) * w;
           }
           let e = energy[i];
           let v = velocity[i];
@@ -187,20 +206,27 @@ export default function DotField({ protectRef, onActiveChange }) {
       const maxR = spacing * 0.34;
       const radius = (e) => (e < 0.04 ? BASE_R : BASE_R + Math.pow(Math.min(e, 1.25), 1.1) * (maxR - BASE_R));
 
-      // Resting dots, all in one path (there are thousands of them).
-      ctx.fillStyle = `rgba(${INK}, 0.22)`;
-      ctx.beginPath();
-      for (let r = 0; r < rows; r++) {
+      // Resting dots, a few paths by opacity (there are thousands of them).
+      for (let level = 1; level <= LEVELS; level++) {
+        const lo = (level - 1) / LEVELS;
+        const hi = level / LEVELS;
+        ctx.fillStyle = `rgba(${INK}, ${(0.22 * hi).toFixed(3)})`;
+        ctx.beginPath();
+        let any = false;
         for (let c = 0; c < cols; c++) {
-          if (c >= clearFrom && c <= clearTo) continue;
-          if (energy[r * cols + c] >= 0.04) continue;
-          const x = c * spacing;
-          const y = r * spacing;
-          ctx.moveTo(x + BASE_R, y);
-          ctx.arc(x, y, BASE_R, 0, Math.PI * 2);
+          const w = colWeight[c];
+          if (w < 0.03 || w <= lo || w > hi) continue;
+          for (let r = 0; r < rows; r++) {
+            if (energy[r * cols + c] >= 0.04) continue;
+            const x = c * spacing;
+            const y = r * spacing;
+            ctx.moveTo(x + BASE_R, y);
+            ctx.arc(x, y, BASE_R, 0, Math.PI * 2);
+            any = true;
+          }
         }
+        if (any) ctx.fill();
       }
-      ctx.fill();
 
       // Bridges (under the swollen dots).
       ctx.lineCap = "round";
@@ -267,16 +293,18 @@ export default function DotField({ protectRef, onActiveChange }) {
 
     const drawStatic = () => {
       const box = canvas.getBoundingClientRect();
-      const [clearFrom, clearTo] = clearColumns(box);
+      measure(box);
       ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = `rgba(${INK}, 0.16)`;
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          if (c >= clearFrom && c <= clearTo) continue;
-          ctx.beginPath();
+      for (let c = 0; c < cols; c++) {
+        const w = colWeight[c];
+        if (w < 0.03) continue;
+        ctx.fillStyle = `rgba(${INK}, ${(0.16 * w).toFixed(3)})`;
+        ctx.beginPath();
+        for (let r = 0; r < rows; r++) {
+          ctx.moveTo(c * spacing + BASE_R, r * spacing);
           ctx.arc(c * spacing, r * spacing, BASE_R, 0, Math.PI * 2);
-          ctx.fill();
         }
+        ctx.fill();
       }
     };
 
