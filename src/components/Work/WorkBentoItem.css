@@ -939,9 +939,3 @@
     padding: 0.45rem 0.875rem;
   }
 }
-
-/* Home cards sit on a white tile so the dot field never runs behind their text */
-.work-bento-item.work-bento-item--compact {
-  background-color: #ffffff;
-  border-radius: 18px;
-}

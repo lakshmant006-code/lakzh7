@@ -441,13 +441,7 @@
 
 /* ----- Work: 2x2 case studies ----- */
 .home-work {
-  position: relative;
   padding: calc(var(--home-section-gap) / 2) 0 calc(var(--home-section-gap) / 2);
-}
-/* The dot field fills the section behind the cards. */
-.home-work > .home-work-inner {
-  position: relative;
-  z-index: 1;
 }
 
 .home-work-section-intro .home-play-subtitle {
