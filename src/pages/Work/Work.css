@@ -60,14 +60,27 @@
   }
 }
 
-/* Narrower screens: keep the cards as wide as before, with slim margins. */
-@media (max-width: 1279px) {
+/* Tablets (iPad): visible margins for the dots, and cards tall enough that
+   their text never clips at the narrower width. */
+@media (min-width: 640px) and (max-width: 1279px) {
   .work-page-dots {
-    --dot-band: 12px;
+    --dot-band: clamp(36px, 5vw, 64px);
+  }
+}
+@media (min-width: 640px) and (max-width: 1024px) {
+  .work-page-dots-inner .work-bento-grid {
+    --work-bento-row-h: 560px;
   }
 }
 @media (min-width: 1025px) and (max-width: 1279px) {
   .work-page-dots-inner .work-bento-grid {
     column-gap: 2.5rem;
+    --work-bento-row-h: 760px;
+  }
+}
+/* Phones: slim margins, the cards keep their width. */
+@media (max-width: 639px) {
+  .work-page-dots {
+    --dot-band: 12px;
   }
 }

@@ -198,10 +198,13 @@ export function setLoopActive(name, active) {
   });
 }
 
-/** Attach the global hover and press listeners. Returns a cleanup function. */
+/**
+ * Attach the global listeners. Every device unlocks audio on its first touch,
+ * click or key press (iPads included). Hover and press sounds are only for
+ * devices with a real hover pointer. Returns a cleanup function.
+ */
 export function initUiSounds() {
-  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
-  if (!finePointer.matches) return () => {};
+  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
   // A region marked data-sound="off" plays nothing by itself (it has its own).
   const isOff = (target) => target.closest("[data-sound]")?.dataset.sound === "off";
@@ -217,16 +220,23 @@ export function initUiSounds() {
   };
   const onDown = (e) => {
     unlock();
+    if (!finePointer) return;
     if (e.button !== 0 || !(e.target instanceof Element) || isOff(e.target)) return;
     if (e.target.closest(CARD) || e.target.closest(SMALL)) playSound("press");
   };
+  // iOS only lets audio start from a touch that ends or begins in a handler.
+  const onTouch = () => unlock();
 
-  document.addEventListener("mouseover", onOver, true);
+  if (finePointer) document.addEventListener("mouseover", onOver, true);
   document.addEventListener("pointerdown", onDown, true);
+  document.addEventListener("touchstart", onTouch, { capture: true, passive: true });
+  document.addEventListener("touchend", onTouch, { capture: true, passive: true });
   document.addEventListener("keydown", unlock, true);
   return () => {
     document.removeEventListener("mouseover", onOver, true);
     document.removeEventListener("pointerdown", onDown, true);
+    document.removeEventListener("touchstart", onTouch, true);
+    document.removeEventListener("touchend", onTouch, true);
     document.removeEventListener("keydown", unlock, true);
   };
 }

@@ -25,9 +25,12 @@
   outline: 2px solid #1b1b1b;
   outline-offset: 3px;
 }
-/* Touch devices get no hover sounds, so no switch either. */
+/* On touch screens (iPad, phones) it sits above the home indicator. */
 @media (hover: none), (pointer: coarse) {
   .sound-toggle {
-    display: none;
+    left: max(16px, env(safe-area-inset-left));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    width: 44px;
+    height: 44px;
   }
 }
