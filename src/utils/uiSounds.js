@@ -113,7 +113,6 @@ export function playSound(name) {
 // ---- Looping music (plays while the pointer hovers the Work page dot field) ----
 const LOOPS = {
   // Four bars at 100 bpm, cut to repeat seamlessly (generated with ElevenLabs Music).
-  dots: { url: "/sounds/dots-loop.mp3", length: 9.6, gain: 0.2 },
 };
 const FADE_IN_S = 0.3;
 const FADE_OUT_S = 0.6;
