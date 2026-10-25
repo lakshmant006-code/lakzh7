@@ -24,7 +24,7 @@
   position: absolute;
   inset: 0;
   transform-origin: 50% 90%;
-  will-change: transform;
+  will-change: transform, opacity;
 }
 
 .pcs-card {
@@ -38,6 +38,7 @@
     0 1px 2px rgba(0, 0, 0, 0.08),
     0 14px 30px rgba(0, 0, 0, 0.16);
   touch-action: none;
+  will-change: transform;
   user-select: none;
   -webkit-user-select: none;
 }

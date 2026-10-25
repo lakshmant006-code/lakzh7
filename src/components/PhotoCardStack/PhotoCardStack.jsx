@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useReducedMotion, useTransform } from "framer-motion";
+import { animate, motion, useMotionValue, useReducedMotion, useTransform } from "framer-motion";
 import "./PhotoCardStack.css";
 
 // How each card sits by depth (0 = the card on top): the stack fans out to
@@ -11,18 +11,32 @@ const POSES = [
   { x: 58, y: -18, rotate: 17, scale: 0.94 },
 ];
 const MAX_DEPTH = POSES.length - 1;
-const FLING_DISTANCE = 20; // drag farther than this many px/10 of card width to send it away
-const EXIT_MS = 380;
+const EXIT_MS = 460;
+// The flung card leaves quickly, then eases out: it carries the speed of the flick.
+const EXIT_EASE = [0.18, 0.75, 0.3, 1];
+const SNAP_BACK = { type: "spring", stiffness: 420, damping: 32 };
 
-function StackCard({ src, alt, depth, isTop, leavingDir, onFling, reduced, enter }) {
+const StackCard = React.memo(function StackCard({
+  src,
+  alt,
+  depth,
+  isTop,
+  leavingDir,
+  onFling,
+  reduced,
+  enter,
+}) {
+  // The finger's offset stays on the card from touch to exit, so releasing it
+  // never makes the card jump: the exit animation just carries on from there.
   const dragX = useMotionValue(0);
+  const dragY = useMotionValue(0);
   const dragRotate = useTransform(dragX, [-240, 0, 240], [-12, 0, 12]);
   const dragged = useRef(false);
 
   const pose = POSES[Math.min(depth, MAX_DEPTH)];
   const leaving = leavingDir !== 0;
 
-  const animate = leaving
+  const animateTo = leaving
     ? {
         x: leavingDir * 560,
         y: -30,
@@ -33,7 +47,10 @@ function StackCard({ src, alt, depth, isTop, leavingDir, onFling, reduced, enter
     : { ...pose, opacity: 1 };
 
   const transition = leaving
-    ? { duration: EXIT_MS / 1000, ease: [0.3, 0, 0.8, 0.3] }
+    ? {
+        default: { duration: EXIT_MS / 1000, ease: EXIT_EASE },
+        opacity: { duration: 0.26, delay: 0.16, ease: "easeIn" },
+      }
     : reduced
       ? { duration: 0.15 }
       : { type: "spring", stiffness: 260, damping: 26 };
@@ -43,22 +60,27 @@ function StackCard({ src, alt, depth, isTop, leavingDir, onFling, reduced, enter
       className="pcs-card-pose"
       style={{ zIndex: leaving ? 100 : 50 - depth }}
       initial={enter ? { ...POSES[MAX_DEPTH], opacity: 0 } : false}
-      animate={animate}
+      animate={animateTo}
       transition={transition}
     >
       <motion.div
         className={`pcs-card${isTop ? " pcs-card--top" : ""}`}
-        style={isTop && !reduced ? { x: dragX, rotate: dragRotate } : undefined}
+        style={{ x: dragX, y: dragY, rotate: dragRotate }}
         drag={isTop && !leaving && !reduced}
-        dragSnapToOrigin
-        dragElastic={0.85}
+        dragMomentum={false}
+        dragElastic={1}
         onDragStart={() => {
           dragged.current = true;
         }}
         onDragEnd={(_, info) => {
           const far = Math.abs(info.offset.x) > 110 || Math.abs(info.offset.y) > 140;
           const fast = Math.abs(info.velocity.x) > 600;
-          if (far || fast) onFling(info.offset.x >= 0 ? 1 : -1);
+          if (far || fast) {
+            onFling(info.offset.x >= 0 ? 1 : -1);
+          } else {
+            animate(dragX, 0, SNAP_BACK);
+            animate(dragY, 0, SNAP_BACK);
+          }
           setTimeout(() => {
             dragged.current = false;
           }, 0);
@@ -67,11 +89,11 @@ function StackCard({ src, alt, depth, isTop, leavingDir, onFling, reduced, enter
           if (isTop && !dragged.current) onFling(1);
         }}
       >
-        <img src={src} alt={alt} draggable={false} loading="lazy" />
+        <img src={src} alt={alt} draggable={false} decoding="async" />
       </motion.div>
     </motion.div>
   );
-}
+});
 
 /**
  * A fanned stack of photo cards. Drag, flick or click the top card away and
@@ -103,6 +125,11 @@ export default function PhotoCardStack({ photos, label = "Photos" }) {
     },
     [leaving, order, reduced],
   );
+
+  // A stable handle for the cards, so a flick doesn't re-render every card.
+  const flingRef = useRef(fling);
+  flingRef.current = fling;
+  const flingStable = useCallback((dir) => flingRef.current(dir), []);
 
   const onKeyDown = (e) => {
     if (e.key === "ArrowRight" || e.key === "Enter" || e.key === " ") {
@@ -140,7 +167,7 @@ export default function PhotoCardStack({ photos, label = "Photos" }) {
               depth={depth}
               isTop={!leaving && depth === 0}
               leavingDir={isLeaving ? leaving.dir : 0}
-              onFling={fling}
+              onFling={flingStable}
               reduced={reduced}
               enter={cycles[idx] > 0}
             />
