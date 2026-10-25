@@ -2,13 +2,25 @@ import React, { useRef } from "react";
 import Footer from "../../components/Footer/Footer";
 import LazyVideo from "../../components/LazyVideo/LazyVideo";
 import ExperienceTimeline from "../../components/ExperienceTimeline/ExperienceTimeline";
-import ExpandingPhotoRow from "../../components/ExpandingPhotoRow/ExpandingPhotoRow";
+import PhotoCardStack from "../../components/PhotoCardStack/PhotoCardStack";
+import enjoy1 from "../../assets/img/about-pictures/enjoy 1.jpeg";
+import enjoy2 from "../../assets/img/about-pictures/enjoy 2.jpeg";
+import enjoy3 from "../../assets/img/about-pictures/enjoy 3.jpeg";
+import enjoy4 from "../../assets/img/about-pictures/enjoy 4.jpeg";
+import enjoy5 from "../../assets/img/about-pictures/enjoy 5.jpeg";
+import enjoy6 from "../../assets/img/about-pictures/enjoy 6.jpeg";
+import enjoy7 from "../../assets/img/about-pictures/enjoy 7.jpeg";
+import enjoy8 from "../../assets/img/about-pictures/enjoy 8.jpeg";
 import useScrollReset from "../../hooks/useScrollReset";
 import useRiseUpOnScroll from "../../hooks/useRiseUpOnScroll";
 import "./About.css";
 
 const HI_CAPTION_TEXT =
   "Hi, I'm Lakshman, a UX designer and researcher turning into a design engineer. I'm interested in interactions and experimenting with details.";
+
+const ENJOY_PHOTOS = [enjoy1, enjoy2, enjoy3, enjoy4, enjoy5, enjoy6, enjoy7, enjoy8].map(
+  (src, i) => ({ src, alt: `Photo ${i + 1} of things I enjoy` }),
+);
 
 const About = () => {
   useScrollReset();
@@ -85,7 +97,7 @@ const About = () => {
             enthusiasts.
           </p>
           <div ref={enjoyImagesRef} className="about-sandbox-enjoy-images">
-            <ExpandingPhotoRow />
+            <PhotoCardStack photos={ENJOY_PHOTOS} label="Things I enjoy" />
           </div>
         </div>
       </section>

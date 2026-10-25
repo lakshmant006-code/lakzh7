@@ -1,0 +1,69 @@
+.pcs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.pcs:focus-visible .pcs-stage {
+  outline: 2px solid #1b1b1b;
+  outline-offset: 12px;
+  border-radius: 24px;
+}
+
+.pcs-stage {
+  position: relative;
+  width: clamp(210px, 56vw, 280px);
+  aspect-ratio: 3 / 4;
+  /* room for the fan on the right */
+  margin-right: 60px;
+}
+
+.pcs-card-pose {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 90%;
+  will-change: transform;
+}
+
+.pcs-card {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  background: #ffffff;
+  padding: 7px;
+  box-sizing: border-box;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.08),
+    0 14px 30px rgba(0, 0, 0, 0.16);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.pcs-card--top {
+  cursor: grab;
+}
+.pcs-card--top:active {
+  cursor: grabbing;
+}
+.pcs-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px;
+  pointer-events: none;
+}
+
+.pcs-hint {
+  margin: 0;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.8rem;
+  color: #8a8a8a;
+}
+@media (max-width: 480px) {
+  .pcs-stage {
+    margin-right: 44px;
+  }
+}
