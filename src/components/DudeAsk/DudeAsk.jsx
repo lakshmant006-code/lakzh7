@@ -1,18 +1,19 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { isSoundEnabled } from "../../utils/uiSounds";
+import { playSound } from "../../utils/uiSounds";
 import "./DudeAsk.css";
+
+const TYPE_MS = 32; // time between typed characters
 
 /**
  * Click the person in the illustration and ask a few questions. Each answer is
- * a recorded clip (public/voice/answers.json lists the question, the words and
- * the audio file), with the words typed out in step with the voice.
+ * typed out with a soft typewriter click per character (public/voice/answers.json
+ * lists the questions and the words).
  */
 export default function DudeAsk({ onClose, onHoverChange }) {
   const [items, setItems] = useState([]);
   const [current, setCurrent] = useState(null); // the item being answered
   const [shown, setShown] = useState(0); // characters of the answer revealed
-  const audioRef = useRef(null);
-  const frameRef = useRef(0);
+  const timerRef = useRef(null);
 
   useEffect(() => {
     let alive = true;
@@ -26,12 +27,7 @@ export default function DudeAsk({ onClose, onHoverChange }) {
   }, []);
 
   const stop = useCallback(() => {
-    cancelAnimationFrame(frameRef.current);
-    const audio = audioRef.current;
-    if (audio) {
-      audio.pause();
-      audioRef.current = null;
-    }
+    clearInterval(timerRef.current);
   }, []);
 
   useEffect(() => stop, [stop]);
@@ -40,27 +36,14 @@ export default function DudeAsk({ onClose, onHoverChange }) {
     stop();
     setCurrent(item);
     setShown(0);
-
-    // With sound off, just show the answer.
-    if (!isSoundEnabled()) {
-      setShown(item.answer.length);
-      return;
-    }
-    const audio = new Audio(item.audio);
-    audioRef.current = audio;
-    const tick = () => {
-      if (audioRef.current !== audio) return;
-      const total = audio.duration || 0;
-      const progress = total ? Math.min(1, audio.currentTime / (total * 0.94)) : 0;
-      setShown(Math.ceil(item.answer.length * progress));
-      if (!audio.ended) frameRef.current = requestAnimationFrame(tick);
-      else setShown(item.answer.length);
-    };
-    audio.addEventListener("playing", () => {
-      frameRef.current = requestAnimationFrame(tick);
-    });
-    audio.addEventListener("error", () => setShown(item.answer.length));
-    audio.play().catch(() => setShown(item.answer.length));
+    let count = 0;
+    timerRef.current = setInterval(() => {
+      count += 1;
+      setShown(count);
+      const char = item.answer[count - 1];
+      if (char && char !== " ") playSound("type");
+      if (count >= item.answer.length) clearInterval(timerRef.current);
+    }, TYPE_MS);
   };
 
   const back = () => {

@@ -14,10 +14,13 @@ const FILES = {
   press: "/sounds/press.mp3",
   horn: "/sounds/auto-horn.mp3",
   woof: "/sounds/dog-woof.mp3",
+  type: "/sounds/type.mp3",
 };
 // Per-sound loudness (the files are peak-normalised).
-const GAIN = { pop: 0.35, tick: 0.2, press: 0.4, horn: 0.5, woof: 0.45 };
+const GAIN = { pop: 0.35, tick: 0.2, press: 0.4, horn: 0.2, woof: 0.4, type: 0.09 };
 const MIN_GAP_MS = 70;
+// Typing clicks come fast, so they get a shorter gap.
+const GAP_MS = { type: 28 };
 
 const CARD =
   ".work-bento-item, .natural-play-bento-item, .cs-next-card, .expanding-photo-row-hitarea, .stack-container, [data-sound='pop']";
@@ -92,13 +95,14 @@ export function playSoundOnClick(name) {
 export function playSound(name) {
   if (!enabled || !ctx || !buffers[name]) return;
   const now = performance.now();
-  if (now - (lastPlayed[name] || 0) < MIN_GAP_MS) return;
+  if (now - (lastPlayed[name] || 0) < (GAP_MS[name] ?? MIN_GAP_MS)) return;
   lastPlayed[name] = now;
 
   const source = ctx.createBufferSource();
   source.buffer = buffers[name];
   // A touch of random pitch so repeated hovers don't sound mechanical.
-  source.playbackRate.value = 0.94 + Math.random() * 0.12;
+  source.playbackRate.value =
+    name === "type" ? 0.9 + Math.random() * 0.22 : 0.94 + Math.random() * 0.12;
   const gain = ctx.createGain();
   gain.gain.value = GAIN[name];
   source.connect(gain).connect(ctx.destination);

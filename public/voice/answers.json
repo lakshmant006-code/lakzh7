@@ -2,31 +2,26 @@
   {
     "id": 1,
     "question": "Who are you?",
-    "answer": "Hi, I'm Lakshman. I'm a UX designer and researcher, turning into a design engineer. I'm interested in interactions, and in experimenting with the small details.",
-    "audio": "/voice/answer-1.mp3"
+    "answer": "Hi, I'm Lakshman. I'm a UX designer and researcher, turning into a design engineer. I'm interested in interactions, and in experimenting with the small details."
   },
   {
     "id": 2,
     "question": "How did you get into design?",
-    "answer": "I started in architecture. What drew me in was the research side, understanding a problem deeply before drawing a solution. Then I realized I wanted to build things that live digitally, so I moved into UX.",
-    "audio": "/voice/answer-2.mp3"
+    "answer": "I started in architecture. What drew me in was the research side, understanding a problem deeply before drawing a solution. Then I realized I wanted to build things that live digitally, so I moved into UX."
   },
   {
     "id": 3,
     "question": "What are you working on lately?",
-    "answer": "Lately, pro-move. It's a motion capture concept for Procreate that I built for the SVSD design competition. You perform on camera, and the character you drew moves with you.",
-    "audio": "/voice/answer-3.mp3"
+    "answer": "Lately, pro-move. It's a motion capture concept for Procreate that I built for the SVSD design competition. You perform on camera, and the character you drew moves with you."
   },
   {
     "id": 4,
     "question": "What do you do for fun?",
-    "answer": "I hike a lot, because I live in Arizona. I also love the beach, trying new coffee shops, and taking pictures of buildings.",
-    "audio": "/voice/answer-4.mp3"
+    "answer": "I hike a lot, because I live in Arizona. I also love the beach, trying new coffee shops, and taking pictures of buildings."
   },
   {
     "id": 5,
     "question": "Where can I see your work?",
-    "answer": "Open the work page. There's Reef, an AI note taking app, Hiku for hikers, Summer for time tracking, and pro-move.",
-    "audio": "/voice/answer-5.mp3"
+    "answer": "Open the work page. There's Reef, an AI note taking app, Hiku for hikers, Summer for time tracking, and pro-move."
   }
 ]
