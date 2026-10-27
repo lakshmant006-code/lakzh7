@@ -6,11 +6,14 @@
 <title>Grass</title>
 <style>
   :root { color-scheme: dark; }
-  html, body { margin: 0; height: 100%; background: #fff; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; }
-  /* the meadow dissolves softly into the page at its edges, like a memory */
-  canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block;
-    -webkit-mask-image: radial-gradient(ellipse 58% 52% at 50% 44%, #000 36%, rgba(0,0,0,.55) 66%, transparent 100%);
-            mask-image: radial-gradient(ellipse 58% 52% at 50% 44%, #000 36%, rgba(0,0,0,.55) 66%, transparent 100%); }
+  html, body { margin: 0; height: 100%; background: #f5f3ef; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; }
+  /* the meadow sits in a soft-edged rounded plate on the paper, like the other scenes */
+  :root { --mx: clamp(16px, 5vw, 64px); --mt: clamp(20px, 5vh, 56px); --mb: clamp(76px, 14vh, 120px); }
+  canvas { position: fixed; left: var(--mx); top: var(--mt); width: calc(100vw - 2 * var(--mx)); height: calc(100vh - var(--mt) - var(--mb)); display: block; border-radius: 44px;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 5.5%, #000 94.5%, transparent), linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
+    -webkit-mask-composite: source-in;
+            mask-image: linear-gradient(to right, transparent, #000 5.5%, #000 94.5%, transparent), linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
+            mask-composite: intersect; }
   .ui { position: fixed; left: 50%; bottom: max(20px, env(safe-area-inset-bottom)); transform: translateX(-50%);
         display: flex; align-items: center; gap: 14px; padding: 10px 16px; border-radius: 999px;
         background: rgba(12,24,10,.42); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
@@ -25,8 +28,10 @@
   .embed .back { top: 76px; }
   .inner .back, .inner .ui, .inner .hint { display: none; }
   .inner, .inner body { background: #f5f3ef; }
-  .inner canvas { -webkit-mask-image: none; mask-image: none; }
+  .inner canvas { left: 0; top: 0; width: 100vw; height: 100vh; border-radius: 0; -webkit-mask-image: none; mask-image: none; }
   .inner .hint { top: 134px; }
+  .bubble { position: fixed; transform: translate(-50%, -100%); padding: 5px 10px; border-radius: 999px; background: #fff; color: #3a332d; font: 500 11px/1.2 -apple-system, system-ui, sans-serif; white-space: nowrap; box-shadow: 0 2px 10px rgba(44,36,32,.18); pointer-events: none; opacity: 0; transition: opacity .3s; z-index: 4; }
+  .bubble::after { content: ""; position: absolute; left: 50%; bottom: -4px; width: 8px; height: 8px; background: #fff; transform: translateX(-50%) rotate(45deg); }
   .hint { position: fixed; top: max(18px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); color: rgba(44,36,32,.72);
           font: 500 13px/1 -apple-system, system-ui, sans-serif; transition: opacity .8s; pointer-events: none; }
 </style>
@@ -34,7 +39,8 @@
 <body>
 <canvas id="c"></canvas>
 <a class="back" id="back" href="/nature/index.html">← Scenes</a>
-<div class="hint" id="hint">Tap anywhere to change the wind</div>
+<div class="hint" id="hint">Tap to plant flowers · someone will come over</div>
+<div id="bubbles"></div>
 <div class="ui"><span>Wind</span><input id="wind" type="range" min="0" max="3" step="0.01" value="0.8" aria-label="Wind speed"><output id="label">Breeze</output></div>
 <script>
 if (location.search.includes("inner")) document.documentElement.classList.add("inner");
@@ -130,6 +136,10 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     float lp = vn(base * 0.28 + 4.0);
     col = mix(col, col * vec3(1.10, 1.10, 0.85) + vec3(0.02, 0.04, 0.0), smoothstep(0.35, 0.8, lp) * t);
     col *= mix(0.42, 1.0, smoothstep(0.02, 0.55, aC.x));   // dark tussock heart
+    // broad darker and lighter patches across the meadow, like mown and unmown grass
+    float pb = vn(base * 0.11 + vec2(7.3, 2.1)) * 0.65 + vn(base * 0.27 + vec2(1.7, 9.4)) * 0.35;
+    float light = smoothstep(0.40, 0.62, pb);
+    col = mix(col * vec3(0.48, 0.55, 0.60), col * vec3(1.55, 1.50, 1.10) + vec3(0.05, 0.08, 0.0) * t, light);
     col *= 0.85 + 0.3 * rnd;
     col += vec3(0.05, 0.05, 0.0) * push * smoothstep(0.4, 1.0, t); // wind-lit sheen
     col *= 1.0 - 0.28 * fall;                                                   // pressed, shaded core
@@ -284,9 +294,8 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     if (!down) return;
     const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y); down = null;
     if (moved > 10) return;
-    presetIdx = (presetIdx + 1) % PRESETS.length;
-    setTarget(PRESETS[presetIdx]);
-    gust = Math.max(gust, 1.0);                                 // eased out below: a swell rolls through
+    gust = Math.max(gust, 0.5);
+    plantAt(e.clientX, e.clientY);
     dirTarget += (e.clientX / innerWidth - 0.5) * 0.8;           // gust leans the wind toward the tap side
     hideHint();
   });
@@ -295,9 +304,9 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
   addEventListener("pointermove", (e) => {
     tx = e.clientX / innerWidth - 0.5; ty = e.clientY / innerHeight - 0.5;
     if (e.target.closest(".ui")) { hover.on = false; return; }
-    hover.nx = (e.clientX / innerWidth) * 2 - 1; hover.ny = -((e.clientY / innerHeight) * 2 - 1); hover.on = true;
+    const cr = canvas.getBoundingClientRect(); hover.nx = ((e.clientX - cr.left) / cr.width) * 2 - 1; hover.ny = -(((e.clientY - cr.top) / cr.height) * 2 - 1); hover.on = true;
   });
-  addEventListener("pointerdown", (e) => { if (!e.target.closest(".ui")) { hover.nx = (e.clientX / innerWidth) * 2 - 1; hover.ny = -((e.clientY / innerHeight) * 2 - 1); hover.on = true; } });
+  addEventListener("pointerdown", (e) => { if (!e.target.closest(".ui")) { const cr = canvas.getBoundingClientRect(); hover.nx = ((e.clientX - cr.left) / cr.width) * 2 - 1; hover.ny = -(((e.clientY - cr.top) / cr.height) * 2 - 1); hover.on = true; } });
   addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") hover.on = false; });
   document.documentElement.addEventListener("pointerleave", () => { hover.on = false; });
 
@@ -307,13 +316,210 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
   let W = 0, H = 0;
   function resize() {
     const dpr = Math.min(devicePixelRatio || 1, DPR_CAP);
-    W = Math.round(innerWidth * dpr); H = Math.round(innerHeight * dpr);
+    const cr = canvas.getBoundingClientRect();
+    W = Math.max(2, Math.round(cr.width * dpr)); H = Math.max(2, Math.round(cr.height * dpr));
     canvas.width = W; canvas.height = H; gl.viewport(0, 0, W, H);
   }
   addEventListener("resize", resize); resize();
 
   const ease = (cur, tgt, dt, tau) => cur + (tgt - cur) * (1 - Math.exp(-dt / tau));
   let last = performance.now();
+
+  /* ---------- flowers and people (top-down sprites with soft cast shadows) ---------- */
+  const SPR_VS = `#version 300 es
+  layout(location=0) in vec4 aPS;   // x, z, sx, sz
+  layout(location=1) in vec4 aRT;   // rot, type, alpha, phase
+  layout(location=2) in vec4 aC;    // colour rgb, variant
+  uniform mat4 uVP; uniform vec2 uRight, uUp;
+  out vec2 vUV; flat out vec4 vRT; flat out vec4 vC; flat out vec2 vS;
+  void main(){
+    vec2 c = vec2(float(gl_VertexID & 1) * 2.0 - 1.0, float((gl_VertexID >> 1) & 1) * 2.0 - 1.0);
+    float cr = cos(aRT.x), sr = sin(aRT.x);
+    vec2 l = c * aPS.zw;
+    vec2 w = aRT.y > 1.5 ? l.x * uRight + l.y * uUp : vec2(cr * l.x - sr * l.y, sr * l.x + cr * l.y);   // people stand upright on screen
+    vUV = c; vRT = aRT; vC = aC; vS = aPS.zw;
+    gl_Position = uVP * vec4(aPS.x + w.x, 1.9, aPS.y + w.y, 1.0);
+  }`;
+  const SPR_FS = `#version 300 es
+  precision highp float;
+  in vec2 vUV; flat in vec4 vRT; flat in vec4 vC; flat in vec2 vS;
+  out vec4 o;
+  float sdCap(vec2 p, vec2 a, vec2 b, float r){ vec2 pa = p - a, ba = b - a; float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0); return length(pa - ba * h) - r; }
+  float sdEll(vec2 p, vec2 r){ return (length(p / r) - 1.0) * min(r.x, r.y); }
+  float cov(float d){ float w = max(fwidth(d), 1e-4) * 0.75; return smoothstep(w, -w, d); }
+  void main(){
+    vec2 p = vUV; float type = vRT.y, A = vRT.z, ph = vRT.w;
+    vec4 col = vec4(0.0);
+    if (type < 0.5) {                                   // shadow
+      float d = length(p);
+      float foot = mix(1.0, 0.55, clamp(p.x * 0.5 + 0.5, 0.0, 1.0));
+      col = vec4(0.10, 0.14, 0.30, smoothstep(1.0, 0.25, d) * 0.8 * A * foot);
+    } else if (type < 1.5) {                            // flower, seen from above
+      float r = length(p), a = atan(p.y, p.x);
+      float n = 5.0 + floor(vC.w * 3.0);                // 5-7 petals
+      float pet = 0.58 + 0.34 * pow(abs(cos(n * 0.5 * a)), 0.7);
+      float petal = smoothstep(pet, pet - 0.07, r);
+      vec3 base = vC.rgb;
+      vec3 pc = mix(base * 0.75, base, smoothstep(0.1, 0.65, r));
+      pc = mix(pc, vec3(1.0), 0.18 * smoothstep(0.55, 0.95, r) * step(0.5, vC.w));
+      pc *= 0.88 + 0.12 * cos(n * a);                   // petal creases
+      vec3 cen = vec3(1.0, 0.78, 0.15);
+      float disc = smoothstep(0.2, 0.15, r);
+      vec3 c = mix(pc, cen, disc);
+      c = mix(c, vec3(0.75, 0.5, 0.05), smoothstep(0.1, 0.0, r - 0.02) * 0.5);
+      col = vec4(c, petal * A);
+    } else {                                            // a small person seen from high above, upright on screen
+      vec2 f = vec2(p.x * 0.55, p.y);                   // figure space: the sprite is 0.55 as wide as tall
+      float s = sin(ph), face = vC.w;                   // stride phase, look variant
+      vec3 skin = mix(vec3(0.96, 0.78, 0.64), vec3(0.56, 0.37, 0.26), fract(face * 7.3));
+      vec3 hair = mix(vec3(0.14, 0.09, 0.06), vec3(0.80, 0.62, 0.32), step(0.72, fract(face * 3.1)));
+      vec3 shirt = vC.rgb;
+      vec3 pants = mix(vec3(0.22, 0.25, 0.36), vec3(0.88, 0.84, 0.76), step(0.55, fract(face * 5.7)));
+      vec3 c = vec3(0.0); float a = 0.0, m;
+      // legs and shoes, striding
+      for (int k = 0; k < 2; k++) {
+        float sd = k == 0 ? 1.0 : -1.0;
+        vec2 hip = vec2(sd * 0.1, -0.12), foot = vec2(sd * 0.11, -0.84 + 0.06 * abs(s)) + vec2(0.0, 0.1 * s * sd);
+        m = cov(sdCap(f, hip, foot, 0.075)); c = mix(c, pants * (0.9 - 0.08 * sd), m); a = max(a, m);
+        m = cov(sdEll(f - foot - vec2(0.0, -0.03), vec2(0.075, 0.05))); c = mix(c, vec3(0.16, 0.13, 0.12), m); a = max(a, m);
+      }
+      // arms swinging against the legs
+      for (int k = 0; k < 2; k++) {
+        float sd = k == 0 ? 1.0 : -1.0;
+        vec2 sh = vec2(sd * 0.23, 0.36), hand = vec2(sd * 0.29, -0.16) + vec2(0.0, -0.1 * s * sd);
+        m = cov(sdCap(f, sh, hand, 0.06)); c = mix(c, shirt * 0.86, m); a = max(a, m);
+        m = cov(length(f - hand) - 0.055); c = mix(c, skin * 0.95, m); a = max(a, m);
+      }
+      // torso, softly shaded so it reads as round
+      float dtor = sdEll(f - vec2(0.0, 0.12), vec2(0.24, 0.33));
+      m = cov(dtor);
+      vec3 tc = shirt * (0.82 + 0.3 * clamp(0.5 - f.x * 1.2 + f.y * 0.5, 0.0, 1.0));
+      c = mix(c, tc, m); a = max(a, m);
+      // head: mostly hair from up here, a sliver of face
+      vec2 hc = f - vec2(0.0, 0.62);
+      m = cov(length(hc) - 0.19);
+      vec3 hcol = mix(skin, hair, smoothstep(-0.09, -0.02, hc.y));
+      hcol *= 0.88 + 0.22 * clamp(0.6 - hc.x * 2.0 + hc.y * 2.0, 0.0, 1.0);
+      c = mix(c, hcol, m); a = max(a, m);
+      col = vec4(c, a * A);
+    }
+    o = col;
+  }`;
+  const spr = compile(SPR_VS, SPR_FS);
+  const SF = 12, SMAX = 600;
+  const sprData = new Float32Array(SMAX * SF);
+  const sprVao = gl.createVertexArray(); gl.bindVertexArray(sprVao);
+  const sprBuf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, sprBuf); gl.bufferData(gl.ARRAY_BUFFER, sprData.byteLength, gl.DYNAMIC_DRAW);
+  [[0, 4, 0], [1, 4, 4], [2, 4, 8]].forEach(([loc, size, off]) => { gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, size, gl.FLOAT, false, SF * 4, off * 4); gl.vertexAttribDivisor(loc, 1); });
+
+  const flowers = [], people = [], bubbles = [];
+  const BLOOMS = [[1, 1, 1], [1, 0.84, 0.2], [1, 0.45, 0.62], [0.5, 0.62, 1], [1, 0.58, 0.2], [0.78, 0.5, 0.92]];
+  const SHIRTS = [[0.96, 0.94, 0.88], [0.62, 0.78, 0.92], [0.95, 0.78, 0.25], [0.86, 0.4, 0.36], [0.98, 0.98, 0.96], [0.55, 0.7, 0.55], [0.92, 0.66, 0.72], [0.4, 0.5, 0.72]];
+  const LINES = ["oh, flowers!", "go ahead, sit down", "what a lovely meadow", "hello there", "so soft out here", "smells like spring"];
+  const rr = (a, b) => a + Math.random() * (b - a);
+  let SUN2N = [0.877, 0.479], SCR_UP = [0, -1], SCR_RIGHT = [1, 0];   // shadows fall toward the screen's lower right
+  let uDirX = 1, uDirY = 0;
+  let lastCam = [0, 8.5, -0.7], lastLook = [0, 0, 0.35], lastVP = null;
+
+  function groundFromNdc(nx, ny) {
+    const cam = lastCam, look = lastLook;
+    let fx = look[0] - cam[0], fy = look[1] - cam[1], fz = look[2] - cam[2]; const fl = Math.hypot(fx, fy, fz); fx /= fl; fy /= fl; fz /= fl;
+    let sx = -fz, sz = fx; const sl = Math.hypot(sx, sz); sx /= sl; sz /= sl;
+    const ux = -sz * fy, uy = sz * fx - sx * fz, uz = sx * fy;
+    const th = Math.tan(0.475), a = nx * th * (W / H), b = ny * th;
+    const dx = fx + a * sx + b * ux, dy = fy + b * uy, dz = fz + a * sz + b * uz;
+    const k = -cam[1] / dy; return [cam[0] + dx * k, cam[2] + dz * k];
+  }
+  function viewRect() {
+    const pts = [[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([x, y]) => groundFromNdc(x * 0.9, y * 0.9));
+    return { x0: Math.min(...pts.map((p) => p[0])), x1: Math.max(...pts.map((p) => p[0])), z0: Math.min(...pts.map((p) => p[1])), z1: Math.max(...pts.map((p) => p[1])) };
+  }
+  function plantAt(cx, cy) {
+    const cr = canvas.getBoundingClientRect();
+    const nx = ((cx - cr.left) / cr.width) * 2 - 1, ny = -(((cy - cr.top) / cr.height) * 2 - 1);
+    if (Math.abs(nx) > 1 || Math.abs(ny) > 1) return;
+    const [gx, gz] = groundFromNdc(nx, ny);
+    const t = performance.now() / 1000;
+    const base = BLOOMS[(Math.random() * BLOOMS.length) | 0];
+    for (let i = 0; i < 11; i++) {
+      const a = Math.random() * 6.283, d = Math.sqrt(Math.random()) * 0.6;
+      const c = Math.random() < 0.6 ? base : BLOOMS[(Math.random() * BLOOMS.length) | 0];
+      flowers.push({ x: gx + Math.cos(a) * d, z: gz + Math.sin(a) * d, s: rr(0.085, 0.14), rot: Math.random() * 6.283, c, v: Math.random(), t0: t + i * 0.07, ph: Math.random() * 6 });
+    }
+    while (flowers.length > 150) flowers.shift();
+    // someone walks over from the nearest edge of the view
+    if (people.length < 8) {
+      const R = viewRect(); const dl = gx - R.x0, dr = R.x1 - gx, dtp = gz - R.z0, db = R.z1 - gz, m = Math.min(dl, dr, dtp, db);
+      const sx = m === dl ? R.x0 - 0.6 : m === dr ? R.x1 + 0.6 : gx + rr(-1.5, 1.5), sz = m === dtp ? R.z0 - 0.6 : m === db ? R.z1 + 0.6 : gz + rr(-1.5, 1.5);
+      people.push({ x: sx, z: sz, tx: gx + rr(-0.45, 0.45) - SCR_UP[0] * 0.5, tz: gz + rr(-0.2, 0.2) - SCR_UP[1] * 0.5, state: "in", t0: t, stand: rr(5, 8), ph: Math.random() * 6, shirt: SHIRTS[(Math.random() * SHIRTS.length) | 0], v: Math.random(), rot: 0, say: LINES[(Math.random() * LINES.length) | 0], bubble: null, R });
+    }
+  }
+  const bubbleHost = document.getElementById("bubbles");
+  function projectToScreen(x, y, z) {
+    const m = lastVP; const cx = m[0] * x + m[4] * y + m[8] * z + m[12], cy = m[1] * x + m[5] * y + m[9] * z + m[13], cw = m[3] * x + m[7] * y + m[11] * z + m[15];
+    const cr = canvas.getBoundingClientRect();
+    return [cr.left + (cx / cw * 0.5 + 0.5) * cr.width, cr.top + (-cy / cw * 0.5 + 0.5) * cr.height];
+  }
+  const ease3 = (t) => 1 - Math.pow(1 - t, 3), backOut = (t) => { const c = 1.7; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+  function updatePeople(dt, t) {
+    for (let i = people.length - 1; i >= 0; i--) {
+      const q = people[i];
+      let gx = q.tx, gz = q.tz;
+      if (q.state === "out") { gx = q.ox; gz = q.oz; }
+      const dx = gx - q.x, dz = gz - q.z, d = Math.hypot(dx, dz);
+      if (q.state === "stand") { q.stand -= dt; if (q.stand <= 0) { q.state = "out"; const R = q.R; const ex = q.x < (R.x0 + R.x1) / 2 ? R.x0 - 1 : R.x1 + 1; q.ox = ex; q.oz = q.z + rr(-1.5, 1.5); } continue; }
+      if (d < 0.08 && q.state === "in") { q.state = "stand"; q.t0 = t; continue; }
+      if (q.state === "out" && d < 0.3) { people.splice(i, 1); if (q.bubble) q.bubble.remove(); continue; }
+      const sp = 0.34, step = Math.min(d, sp * dt);
+      q.x += dx / d * step; q.z += dz / d * step; q.ph += step * 34.0;
+      q.rot += Math.atan2(Math.sin(Math.atan2(dz, dx) - q.rot), Math.cos(Math.atan2(dz, dx) - q.rot)) * Math.min(1, dt * 8);
+    }
+  }
+  function drawSprites(dt, t) {
+    { const o = groundFromNdc(0, 0), r = groundFromNdc(0.1, 0), u = groundFromNdc(0, 0.1);
+      const rl = Math.hypot(r[0] - o[0], r[1] - o[1]), ul = Math.hypot(u[0] - o[0], u[1] - o[1]);
+      SCR_RIGHT = [(r[0] - o[0]) / rl, (r[1] - o[1]) / rl]; SCR_UP = [(u[0] - o[0]) / ul, (u[1] - o[1]) / ul];
+      const sx = SCR_RIGHT[0] * 0.88 - SCR_UP[0] * 0.48, sz = SCR_RIGHT[1] * 0.88 - SCR_UP[1] * 0.48, sl = Math.hypot(sx, sz);
+      SUN2N = [sx / sl, sz / sl]; }
+    updatePeople(dt, t);
+    let n = 0; const put = (x, z, sx, sz, rot, type, a, ph, r, g, b, v) => { if (n >= SMAX) return; sprData.set([x, z, sx, sz, rot, type, a, ph, r, g, b, v], n * SF); n++; };
+    const sunRot = Math.atan2(SUN2N[1], SUN2N[0]);
+    const sway = (x) => Math.sin(phase * 1.7 + x * 0.6) * 0.06 * Math.min(1.5, strength);
+    for (const f of flowers) {                                  // shadows first
+      const g = f.t0 > t ? 0 : backOut(Math.min(1, (t - f.t0) / 0.9)); if (g <= 0.01) continue;
+      put(f.x + SUN2N[0] * f.s * 0.9 * g, f.z + SUN2N[1] * f.s * 0.9 * g, f.s * 1.4 * g, f.s * 0.8 * g, sunRot, 0, 0.75, 0, 0, 0, 0, 0);
+    }
+    for (const q of people) {
+      // a long soft shadow from the feet, toward the lower right
+      const fx = q.x - SCR_UP[0] * 0.17, fz = q.z - SCR_UP[1] * 0.17, L = 0.42;
+      put(fx + SUN2N[0] * L, fz + SUN2N[1] * L, L, 0.065, sunRot, 0, 1, 0, 0, 0, 0, 0);
+    }
+    for (const f of flowers) {
+      const g = f.t0 > t ? 0 : backOut(Math.min(1, (t - f.t0) / 0.9)); if (g <= 0.01) continue;
+      put(f.x + Math.cos(phase) * 0.0 + uDirX * sway(f.x), f.z + uDirY * sway(f.x), f.s * g, f.s * g, f.rot + sway(f.z) * 2, 1, Math.min(1, g * 1.4), 0, f.c[0], f.c[1], f.c[2], f.v);
+    }
+    for (const q of people) {
+      const moving = q.state !== "stand";
+      put(q.x, q.z, 0.1, 0.18, q.rot, 2, 1, moving ? q.ph : Math.sin(t * 1.5 + q.ph) * 0.2, q.shirt[0], q.shirt[1], q.shirt[2], q.v);
+    }
+    gl.useProgram(spr.p);
+    gl.uniformMatrix4fv(spr.u.uVP, false, lastVP);
+    gl.uniform2f(spr.u.uRight, SCR_RIGHT[0], SCR_RIGHT[1]); gl.uniform2f(spr.u.uUp, SCR_UP[0], SCR_UP[1]);
+    gl.bindVertexArray(sprVao); gl.bindBuffer(gl.ARRAY_BUFFER, sprBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, sprData, 0, n * SF);
+    gl.disable(gl.DEPTH_TEST); gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, n);
+    gl.disable(gl.BLEND); gl.enable(gl.DEPTH_TEST);
+    // speech bubbles follow the people who have stopped
+    for (const q of people) {
+      if (q.state === "stand" && !q.bubble) { const el = document.createElement("div"); el.className = "bubble"; el.textContent = q.say; bubbleHost.appendChild(el); q.bubble = el; requestAnimationFrame(() => (el.style.opacity = 1)); }
+      if (q.bubble) {
+        const [sx, sy] = projectToScreen(q.x + SCR_UP[0] * 0.2, 1.9, q.z + SCR_UP[1] * 0.2);
+        q.bubble.style.left = sx + "px"; q.bubble.style.top = sy - 26 + "px";
+        if (q.state !== "stand") q.bubble.style.opacity = 0; else if (q.stand < 0.8) q.bubble.style.opacity = 0;
+      }
+    }
+  }
+
   function frame(now) {
     const dt = Math.min(0.05, (now - last) / 1000); last = now;
     speed = ease(speed, target, dt, 0.9);          // everything glides to the new wind
@@ -326,6 +532,7 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     const cam = [px * 0.9, 8.5, py * 0.9 - 0.7];
     const look = [px * 0.9, 0, py * 0.9 + 0.35];
     const vp = m4.mul(m4.persp(0.95, W / H, 0.1, 60), m4.look(cam, look));
+    lastCam = cam; lastLook = look; lastVP = vp; uDirX = Math.cos(dirAngle); uDirY = Math.sin(dirAngle);
     {   // hover point: cast a ray from the camera through the pointer onto the ground
       let fx = look[0] - cam[0], fy = look[1] - cam[1], fz = look[2] - cam[2]; const fl = Math.hypot(fx, fy, fz); fx /= fl; fy /= fl; fz /= fl;
       let sx = -fz, sz = fx; const sl = Math.hypot(sx, sz); sx /= sl; sz /= sl;
@@ -356,6 +563,7 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     gl.disable(gl.CULL_FACE);
     gl.bindVertexArray(vao);
     gl.drawElementsInstanced(gl.TRIANGLES, idx.length, gl.UNSIGNED_SHORT, 0, COUNT);
+    drawSprites(dt, now / 1000);
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);

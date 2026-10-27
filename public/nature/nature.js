@@ -807,7 +807,7 @@ const META = {
   pond: ["Lily pond", "Summer · pads, lotus and ripples", "Move over the water · tap for a big ripple · drag to fly", "pond"],
   canopy: ["Jungle canopy", "Understory · broad leaves in dappled light", "Move to open a gap in the canopy · tap to shake the leaves", "canopy"],
   mites: ["Mite burrow", "Damp soil · velvet mites", "Move over a mite · press and hold to make it curl up", "mites"],
-  grass: ["Grass from above", "Meadow · combed by the wind", "Hover to part the grass · tap to change the wind", "grass"],
+  grass: ["Grass from above", "Meadow · combed by the wind", "Hover to part the grass · tap to plant flowers · someone will come over", "grass"],
 };
 const ORDER = ["tulips", "meadow", "pond", "canopy", "mites", "grass"];
 const nav = document.getElementById("scenes");
