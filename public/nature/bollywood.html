@@ -59,7 +59,7 @@ new ResizeObserver(fit).observe(canvas); fit();
 
 
 /* ---------- the dupatta: a gathered silk rectangle ---------- */
-const COLS = 19, ROWS = 90;       // fine grid so folds stay silky
+const COLS = 30, ROWS = 140;      // a fine weave of simulated points, so even small folds and creases hold their shape
 const LENGTH = 600, W_TOP = 28, W_FULL = 150;   // a big dupatta, in world pixels
 const ANCHOR = { x: LADY_LEFT + 85 * 0.7 * SCALE, y: LADY_TOP + 275.7 * 0.7 * SCALE }; // her left hand (on the left of the picture), in world pixels (y down)
 const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
@@ -162,26 +162,47 @@ for (let j = 0; j < ROWS - 1; j++) for (let i = 0; i < COLS - 1; i++) {
 }
 geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
 geo.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
+const fold = new Float32Array(N * 2); geo.setAttribute("aFold", new THREE.BufferAttribute(fold, 2));
 geo.setIndex(ind);
 const tex = new THREE.TextureLoader().load("./bollywood/dupatta.webp");
 tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
 // silk: the pattern in its own colours, softly lit from the upper left, with a faint sheen where it turns edge-on
 const mat = new THREE.ShaderMaterial({
-  uniforms: { map: { value: tex }, alpha: { value: 1 } },
+  uniforms: { map: { value: tex }, alpha: { value: 1 }, time: { value: 0 } },
   transparent: true,
   side: THREE.DoubleSide,
-  vertexShader: `varying vec2 vUv; varying vec3 vN;
-    void main(){ vUv = uv; vN = normal; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
-  fragmentShader: `uniform sampler2D map; uniform float alpha; varying vec2 vUv; varying vec3 vN;
+  extensions: { derivatives: true },
+  vertexShader: `attribute vec2 aFold; varying vec2 vUv; varying vec3 vN; varying vec3 vP; varying vec2 vF;
+    void main(){ vUv = uv; vN = normal; vF = aFold; vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+  fragmentShader: `uniform sampler2D map; uniform float alpha; varying vec2 vUv; varying vec3 vN; varying vec3 vP; varying vec2 vF;
+    float h(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+    float vn(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f); return mix(mix(h(i), h(i + vec2(1, 0)), f.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), f.x), f.y); }
     void main(){
+      vec3 dp1 = dFdx(vP), dp2 = dFdy(vP); vec2 du1 = dFdx(vUv), du2 = dFdy(vUv);
+      vec3 T = normalize(dp1 * du2.y - dp2 * du1.y + 1e-6);                  // along the warp threads
       vec3 n = normalize(vN); if (!gl_FrontFacing) n = -n;
-      vec3 l = normalize(vec3(-0.45, 0.55, 0.7));
-      float d = max(dot(n, l), 0.0);
-      float sheen = pow(1.0 - abs(n.z), 2.5);
-      vec3 c = texture2D(map, vUv).rgb;
-      float shade = 0.80 + 0.30 * d - 0.10 * (1.0 - abs(n.z));
-      gl_FragColor = vec4(c * shade + vec3(1.0, 0.93, 0.8) * sheen * 0.10, alpha);
+      // fine crumples where the cloth is squeezed: small wobbling normals scaled by compression
+      float sq = clamp(-vF.y, 0.0, 1.0) + 0.25 * vF.x;
+      vec2 q = vUv * vec2(60.0, 170.0);
+      n = normalize(n + (vec3(vn(q) - 0.5, vn(q + 7.3) - 0.5, vn(q * 1.7 + 3.1) - 0.5)) * (0.20 + 1.4 * sq));
+      vec3 L = normalize(vec3(-0.45, 0.55, 0.7)), V = vec3(0.0, 0.0, 1.0), H = normalize(L + V);
+      float diff = max(dot(n, L), 0.0);
+      float back = pow(clamp(dot(-n, L), 0.0, 1.0), 1.4);                    // light shining through the silk
+      float ts = dot(T, H), aniso = pow(sqrt(max(0.0, 1.0 - ts * ts)), 36.0) * smoothstep(0.0, 0.4, diff + 0.1);
+      float rim = pow(1.0 - abs(n.z), 2.6);
+      vec3 base = texture2D(map, vUv).rgb;
+      float wp = 0.5 + 0.5 * sin(vUv.x * 520.0) * sin(vUv.y * 1500.0);        // the weave, faint, fading as it gets too fine
+      float wv = mix(1.0, 0.94 + 0.10 * wp, 0.85);
+      float ao = 1.0 - 0.30 * vF.x;                                           // the deep of a fold is darker
+      vec3 col = base * wv * ao * (0.78 + 0.34 * diff - 0.08 * (1.0 - abs(n.z)));
+      col += base * vec3(1.0, 0.9, 0.72) * back * 0.30;                       // warm glow through thin layers
+      col += vec3(1.0, 0.95, 0.84) * (aniso * 0.20 + rim * 0.10);             // silk sheen
+      gl_FragColor = vec4(col, alpha);
     }`,
+});
+const shadows = [[10, -14, 0.10], [20, -26, 0.08], [32, -40, 0.06]].map(([dx, dy, o]) => {
+  const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0x4a3a30, transparent: true, opacity: o, depthWrite: false, side: THREE.DoubleSide }));
+  m.position.set(dx, dy, -2); m.frustumCulled = false; m.renderOrder = -1; scene.add(m); return m;
 });
 const cloth = new THREE.Mesh(geo, mat); cloth.frustumCulled = false; scene.add(cloth);
 
@@ -205,7 +226,7 @@ canvas.addEventListener("pointerdown", () => {
 });
 
 /* ---------- physics (fixed step, sub-stepped, then relaxed for silk smoothness) ---------- */
-const STEP = 1 / 60, SUB = 3, DT = STEP / SUB, ITER = 6;
+const STEP = 1 / 60, SUB = 3, DT = STEP / SUB, ITER = 9;
 const WS = 0.5, GRAVITY = 820 * SCALE, DRAG = 0.994, AIR = 0.012, AIRDRAG = 1.5;
 const nrm = new Float32Array(N * 3);
 function normals() {
@@ -219,7 +240,33 @@ function normals() {
     const m = Math.hypot(nx, ny, nz) || 1; nrm[a] = nx / m; nrm[a + 1] = ny / m; nrm[a + 2] = nz / m;
   }
 }
-let time = 0;
+/* self-collision: points of one layer of silk push away from points of another, so folds stack instead of passing through */
+const CELL = 9, THICK = 6.5, HASH = new Map();
+function selfCollide() {
+  HASH.clear();
+  for (let p = 0; p < N; p++) {
+    const key = (Math.floor(px[p * 3] / CELL) * 73856093) ^ (Math.floor(px[p * 3 + 1] / CELL) * 19349663) ^ (Math.floor(px[p * 3 + 2] / CELL) * 83492791);
+    const a = HASH.get(key); if (a) a.push(p); else HASH.set(key, [p]);
+  }
+  for (let p = 0; p < N; p++) {
+    const x = px[p * 3], y = px[p * 3 + 1], z = px[p * 3 + 2], ci = p % COLS, cj = (p / COLS) | 0;
+    const cx = Math.floor(x / CELL), cy = Math.floor(y / CELL), cz = Math.floor(z / CELL);
+    for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) for (let dz = -1; dz <= 1; dz++) {
+      const lst = HASH.get(((cx + dx) * 73856093) ^ ((cy + dy) * 19349663) ^ ((cz + dz) * 83492791)); if (!lst) continue;
+      for (const q of lst) {
+        if (q <= p) continue;
+        const qi = q % COLS, qj = (q / COLS) | 0;
+        if (Math.abs(qi - ci) <= 3 && Math.abs(qj - cj) <= 3) continue;                          // neighbours on the same sheet are the springs' job
+        const ex = px[q * 3] - x, ey = px[q * 3 + 1] - y, ez = px[q * 3 + 2] - z, d2 = ex * ex + ey * ey + ez * ez;
+        if (d2 >= THICK * THICK || d2 < 1e-6) continue;
+        const d = Math.sqrt(d2), f = (THICK - d) / d * 0.5;
+        if (!pinned[p]) { px[p * 3] -= ex * f; px[p * 3 + 1] -= ey * f; px[p * 3 + 2] -= ez * f; }
+        if (!pinned[q]) { px[q * 3] += ex * f; px[q * 3 + 1] += ey * f; px[q * 3 + 2] += ez * f; }
+      }
+    }
+  }
+}
+let time = 0, frameNo = 0;
 function simulate(t) {
   const strength = Math.max(0, windSlider) * (reduce ? 0.5 : 1);
   // the breath of the wind: slow swell, quick flutter, and a gust that fades away
@@ -285,6 +332,7 @@ function simulate(t) {
       px[k] = nx; px[k + 1] = Math.min(ny, 930); px[k + 2] = Math.max(-420 * SCALE, Math.min(420 * SCALE, nz));
     }
     if (mode === "held") for (const { i, dy } of pinRest) { const k = idx(i, 0) * 3; px[k] = ax; px[k + 1] = ay + dy; px[k + 2] = Math.sin(i * 0.9) * 3 * SCALE; pv[k] = px[k]; pv[k + 1] = px[k + 1]; pv[k + 2] = px[k + 2]; }
+    if ((mode !== "held" || wrap > 0.02) && (frameNo++ & 1) === 0 && s === 0) selfCollide();
     for (let it = 0; it < ITER; it++) {
       for (let c = 0; c < rest.length; c++) {
         const [a, b, len, sf] = rest[c], ka = a * 3, kb = b * 3;
@@ -306,6 +354,18 @@ function simulate(t) {
 function upload() {
   for (let p = 0; p < N; p++) { const k = p * 3; pos[k] = px[k]; pos[k + 1] = WORLD_H - px[k + 1]; pos[k + 2] = px[k + 2]; }
   geo.attributes.position.needsUpdate = true; geo.computeVertexNormals(); geo.computeBoundingSphere();
+  // how sharply the silk is folded here (neighbouring normals disagreeing) and whether it is squeezed or stretched
+  const nr = geo.attributes.normal.array;
+  for (let j = 0; j < ROWS; j++) for (let i = 0; i < COLS; i++) {
+    const a = idx(i, j), b = idx(Math.min(i + 1, COLS - 1), j), c = idx(i, Math.min(j + 1, ROWS - 1)), d = idx(Math.max(i - 1, 0), j), e = idx(i, Math.max(j - 1, 0));
+    const ka = a * 3; let dot = 0;
+    for (const q of [b, c, d, e]) dot += nr[ka] * nr[q * 3] + nr[ka + 1] * nr[q * 3 + 1] + nr[ka + 2] * nr[q * 3 + 2];
+    const f = Math.min(1, Math.max(0, 1 - dot / 4) * 6);
+    const l1 = Math.hypot(px[c * 3] - px[ka], px[c * 3 + 1] - px[ka + 1], px[c * 3 + 2] - px[ka + 2]), l2 = Math.hypot(px[b * 3] - px[ka], px[b * 3 + 1] - px[ka + 1], px[b * 3 + 2] - px[ka + 2]);
+    const rl1 = LENGTH / (ROWS - 1), rl2 = widthAt(j / (ROWS - 1)) / (COLS - 1);
+    fold[a * 2] = f; fold[a * 2 + 1] = Math.max(-1, Math.min(1, ((l1 / rl1 - 1) + (l2 / rl2 - 1)) * 3));
+  }
+  geo.attributes.aFold.needsUpdate = true;
 }
 
 /* ---------- loop ---------- */
@@ -317,7 +377,8 @@ function frame(now) {
   acc += Math.min(0.05, (now - last) / 1000); last = now;
   while (acc >= STEP) { time += STEP; simulate(time); acc -= STEP; }
   manEl.style.opacity = 1 - 0.72 * smooth(0.6, 1, wrap);        // he shows faintly through the silk
-  mat.uniforms.alpha.value = 1 - 0.16 * smooth(0.5, 1, wrap);
+  mat.uniforms.alpha.value = 1 - 0.16 * smooth(0.5, 1, wrap); mat.uniforms.time.value = time;
+  for (const m of shadows) m.visible = wrap < 0.7;                         // the shadow falls on the scene, not on him once it covers him
   upload(); renderer.render(scene, camera);
 }
 for (let i = 0; i < 240; i++) { time += STEP; simulate(time); }   // let it settle before the first frame
