@@ -212,7 +212,7 @@ const KeepCaseStudy = () => {
         <CsPanel title="Re-live">
           <CsVideo
             src="/work/keep/sol-relive.mp4"
-            label="A 3D avatar of a tagged person standing in the same place as their photo and changing pose"
+            label="Re-live on a phone: a 3D avatar standing on a real street and changing pose"
           />
         </CsPanel>
         <CsText>
@@ -222,10 +222,10 @@ const KeepCaseStudy = () => {
           moment. Drag to turn them, change their pose, or restyle their skin
           tone, hair, and clothes.
         </CsText>
-        <CsPanel title="Matched on the phone">
+        <CsPanel title="Matched on a real street">
           <CsImg
             src={`${SHOTS}/relive.webp`}
-            alt="Re-live showing a matched memory with a 3D avatar and its journals"
+            alt="Re-live on a real street: a matched memory with a 3D avatar standing on the pavement"
             style={{ maxWidth: 300, margin: "0 auto" }}
           />
         </CsPanel>
