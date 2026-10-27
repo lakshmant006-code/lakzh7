@@ -219,6 +219,28 @@ function updateEchoes(dt) {
   }
 }
 let echoDist = 0;
+// the cow you steer is solid: it can never sit on top of a vehicle, it is stopped at the edge and slides along it
+function pushOut(c) {
+  const hit = () => cars.some((v) => Math.abs(c.x - v.x) < (c.w + v.w) / 2 && Math.abs(c.y - v.y) < (c.h + v.h) / 2);
+  for (let it = 0; it < 12; it++) {
+    let moved = false;
+    for (const v of cars) {
+      const ox = (c.w + v.w) / 2 + 1 - Math.abs(c.x - v.x), oy = (c.h + v.h) / 2 + 1 - Math.abs(c.y - v.y);
+      if (ox <= 0 || oy <= 0) continue;
+      if (ox < oy) c.x += (c.x >= v.x ? 1 : -1) * ox; else c.y += (c.y >= v.y ? 1 : -1) * oy;
+      moved = true;
+    }
+    if (!moved) break;
+  }
+  c.x = Math.max(14, Math.min(SW - 14, c.x)); c.y = Math.max(8, Math.min(SH - 8, c.y));
+  // squeezed between vehicles with no room: stay where it last stood freely, and make the nearby drivers stop
+  if (hit() && c.okx !== undefined) {
+    c.x = c.okx; c.y = c.oky; c.heading = c.okh;                // also undo any turn that made it too wide for the gap
+    const ca = Math.abs(Math.cos(c.heading)), sa = Math.abs(Math.sin(c.heading)); c.h = c.len * ca + c.wid * sa; c.w = c.len * sa + c.wid * ca;
+    for (const v of cars) if (Math.hypot(v.x - c.x, v.y - c.y) < 60) v.speed *= 0.5;
+  }
+  if (!hit()) { c.okx = c.x; c.oky = c.y; c.okh = c.heading; }
+}
 
 /* ---------- sound (ElevenLabs sound effects) ---------- */
 const SFX = { auto: "auto", car: "car", scooter: "scooter", truck: "truck", cow: "cow", ped: "whistle", chaos: "chaos" };
@@ -389,11 +411,11 @@ function aheadOf(v, x) {
     let blocked = false, cy = c.y;
     for (const lead of [0, 0.5, 1.1]) {
       const px = c.x + c.vx * lead, py = c.y + c.vy * lead;
-      if (Math.abs(px - x) <= (c.w + v.w) * 0.5 + 3) { blocked = true; cy = py; break; }
+      if (Math.abs(px - x) <= (c.w + v.w) * 0.5 + (c.player ? 9 : 3)) { blocked = true; cy = py; break; }
     }
     if (!blocked) continue;
     const d = (cy - v.y) * v.dir; if (d <= -c.h * 0.3) continue;
-    const g = d - v.h / 2 - c.h / 2 - 3; if (g < gap) { gap = g; sp = Math.max(0, (c.vx * 0 + c.vy * v.dir)); aheadOf.why = "cow"; }
+    const g = d - v.h / 2 - c.h / 2 - (c.player ? 11 : 3); if (g < gap) { gap = g; sp = Math.max(0, (c.vx * 0 + c.vy * v.dir)); aheadOf.why = "cow"; }
   }
   for (const p of walkers) {
     if (p.mode !== "cross" || Math.abs(p.x - x) > v.w * 0.5 + 10) continue;
@@ -463,6 +485,7 @@ function step(dt) {
       c.stride += c.speed * dt;
       const ca = Math.abs(Math.cos(c.heading)), sa = Math.abs(Math.sin(c.heading));
       c.h = c.len * ca + c.wid * sa; c.w = c.len * sa + c.wid * ca;
+      pushOut(c);
       continue;
     }
     let tx = c.tx, ty = c.ty, vmax = c.crossing ? 16 : 10, acc = 14, turn = 1.8;
@@ -531,6 +554,7 @@ function step(dt) {
 
   // vehicles: car-following along the lane, a stop line on amber/red, unhurried lane changes when stuck
   for (const v of cars) {
+    v.px = v.x; v.py = v.y;                                   // remember where it was, in case this move would put it on the cow
     let [gap, sp] = aheadOf(v, v.x); v.why = aheadOf.why;
     const front = v.y + v.dir * v.h / 2, toLine = (STOP[v.dir] - front) * v.dir;
     if (light === "green" && toLine > -2 && toLine < 45 && gap < toLine + 44 + v.h) { gap = Math.max(0, toLine); sp = 0; v.why = "box"; }
@@ -608,6 +632,13 @@ function step(dt) {
     if (p.y > SH + 20) p.y = -20; if (p.y < -20) p.y = SH + 20;
   }
 
+  // last word of every step: the cow you steer is never left on top of a vehicle
+  if (me) {
+    for (const v of cars) {                                    // a vehicle that moved onto the cow is put back and stops dead
+      if (Math.abs(me.x - v.x) < (me.w + v.w) / 2 && Math.abs(me.y - v.y) < (me.h + v.h) / 2 && v.px !== undefined) { v.x = v.px; v.y = v.py; v.speed = 0; v.vx = 0; }
+    }
+    pushOut(me); const [mx, my] = toWorld(me.x, me.y); me.mesh.position.set(mx, my, 4);
+  }
 }
 function draw(dt) {
   for (const v of vehicles) {
@@ -630,7 +661,7 @@ function draw(dt) {
   renderer.render(scene, camera);
 }
 requestAnimationFrame(frame);
-window.__street = { vehicles, cows, streetAt, beCow, pointer: () => pointer, get light() { return light; } };
+window.__street = { vehicles, cows, streetAt, beCow, pushOut, pointer: () => pointer, get light() { return light; } };
 
 </script>
 </body>
