@@ -835,6 +835,8 @@ function showNow(id) {
   if (isGrass && !grassFrame.src) grassFrame.src = grassFrame.dataset.src;
   if (isStreet && !streetFrame.src) streetFrame.src = streetFrame.dataset.src;
   if (isBolly && !bollyFrame.src) bollyFrame.src = bollyFrame.dataset.src;
+  try { streetFrame.contentWindow?.postMessage({ away: !isStreet }, "*"); } catch (_) {}
+  if (!isStreet && streetFrame.src) setTimeout(() => { if (currentId !== "street") streetFrame.removeAttribute("src"); }, 2600);   // its sound lasts two more seconds, then it stops
   if (!isBolly && bollyFrame.src) setTimeout(() => { if (currentId !== "bollywood") bollyFrame.removeAttribute("src"); }, 700);
   if (!isMites && mitesFrame.src) setTimeout(() => { if (currentId !== "mites") mitesFrame.removeAttribute("src"); }, 700);
   if (!isGrass && grassFrame.src) setTimeout(() => { if (currentId !== "grass") grassFrame.removeAttribute("src"); }, 700);

@@ -259,18 +259,28 @@ function unlock() {
 // sound only plays for a short moment after a click, then fades out until the next click
 const SOUND_WINDOW = 2.5;
 function openSound() {
-  if (!ctx) return;
+  if (!ctx || away) return;
   const n = ctx.currentTime; openUntil = n + SOUND_WINDOW;
   master.gain.cancelScheduledValues(n); master.gain.setValueAtTime(1, n);
   master.gain.setValueAtTime(1, openUntil); master.gain.linearRampToValueAtTime(0, openUntil + 0.4);
 }
 // while the cow stands in the traffic the street keeps honking, so the sound window is held open for as long as it's needed
 function keepSoundOpen() {
-  if (!ctx || !master) return;
+  if (!ctx || !master || away) return;
   const n = ctx.currentTime; if (openUntil - n > 1.4) return;
   openUntil = n + SOUND_WINDOW; master.gain.cancelScheduledValues(n); master.gain.setValueAtTime(1, n);
   master.gain.setValueAtTime(1, openUntil); master.gain.linearRampToValueAtTime(0, openUntil + 0.4);
 }
+// when the visitor moves to another scene the street keeps its sound for two more seconds, then goes quiet
+let away = false;
+addEventListener("message", (e) => {
+  if (!e.data || typeof e.data.away !== "boolean") return;
+  away = e.data.away;
+  if (!away || !ctx || !master) return;
+  const n = ctx.currentTime; openUntil = Math.min(openUntil, n + 2);
+  master.gain.cancelScheduledValues(n); master.gain.setValueAtTime(Math.max(master.gain.value, 0), n);
+  master.gain.setValueAtTime(master.gain.value, n + 1.6); master.gain.linearRampToValueAtTime(0, n + 2);
+});
 let lastAny = 0;
 function play(name, gain = 1, delay = 0, wide = false) {
   if (!ctx || !buffers[name] || ctx.currentTime + delay > openUntil) return;
@@ -547,7 +557,6 @@ function step(dt) {
   }
   if (me) {
     echoDist += me.speed * dt;
-    if (echoDist > 26 && me.speed > 6) { echoDist = 0; dropEcho(me); }
   }
   updateEchoes(dt);
   if (ring) { ring.visible = false; if (false) { if (ring.visible) { const [rx, ry] = toWorld(pointer[0], pointer[1]); ring.position.set(rx, ry, 6); ring.scale.setScalar(1 + 0.12 * Math.sin(t * 5)); } } }
