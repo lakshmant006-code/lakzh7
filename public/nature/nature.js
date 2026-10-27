@@ -404,6 +404,7 @@ SCENES.tulips = () => {
     move(x, y) { const p = pickZ(x, y, -1); if (p) target.set(p.x, Math.max(0.7, p.y), p.z); },
     tap(x, y) {
       const p = pickZ(x, y, 0); if (!p) return;
+      target.set(p.x, Math.max(0.9, p.y + 0.4), p.z);
       for (let i = 0; i < 90; i++) {
         const a = Math.random() * 6.28, s = 0.8 + Math.random() * 2.4;
         petals.emit(p.x + (Math.random() - 0.5) * 0.4, p.y, p.z + (Math.random() - 0.5) * 0.4, Math.cos(a) * s, 1.4 + Math.random() * 2, Math.sin(a) * s * 0.5, 2.5 + Math.random() * 3);
@@ -455,6 +456,7 @@ SCENES.meadow = () => {
     move(x, y) { const p = pickZ(x, y, 0); if (p) target.set(p.x, Math.max(0.9, p.y), p.z); },
     tap(x, y) {
       const p = pickZ(x, y, 0); if (!p) return;
+      target.set(p.x, Math.max(1.0, p.y + 0.5), p.z);
       const near = puffs.slice().sort((a, b) => Math.hypot(a.pos[0] - p.x, a.h - p.y) - Math.hypot(b.pos[0] - p.x, b.h - p.y)).slice(0, 5);
       near.forEach((n) => blow(40, n.pos[0], n.h, n.pos[2]));
       blow(60, p.x, p.y, p.z);
@@ -565,7 +567,7 @@ SCENES.pond = () => {
       const now = U.uTime.value;
       if (now - lastRip > 0.16 && p.distanceTo(lastP) > 0.35) { ripple(p.x, p.z, 0.45); lastRip = now; lastP.copy(p); }
     },
-    tap(x, y) { const p = pickPlane(x, y, 0); if (p) { ripple(p.x, p.z, 1.4); ripple(p.x, p.z, 0.8); } },
+    tap(x, y) { const p = pickPlane(x, y, 0); if (p) { target.set(p.x, 1.2, p.z); ripple(p.x, p.z, 1.4); ripple(p.x, p.z, 0.8); } },
   };
 };
 
@@ -577,9 +579,9 @@ let pixelOn = params.get("px") !== "0";
 const rt = new THREE.WebGLRenderTarget(2, 2, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: true });
 const postScene = new THREE.Scene(), postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 const postMat = new THREE.ShaderMaterial({
-  uniforms: { tDiffuse: { value: rt.texture }, uRes: { value: new THREE.Vector2(2, 2) }, uLevels: { value: LEVELS } },
+  uniforms: { tDiffuse: { value: rt.texture }, uRes: { value: new THREE.Vector2(2, 2) }, uLevels: { value: LEVELS }, uFade: { value: 0 } },
   vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
-  fragmentShader: `uniform sampler2D tDiffuse; uniform vec2 uRes; uniform float uLevels; varying vec2 vUv;
+  fragmentShader: `uniform sampler2D tDiffuse; uniform vec2 uRes; uniform float uLevels; uniform float uFade; varying vec2 vUv;
     float bayer(vec2 p){
       int x = int(mod(p.x, 4.0)), y = int(mod(p.y, 4.0));
       float m[16] = float[16](0.,8.,2.,10., 12.,4.,14.,6., 3.,11.,1.,9., 15.,7.,13.,5.);
@@ -589,6 +591,9 @@ const postMat = new THREE.ShaderMaterial({
       vec3 c = texture2D(tDiffuse, vUv).rgb;
       float t = bayer(floor(vUv * uRes)) - 0.5;
       c = floor(c * (uLevels - 1.0) + 0.5 + t * 0.95) / (uLevels - 1.0);
+      // halftone dissolve to the page colour while switching scenes
+      float th = bayer(floor(vUv * uRes * 0.5) * 2.0 + vec2(mod(floor(vUv.x * uRes.x), 2.0), 0.0));
+      c = mix(c, vec3(1.0), step(th * 0.96 + 0.02, uFade));
       gl_FragColor = vec4(c, 1.0);
     }`,
   depthTest: false, depthWrite: false,
@@ -596,46 +601,75 @@ const postMat = new THREE.ShaderMaterial({
 postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), postMat));
 
 /* ---------- scene manager ---------- */
-const NAV = [["tulips", "Tulips"], ["meadow", "Meadow"], ["pond", "Pond"], ["mites", "Mites"], ["grass", "Grass"]];
+const META = {
+  tulips: ["Tulip field", "Spring · pink tulips over the hill", "Tap a flower to scatter its petals · tap to call the butterfly · drag to fly"],
+  meadow: ["Buttercup meadow", "Spring · dandelion clocks and clover", "Tap a dandelion to blow it · tap to call the butterfly · drag to fly"],
+  pond: ["Lily pond", "Summer · pads, lotus and ripples", "Move over the water · tap for a big ripple · drag to fly"],
+  mites: ["Mite burrow", "Damp soil · velvet mites", "Move over a mite · press and hold to make it curl up"],
+  grass: ["Grass from above", "Meadow · combed by the wind", "Hover to part the grass · tap to change the wind"],
+};
+const ORDER = ["tulips", "meadow", "pond", "mites", "grass"];
 const nav = document.getElementById("scenes");
-const hint = document.getElementById("hint");
+const deck = document.getElementById("deck");
 const built = {};
 let current = null, currentId = null, mitesing = false;
 const root = new THREE.Scene();
-
 const mitesFrame = document.getElementById("mites");
 const grassFrame = document.getElementById("grass");
-function show(id) {
-  // "mites" and "grass" are separate pages shown in-place in a frame, so switching never leaves this page
+
+/** swap what is on screen right now (no animation) */
+function showNow(id) {
   const isMites = id === "mites", isGrass = id === "grass";
   document.body.classList.toggle("is-mites", isMites);
   document.body.classList.toggle("is-grass", isGrass);
-  if (isMites || isGrass) {
-    if (isMites && !mitesFrame.src) mitesFrame.src = mitesFrame.dataset.src + (pixelOn ? "?px=1" : "");
-    if (isGrass && !grassFrame.src) grassFrame.src = grassFrame.dataset.src;
-    [...nav.children].forEach((el) => el.setAttribute("aria-current", String(el.dataset.id === id)));
-    history.replaceState(null, "", location.search + "#" + id);
-    mitesing = true;
-    return;
-  }
-  mitesing = false;
-  if (!SCENES[id]) id = "tulips";
-  if (current?.leave) current.leave();
-  if (current) root.remove(current.group);
-  current = built[id] || (built[id] = SCENES[id]());
+  // frames only run while visible
+  if (isMites && !mitesFrame.src) mitesFrame.src = mitesFrame.dataset.src + (pixelOn ? "?px=1" : "");
+  if (isGrass && !grassFrame.src) grassFrame.src = grassFrame.dataset.src;
+  if (!isMites && mitesFrame.src) setTimeout(() => { if (currentId !== "mites") mitesFrame.removeAttribute("src"); }, 700);
+  if (!isGrass && grassFrame.src) setTimeout(() => { if (currentId !== "grass") grassFrame.removeAttribute("src"); }, 700);
   currentId = id;
-  root.add(current.group);
-  root.background = current.bg instanceof THREE.Color ? current.bg : current.bg;
-  current.enter();
-  resize();
-  [...nav.children].forEach((el) => el.setAttribute("aria-current", String(el.dataset.id === id)));
-  hint.textContent = current.hint; hint.style.opacity = 1;
-  clearTimeout(show.t); show.t = setTimeout(() => (hint.style.opacity = 0), 4200);
+  if (isMites || isGrass) { mitesing = true; }
+  else {
+    mitesing = false;
+    if (current?.leave) current.leave();
+    if (current) root.remove(current.group);
+    current = built[id] || (built[id] = SCENES[id]());
+    root.add(current.group); root.background = current.bg;
+    current.enter(); resize();
+  }
+  const [t, sub, hintText] = META[id];
+  document.getElementById("cap-title").textContent = t; document.getElementById("cap-sub").textContent = sub;
+  document.getElementById("cap-hint").textContent = hintText;
+  [...nav.querySelectorAll(".thumb")].forEach((el) => el.setAttribute("aria-current", String(el.dataset.id === id)));
   history.replaceState(null, "", location.search + "#" + id);
 }
-NAV.forEach(([id, label]) => {
-  const b = document.createElement("button"); b.textContent = label; b.dataset.id = id; b.onclick = () => show(id); nav.appendChild(b);
+
+/* dissolve out (halftone dots to white), swap, dissolve back in */
+let fade = 0, fadeDir = 0, pending = null, elapsed = 0, autoplay = params.get("auto") !== "0";
+const DURATION = 11;
+function goto(id, manual) {
+  if (!SCENES[id] && id !== "mites" && id !== "grass") id = "tulips";
+  elapsed = 0;
+  if (manual && id === currentId) return;
+  if (currentId === null) { showNow(id); return; }
+  pending = id; fadeDir = 1; deck.classList.add("swap");
+}
+function stepFade(dt) {
+  if (fadeDir === 0) return;
+  fade = Math.min(1, Math.max(0, fade + fadeDir * dt / (fadeDir > 0 ? 0.45 : 0.55)));
+  if (fadeDir > 0 && fade >= 1) {
+    showNow(pending); pending = null; fadeDir = -1; deck.classList.remove("swap");
+  } else if (fadeDir < 0 && fade <= 0) fadeDir = 0;
+}
+ORDER.forEach((id) => {
+  const b = document.createElement("button"); b.className = "thumb"; b.dataset.id = id; b.setAttribute("aria-label", META[id][0]);
+  b.style.backgroundImage = `url(./thumbs/${id}.jpg)`; b.innerHTML = "<i></i>";
+  b.onclick = () => goto(id, true); nav.appendChild(b);
 });
+const playBtn = document.createElement("button"); playBtn.id = "play"; playBtn.type = "button";
+const syncPlay = () => { playBtn.textContent = autoplay ? "❚❚" : "▶"; playBtn.setAttribute("aria-label", autoplay ? "Pause" : "Play"); };
+playBtn.onclick = () => { autoplay = !autoplay; syncPlay(); };
+nav.appendChild(playBtn); syncPlay();
 
 /* ---------- pixel toggle ---------- */
 const pxBtn = document.getElementById("px");
@@ -688,12 +722,22 @@ function frame(now) {
   phase += speed * dt;
   U.uPhase.value = phase; U.uStrength.value = strength; U.uGust.value = gust; U.uTime.value = time;
   U.uDir.value.set(Math.cos(dirAngle), Math.sin(dirAngle));
-  if (!mitesing && current) { current.update(dt, { strength, dir: U.uDir.value, time }); 
-    if (pixelOn) { renderer.setRenderTarget(rt); renderer.render(root, camera); renderer.setRenderTarget(null); renderer.render(postScene, postCam); }
-    else renderer.render(root, camera);
+  stepFade(dt);
+  if (autoplay && fadeDir === 0) {
+    elapsed += dt;
+    if (elapsed >= DURATION) goto(ORDER[(ORDER.indexOf(currentId) + 1) % ORDER.length]);
   }
+  const prog = nav.querySelector('.thumb[aria-current="true"]'); if (prog) prog.style.setProperty("--p", autoplay ? Math.min(1, elapsed / DURATION) : 0);
+  if (!mitesing && current) {
+    current.update(dt, { strength, dir: U.uDir.value, time });
+    if (pixelOn) {
+      postMat.uniforms.uFade.value = fade;
+      renderer.setRenderTarget(rt); renderer.render(root, camera); renderer.setRenderTarget(null); renderer.render(postScene, postCam);
+      canvas.style.opacity = 1;
+    } else { renderer.render(root, camera); canvas.style.opacity = 1 - fade; }
+  } else canvas.style.opacity = 1;
   requestAnimationFrame(frame);
 }
-show(location.hash.slice(1) || "tulips");
+goto(location.hash.slice(1) || "tulips");
 requestAnimationFrame(frame);
-window.__nature = { show, setTarget, get state() { return { speed, strength, phase, target, scene: currentId }; } };
+window.__nature = { show: goto, setTarget, get state() { return { speed, strength, phase, target, scene: currentId }; } };
