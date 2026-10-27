@@ -15,6 +15,7 @@ import QuizAICaseStudy from "./pages/QuizAICaseStudy/QuizAICaseStudy";
 import HikuCaseStudy from "./pages/HikuCaseStudy/HikuCaseStudy";
 import ProMoveCaseStudy from "./pages/ProMoveCaseStudy/ProMoveCaseStudy";
 import Scenes from "./pages/Scenes/Scenes";
+import ScenesOverlay from "./components/ScenesOverlay/ScenesOverlay";
 import PixelCatPage from "./pages/PixelCat/PixelCat";
 import NotFound from "./pages/NotFound/NotFound";
 import "./App.css";
@@ -65,6 +66,7 @@ function App() {
         <ScrollToTop />
         <BackToTop />
         <SoundToggle />
+        <ScenesOverlay />
         <div className="app min-h-screen relative">
           <div
             className="fixed top-0 left-0 w-full"

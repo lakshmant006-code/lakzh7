@@ -8,6 +8,16 @@
   html, body { margin: 0; height: 100%; overflow: hidden; background: #f5f3ef; touch-action: none; -webkit-user-select: none; user-select: none; }
   canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
   body.over canvas { cursor: pointer; }
+  /* a remembered afternoon: warm wash, softened edges, a slow breath of light */
+  .memory { position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    background: radial-gradient(ellipse 78% 74% at 50% 50%, rgba(255,236,206,0) 38%, rgba(255,232,198,.22) 70%, rgba(250,238,220,.62) 100%);
+    -webkit-backdrop-filter: blur(0px); animation: breathe 9s ease-in-out infinite; }
+  .memory::after { content: ""; position: absolute; inset: 0;
+    -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+    -webkit-mask-image: radial-gradient(ellipse 72% 68% at 50% 50%, transparent 55%, #000 100%);
+            mask-image: radial-gradient(ellipse 72% 68% at 50% 50%, transparent 55%, #000 100%); }
+  @keyframes breathe { 0%, 100% { opacity: .85; } 50% { opacity: 1; } }
+  body.cow-mode .memory { background: radial-gradient(ellipse 78% 74% at 50% 50%, rgba(255,236,206,0) 34%, rgba(255,226,186,.3) 68%, rgba(246,232,210,.72) 100%); }
   .be-cow { all: unset; position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 3; cursor: pointer;
     padding: 9px 16px; border-radius: 999px; background: rgba(245,243,239,.9); color: #2c2420; font: 500 13px/1 "DM Sans", -apple-system, system-ui, sans-serif;
     box-shadow: 0 4px 18px rgba(44,36,32,.18); }
@@ -26,6 +36,7 @@
 <body>
 <canvas id="c"></canvas>
 <button class="be-cow" type="button" aria-pressed="false">be the cow</button>
+<div class="memory"></div>
 <div class="grain"></div>
 <div class="grain fine"></div>
 <script type="module">
@@ -168,7 +179,7 @@ function makeCow(i, player = false) {
   const mesh = spriteMesh(cowSheet, cowAtlas.w, cowAtlas.h, f.ax, f.ay, f.aw, f.ah);
   const k = COW_LEN / f.ah;
   mesh.scale.setScalar(k);
-  const c = { mesh, k, len: f.ah * k * 0.8, wid: f.aw * k * 0.55, vx: 0, vy: 0, stride: Math.random() * 13, w: f.aw * k * 0.7, h: f.ah * k * 0.8, x: Math.random() < 0.5 ? 135 + Math.random() * 25 : 370 + Math.random() * 25, y: 120 + Math.random() * 600,
+  const c = { mesh, f, k, len: f.ah * k * 0.8, wid: f.aw * k * 0.55, vx: 0, vy: 0, stride: Math.random() * 13, w: f.aw * k * 0.7, h: f.ah * k * 0.8, x: Math.random() < 0.5 ? 135 + Math.random() * 25 : 370 + Math.random() * 25, y: 120 + Math.random() * 600,
     tx: 0, ty: 0, heading: Math.random() * 6.28, bump: 0, speed: 0, pause: 0, phase: Math.random() * 6, player, lastMoo: -9 };
   pickTarget(c); cows.push(c); return c;
 }
@@ -183,6 +194,31 @@ function pickTarget(c) {
 }
 for (let i = 0; i < 3; i++) makeCow(i);
 let me = null;                                           // the cow you walk, when "be the cow" is on
+
+/* ---------- memory: the cow you walk leaves faint warm echoes of itself that dissolve behind it ---------- */
+const echoes = [];
+function dropEcho(c, strength = 1) {
+  let e = echoes.find((o) => o.life <= 0);
+  if (!e) {
+    if (echoes.length >= 24) return;
+    const mesh = spriteMesh(cowSheet, cowAtlas.w, cowAtlas.h, c.f.ax, c.f.ay, c.f.aw, c.f.ah);
+    mesh.material.color.setHex(0xffe3c0); mesh.renderOrder = 3;
+    e = { mesh, life: 0, max: 1 }; echoes.push(e);
+  }
+  e.life = e.max = 2.6 * strength; e.mesh.visible = true;
+  e.mesh.material.map.offset.copy(c.mesh.material.map.offset);
+  const [wx, wy] = toWorld(c.x, c.y);
+  e.mesh.position.set(wx, wy, 3.9); e.mesh.rotation.z = c.mesh.rotation.z; e.base = c.mesh.scale.x; e.mesh.scale.set(c.mesh.scale.x, c.mesh.scale.y, 1);
+}
+function updateEchoes(dt) {
+  for (const e of echoes) {
+    if (e.life <= 0) { e.mesh.visible = false; continue; }
+    e.life -= dt; const k = Math.max(0, e.life / e.max);
+    e.mesh.material.opacity = 0.5 * k * k;              // fades like a thought
+    const g = 1 + (1 - k) * 0.16; e.mesh.scale.set(e.base * g, e.base * g * (e.mesh.scale.y / e.mesh.scale.x || 1), 1);
+  }
+}
+let echoDist = 0;
 
 /* ---------- sound (ElevenLabs sound effects) ---------- */
 const SFX = { auto: "auto", car: "car", scooter: "scooter", truck: "truck", cow: "cow", ped: "whistle", chaos: "chaos" };
@@ -486,6 +522,11 @@ function step(dt) {
     c.mesh.position.set(wx, wy, 4); c.mesh.rotation.z = -c.heading + roll;
     c.mesh.scale.set(c.k * (1 - (stretch - 1) * 0.5), c.k * stretch, 1);
   }
+  if (me) {
+    echoDist += me.speed * dt;
+    if (echoDist > 26 && me.speed > 6) { echoDist = 0; dropEcho(me); }
+  }
+  updateEchoes(dt);
   if (ring) { ring.visible = false; if (false) { if (ring.visible) { const [rx, ry] = toWorld(pointer[0], pointer[1]); ring.position.set(rx, ry, 6); ring.scale.setScalar(1 + 0.12 * Math.sin(t * 5)); } } }
 
   // vehicles: car-following along the lane, a stop line on amber/red, unhurried lane changes when stuck
