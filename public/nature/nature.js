@@ -574,6 +574,204 @@ SCENES.pond = () => {
 };
 
 
+
+/* ---------- 4. Jungle canopy: big rendered leaves in dappled light ---------- */
+const LEAF_VS = `
+${WIND_GLSL}
+attribute vec2 aUV; attribute vec4 aA; attribute vec4 aR; attribute vec2 aT;
+varying vec2 vUV; varying vec3 vN; varying vec3 vW; varying float vRnd; varying float vHue; varying float vLen;
+mat3 rotY(float a){ float c=cos(a), s=sin(a); return mat3(c,0.,-s, 0.,1.,0., s,0.,c); }
+mat3 rotZ(float a){ float c=cos(a), s=sin(a); return mat3(c,s,0., -s,c,0., 0.,0.,1.); }
+mat3 rotX(float a){ float c=cos(a), s=sin(a); return mat3(1.,0.,0., 0.,c,s, 0.,-s,c); }
+void main(){
+  float sc = aA.w, rnd = aR.w, v = aUV.y;
+  float sway = sin(uPhase*1.3 + rnd*6.283 + aA.x*0.45) * (0.03 + 0.05*uStrength) + uGust*0.07*sin(uPhase*3.0 + rnd*9.0);
+  mat3 R = rotY(aR.x) * rotZ(aR.y + sway * 0.6) * rotX(aR.z + sway * 0.35);
+  vec3 p = R * (position * sc);
+  vec2 wo = windOff(aA.xz, rnd) * 0.07 * v * sc * uStrength;
+  p.xz += wo;
+  vec3 world = aA.xyz + p;
+  vUV = aUV; vN = R * normal; vW = world; vRnd = rnd; vHue = aT.y; vLen = v;
+  gl_Position = projectionMatrix * viewMatrix * vec4(world, 1.0);
+}`;
+const LEAF_FS = `
+uniform float uTime; uniform float uKind; uniform vec3 uSun; uniform vec3 uCam; uniform vec3 uPtr; uniform float uPtrA;
+varying vec2 vUV; varying vec3 vN; varying vec3 vW; varying float vRnd; varying float vHue; varying float vLen;
+float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
+float vn(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x), mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x), f.y); }
+float fbm(vec2 p){ float a=0.5, s=0.0; for(int i=0;i<4;i++){ s+=a*vn(p); p=p*2.03+vec2(1.7,9.2); a*=0.5; } return s; }
+float sunMask(vec3 w){
+  vec2 p = w.xz + w.y * vec2(0.55, 0.35);                 // light slants through the canopy
+  float n = fbm(p * 0.30 + vec2(uTime * 0.012, 0.0));
+  float shaft = 0.5 + 0.5 * sin((p.x * 0.62 - p.y * 0.38) * 0.95 + 1.3 + n * 2.0);
+  float m = smoothstep(0.55, 0.64, n * 0.78 + shaft * 0.36);
+  float d = distance(w.xz, uPtr.xz);                       // the pointer opens a gap in the leaves
+  m = max(m, smoothstep(2.6, 0.2, d) * uPtrA);
+  return m;
+}
+void main(){
+  vec3 n = normalize(vN); if(!gl_FrontFacing) n = -n;
+  float u = vUV.x, v = vUV.y;
+  // veins
+  float mid = smoothstep(0.075, 0.0, abs(u)) * (1.0 - v * 0.55);
+  float side = 0.0;
+  if (uKind < 0.5) {
+    float f = fract(v * 17.0 - abs(u) * 2.6 + vRnd * 3.0);
+    side = smoothstep(0.075, 0.0, min(f, 1.0 - f)) * smoothstep(0.09, 0.22, abs(u)) * (1.0 - abs(u) * 0.45);
+  } else if (uKind < 1.5) {
+    float a = atan(u * 0.78, v + 0.06);
+    float f = fract(a * 5.2 + vRnd);
+    side = smoothstep(0.07, 0.0, min(f, 1.0 - f)) * smoothstep(0.08, 0.3, v) * (1.0 - smoothstep(0.55, 1.0, v) * 0.7);
+    float f2 = fract(v * 11.0 - abs(u) * 1.3);                         // fine cross veins
+    side = max(side, smoothstep(0.05, 0.0, min(f2, 1.0 - f2)) * 0.35 * smoothstep(0.2, 0.5, abs(u)));
+  }
+  float vein = max(mid, side * 0.8);
+  float mott = fbm(vec2(u * 3.0 + vRnd * 9.0, v * 9.0));
+  float lam = clamp(dot(n, uSun) * 0.5 + 0.5, 0.0, 1.0);
+  float trans = pow(clamp(dot(-n, uSun), 0.0, 1.0), 1.4);
+  float lit = sunMask(vW);
+
+  vec3 shadowCol = vec3(0.02, 0.12, 0.11), midCol = vec3(0.10, 0.36, 0.19), sunCol = mix(vec3(0.56, 0.78, 0.24), vec3(0.74, 0.86, 0.30), vHue);
+  vec3 col = mix(shadowCol * (0.8 + 0.5 * mott), midCol * (0.7 + 0.5 * mott), 0.25 + 0.5 * lam);
+  col = mix(col, sunCol * (0.62 + 0.38 * lam) * (0.8 + 0.3 * mott), lit * 0.88);
+  col += vec3(0.30, 0.46, 0.06) * trans * lit * 0.45;                  // light shining through the blade
+  vec3 veinCol = mix(vec3(0.30, 0.52, 0.30), vec3(0.86, 0.93, 0.62), lit);
+  col = mix(col, veinCol, vein * (0.28 + 0.4 * lit));
+  col *= 1.0 - 0.45 * pow(abs(u), 5.0);                                // darker, rolled edges
+  if (uKind > 1.5) col *= 0.82;                                        // ferns sit deeper
+  float depth = smoothstep(0.1, 3.4, vW.y);
+  col *= mix(0.10, 1.0, depth);                                        // the understory falls into dark teal
+  col = mix(col, vec3(0.02, 0.09, 0.09), (1.0 - depth) * 0.5);
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+function leafMesh(geo, kind, items, uniforms) {
+  const n = items.length;
+  const g = new THREE.InstancedBufferGeometry();
+  g.index = geo.index;
+  for (const k of ["position", "normal", "aUV"]) g.setAttribute(k, geo.getAttribute(k));
+  const A = new Float32Array(n * 4), R = new Float32Array(n * 4), T = new Float32Array(n * 2);
+  items.forEach((it, i) => { A.set([...it.pos, it.s], i * 4); R.set([it.yaw, it.pitch, it.roll ?? 0, it.rnd], i * 4); T.set([kind, it.hue ?? Math.random()], i * 2); });
+  g.setAttribute("aA", new THREE.InstancedBufferAttribute(A, 4));
+  g.setAttribute("aR", new THREE.InstancedBufferAttribute(R, 4));
+  g.setAttribute("aT", new THREE.InstancedBufferAttribute(T, 2));
+  g.instanceCount = n;
+  const mat = new THREE.ShaderMaterial({ vertexShader: LEAF_VS, fragmentShader: LEAF_FS, side: THREE.DoubleSide,
+    uniforms: { ...uniforms, uKind: { value: kind } } });
+  const m = new THREE.Mesh(g, mat); m.frustumCulled = false; return m;
+}
+/** one broad leaf, length 1 along +x, base at the origin: kind 0 long and pointed, kind 1 round and heart-based */
+function broadLeafGeo(kind) {
+  const rows = 22, cols = 14, pos = [], uv = [], idx = [];
+  for (let r = 0; r <= rows; r++) for (let k = 0; k <= cols; k++) {
+    const v = r / rows, u = k / cols * 2 - 1;
+    let w;
+    if (kind === 0) w = 0.34 * Math.pow(Math.sin(Math.PI * Math.pow(v, 0.78)), 0.8);
+    else w = 0.56 * Math.pow(Math.sin(Math.PI * Math.pow(v, 0.62)), 0.55) * (1 - 0.18 * v);
+    const wave = 0.022 * Math.sin(v * 26 + u * 3) * u * u;
+    const y = 0.2 * Math.sin(Math.PI * v * 0.6) - 0.34 * v * v + (kind === 0 ? 0.32 : 0.22) * u * u * w + wave;
+    pos.push(v, y, u * w); uv.push(u, v);
+  }
+  for (let r = 0; r < rows; r++) for (let k = 0; k < cols; k++) {
+    const a = r * (cols + 1) + k, b = a + 1, c = a + cols + 1, d = c + 1; idx.push(a, c, b, b, c, d);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute("aUV", new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx); g.computeVertexNormals(); return g;
+}
+function fernGeo() {
+  const pos = [], uv = [], idx = [];
+  const rach = (t) => [t, 0.34 * Math.sin(Math.PI * 0.5 * t) - 0.38 * t * t];
+  for (let i = 0; i < 18; i++) {
+    const t = (i + 1) / 19, [bx, by] = rach(t), [nx, ny] = rach(t + 0.02);
+    const tx = nx - bx, ty = ny - by, tl = Math.hypot(tx, ty), Tx = tx / tl, Ty = ty / tl;
+    for (const side of [-1, 1]) {
+      const a = 1.05, len = 0.2 * (1 - t * 0.72);
+      const dx = Tx * Math.cos(a), dy = Ty * Math.cos(a), dz = side * Math.sin(a);
+      const dl = Math.hypot(dx, dy, dz), D = [dx / dl, dy / dl, dz / dl];
+      const wl = Math.hypot(D[2], D[0]) || 1, Wd = [D[2] / wl, 0, -D[0] / wl];
+      const base = pos.length / 3;
+      for (let j = 0; j <= 3; j++) {
+        const sj = j / 3, ww = 0.032 * len / 0.2 * Math.pow(Math.sin(Math.PI * Math.min(sj, 0.98)), 0.7);
+        const cx = bx + D[0] * len * sj, cy = by + D[1] * len * sj - 0.05 * len * sj * sj, cz = D[2] * len * sj;
+        pos.push(cx + Wd[0] * ww, cy, cz + Wd[2] * ww, cx - Wd[0] * ww, cy, cz - Wd[2] * ww);
+        uv.push(1, sj, -1, sj);
+      }
+      for (let j = 0; j < 3; j++) { const q = base + j * 2; idx.push(q, q + 2, q + 1, q + 1, q + 2, q + 3); }
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute("aUV", new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx); g.computeVertexNormals(); return g;
+}
+
+SCENES.canopy = () => {
+  const group = new THREE.Group(), r = rng(47);
+  const uni = {
+    uPhase: U.uPhase, uStrength: U.uStrength, uGust: U.uGust, uDir: U.uDir, uTime: U.uTime,
+    uSun: { value: new THREE.Vector3(-0.35, 0.85, -0.3).normalize() }, uCam: { value: camera.position },
+    uPtr: { value: new THREE.Vector3(0, 1.8, 0) }, uPtrA: { value: 0 },
+  };
+  const J = (a) => (r() * 2 - 1) * a;
+  // the big leaves in front, cut by the frame, like the reference
+  const hero = [
+    { pos: [-6.6, 3.5, -2.2], yaw: 0.15, pitch: -0.22, roll: 0.15, s: 7.6, rnd: r() },
+    { pos: [-3.6, 3.9, 4.8], yaw: 0.75, pitch: -0.3, roll: -0.1, s: 6.4, rnd: r() },
+  ];
+  const heroLong = [
+    { pos: [7.8, 2.9, -2.4], yaw: Math.PI - 0.3, pitch: -0.28, roll: 0.1, s: 8.4, rnd: r() },
+    { pos: [2.2, 2.5, 5.6], yaw: -Math.PI / 2 + 0.15, pitch: -0.12, roll: 0.0, s: 6.2, rnd: r() },
+    { pos: [4.6, 3.3, 3.0], yaw: Math.PI + 0.55, pitch: -0.34, roll: -0.12, s: 5.6, rnd: r() },
+  ];
+  const ring = (rMin, rMax) => { const a = r() * 6.283, d = r.range(rMin, rMax); return [Math.cos(a) * d * 1.45, Math.sin(a) * d * 0.9 - 0.8]; };
+  const mid = Array.from({ length: Math.round(13 * Math.max(Q, 0.6)) }, () => {
+    const [x, z] = ring(3.2, 7); const yaw = Math.atan2(-z - 0.8, -x) * -1 + J(0.5);
+    return { pos: [x, r.range(1.3, 2.7), z], yaw, pitch: r.range(-0.42, -0.05), roll: J(0.25), s: r.range(2.6, 4.4), rnd: r(), hue: r() };
+  });
+  const midRound = Array.from({ length: 4 }, () => {
+    const [x, z] = ring(4, 7.5);
+    return { pos: [x, r.range(1.2, 2.2), z], yaw: r() * 6.28, pitch: r.range(-0.35, -0.05), roll: J(0.2), s: r.range(2.2, 3.4), rnd: r(), hue: r() };
+  });
+  const low = Array.from({ length: Math.round(46 * Math.max(Q, 0.5)) }, () => ({
+    pos: [J(9), r.range(0.2, 1.0), r.range(-7, 5.5)], yaw: r() * 6.28, pitch: r.range(-0.1, 0.55), roll: J(0.3), s: r.range(1.0, 2.2), rnd: r(), hue: r(),
+  }));
+  const ferns = Array.from({ length: Math.round(90 * Math.max(Q, 0.5)) }, () => ({
+    pos: [J(9), r.range(0.1, 0.8), r.range(-7, 5.5)], yaw: r() * 6.28, pitch: r.range(-0.2, 0.3), roll: J(0.3), s: r.range(1.3, 2.6), rnd: r(), hue: r(),
+  }));
+  const carpet = Array.from({ length: Math.round(420 * Math.max(Q, 0.4)) }, () => ({
+    pos: [J(10), r.range(0.02, 0.35), r.range(-8, 6)], yaw: r() * 6.28, pitch: r.range(0.0, 0.7), roll: J(0.4), s: r.range(0.45, 1.0), rnd: r(), hue: r(),
+  }));
+  group.add(leafMesh(broadLeafGeo(0), 0, [...heroLong, ...mid, ...low, ...carpet], uni));
+  group.add(leafMesh(broadLeafGeo(1), 1, [...hero, ...midRound], uni));
+  group.add(leafMesh(fernGeo(), 2, ferns, uni));
+  // dark forest floor
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.ShaderMaterial({
+    uniforms: { uTime: U.uTime },
+    vertexShader: "varying vec3 vW; void main(){ vec4 w = modelMatrix*vec4(position,1.0); vW = w.xyz; gl_Position = projectionMatrix*viewMatrix*w; }",
+    fragmentShader: `uniform float uTime; varying vec3 vW;
+      float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
+      float vn(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
+        return mix(mix(hash(i),hash(i+vec2(1,0)),f.x), mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x), f.y); }
+      void main(){ float n = vn(vW.xz * 1.6) * 0.6 + vn(vW.xz * 5.0) * 0.4;
+        gl_FragColor = vec4(mix(vec3(0.01, 0.045, 0.05), vec3(0.05, 0.16, 0.12), n), 1.0); }`,
+  }));
+  floor.rotation.x = -Math.PI / 2; group.add(floor);
+  let idle = 0;
+  return {
+    group, bg: new THREE.Color(0x03120f),
+    enter() { camera.position.set(0.4, 9.2, 3.6); camera.up.set(0, 1, 0); camera.fov = 50; camera.lookAt(0, 0, -0.9); camera.updateProjectionMatrix(); },
+    update(dt) {
+      idle += dt;
+      uni.uPtrA.value = ease(uni.uPtrA.value, idle < 2.4 ? 0.9 : 0.0, dt, 0.5);
+    },
+    move(x, y) { const p = pickPlane(x, y, 1.8); if (p) { uni.uPtr.value.copy(p); idle = 0; } },
+    tap(x, y) { const p = pickPlane(x, y, 1.8); if (p) { uni.uPtr.value.copy(p); idle = 0; uni.uPtrA.value = 1.3; } },
+  };
+};
+
 /* ---------- pixel + ordered-dither pass ---------- */
 const PX = +params.get("px") || (innerWidth < 700 ? 2 : 3);       // CSS pixels per "big pixel"
 const LEVELS = 9;                                                   // colour steps per channel
@@ -607,10 +805,11 @@ const META = {
   tulips: ["Tulip field", "Spring · pink tulips over the hill", "Tap a flower to scatter its petals · tap to call the butterfly · drag to fly", "tulips"],
   meadow: ["Buttercup meadow", "Spring · dandelion clocks and clover", "Tap a dandelion to blow it · tap to call the butterfly · drag to fly", "meadow"],
   pond: ["Lily pond", "Summer · pads, lotus and ripples", "Move over the water · tap for a big ripple · drag to fly", "pond"],
+  canopy: ["Jungle canopy", "Understory · broad leaves in dappled light", "Move to open a gap in the canopy · tap to shake the leaves", "canopy"],
   mites: ["Mite burrow", "Damp soil · velvet mites", "Move over a mite · press and hold to make it curl up", "mites"],
   grass: ["Grass from above", "Meadow · combed by the wind", "Hover to part the grass · tap to change the wind", "grass"],
 };
-const ORDER = ["tulips", "meadow", "pond", "mites", "grass"];
+const ORDER = ["tulips", "meadow", "pond", "canopy", "mites", "grass"];
 const nav = document.getElementById("scenes");
 const deck = document.getElementById("deck");
 const built = {};
@@ -717,7 +916,7 @@ function resize() {
 }
 addEventListener("resize", resize);
 
-const ease = (cur, tgt, dt, tau) => cur + (tgt - cur) * (1 - Math.exp(-dt / tau));
+function ease(cur, tgt, dt, tau) { return cur + (tgt - cur) * (1 - Math.exp(-dt / tau)); }
 let last = performance.now(), time = 0;
 function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now; time += dt;
