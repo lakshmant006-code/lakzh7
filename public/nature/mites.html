@@ -17,7 +17,7 @@
 body{background:var(--ground);color:var(--ink);font-family:var(--ui);margin:0;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px;
   min-height:100vh;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
-.stage{width:min(100%,720px);aspect-ratio:1;position:relative}
+.stage{width:100%;height:100%;position:fixed;inset:0}
 canvas{image-rendering:pixelated;width:100%;height:100%;display:block;touch-action:none;cursor:default;overflow:visible}
 .cap{display:none!important;gap:12px 28px;flex-wrap:wrap;justify-content:center;font-size:13px;letter-spacing:.04em;color:var(--ink-soft)}
 .cap b{font-family:var(--display);font-weight:600;color:var(--ink);letter-spacing:0}
@@ -30,13 +30,14 @@ canvas{image-rendering:pixelated;width:100%;height:100%;display:block;touch-acti
 <script>
 (function(){
 const PIXEL=new URLSearchParams(location.search).has('px');
-const W=640, dpr=PIXEL?.42:Math.min(2,window.devicePixelRatio||1);
-const cv=document.getElementById('c'); cv.width=cv.height=W*dpr;
+const WY=640, ASP=Math.max(.7,Math.min(2.4,innerWidth/Math.max(1,innerHeight))), WX=Math.round(WY*ASP), W=WY, dpr=PIXEL?.42:Math.min(2,window.devicePixelRatio||1);
+let rz;addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>location.reload(),350)});
+const cv=document.getElementById('c'); cv.width=WX*dpr;cv.height=WY*dpr;
 const ctx=cv.getContext('2d');
 const rnd=(a,b)=>a+Math.random()*(b-a);
 const wrap=a=>Math.atan2(Math.sin(a),Math.cos(a));
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const mk=()=>{const c=document.createElement('canvas');c.width=c.height=W*dpr;return c};
+const mk=()=>{const c=document.createElement('canvas');c.width=WX*dpr;c.height=WY*dpr;return c};
 /* soft, irregular cloud mask: the scene fades into the page like a memory */
 const maskC=mk();
 (function(){
@@ -48,24 +49,24 @@ const maskC=mk();
 })();
 
 /* ---------- burrow holes ---------- */
-const holes=[[128,150],[490,118],[300,330],[130,480],[505,440],[340,575]].map(([x,y])=>({x,y,r:rnd(15,19),last:-1e9,rot:rnd(0,3)}));
+const holes=[[.2,.23],[.77,.19],[.47,.52],[.2,.75],[.79,.69],[.53,.9],[.9,.4],[.07,.45]].slice(0,ASP>1.5?8:6).map(([fx,fy])=>({x:fx*WX,y:fy*WY,r:rnd(15,19),last:-1e9,rot:rnd(0,3)}));
 
 /* ---------- soil, wet patches and holes (static) ---------- */
 const bg=mk();
 (function(){
   const b=bg.getContext('2d');
-  let g=b.createLinearGradient(0,0,W*dpr,W*dpr);
+  let g=b.createLinearGradient(0,0,WX*dpr,WY*dpr);
   g.addColorStop(0,'#98795f'); g.addColorStop(1,'#7a5f4a');
   b.fillStyle=g; b.fillRect(0,0,bg.width,bg.height);
   b.save(); b.scale(dpr,dpr);
   for(let i=0;i<110;i++){ // large tonal blotches
-    const x=rnd(0,W), y=rnd(0,W), r=rnd(30,110), dark=Math.random()<.5;
+    const x=rnd(0,WX), y=rnd(0,WY), r=rnd(30,110), dark=Math.random()<.5;
     const gr=b.createRadialGradient(x,y,0,x,y,r);
     gr.addColorStop(0,dark?'rgba(40,26,14,.08)':'rgba(190,150,115,.22)'); gr.addColorStop(1,'rgba(0,0,0,0)');
     b.fillStyle=gr; b.beginPath(); b.arc(x,y,r,0,7); b.fill();
   }
   // wet patches: darker, glossy
-  const wet=[[250,150,70],[420,300,60],[110,330,55],[430,520,62],[560,250,45],[240,470,50]];
+  const wet=[[.39,.23,70],[.66,.47,60],[.17,.52,55],[.67,.81,62],[.87,.39,45],[.37,.73,50],[.55,.12,50],[.3,.9,48]].map(([fx,fy,r])=>[fx*WX,fy*WY,r]);
   wet.forEach(([wx,wy,wr])=>{
     for(let j=0;j<7;j++){
       const x=wx+rnd(-wr*.5,wr*.5), y=wy+rnd(-wr*.4,wr*.4), r=rnd(wr*.4,wr*.8);
@@ -86,13 +87,13 @@ const bg=mk();
   b.putImageData(id,0,0);
   b.save(); b.scale(dpr,dpr);
   for(let i=0;i<2600;i++){ // clods and grit
-    const x=rnd(0,W), y=rnd(0,W), r=rnd(.5,2.6), a=rnd(0,3);
+    const x=rnd(0,WX), y=rnd(0,WY), r=rnd(.5,2.6), a=rnd(0,3);
     b.fillStyle='rgba(0,0,0,.35)'; b.beginPath(); b.ellipse(x+r*.5,y+r*.6,r,r*.8,a,0,7); b.fill();
     b.fillStyle='rgba('+(95+rnd(0,35))+','+(66+rnd(0,25))+','+(44+rnd(0,15))+','+rnd(.3,.6)+')';
     b.beginPath(); b.ellipse(x,y,r,r*.8,a,0,7); b.fill();
   }
   for(let i=0;i<22;i++){ // small stones
-    const x=rnd(10,W-10), y=rnd(10,W-10), r=rnd(2.5,5.5);
+    const x=rnd(10,WX-10), y=rnd(10,WY-10), r=rnd(2.5,5.5);
     b.fillStyle='rgba(0,0,0,.3)'; b.beginPath(); b.ellipse(x+2,y+2.5,r*1.1,r*.85,0,0,7); b.fill();
     b.fillStyle='rgba(140,128,112,.55)'; b.beginPath(); b.ellipse(x,y,r,r*.8,rnd(0,3),0,7); b.fill();
     b.fillStyle='rgba(255,245,230,.25)'; b.beginPath(); b.ellipse(x-r*.3,y-r*.3,r*.4,r*.25,0,0,7); b.fill();
@@ -219,8 +220,8 @@ function drawMite(c,m,shadow){
 }
 
 /* ---------- hand (drawn in code, index finger is the pointer) ---------- */
-const H={x:W*.7,y:W*.75,a:0,press:0};
-const P={x:W*.7,y:W*.75,on:false,down:false};
+const H={x:WX*.7,y:WY*.75,a:0,press:0};
+const P={x:WX*.7,y:WY*.75,on:false,down:false};
 function drawHand(c,shadow){
   const skin=shadow?'#000':'#dfa98a', hi='#efc4a8', cr='rgba(130,72,50,.38)';
   c.lineCap='round'; c.lineJoin='round';
@@ -247,7 +248,7 @@ function drawHand(c,shadow){
 const TIP=[-19+Math.sin(-.15)*66,-26-Math.cos(-.15)*66], HR=-.38;
 
 /* ---------- pointer ---------- */
-function setP(e){const r=cv.getBoundingClientRect();P.x=(e.clientX-r.left)/r.width*W;P.y=(e.clientY-r.top)/r.height*W;P.on=true}
+function setP(e){const r=cv.getBoundingClientRect();P.x=(e.clientX-r.left)/r.width*WX;P.y=(e.clientY-r.top)/r.height*WY;P.on=true}
 cv.addEventListener('pointermove',setP);
 cv.addEventListener('pointerdown',e=>{setP(e);P.down=true;try{cv.setPointerCapture(e.pointerId)}catch(_){}});
 const up=()=>{P.down=false};
@@ -278,7 +279,7 @@ function step(m,dt,now){
     for(const o of mites){ if(o===m) continue;
       const dx=o.x-m.x, dy=o.y-m.y, d=Math.hypot(dx,dy);
       if(d<62) want+=wrap(Math.atan2(-dy,-dx)-m.h)*.07; }
-    if(Math.hypot(m.x-W/2,m.y-W/2)>215) want+=wrap(Math.atan2(W/2-m.y,W/2-m.x)-m.h)*.1;
+    if(Math.hypot((m.x-WX/2)/(WX*.46),(m.y-WY/2)/(WY*.44))>1) want+=wrap(Math.atan2(WY/2-m.y,WX/2-m.x)-m.h)*.1;
     if(Math.random()<.0016) m.wait=rnd(500,1700);
   }
   m.h+=wrap(want-m.h)*rate;
@@ -292,7 +293,7 @@ const sh=mk(), sx=sh.getContext('2d');
 const cnt=document.getElementById('count'); let last=performance.now();
 function frame(now){
   const dt=Math.min(40,now-last); last=now;
-  if(now>nextSpawn && mites.length<7){ spawn(now); nextSpawn=now+(mites.length<4?900:rnd(2500,6000)); }
+  if(now>nextSpawn && mites.length<9){ spawn(now); nextSpawn=now+(mites.length<4?900:rnd(2500,6000)); }
   H.x+=(P.x-H.x)*.35; H.y+=(P.y-H.y)*.35;
   H.a+=((P.on?1:0)-H.a)*.12;
   H.press+=((P.down?1:0)-H.press)*.28;
@@ -306,7 +307,6 @@ function frame(now){
   ctx.setTransform(dpr,0,0,dpr,0,0);
   mites.slice().sort((a,b)=>a.y-b.y).forEach(m=>drawMite(ctx,m,false));
   ctx.setTransform(1,0,0,1,0,0);
-  ctx.globalCompositeOperation='destination-in'; ctx.drawImage(maskC,0,0); ctx.globalCompositeOperation='source-over';
   ctx.setTransform(dpr,0,0,dpr,0,0);
 
   if(H.a>.02){
