@@ -1,0 +1,642 @@
+import * as THREE from "./vendor/three.module.min.js";
+
+const params = new URLSearchParams(location.search);
+const COARSE = matchMedia("(pointer: coarse)").matches;
+const Q = +params.get("q") || (COARSE ? 0.6 : 1); // density multiplier
+const DPR_CAP = 2;
+
+const canvas = document.getElementById("c");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, DPR_CAP));
+
+/* ---------- seeded random ---------- */
+function rng(seed) {
+  let s = seed >>> 0;
+  const r = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+  r.range = (a, b) => a + (b - a) * r();
+  r.gauss = () => (r() + r() + r() + r() - 2) * 1.2;
+  return r;
+}
+
+/* ---------- shared wind state (uniform objects are shared by reference) ---------- */
+const U = {
+  uPhase: { value: 0 }, uStrength: { value: 0.8 }, uGust: { value: 0 }, uDir: { value: new THREE.Vector2(0.94, 0.34) },
+  uTime: { value: 0 },
+};
+const SUN = new THREE.Vector3(-0.45, 0.65, 0.5).normalize();
+
+/* ---------- plant material: instanced, wind-bent, vertex-coloured ---------- */
+const WIND_GLSL = `
+uniform float uPhase, uStrength, uGust; uniform vec2 uDir;
+float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
+float vn(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x), mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x), f.y); }
+vec2 windOff(vec2 base, float rnd){
+  vec2 along = vec2(dot(base,uDir), dot(base, vec2(-uDir.y,uDir.x)));
+  float w1 = vn(vec2(along.x*0.11 - uPhase*0.9, along.y*0.16));
+  float w2 = vn(vec2(along.x*0.42 - uPhase*1.9, along.y*0.55 + uPhase*0.2));
+  float swell = 0.5 + 0.5*sin(along.x*0.35 - uPhase*2.4 + along.y*0.12);
+  float field = 0.55*w1 + 0.25*w2 + 0.35*swell;
+  float push = (0.12 + field*1.1 + uGust*(0.4+0.6*swell)) * uStrength;
+  float flutter = sin(uPhase*5.0 + rnd*40.0 + base.x*1.3) * (0.25 + 0.5*w2);
+  return uDir*push*0.55 + vec2(-uDir.y,uDir.x)*flutter*min(push,1.2)*0.12;
+}`;
+
+const PLANT_VS = `
+${WIND_GLSL}
+attribute vec3 aCol; attribute vec3 aPos; attribute vec4 aI; attribute vec3 aTint;
+uniform float uBend; uniform vec3 uCam; uniform float uFogD; uniform vec3 uOff; uniform float uScl;
+varying vec3 vCol; varying vec3 vN; varying float vH; varying float vFog; varying vec3 vV;
+void main(){
+  float yaw = aI.x, hs = aI.y, ws = aI.z, rnd = aI.w;
+  vec3 p = vec3(position.x*ws, position.y*hs, position.z*hs) * uScl;
+  float c = cos(yaw), s = sin(yaw);
+  vec3 q = vec3(c*p.x + s*p.z, p.y, -s*p.x + c*p.z);
+  vec3 n = vec3(c*normal.x + s*normal.z, normal.y, -s*normal.x + c*normal.z);
+  float h = max(position.y, 0.0);
+  float sw = h*h*uBend;
+  vec2 off = windOff(aPos.xz, rnd) * sw * hs;
+  q.xz += off;
+  q.y -= 0.5*dot(off,off)/max(hs,0.01);
+  vec3 world = aPos * uScl + uOff + q;
+  vCol = aCol * aTint; vN = n; vH = h;
+  vV = normalize(uCam - world);
+  vFog = 1.0 - exp(-pow(distance(world, uCam)*uFogD, 1.3));
+  gl_Position = projectionMatrix * viewMatrix * vec4(world, 1.0);
+}`;
+const PLANT_FS = `
+uniform vec3 uSun; uniform vec3 uFog; uniform float uGlow;
+varying vec3 vCol; varying vec3 vN; varying float vH; varying float vFog; varying vec3 vV;
+void main(){
+  vec3 n = normalize(vN); if(!gl_FrontFacing) n = -n;
+  float lam = clamp(dot(n,uSun)*0.5+0.5, 0.0, 1.0);
+  float trans = pow(clamp(dot(-n,uSun),0.0,1.0), 2.0) * 0.5;
+  float ao = mix(0.5, 1.0, smoothstep(0.0, 0.45, vH));
+  vec3 light = vec3(0.52,0.60,0.66)*0.6 + vec3(1.05,0.96,0.80)*lam*0.85;
+  vec3 c = vCol*light*ao + vCol*vec3(0.5,0.6,0.2)*trans*0.6;
+  c += vCol * pow(1.0-abs(dot(n,vV)), 3.0) * uGlow;
+  c = mix(c, uFog, vFog);
+  gl_FragColor = vec4(c, 1.0);
+}`;
+
+function plantMaterial({ bend = 1, fog = [0.78, 0.9, 0.95], fogD = 0.012, glow = 0.12, cam }) {
+  return new THREE.ShaderMaterial({
+    vertexShader: PLANT_VS, fragmentShader: PLANT_FS, side: THREE.DoubleSide,
+    uniforms: {
+      uPhase: U.uPhase, uStrength: U.uStrength, uGust: U.uGust, uDir: U.uDir,
+      uBend: { value: bend }, uCam: { value: cam.position }, uSun: { value: SUN }, uFog: { value: new THREE.Vector3(...fog) },
+      uFogD: { value: fogD }, uGlow: { value: glow }, uOff: { value: new THREE.Vector3() }, uScl: { value: 1 },
+    },
+  });
+}
+
+/* ---------- geometry builder ---------- */
+class GB {
+  constructor() { this.p = []; this.c = []; this.i = []; }
+  grid(rows, cols, fn) {
+    const base = this.p.length / 3;
+    for (let r = 0; r <= rows; r++) for (let k = 0; k <= cols; k++) {
+      const o = fn(k / cols, r / rows); this.p.push(o[0], o[1], o[2]); this.c.push(o[3], o[4], o[5]);
+    }
+    for (let r = 0; r < rows; r++) for (let k = 0; k < cols; k++) {
+      const a = base + r * (cols + 1) + k, b = a + 1, c = a + cols + 1, d = c + 1;
+      this.i.push(a, c, b, b, c, d);
+    }
+  }
+  build() {
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(this.p, 3));
+    g.setAttribute("aCol", new THREE.Float32BufferAttribute(this.c, 3));
+    g.setIndex(this.i); g.computeVertexNormals();
+    return g;
+  }
+}
+const mix3 = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+const hex = (h) => [((h >> 16) & 255) / 255, ((h >> 8) & 255) / 255, (h & 255) / 255];
+
+/** slender stem, bowed in +x, from y=0 to y=1 */
+function addStem(gb, { bow = 0.04, r0 = 0.014, r1 = 0.008, c0 = hex(0x2c6a1a), c1 = hex(0x59a232) }) {
+  gb.grid(8, 5, (u, v) => {
+    const a = u * Math.PI * 2, cx = bow * Math.sin(v * Math.PI * 0.9), rad = r0 + (r1 - r0) * v;
+    return [cx + Math.cos(a) * rad, v, Math.sin(a) * rad, ...mix3(c0, c1, v)];
+  });
+}
+/** a curved petal / leaf: arc from vertical angle phi0 with curl kappa, length L, half-width W */
+function addPetal(gb, { y = 1, angle = 0, phi0 = 0.4, kappa = 0.8, L = 0.3, W = 0.12, cup = 0.5, c0, c1, rows = 6, cols = 4, tipPow = 0.75, edge = 0, ox = 0 }) {
+  const ca = Math.cos(angle), sa = Math.sin(angle);
+  gb.grid(rows, cols, (u, v) => {
+    const s = u * 2 - 1;
+    const rd = Math.abs(kappa) < 1e-3 ? L * Math.sin(phi0) * v : L * (Math.cos(phi0) - Math.cos(phi0 + kappa * v)) / kappa;
+    const yy = Math.abs(kappa) < 1e-3 ? L * Math.cos(phi0) * v : L * (Math.sin(phi0 + kappa * v) - Math.sin(phi0)) / kappa;
+    const w = W * Math.pow(Math.max(Math.sin(Math.PI * Math.pow(v, tipPow)), 0), 0.7) * (v < 0.02 ? 0.3 : 1);
+    const across = s * w;
+    const lift = s * s * w * cup;
+    // direction (ca, sa) in xz; across = perpendicular
+    const x = ox + ca * rd - sa * across, z = sa * rd + ca * across;
+    const col = mix3(c0, c1, Math.pow(v, 1.2));
+    const e = 1 + edge * s * s;
+    return [x, y + yy + lift, z, col[0] * e, col[1] * e, col[2] * e];
+  });
+}
+function addBlade(gb, { curl = 0.3, c0 = hex(0x1d4a14), c1 = hex(0x7fbf3a), seg = 5 }) {
+  gb.grid(seg, 1, (u, v) => {
+    const s = u * 2 - 1, w = 0.5 * (1 - Math.pow(v, 1.3));
+    const col = mix3(c0, c1, Math.pow(v, 0.9));
+    return [s * w, v, curl * v * v, col[0], col[1], col[2]];
+  });
+}
+function addSpike(gb, dir, len, rad, c) {
+  const [dx, dy, dz] = dir;
+  gb.grid(1, 3, (u, v) => {
+    const a = u * Math.PI * 2, r = rad * (1 - v);
+    return [dx * len * v + Math.cos(a) * r, dy * len * v + Math.sin(a) * r, dz * len * v, c[0], c[1], c[2]];
+  });
+}
+
+/* ---------- plant geometries (all in a ~1 unit tall local space) ---------- */
+function tulipGeo() {
+  const gb = new GB();
+  addStem(gb, { bow: 0.05, r0: 0.02, r1: 0.011 });
+  for (let k = 0; k < 3; k++) { // broad leaves from the base
+    addPetal(gb, { y: 0.02, angle: k * 2.1 + 0.4, phi0: 0.3, kappa: 1.1, L: 0.62, W: 0.1, cup: 0.5, c0: hex(0x1f5a1a), c1: hex(0x66b23a), rows: 7, cols: 4, tipPow: 0.9 });
+  }
+  const topX = 0.05 * Math.sin(Math.PI * 0.9);
+  const pinkBase = hex(0xfff0f5), pinkMid = hex(0xf36a9c), pinkTip = hex(0xd9306f);
+  const petal = (angle, phi0, kappa, L, W, c1) => addPetal(gb, { y: 1, ox: topX, angle, phi0, kappa, L, W, cup: 0.9, c0: pinkBase, c1, rows: 6, cols: 4, tipPow: 0.7, edge: 0.18 });
+  for (let k = 0; k < 6; k++) petal(k * (Math.PI / 3) + 0.2, 0.5, -0.85, 0.3, 0.13, k % 2 ? pinkMid : pinkTip);
+  for (let k = 0; k < 6; k++) petal(k * (Math.PI / 3) + 0.2 + Math.PI / 6, 0.25, -0.6, 0.29, 0.11, pinkMid);
+  for (let k = 0; k < 4; k++) petal(k * (Math.PI / 2) + 0.5, 0.05, -0.3, 0.2, 0.08, hex(0xff9ec0));
+  return gb.build();
+}
+function buttercupGeo() {
+  const gb = new GB();
+  addStem(gb, { bow: 0.07, r0: 0.012, r1: 0.007 });
+  addPetal(gb, { y: 0.04, angle: 0.6, phi0: 0.35, kappa: 1.0, L: 0.35, W: 0.07, cup: 0.4, c0: hex(0x2a6a20), c1: hex(0x6fb43a) });
+  const topX = 0.07 * Math.sin(Math.PI * 0.9);
+  for (let k = 0; k < 5; k++) {
+    addPetal(gb, { y: 1, ox: topX, angle: k * (Math.PI * 2 / 5), phi0: 0.95, kappa: -0.55, L: 0.15, W: 0.085, cup: 0.6, c0: hex(0xe0961a), c1: hex(0xffe23a), rows: 4, cols: 4, tipPow: 0.55, edge: 0.12 });
+  }
+  return gb.build();
+}
+function dandelionGeo() {
+  const gb = new GB();
+  addStem(gb, { bow: 0.05, r0: 0.01, r1: 0.007, c0: hex(0x3d7a2a), c1: hex(0x86b84a) });
+  const topX = 0.05 * Math.sin(Math.PI * 0.9), r = rng(5);
+  for (let k = 0; k < 70; k++) {
+    const th = Math.acos(1 - 2 * r()), ph = r() * Math.PI * 2;
+    const d = [Math.sin(th) * Math.cos(ph), Math.cos(th), Math.sin(th) * Math.sin(ph)];
+    const g = new GB();
+    addSpike(g, d, 0.11, 0.004, [0.96, 0.97, 0.99]);
+    for (let q = 0; q < g.p.length; q += 3) { gb.p.push(g.p[q] + topX, g.p[q + 1] + 1.0, g.p[q + 2]); }
+    const off = (gb.p.length - g.p.length) / 3;
+    gb.c.push(...g.c); for (const idx of g.i) gb.i.push(idx + off);
+  }
+  return gb.build();
+}
+function smallFlowerGeo(c0, c1) {
+  const gb = new GB();
+  addStem(gb, { bow: 0.03, r0: 0.014, r1: 0.008 });
+  const topX = 0.03 * Math.sin(Math.PI * 0.9);
+  for (let k = 0; k < 5; k++) addPetal(gb, { y: 1, ox: topX, angle: k * (Math.PI * 2 / 5), phi0: 1.2, kappa: -0.6, L: 0.2, W: 0.12, cup: 0.5, c0, c1, rows: 3, cols: 3, tipPow: 0.5 });
+  return gb.build();
+}
+function lotusGeo() {
+  const gb = new GB();
+  const c0 = hex(0xfff6f8), c1 = hex(0xf37aa8), c2 = hex(0xe0457f);
+  for (let k = 0; k < 8; k++) addPetal(gb, { y: 0, angle: k * Math.PI / 4, phi0: 1.05, kappa: -0.35, L: 0.5, W: 0.2, cup: 0.5, c0, c1: k % 2 ? c1 : c2, edge: 0.15 });
+  for (let k = 0; k < 8; k++) addPetal(gb, { y: 0.03, angle: k * Math.PI / 4 + Math.PI / 8, phi0: 0.55, kappa: 0.2, L: 0.42, W: 0.17, cup: 0.7, c0, c1, edge: 0.15 });
+  for (let k = 0; k < 6; k++) addPetal(gb, { y: 0.05, angle: k * Math.PI / 3, phi0: 0.15, kappa: 0.4, L: 0.3, W: 0.12, cup: 0.8, c0: hex(0xffe27a), c1: hex(0xffb0c8) });
+  return gb.build();
+}
+function bladeGeo(curl, c0, c1, seg) {
+  const gb = new GB(); addBlade(gb, { curl, c0, c1, seg }); return gb.build();
+}
+function leafGeo(L, W) { // big arched leaf for pond edges
+  const gb = new GB();
+  addPetal(gb, { y: 0, angle: 0, phi0: 1.1, kappa: -0.5, L, W, cup: 0.5, c0: hex(0x11501e), c1: hex(0x7ad04a), rows: 10, cols: 6, tipPow: 0.9 });
+  return gb.build();
+}
+
+/* ---------- instancing ---------- */
+function instanced(geo, mat, items) {
+  const n = items.length;
+  const g = new THREE.InstancedBufferGeometry();
+  g.index = geo.index;
+  for (const k of ["position", "normal", "aCol"]) g.setAttribute(k, geo.getAttribute(k));
+  const pos = new Float32Array(n * 3), inst = new Float32Array(n * 4), tint = new Float32Array(n * 3);
+  items.forEach((it, i) => {
+    pos.set(it.pos, i * 3); inst.set([it.yaw ?? 0, it.h ?? 1, it.w ?? it.h ?? 1, it.rnd ?? Math.random()], i * 4); tint.set(it.tint ?? [1, 1, 1], i * 3);
+  });
+  g.setAttribute("aPos", new THREE.InstancedBufferAttribute(pos, 3));
+  g.setAttribute("aI", new THREE.InstancedBufferAttribute(inst, 4));
+  g.setAttribute("aTint", new THREE.InstancedBufferAttribute(tint, 3));
+  g.instanceCount = n;
+  const m = new THREE.Mesh(g, mat); m.frustumCulled = false;
+  return m;
+}
+const tintJitter = (r, a = 0.14) => { const k = 1 - a + r() * a * 2; return [k, 1 - a * 0.5 + r() * a, k]; };
+
+/* ---------- particles (petals, seeds) ---------- */
+class Particles {
+  constructor(max, color, size) {
+    this.max = max; this.n = 0;
+    this.pos = new Float32Array(max * 3); this.vel = new Float32Array(max * 3); this.life = new Float32Array(max); this.age = new Float32Array(max);
+    this.alpha = new Float32Array(max);
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(this.pos, 3));
+    g.setAttribute("aA", new THREE.BufferAttribute(this.alpha, 1));
+    this.geo = g;
+    this.mat = new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false,
+      uniforms: { uColor: { value: new THREE.Color(...color) }, uSize: { value: size }, uPx: { value: 1 } },
+      vertexShader: `attribute float aA; uniform float uSize, uPx; varying float vA;
+        void main(){ vA=aA; vec4 mv = modelViewMatrix*vec4(position,1.0); gl_PointSize = uSize*uPx/max(-mv.z,0.1); gl_Position = projectionMatrix*mv; }`,
+      fragmentShader: `uniform vec3 uColor; varying float vA;
+        void main(){ vec2 d = gl_PointCoord-0.5; float r = length(d)*2.0; float a = smoothstep(1.0,0.55,r)*vA; if(a<0.01) discard; gl_FragColor = vec4(uColor, a); }`,
+    });
+    this.points = new THREE.Points(g, this.mat); this.points.frustumCulled = false;
+  }
+  emit(x, y, z, vx, vy, vz, life) {
+    const i = this.n < this.max ? this.n++ : Math.floor(Math.random() * this.max);
+    this.pos.set([x, y, z], i * 3); this.vel.set([vx, vy, vz], i * 3); this.life[i] = life; this.age[i] = 0;
+  }
+  update(dt, wind, gravity) {
+    for (let i = 0; i < this.n; i++) {
+      this.age[i] += dt;
+      const t = this.age[i] / this.life[i];
+      if (t >= 1) { this.alpha[i] = 0; continue; }
+      const o = i * 3;
+      this.vel[o] += (wind.x * 1.6 - this.vel[o]) * dt * 0.8;
+      this.vel[o + 2] += (wind.y * 1.6 - this.vel[o + 2]) * dt * 0.8;
+      this.vel[o + 1] += gravity * dt;
+      this.pos[o] += this.vel[o] * dt; this.pos[o + 1] += this.vel[o + 1] * dt; this.pos[o + 2] += this.vel[o + 2] * dt;
+      this.alpha[i] = Math.min(1, t * 8) * (1 - Math.pow(t, 3));
+    }
+    this.geo.attributes.position.needsUpdate = true; this.geo.attributes.aA.needsUpdate = true;
+  }
+}
+
+/* ---------- butterfly ---------- */
+function makeButterfly() {
+  const g = new THREE.Group();
+  const shape = new THREE.Shape();
+  shape.moveTo(0, 0); shape.bezierCurveTo(0.1, 0.32, 0.5, 0.38, 0.46, 0.08); shape.bezierCurveTo(0.42, -0.06, 0.2, -0.14, 0.14, -0.3);
+  shape.bezierCurveTo(0.08, -0.34, 0.02, -0.2, 0, 0);
+  const geo = new THREE.ShapeGeometry(shape, 12);
+  const mat = new THREE.MeshBasicMaterial({ color: 0xf7fbff, side: THREE.DoubleSide });
+  const wl = new THREE.Mesh(geo, mat), wr = new THREE.Mesh(geo, mat);
+  wl.scale.x = -1;
+  const pl = new THREE.Group(), pr = new THREE.Group();
+  pl.add(wl); pr.add(wr);
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.018, 0.16, 3, 6), new THREE.MeshBasicMaterial({ color: 0x3a4a5a }));
+  body.rotation.x = Math.PI / 2;
+  g.add(pl, pr, body);
+  g.userData = { pl, pr, v: new THREE.Vector3(), target: new THREE.Vector3(), t: Math.random() * 10 };
+  g.scale.setScalar(0.8);
+  return g;
+}
+function updateButterfly(b, dt, target, lowAltitude) {
+  const d = b.userData; d.t += dt;
+  const tx = target.x + Math.sin(d.t * 1.3) * 0.9, tz = target.z + Math.cos(d.t * 0.9) * 0.6, ty = target.y + Math.sin(d.t * 2.1) * 0.25 + (lowAltitude ? 0 : 0.2);
+  const k = 1 - Math.exp(-dt * 1.4);
+  const px = b.position.x, pz = b.position.z;
+  b.position.x += (tx - b.position.x) * k; b.position.y += (ty - b.position.y) * k; b.position.z += (tz - b.position.z) * k;
+  const vx = b.position.x - px, vz = b.position.z - pz;
+  if (Math.hypot(vx, vz) > 1e-4) b.rotation.y = Math.atan2(vx, vz) + Math.PI;
+  const flap = Math.sin(d.t * 22) * 0.9;
+  d.pl.rotation.z = -0.2 - flap; d.pr.rotation.z = 0.2 + flap;
+}
+
+/* ---------- camera, pointer helpers ---------- */
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 200);
+const ray = new THREE.Raycaster();
+const ndc = new THREE.Vector2();
+function pickPlane(x, y, planeY) {
+  ndc.set((x / innerWidth) * 2 - 1, -(y / innerHeight) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const t = (planeY - ray.ray.origin.y) / ray.ray.direction.y;
+  return t > 0 ? ray.ray.at(t, new THREE.Vector3()) : null;
+}
+function pickZ(x, y, z) {
+  ndc.set((x / innerWidth) * 2 - 1, -(y / innerHeight) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const t = (z - ray.ray.origin.z) / ray.ray.direction.z;
+  return t > 0 ? ray.ray.at(t, new THREE.Vector3()) : null;
+}
+function skyTexture(stops) {
+  const c = document.createElement("canvas"); c.width = 2; c.height = 256;
+  const x = c.getContext("2d"), g = x.createLinearGradient(0, 0, 0, 256);
+  stops.forEach(([p, col]) => g.addColorStop(p, col));
+  x.fillStyle = g; x.fillRect(0, 0, 2, 256);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+function hillMesh(z, baseY, amp, freq, colTop, colBot, seed, width = 220) {
+  const r = rng(seed), N = 90, pos = [], col = [], idx = [];
+  const phase = r() * 6;
+  for (let i = 0; i <= N; i++) {
+    const x = (i / N - 0.5) * width;
+    const top = baseY + amp * (Math.sin(x * freq + phase) * 0.6 + Math.sin(x * freq * 2.3 + phase * 2) * 0.3);
+    pos.push(x, top, z, x, baseY - 30, z);
+    col.push(...colTop.toArray(), ...colBot.toArray());
+    if (i < N) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
+  g.setIndex(idx);
+  return new THREE.Mesh(g, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide, fog: false }));
+}
+
+/* =====================================================================
+   SCENES
+   each: { build(), group, bg, hint, enter(), resize(), update(dt, ctx), tap(x,y), move(x,y) }
+   ===================================================================== */
+const SCENES = {};
+
+/* ---------- 1. Tulip field ---------- */
+SCENES.tulips = () => {
+  const group = new THREE.Group(), r = rng(11);
+  const FOG = [0.80, 0.92, 0.96];
+  const mat = plantMaterial({ bend: 0.5, fog: FOG, fogD: 0.016, glow: 0.12, cam: camera });
+  const tulips = [];
+  const NT = Math.round(1700 * Q);
+  for (let i = 0; i < NT; i++) {
+    const z = 5.2 - 26 * Math.pow(r(), 1.5), half = 3.4 + (6 - z) * 0.5;
+    tulips.push({ pos: [(r() * 2 - 1) * half, 0, z], yaw: r() * 6.28, h: r.range(0.75, 1.25), w: undefined, tint: [1 + r() * 0.12, 0.9 + r() * 0.18, 0.95 + r() * 0.12], rnd: r() });
+  }
+  tulips.forEach((t) => { t.w = t.h; });
+  group.add(instanced(tulipGeo(), mat, tulips));
+  // dense leafy undergrowth
+  const NB = Math.round(60000 * Q), blades = [];
+  const bladeMat = plantMaterial({ bend: 0.7, fog: FOG, fogD: 0.016, glow: 0.05, cam: camera });
+  for (let i = 0; i < NB; i++) {
+    const z = 5.6 - 27 * Math.pow(r(), 1.4), half = 3.8 + (6 - z) * 0.52;
+    blades.push({ pos: [(r() * 2 - 1) * half, 0, z], yaw: r() * 6.28, h: r.range(0.35, 0.95), w: r.range(0.05, 0.1), tint: tintJitter(r), rnd: r() });
+  }
+  group.add(instanced(bladeGeo(0.25, hex(0x143c10), hex(0x5fae35), 4), bladeMat, blades));
+  // ground + hills
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(220, 120), new THREE.MeshBasicMaterial({ color: 0x143a10 }));
+  ground.rotation.x = -Math.PI / 2; ground.position.set(0, -0.02, -40); group.add(ground);
+  group.add(hillMesh(-48, 2.4, 3.4, 0.045, new THREE.Color(0xc8e86a), new THREE.Color(0x5aa43a), 3));
+  group.add(hillMesh(-36, 0.4, 2.0, 0.07, new THREE.Color(0x7fc24a), new THREE.Color(0x2f7a26), 7));
+  const petals = new Particles(900, [1.0, 0.55, 0.72], 0.1); group.add(petals.points);
+  const butterfly = makeButterfly(); butterfly.position.set(0, 2, 0); group.add(butterfly);
+  const target = new THREE.Vector3(0, 1.8, -1);
+  let ambient = 0;
+  return {
+    group, hint: "Tap to scatter petals",
+    bg: skyTexture([[0, "#4aa0e8"], [0.55, "#9fd0f0"], [1, "#d9f0f4"]]),
+    enter() { camera.position.set(0, 1.1, 7.2); camera.lookAt(0, 1.35, -2); camera.fov = 48; camera.updateProjectionMatrix(); },
+    update(dt, c) {
+      ambient += dt * (0.6 + c.strength * 2);
+      while (ambient > 0.08) {
+        ambient -= 0.08;
+        petals.emit((Math.random() - 0.5) * 12, 0.8 + Math.random() * 2.2, 1 - Math.random() * 6, 0, 0.1, 0, 4 + Math.random() * 3);
+      }
+      petals.update(dt, c.dir, -0.35);
+      updateButterfly(butterfly, dt, target, true);
+    },
+    move(x, y) { const p = pickZ(x, y, -1); if (p) target.set(p.x, Math.max(0.7, p.y), p.z); },
+    tap(x, y) {
+      const p = pickZ(x, y, 0); if (!p) return;
+      for (let i = 0; i < 90; i++) {
+        const a = Math.random() * 6.28, s = 0.8 + Math.random() * 2.4;
+        petals.emit(p.x + (Math.random() - 0.5) * 0.4, p.y, p.z + (Math.random() - 0.5) * 0.4, Math.cos(a) * s, 1.4 + Math.random() * 2, Math.sin(a) * s * 0.5, 2.5 + Math.random() * 3);
+      }
+    },
+    petals,
+  };
+};
+
+/* ---------- 2. Buttercup meadow ---------- */
+SCENES.meadow = () => {
+  const group = new THREE.Group(), r = rng(23);
+  const FOG = [0.70, 0.88, 0.92];
+  const mkMat = (bend, glow = 0.1) => plantMaterial({ bend, fog: FOG, fogD: 0.03, glow, cam: camera });
+  const place = (n, zNear, zFar, hMin, hMax, extra) => Array.from({ length: n }, () => {
+    const z = zNear - (zNear - zFar) * Math.pow(r(), 1.3), half = 2.4 + (zNear - z) * 0.9;
+    const h = r.range(hMin, hMax);
+    return { pos: [(r() * 2 - 1) * half, 0, z], yaw: r() * 6.28, h, w: h, rnd: r(), ...extra?.(h) };
+  });
+  const blades = place(Math.round(52000 * Q), 4.2, -10, 1.1, 2.0, (h) => ({ w: r.range(0.025, 0.05), tint: tintJitter(r, 0.2) }));
+  group.add(instanced(bladeGeo(0.35, hex(0x0c3a2c), hex(0x6cc44a), 6), mkMat(0.55, 0.06), blades));
+  const low = place(Math.round(30000 * Q), 4.4, -6, 0.25, 0.7, () => ({ w: r.range(0.03, 0.05), tint: tintJitter(r, 0.2) }));
+  group.add(instanced(bladeGeo(0.3, hex(0x0f4a36), hex(0x3fa59a), 4), mkMat(0.6, 0.05), low));
+  group.add(instanced(buttercupGeo(), mkMat(0.5, 0.2), place(Math.round(320 * Q) + 20, 3.6, -6, 1.2, 2.3, () => ({ tint: [1, 0.96 + r() * 0.08, 0.9 + r() * 0.1] }))));
+  const puffs = place(Math.round(46 * Q) + 6, 3.4, -4, 1.6, 2.5);
+  group.add(instanced(dandelionGeo(), mkMat(0.45, 0.4), puffs));
+  const blue = place(Math.round(520 * Q), 3.4, -3, 0.35, 0.65, () => ({ tint: r() < 0.5 ? [0.8, 0.85, 1.1] : [0.95, 0.9, 1.1] }));
+  group.add(instanced(smallFlowerGeo(hex(0xe8f0ff), hex(0x6a8cf0)), mkMat(0.5, 0.25), blue));
+  const seeds = new Particles(700, [1, 1, 1], 0.06); group.add(seeds.points);
+  const butterfly = makeButterfly(); butterfly.position.set(0, 2, 1); group.add(butterfly);
+  const target = new THREE.Vector3(0, 1.6, 0);
+  let dust = 0;
+  const blow = (n, x, y, z) => {
+    for (let i = 0; i < n; i++) {
+      const s = 0.5 + Math.random() * 1.2;
+      seeds.emit(x + (Math.random() - 0.5) * 0.3, y + (Math.random() - 0.5) * 0.3, z + (Math.random() - 0.5) * 0.3, U.uDir.value.x * s * 1.6, 0.4 + Math.random() * 0.9, U.uDir.value.y * s * 1.6, 3 + Math.random() * 4);
+    }
+  };
+  return {
+    group, hint: "Tap to blow the dandelions",
+    bg: skyTexture([[0, "#2f86e0"], [0.5, "#78bdf0"], [1, "#cdeaf4"]]),
+    enter() { camera.position.set(0, 1.5, 7.5); camera.lookAt(0, 1.7, 0); camera.fov = 52; camera.updateProjectionMatrix(); },
+    update(dt, c) {
+      dust += dt * (0.5 + c.strength * 3);
+      while (dust > 0.1) { dust -= 0.1; const p = puffs[Math.floor(Math.random() * puffs.length)]; blow(1, p.pos[0], p.h * 1.0, p.pos[2]); }
+      seeds.update(dt, c.dir, 0.05);
+      updateButterfly(butterfly, dt, target, false);
+    },
+    move(x, y) { const p = pickZ(x, y, 0); if (p) target.set(p.x, Math.max(0.9, p.y), p.z); },
+    tap(x, y) {
+      const p = pickZ(x, y, 0); if (!p) return;
+      const near = puffs.slice().sort((a, b) => Math.hypot(a.pos[0] - p.x, a.h - p.y) - Math.hypot(b.pos[0] - p.x, b.h - p.y)).slice(0, 5);
+      near.forEach((n) => blow(40, n.pos[0], n.h, n.pos[2]));
+      blow(60, p.x, p.y, p.z);
+    },
+  };
+};
+
+/* ---------- 3. Pond ---------- */
+const WATER_FS = `
+uniform float uTime; uniform vec4 uRip[8]; uniform vec2 uDrift;
+varying vec3 vW;
+float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
+float vn(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x), mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x), f.y); }
+float fbm(vec2 p){ float a=0.5, s=0.0; for(int i=0;i<5;i++){ s+=a*vn(p); p=p*2.03+vec2(1.7,9.2); a*=0.5; } return s; }
+void main(){
+  vec2 p = vW.xz;
+  vec2 q = p*0.18 + uDrift;
+  float n = fbm(q + fbm(q*1.6 + uTime*0.02));
+  vec3 deep = vec3(0.04,0.33,0.84), mid = vec3(0.12,0.52,0.95), cloud = vec3(0.80,0.91,1.0);
+  vec3 col = mix(deep, mid, smoothstep(0.25,0.7,n));
+  col = mix(col, cloud, smoothstep(0.58,0.82,fbm(q*0.8 - 3.0)) * 0.85);
+  float rim = 0.0; vec2 grad = vec2(0.0);
+  for(int i=0;i<8;i++){
+    vec4 r = uRip[i]; float age = uTime - r.z; if(age<0.0 || age>6.0) continue;
+    vec2 d = p - r.xy; float dist = length(d)+1e-4; float front = age*1.9;
+    float env = exp(-pow((dist-front)*0.9, 2.0)) * exp(-age*0.55) * r.w;
+    float w = sin((dist-front)*9.0);
+    rim += env*w; grad += (d/dist) * env * cos((dist-front)*9.0) * 9.0;
+  }
+  col += vec3(0.5,0.7,0.9) * max(rim,0.0) * 0.55 - vec3(0.06,0.1,0.12) * max(-rim,0.0);
+  vec3 nrm = normalize(vec3(-grad.x*0.06, 1.0, -grad.y*0.06));
+  float spec = pow(max(dot(nrm, normalize(vec3(-0.4,0.9,0.3))), 0.0), 60.0);
+  col += vec3(1.0) * spec * 0.6;
+  float sp = pow(vn(p*9.0 + uTime*vec2(0.3,-0.2)), 14.0); col += vec3(0.7,0.9,1.0)*sp*0.5;
+  gl_FragColor = vec4(col, 1.0);
+}`;
+SCENES.pond = () => {
+  const group = new THREE.Group(), r = rng(31);
+  const waterMat = new THREE.ShaderMaterial({
+    uniforms: { uTime: U.uTime, uRip: { value: Array.from({ length: 8 }, () => new THREE.Vector4(0, 0, -100, 0)) }, uDrift: { value: new THREE.Vector2() } },
+    vertexShader: `varying vec3 vW; void main(){ vec4 w = modelMatrix*vec4(position,1.0); vW = w.xyz; gl_Position = projectionMatrix*viewMatrix*w; }`,
+    fragmentShader: WATER_FS,
+  });
+  const water = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), waterMat);
+  water.rotation.x = -Math.PI / 2; group.add(water);
+  group.add(new THREE.HemisphereLight(0xdff0ff, 0x4a5a40, 1.6));
+  const sun = new THREE.DirectionalLight(0xfff3dc, 2.2); sun.position.set(-4, 8, 3); group.add(sun);
+
+  // rocks on the left edge
+  const edgeL = new THREE.Group(), edgeR = new THREE.Group();
+  const rockMat = new THREE.MeshStandardMaterial({ color: 0x9aa0ab, roughness: 0.9, flatShading: false });
+  [[0, 0, 0, 1.7, 1.2], [-0.3, 0.2, 1.6, 1.2, 0.9], [0.4, 0.1, -1.7, 1.1, 0.8]].forEach(([x, y, z, sx, sz]) => {
+    const g = new THREE.IcosahedronGeometry(1, 3), p = g.attributes.position;
+    for (let i = 0; i < p.count; i++) { const px = p.getX(i), py = p.getY(i), pz = p.getZ(i), k = 1 + (Math.sin(px * 5.1 + pz * 3.3) * 0.5 + Math.cos(py * 6.7 - px * 2.9) * 0.5) * 0.09; p.setXYZ(i, p.getX(i) * k, p.getY(i) * k, p.getZ(i) * k); }
+    g.computeVertexNormals();
+    const m = new THREE.Mesh(g, rockMat); m.scale.set(sx, 0.6, sz); m.position.set(x, y, z); edgeL.add(m);
+  });
+  group.add(edgeL);
+
+  const leafMat = plantMaterial({ bend: 0.8, fog: [1, 1, 1], fogD: 0.0, glow: 0.15, cam: camera });
+  const leaves = [];
+  const NL = Math.round(22 * Math.max(Q, 0.5));
+  for (let i = 0; i < NL; i++) {
+    leaves.push({ pos: [r.range(-0.4, 0.6), 0.25 + r() * 0.5, r.range(-3.2, 3.8)], yaw: Math.PI + r.range(-0.7, 0.7), h: r.range(0.9, 1.7), w: r.range(0.9, 1.6), tint: tintJitter(r, 0.1), rnd: r() });
+  }
+  edgeR.add(instanced(leafGeo(2.6, 0.5), leafMat, leaves));
+  group.add(edgeR);
+
+  // lily pads with lotus flowers
+  const pads = [], lotusItems = [];
+  const padMat = new THREE.MeshStandardMaterial({ color: 0x3f9a34, roughness: 0.6, side: THREE.DoubleSide });
+  const padGeo = new THREE.CircleGeometry(1, 40, 0.35, Math.PI * 2 - 0.7); padGeo.rotateX(-Math.PI / 2);
+  [[-1.3, 0.8, 0.9], [1.1, -1.1, 0.75], [0.2, 1.9, 0.6], [-0.4, -1.6, 0.55], [2.0, 1.2, 0.5]].forEach(([x, z, s], i) => {
+    const m = new THREE.Mesh(padGeo, padMat); m.scale.set(s, 1, s); m.position.set(x, 0.03, z); m.rotation.y = r() * 6.28;
+    m.userData.s = i; group.add(m); pads.push(m);
+    if (i < 2) lotusItems.push({ pos: [x, 0.05, z], yaw: r() * 6.28, h: s * 0.9, w: s * 0.9, tint: [1, 1, 1], rnd: r() });
+  });
+  const lotusMat = plantMaterial({ bend: 0.0, fog: [1, 1, 1], fogD: 0, glow: 0.2, cam: camera });
+  group.add(instanced(lotusGeo(), lotusMat, lotusItems));
+
+  const butterfly = makeButterfly(); butterfly.position.set(1, 1.4, 0); group.add(butterfly);
+  const target = new THREE.Vector3(0, 1, 0);
+  let ripIdx = 0, lastRip = 0, lastP = new THREE.Vector3(), ambient = 0;
+  const ripple = (x, z, amp) => { waterMat.uniforms.uRip.value[ripIdx % 8].set(x, z, U.uTime.value, amp); ripIdx++; };
+  const extents = () => {
+    const hh = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.y, hw = hh * camera.aspect;
+    edgeL.position.set(-hw - 0.3, 0, -hh * 0.1);
+    const k = Math.max(0.6, Math.min(1.2, hh / 3.6));
+    edgeL.scale.setScalar(k); leafMat.uniforms.uScl.value = k;
+    leafMat.uniforms.uOff.value.set(hw - 0.9 * k, 0, 0);
+  };
+  return {
+    group, hint: "Move over the water, tap for a big ripple", bg: new THREE.Color(0x2a78d8),
+    enter() { camera.position.set(0, 9, 0.001); camera.up.set(0, 0, -1); camera.fov = 40; camera.lookAt(0, 0, 0); camera.updateProjectionMatrix(); extents(); },
+    leave() { camera.up.set(0, 1, 0); },
+    resize: extents,
+    update(dt, c) {
+      waterMat.uniforms.uDrift.value.addScaledVector(U.uDir.value, dt * 0.01 * (0.4 + c.strength));
+      ambient += dt * (0.2 + c.strength * 1.1);
+      while (ambient > 1) { ambient -= 1; ripple((Math.random() - 0.5) * 8, (Math.random() - 0.5) * 6, 0.35); }
+      pads.forEach((p, i) => { p.position.y = 0.03 + Math.sin(U.uTime.value * 0.9 + i * 1.7) * 0.012; p.rotation.z = Math.sin(U.uTime.value * 0.6 + i) * 0.015; });
+      updateButterfly(butterfly, dt, target, false);
+    },
+    move(x, y) {
+      const p = pickPlane(x, y, 0); if (!p) return;
+      target.set(p.x, 1.2, p.z);
+      const now = U.uTime.value;
+      if (now - lastRip > 0.16 && p.distanceTo(lastP) > 0.35) { ripple(p.x, p.z, 0.45); lastRip = now; lastP.copy(p); }
+    },
+    tap(x, y) { const p = pickPlane(x, y, 0); if (p) { ripple(p.x, p.z, 1.4); ripple(p.x, p.z, 0.8); } },
+  };
+};
+
+/* ---------- scene manager ---------- */
+const NAV = [["tulips", "Tulips"], ["meadow", "Meadow"], ["pond", "Pond"]];
+const nav = document.getElementById("scenes");
+const hint = document.getElementById("hint");
+const built = {};
+let current = null, currentId = null;
+const root = new THREE.Scene();
+
+function show(id) {
+  if (!SCENES[id]) id = "tulips";
+  if (current?.leave) current.leave();
+  if (current) root.remove(current.group);
+  current = built[id] || (built[id] = SCENES[id]());
+  currentId = id;
+  root.add(current.group);
+  root.background = current.bg instanceof THREE.Color ? current.bg : current.bg;
+  current.enter();
+  resize();
+  [...nav.children].forEach((el) => el.setAttribute("aria-current", String(el.dataset.id === id)));
+  hint.textContent = current.hint; hint.style.opacity = 1;
+  clearTimeout(show.t); show.t = setTimeout(() => (hint.style.opacity = 0), 4200);
+  history.replaceState(null, "", "#" + id);
+}
+NAV.forEach(([id, label]) => {
+  const b = document.createElement("button"); b.textContent = label; b.dataset.id = id; b.onclick = () => show(id); nav.appendChild(b);
+});
+const g = document.createElement("a"); g.textContent = "Grass"; g.href = "/grass/"; nav.appendChild(g);
+
+/* ---------- wind controls ---------- */
+const slider = document.getElementById("wind"), label = document.getElementById("label");
+const NAMES = [[0.12, "Still"], [0.5, "Light air"], [1.0, "Breeze"], [1.7, "Windy"], [2.4, "Gale"], [9, "Storm"]];
+let target = parseFloat(slider.value), speed = target, strength = target, gust = 0, phase = 0, dirAngle = 0.35, dirTarget = 0.35;
+const setTarget = (v) => { target = v; slider.value = v; label.textContent = NAMES.find(([m]) => v < m)[1]; };
+slider.addEventListener("input", () => setTarget(parseFloat(slider.value)));
+setTarget(target);
+
+let down = null;
+addEventListener("pointerdown", (e) => { if (e.target.closest(".bar")) return; down = { x: e.clientX, y: e.clientY }; });
+addEventListener("pointermove", (e) => { if (!e.target.closest(".bar")) current?.move?.(e.clientX, e.clientY); });
+addEventListener("pointerup", (e) => {
+  if (!down) return;
+  const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y); down = null;
+  if (moved > 12) return;
+  gust = Math.max(gust, 1.0);
+  dirTarget += (e.clientX / innerWidth - 0.5) * 0.6;
+  current?.tap?.(e.clientX, e.clientY);
+});
+
+/* ---------- loop ---------- */
+function resize() {
+  const dpr = Math.min(devicePixelRatio || 1, DPR_CAP);
+  renderer.setPixelRatio(dpr); renderer.setSize(innerWidth, innerHeight, false);
+  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  Object.values(built).forEach((s) => { if (s.petals) s.petals.mat.uniforms.uPx.value = innerHeight * dpr * 0.5; });
+  const px = innerHeight * dpr * 0.5;
+  Object.values(built).forEach((s) => s.group.traverse((o) => { if (o.material?.uniforms?.uPx) o.material.uniforms.uPx.value = px; }));
+  current?.resize?.();
+}
+addEventListener("resize", resize);
+
+const ease = (cur, tgt, dt, tau) => cur + (tgt - cur) * (1 - Math.exp(-dt / tau));
+let last = performance.now(), time = 0;
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now; time += dt;
+  speed = ease(speed, target, dt, 0.9); strength = ease(strength, target, dt, 0.7);
+  gust = ease(gust, 0, dt, 1.6); dirAngle = ease(dirAngle, dirTarget, dt, 1.2);
+  phase += speed * dt;
+  U.uPhase.value = phase; U.uStrength.value = strength; U.uGust.value = gust; U.uTime.value = time;
+  U.uDir.value.set(Math.cos(dirAngle), Math.sin(dirAngle));
+  current.update(dt, { strength, dir: U.uDir.value, time });
+  renderer.render(root, camera);
+  requestAnimationFrame(frame);
+}
+show(location.hash.slice(1) || "tulips");
+requestAnimationFrame(frame);
+window.__nature = { show, setTarget, get state() { return { speed, strength, phase, target, scene: currentId }; } };

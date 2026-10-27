@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nature</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #bfe3f2; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  .bar { position: fixed; display: flex; align-items: center; gap: 6px; padding: 8px; border-radius: 999px;
+         background: rgba(12,24,10,.42); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+         color: #eef6e4; font: 500 13px/1 -apple-system, "SF Pro Text", system-ui, sans-serif; letter-spacing: .02em; }
+  .scenes { top: max(16px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); }
+  .scenes a, .scenes button { all: unset; cursor: pointer; padding: 9px 14px; border-radius: 999px; color: #eef6e4; transition: background .25s; }
+  .scenes [aria-current="true"] { background: rgba(255,255,255,.22); }
+  .scenes a:hover, .scenes button:hover { background: rgba(255,255,255,.14); }
+  .wind { bottom: max(18px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); padding: 10px 16px; gap: 14px; }
+  .wind output { min-width: 4.6em; text-align: right; font-variant-numeric: tabular-nums; opacity: .9; }
+  input[type=range] { -webkit-appearance: none; appearance: none; width: min(34vw, 220px); height: 28px; background: transparent; }
+  input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 4px; background: rgba(255,255,255,.35); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -9px; border-radius: 50%; background: #fff; box-shadow: 0 1px 6px rgba(0,0,0,.35); }
+  input[type=range]::-moz-range-track { height: 4px; border-radius: 4px; background: rgba(255,255,255,.35); }
+  input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border: 0; border-radius: 50%; background: #fff; }
+  .hint { position: fixed; top: calc(max(16px, env(safe-area-inset-top)) + 58px); left: 50%; transform: translateX(-50%); color: rgba(255,255,255,.95);
+          font: 500 13px/1 -apple-system, system-ui, sans-serif; text-shadow: 0 1px 8px rgba(0,0,0,.4); transition: opacity .8s; pointer-events: none; white-space: nowrap; }
+  @media (max-width: 520px) { .scenes a, .scenes button { padding: 9px 10px; } }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<nav class="bar scenes" id="scenes" aria-label="Scenes"></nav>
+<div class="hint" id="hint"></div>
+<div class="bar wind"><span>Wind</span><input id="wind" type="range" min="0" max="3" step="0.01" value="0.8" aria-label="Wind speed"><output id="label">Breeze</output></div>
+<script type="module" src="./nature.js"></script>
+</body>
+</html>
