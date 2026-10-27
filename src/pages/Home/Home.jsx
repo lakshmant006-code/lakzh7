@@ -390,8 +390,8 @@ const Home = () => {
             <article className="home-bento-card home-bento-work">
               <p className="home-bento-label">Work</p>
               <div>
-                <h2 className="home-bento-title">3 case studies</h2>
-                <p className="home-bento-text">Reef, Hiku, and Summer</p>
+                <h2 className="home-bento-title">4 projects</h2>
+                <p className="home-bento-text">Keep, Reef, Hiku, and Summer</p>
               </div>
               <button
                 type="button"

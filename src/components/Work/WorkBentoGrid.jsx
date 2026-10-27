@@ -8,6 +8,18 @@ import "./WorkBentoItem.css";
 // thumbnailImage: used as thumbnail in mobile view instead of video
 const workProjects = [
   {
+    id: "keep-memory-calendar",
+    title: "Keep: A Memory Calendar That Answers Back",
+    role: "Product Designer, Developer",
+    tags: ["Mobile PWA", "AI", "Personal Data"],
+    summary:
+      "Photos, voice notes, and quotes end up scattered and forgotten. Keep files everything on one calendar, then lets you ask for it later, with Re-live avatars, a places map, face-matched people, and insights.",
+    shortSummary: "Keep what matters, then just ask for it later.",
+    image: "/work/keep/keep-thumb.jpg",
+    liveUrl: "https://lakshmant006-code.github.io/keepxmeta/",
+    category: "case-study",
+  },
+  {
     id: "quizai-approval-flow",
     title: "Reef: AI Powered Notetaking Application",
     role: "Product Designer",
@@ -252,6 +264,28 @@ function WorkCard({
       >
         {content}
       </Link>
+    );
+  }
+
+  // No case study page: the whole card opens the live app.
+  if (project.liveUrl && !routeMap[project.id]) {
+    const openLive = () =>
+      window.open(project.liveUrl, "_blank", "noopener,noreferrer");
+    return (
+      <div
+        className={`${cardClassName} cursor-pointer`}
+        data-project-id={project.id}
+        role="link"
+        tabIndex={0}
+        aria-label={`${project.title} (opens in a new tab)`}
+        onClick={openLive}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") openLive();
+        }}
+        {...hoverProps}
+      >
+        {content}
+      </div>
     );
   }
 
