@@ -12,7 +12,7 @@ import {
 import "./Nav.css";
 import darkLogo from "../../assets/img/dark-logo.png";
 import lightLogo from "../../assets/img/light-logo.png";
-import spiralIcon from "../../assets/img/spiraL.png";
+import grassIcon from "../../assets/img/grass-icon.svg";
 
 const Nav = () => {
   const location = useLocation();
@@ -34,7 +34,7 @@ const Nav = () => {
   const navItems = [
     { label: "work", href: "/", isLink: true },
     { label: "about", href: "/about", isLink: true },
-    { label: "celestera", href: "https://www.celestera.online/?utm_source=portfolio&utm_medium=nav", isLink: true, external: true },
+    { label: "grass", href: "/grass/", isLink: true, external: true },
   ];
 
   const handleLogoClick = (e) => {
@@ -61,12 +61,12 @@ const Nav = () => {
   };
 
   const renderPillLabel = (item) => {
-    if (item.label === "celestera") {
+    if (item.label === "grass") {
       return (
         <img
-          src={spiralIcon}
-          alt="Celestera"
-          className="nav-spiral-icon"
+          src={grassIcon}
+          alt="Grass"
+          className="nav-spiral-icon nav-grass-icon"
         />
       );
     }
@@ -518,10 +518,10 @@ const Nav = () => {
         <ul className="mobile-menu-list">
           {navItems.map((item, i) => {
             const mobileInner =
-              item.label === "celestera" ? (
+              item.label === "grass" ? (
                 <span className="mobile-particles-link">
-                  <img src={spiralIcon} alt="" className="nav-spiral-icon" aria-hidden="true" />
-                  celestera
+                  <img src={grassIcon} alt="" className="nav-spiral-icon nav-grass-icon" aria-hidden="true" />
+                  grass
                 </span>
               ) : (
                 item.label

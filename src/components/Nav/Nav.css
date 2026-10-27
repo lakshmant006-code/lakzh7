@@ -47,6 +47,22 @@
   filter: grayscale(0) opacity(1);
 }
 
+.nav-grass-icon {
+  filter: none;
+  transform-origin: 50% 90%;
+}
+
+.nav-grass-icon:hover {
+  filter: none;
+  transform: rotate(0deg);
+  animation: nav-grass-sway 1.1s ease-in-out infinite;
+}
+
+@keyframes nav-grass-sway {
+  0%, 100% { transform: rotate(-7deg); }
+  50% { transform: rotate(7deg); }
+}
+
 @media (min-width: 768px) {
   .nav-spiral-icon {
     width: 32px;
