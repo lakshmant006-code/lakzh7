@@ -280,6 +280,40 @@ const KeepCaseStudy = () => {
         </CsText>
       </CsSection>
 
+      <CsSection
+        id="keep-systems"
+        label="What I learned"
+        title="Design systems: stay with what people already know"
+      >
+        <CsText>
+          To make Keep feel like it belonged to Meta AI, I worked inside the
+          systems that already exist: <strong>Meta AI&apos;s chat</strong> and{" "}
+          <strong>Meta&apos;s published design system</strong>. It was the first
+          time I had designed a product that had to live inside someone
+          else&apos;s patterns, and it taught me more about systems design than
+          any project before it.
+        </CsText>
+        <CsH3>The hard part: a memory that feels like a memory</CsH3>
+        <CsText>
+          The biggest challenge was fitting the memory interface into those
+          systems. Looking back through a memory should feel like looking
+          through a memory, with the photo, the day, and the people in it
+          close at hand, and I did not want it to feel like another list of
+          results. Getting that feeling out of components that were built for
+          other things was the real design problem.
+        </CsText>
+        <CsH3>What it taught me</CsH3>
+        <CsText>
+          It is tempting to experiment a lot, and I did. But people already
+          know how Meta&apos;s interfaces work, and that familiarity is worth
+          more than anything new I could invent. So the lesson was to{" "}
+          <strong>keep the same patterns people are used to</strong> and put the
+          experimenting into what sits on top of them, not into the patterns
+          themselves. A system is a promise to the people using it that things
+          will work the way they expect.
+        </CsText>
+      </CsSection>
+
       <CsSection id="keep-reflection" label="Reflections" title="Answer, but never replace.">
         <CsText>
           Designing this as a concept for Meta AI taught me that the hard part of an AI memory product is
