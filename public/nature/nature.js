@@ -808,9 +808,10 @@ const META = {
   canopy: ["Jungle canopy", "Understory · broad leaves in dappled light", "Move to open a gap in the canopy · tap to shake the leaves", "canopy"],
   mites: ["Rainy velvets", "A memory · velvet mites after the rain", "Move over a mite · press and hold to make it curl up", "rainy velvets"],
   street: ["Street", "Midday · a city street from above", "Traffic keeps its lanes and stops at the signal · hover to honk · or be the cow", "street"],
+  bollywood: ["Bollywood", "A memory · a dance under the arch, the Taj Mahal behind", "Move to stir the wind · tap for a gust · the slider sets the breeze", "bollywood"],
   grass: ["Grass from above", "Meadow · combed by the wind", "Tap to plant flowers and watch them bloom · someone will come over", "grass"],
 };
-const ORDER = ["tulips", "meadow", "pond", "canopy", "mites", "grass", "street"];
+const ORDER = ["tulips", "meadow", "pond", "canopy", "mites", "grass", "street", "bollywood"];
 const nav = document.getElementById("scenes");
 const deck = document.getElementById("deck");
 const built = {};
@@ -819,10 +820,12 @@ const root = new THREE.Scene();
 const mitesFrame = document.getElementById("mites");
 const grassFrame = document.getElementById("grass");
 const streetFrame = document.getElementById("street");
+const bollyFrame = document.getElementById("bollywood");
 
 /** swap what is on screen right now (no animation) */
 function showNow(id) {
-  const isMites = id === "mites", isGrass = id === "grass", isStreet = id === "street";
+  const isMites = id === "mites", isGrass = id === "grass", isStreet = id === "street", isBolly = id === "bollywood";
+  document.body.classList.toggle("is-bollywood", isBolly);
   document.body.classList.toggle("is-street", isStreet);
   document.body.classList.toggle("is-canopy", id === "canopy");
   document.body.classList.toggle("is-mites", isMites);
@@ -831,10 +834,12 @@ function showNow(id) {
   if (isMites && !mitesFrame.src) mitesFrame.src = mitesFrame.dataset.src + (pixelOn ? "?px=1" : "");
   if (isGrass && !grassFrame.src) grassFrame.src = grassFrame.dataset.src;
   if (isStreet && !streetFrame.src) streetFrame.src = streetFrame.dataset.src;
+  if (isBolly && !bollyFrame.src) bollyFrame.src = bollyFrame.dataset.src;
+  if (!isBolly && bollyFrame.src) setTimeout(() => { if (currentId !== "bollywood") bollyFrame.removeAttribute("src"); }, 700);
   if (!isMites && mitesFrame.src) setTimeout(() => { if (currentId !== "mites") mitesFrame.removeAttribute("src"); }, 700);
   if (!isGrass && grassFrame.src) setTimeout(() => { if (currentId !== "grass") grassFrame.removeAttribute("src"); }, 700);
   currentId = id;
-  if (isMites || isGrass || isStreet) { mitesing = true; }
+  if (isMites || isGrass || isStreet || isBolly) { mitesing = true; }
   else {
     mitesing = false;
     if (current?.leave) current.leave();
@@ -854,7 +859,7 @@ function showNow(id) {
 let fade = 0, fadeDir = 0, pending = null, elapsed = 0, autoplay = params.get("auto") !== "0";
 const DURATION = 11;
 function goto(id, manual) {
-  if (!SCENES[id] && id !== "mites" && id !== "grass" && id !== "street") id = "tulips";
+  if (!SCENES[id] && id !== "mites" && id !== "grass" && id !== "street" && id !== "bollywood") id = "tulips";
   elapsed = 0;
   if (manual && id === currentId) return;
   if (currentId === null) { showNow(id); return; }
@@ -888,9 +893,10 @@ pxBtn.addEventListener("click", () => { pixelOn = !pixelOn; syncPx(); resize(); 
 const slider = document.getElementById("wind"), label = document.getElementById("label");
 const NAMES = [[0.12, "Still"], [0.5, "Light air"], [1.0, "Breeze"], [1.7, "Windy"], [2.4, "Gale"], [9, "Storm"]];
 let target = parseFloat(slider.value), speed = target, strength = target, gust = 0, phase = 0, dirAngle = 0.35, dirTarget = 0.35;
-const sendWind = () => { try { grassFrame.contentWindow?.postMessage({ wind: target }, "*"); } catch (_) {} };
+const sendWind = () => { for (const f of [grassFrame, bollyFrame]) { try { f.contentWindow?.postMessage({ wind: target }, "*"); } catch (_) {} } };
 const setTarget = (v) => { target = v; slider.value = v; label.textContent = NAMES.find(([m]) => v < m)[1]; sendWind(); };
 grassFrame.addEventListener("load", sendWind);
+bollyFrame.addEventListener("load", sendWind);
 slider.addEventListener("input", () => setTarget(parseFloat(slider.value)));
 setTarget(target);
 syncPx();
