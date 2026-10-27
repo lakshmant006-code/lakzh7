@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nature</title>
+<style>
+  :root { --paper: #f5f3ef; --ink: #2c2420; --soft: #9a9186; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--paper); overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none;
+    font: 400 14px/1.4 "DM Sans", -apple-system, system-ui, sans-serif; color: var(--ink); }
+  .page { height: 100%; display: flex; flex-direction: column; align-items: center; padding: max(24px, env(safe-area-inset-top)) clamp(16px, 5vw, 64px) max(14px, env(safe-area-inset-bottom)); }
+  .embed .page { padding-top: 92px; }
+
+  /* the picture: a soft-edged rounded plate with a little grain, set into the paper */
+  .stage { position: relative; flex: 1; min-height: 0; width: 100%; max-width: 1240px; border-radius: 44px; overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 5.5%, #000 94.5%, transparent), linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
+    -webkit-mask-composite: source-in;
+            mask-image: linear-gradient(to right, transparent, #000 5.5%, #000 94.5%, transparent), linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
+            mask-composite: intersect; }
+  .stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .22; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .3  0 0 0 0 .25  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: var(--paper);
+    opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .55s ease, visibility 0s .55s; }
+  body.is-mites #mites, body.is-grass #grass, body.is-street #street { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity .55s ease, visibility 0s; }
+  body.is-mites canvas, body.is-grass canvas, body.is-street canvas { visibility: hidden; }
+  body.is-mites .wind-group, body.is-grass #px, body.is-street .controls, body.is-canopy #px { display: none; }
+
+  .rule { width: 100%; max-width: 1240px; height: 1px; margin-top: 14px; background: linear-gradient(90deg, transparent, #b9c5a6 18%, #8fa070 50%, #b9c5a6 82%, transparent); opacity: .8; }
+  .names { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 26px; margin-top: 16px; }
+  .name { all: unset; cursor: pointer; position: relative; color: var(--soft); font-size: 14px; letter-spacing: .01em; padding: 4px 0; transition: color .25s; }
+  .name:hover { color: var(--ink); }
+  .name[aria-current="true"] { color: var(--ink); }
+  .name i { position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: rgba(44,36,32,.12); display: none; overflow: hidden; }
+  .name[aria-current="true"] i { display: block; }
+  .name i::after { content: ""; display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: var(--ink); }
+  #play { all: unset; cursor: pointer; color: var(--soft); font-size: 12px; padding: 4px 0; }
+  #play:hover { color: var(--ink); }
+  .info { margin: 10px 0 0; text-align: center; color: var(--soft); font-size: 12px; transition: opacity .35s; max-width: 640px; }
+  .info b { color: var(--ink); font-weight: 500; }
+  .info.swap { opacity: 0; }
+  .controls { display: flex; align-items: center; gap: 18px; margin-top: 10px; color: var(--soft); font-size: 12px; }
+  .wind-group { display: flex; align-items: center; gap: 10px; }
+  .wind-group output { min-width: 4.6em; font-variant-numeric: tabular-nums; }
+  #px { all: unset; cursor: pointer; }
+  #px:hover { color: var(--ink); }
+  input[type=range] { -webkit-appearance: none; appearance: none; width: min(34vw, 180px); height: 24px; background: transparent; }
+  input[type=range]::-webkit-slider-runnable-track { height: 2px; border-radius: 2px; background: rgba(44,36,32,.2); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; margin-top: -7px; border-radius: 50%; background: var(--ink); }
+  input[type=range]::-moz-range-track { height: 2px; border-radius: 2px; background: rgba(44,36,32,.2); }
+  input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: var(--ink); }
+  @media (max-width: 560px) { .names { gap: 4px 16px; } .stage { border-radius: 28px; } }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap">
+</head>
+<body>
+<div class="page">
+  <div class="stage" id="stage">
+    <canvas id="c"></canvas>
+    <iframe class="frame" id="grass" title="Grass" data-src="/grass/?inner=1"></iframe>
+    <iframe class="frame" id="street" title="Street" data-src="./street.html"></iframe>
+    <iframe class="frame" id="mites" title="Rainy velvets" data-src="./mites.html"></iframe>
+  </div>
+  <div class="rule"></div>
+  <nav class="names" id="scenes" aria-label="Scenes"></nav>
+  <p class="info" id="deck"><b id="cap-title"></b> · <span id="cap-sub"></span><br><span id="cap-hint"></span></p>
+  <div class="controls">
+    <button id="px" type="button" aria-pressed="true">pixel: on</button>
+    <span class="wind-group"><span>wind</span><input id="wind" type="range" min="0" max="3" step="0.01" value="0.8" aria-label="Wind speed"><output id="label">Breeze</output></span>
+  </div>
+</div>
+<script>if (new URLSearchParams(location.search).has("embed")) document.documentElement.classList.add("embed");</script>
+<script type="module" src="./nature.js"></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+/* Sits where the typed caption sits, in the illustration's bottom-right corner,
+   framed with the same hand-drawn box. */
+.dude-ask {
+  position: absolute;
+  z-index: 7;
+  right: 4%;
+  bottom: 5%;
+  width: 44%;
+  box-sizing: border-box;
+  padding: 0.65em 1.9em 0.65em 0.9em;
+  background: #ffffff;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, "Courier New", monospace;
+  font-size: clamp(0.56rem, 0.95vw, 0.8rem);
+  line-height: 1.45;
+  color: #1a1a1a;
+  cursor: default;
+}
+.dude-ask::after {
+  content: "";
+  position: absolute;
+  inset: -2.35% -1.92% -3.73% -2.19%;
+  background: url("/home/frame-plain.webp") center / 100% 100% no-repeat;
+  pointer-events: none;
+}
+.dude-ask p {
+  margin: 0;
+}
+.dude-ask-title {
+  margin-bottom: 0.4em !important;
+  color: #777;
+}
+.dude-ask-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.05em;
+}
+.dude-ask button {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.dude-ask-list button {
+  display: block;
+  width: 100%;
+  padding: 0.18em 0.4em;
+  margin-left: -0.4em;
+  border-radius: 3px;
+}
+.dude-ask-list button:hover,
+.dude-ask-list button:focus-visible {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+.dude-ask-q {
+  margin-bottom: 0.5em !important;
+  color: #777;
+}
+.dude-ask-a {
+  min-height: 4em;
+}
+.dude-ask-back {
+  display: inline-block !important;
+  margin-top: 0.6em;
+  border-bottom: 1px solid currentColor;
+  color: #555;
+}
+.dude-ask-back:hover {
+  color: #1a1a1a;
+}
+.dude-ask .dude-ask-close {
+  position: absolute;
+  top: 0.35em;
+  right: 0.55em;
+  z-index: 2;
+  font-size: 1.3em;
+  line-height: 1;
+  padding: 0.1em 0.25em;
+  color: #777;
+}
+.dude-ask .dude-ask-close:hover {
+  color: #1a1a1a;
+}
+@media (max-width: 640px) {
+  .dude-ask {
+    width: 70%;
+    right: 2%;
+    bottom: 2%;
+    font-size: 0.58rem;
+    padding: 0.6em 0.8em;
+  }
+}

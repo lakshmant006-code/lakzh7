@@ -12,7 +12,7 @@ import {
 import "./Nav.css";
 import darkLogo from "../../assets/img/dark-logo.png";
 import lightLogo from "../../assets/img/light-logo.png";
-import spiralIcon from "../../assets/img/spiraL.png";
+import grassIcon from "../../assets/img/grass-icon.svg";
 
 const Nav = () => {
   const location = useLocation();
@@ -31,10 +31,21 @@ const Nav = () => {
   const navItemsRef = useRef(null);
   const navRef = useRef(null);
 
+  const [scenesOpen, setScenesOpen] = useState(false);
+  useEffect(() => {
+    const onState = (e) => setScenesOpen(!!e.detail);
+    window.addEventListener("scenes:state", onState);
+    return () => window.removeEventListener("scenes:state", onState);
+  }, []);
+  const openScenes = (e) => {
+    e.preventDefault();
+    window.dispatchEvent(new CustomEvent("scenes:toggle"));
+  };
+
   const navItems = [
     { label: "work", href: "/", isLink: true },
     { label: "about", href: "/about", isLink: true },
-    { label: "celestera", href: "https://www.celestera.online/?utm_source=portfolio&utm_medium=nav", isLink: true, external: true },
+    { label: "grass", href: "/", isLink: true, scenes: true },
   ];
 
   const handleLogoClick = (e) => {
@@ -57,16 +68,17 @@ const Nav = () => {
       if (item.label === "about") return false;
     }
     if (item.label === "about") return path === "/about";
+    if (item.label === "grass") return scenesOpen || path === "/scenes";
     return false;
   };
 
   const renderPillLabel = (item) => {
-    if (item.label === "celestera") {
+    if (item.label === "grass") {
       return (
         <img
-          src={spiralIcon}
-          alt="Celestera"
-          className="nav-spiral-icon"
+          src={grassIcon}
+          alt="Grass"
+          className="nav-spiral-icon nav-grass-icon"
         />
       );
     }
@@ -492,7 +504,7 @@ const Nav = () => {
                       className={pillClassName}
                       onMouseEnter={() => handleEnter(i)}
                       onMouseLeave={() => handleLeave(i)}
-                      onClick={item.label === "work" ? handleWorkClick : item.label === "playground" ? handlePlaygroundClick : undefined}
+                      onClick={item.scenes ? openScenes : item.label === "work" ? handleWorkClick : item.label === "playground" ? handlePlaygroundClick : undefined}
                     >
                       {pillInner}
                     </Link>
@@ -518,10 +530,10 @@ const Nav = () => {
         <ul className="mobile-menu-list">
           {navItems.map((item, i) => {
             const mobileInner =
-              item.label === "celestera" ? (
+              item.label === "grass" ? (
                 <span className="mobile-particles-link">
-                  <img src={spiralIcon} alt="" className="nav-spiral-icon" aria-hidden="true" />
-                  celestera
+                  <img src={grassIcon} alt="" className="nav-spiral-icon nav-grass-icon" aria-hidden="true" />
+                  grass
                 </span>
               ) : (
                 item.label
@@ -547,7 +559,9 @@ const Nav = () => {
                     to={item.href}
                     className={mobileClassName}
                     onClick={(e) => {
-                      if (item.label === "work") {
+                      if (item.scenes) {
+                        openScenes(e);
+                      } else if (item.label === "work") {
                         handleWorkClick(e);
                       } else if (item.label === "playground") {
                         handlePlaygroundClick(e);

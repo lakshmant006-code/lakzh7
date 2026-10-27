@@ -94,11 +94,11 @@ const TimeManagementCaseStudy = () => {
 
       <CsSection id="time-management-context" label="Overview" title="Goal">
         <CsText>
-          A company had no real sense of where the workday actually went, who
-          was logged in, who was buried, who had room to take more on. The goal
-          was simple to say and harder to do: make that whole picture easy to
-          see at a glance, without turning it into one more dashboard nobody
-          opens.
+          Teams do their best work when everyone can see how the workday is
+          unfolding: who is logged in, where time is going, and who has room to
+          take on more. The goal was to bring that whole picture together in one
+          clear view that managers can read at a glance and genuinely want to
+          return to every day.
         </CsText>
         <CsPanel title="The finished product">
           <CsImg
@@ -426,14 +426,14 @@ const TimeManagementCaseStudy = () => {
         items={[
           {
             to: "/quizai",
-            video: "/work/quizai/thumbnail.mp4",
-            title: "Quizzy: AI Powered Notetaking Application",
+            video: "/work/reef/reef-thumb.mp4",
+            title: "Reef: AI Powered Notetaking Application",
             description:
               "Helping students turn uploaded notes into personalized quizzes and summaries through a centralized study dashboard.",
           },
           {
             to: "/hiku",
-            video: "/work/Hiku/thumbnail.mp4",
+            video: "/work/Hiku/hiku-promo.mp4",
             title: "Hiku: A Mobile Application for Hiking Enthusiasts",
             description:
               "Connecting hiking enthusiasts through community, shared experiences, and a convenient way to buy or rent outdoor gear.",

@@ -1,19 +1,29 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import Footer from "../../components/Footer/Footer";
 import LazyVideo from "../../components/LazyVideo/LazyVideo";
 import ExperienceTimeline from "../../components/ExperienceTimeline/ExperienceTimeline";
-import ExpandingPhotoRow from "../../components/ExpandingPhotoRow/ExpandingPhotoRow";
+import PhotoCardStack from "../../components/PhotoCardStack/PhotoCardStack";
+import enjoy1 from "../../assets/img/about-pictures/enjoy 1.jpeg";
+import enjoy2 from "../../assets/img/about-pictures/enjoy 2.jpeg";
+import enjoy3 from "../../assets/img/about-pictures/enjoy 3.jpeg";
+import enjoy4 from "../../assets/img/about-pictures/enjoy 4.jpeg";
+import enjoy5 from "../../assets/img/about-pictures/enjoy 5.jpeg";
+import enjoy6 from "../../assets/img/about-pictures/enjoy 6.jpeg";
+import enjoy7 from "../../assets/img/about-pictures/enjoy 7.jpeg";
+import enjoy8 from "../../assets/img/about-pictures/enjoy 8.jpeg";
 import useScrollReset from "../../hooks/useScrollReset";
 import useRiseUpOnScroll from "../../hooks/useRiseUpOnScroll";
 import "./About.css";
 
 const HI_CAPTION_TEXT =
-  "Hi, I'm Lakshman, UX Researcher & Designer who loves translating user experiences using qualitative and quantitative data to effective design solutions";
+  "Hi, I'm Lakshman, a UX designer and researcher turning into a design engineer. I'm interested in interactions and experimenting with details.";
+
+const ENJOY_PHOTOS = [enjoy1, enjoy2, enjoy3, enjoy4, enjoy5, enjoy6, enjoy7, enjoy8].map(
+  (src, i) => ({ src, alt: `Photo ${i + 1} of things I enjoy` }),
+);
 
 const About = () => {
   useScrollReset();
-  const [typedHiCaption, setTypedHiCaption] = useState("");
-  const hiTypingIntervalRef = useRef(null);
   const whereTitleRef = useRef(null);
   const enjoyTitleRef = useRef(null);
   const enjoyDescRef = useRef(null);
@@ -23,27 +33,10 @@ const About = () => {
   useRiseUpOnScroll(enjoyDescRef);
   useRiseUpOnScroll(enjoyImagesRef, { delay: 0.5 });
 
-  useEffect(() => () => clearInterval(hiTypingIntervalRef.current), []);
-
-  const handleHiMouseEnter = () => {
-    clearInterval(hiTypingIntervalRef.current);
-    let charCount = 0;
-    hiTypingIntervalRef.current = setInterval(() => {
-      charCount += 1;
-      setTypedHiCaption(HI_CAPTION_TEXT.slice(0, charCount));
-      if (charCount >= HI_CAPTION_TEXT.length) {
-        clearInterval(hiTypingIntervalRef.current);
-      }
-    }, 30);
-  };
-
   return (
     <main className="about-sandbox">
       <section className="about-sandbox-polaroid">
-        <div
-          className="about-sandbox-hi-wrap"
-          onMouseEnter={handleHiMouseEnter}
-        >
+        <div className="about-sandbox-hi-wrap">
           <LazyVideo
             className="about-sandbox-hi-video"
             src="/about/diary-fall.mp4"
@@ -53,14 +46,7 @@ const About = () => {
             muted
             playsInline
           />
-          <p className="about-sandbox-hi-caption">
-            {typedHiCaption}
-            {typedHiCaption.length > 0 && (
-              <span className="about-sandbox-hi-cursor" aria-hidden="true">
-                |
-              </span>
-            )}
-          </p>
+          <p className="about-sandbox-hi-caption">{HI_CAPTION_TEXT}</p>
         </div>
       </section>
 
@@ -111,7 +97,7 @@ const About = () => {
             enthusiasts.
           </p>
           <div ref={enjoyImagesRef} className="about-sandbox-enjoy-images">
-            <ExpandingPhotoRow />
+            <PhotoCardStack photos={ENJOY_PHOTOS} label="Things I enjoy" />
           </div>
         </div>
       </section>

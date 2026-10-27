@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Grass</title>
+<style>
+  :root { color-scheme: dark; }
+  html, body { margin: 0; height: 100%; background: #f5f3ef; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; }
+  /* the meadow sits in a soft-edged rounded plate on the paper, like the other scenes */
+  :root { --mx: clamp(16px, 5vw, 64px); --mt: clamp(20px, 5vh, 56px); --mb: clamp(76px, 14vh, 120px); }
+  canvas { position: fixed; left: var(--mx); top: var(--mt); width: calc(100vw - 2 * var(--mx)); height: calc(100vh - var(--mt) - var(--mb)); display: block; border-radius: 44px; filter: blur(0.35px) saturate(1.04);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 5.5%, #000 94.5%, transparent), linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
+    -webkit-mask-composite: source-in;
+            mask-image: linear-gradient(to right, transparent, #000 5.5%, #000 94.5%, transparent), linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
+            mask-composite: intersect; }
+  .ui { position: fixed; left: 50%; bottom: max(20px, env(safe-area-inset-bottom)); transform: translateX(-50%);
+        display: flex; align-items: center; gap: 14px; padding: 10px 16px; border-radius: 999px;
+        background: rgba(12,24,10,.42); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+        color: #eef6e4; font: 500 13px/1 -apple-system, "SF Pro Text", system-ui, sans-serif; letter-spacing: .02em; }
+  .ui output { min-width: 4.6em; text-align: right; font-variant-numeric: tabular-nums; opacity: .9; }
+  input[type=range] { -webkit-appearance: none; appearance: none; width: min(34vw, 220px); height: 28px; background: transparent; }
+  input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 4px; background: rgba(255,255,255,.35); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -9px; border-radius: 50%; background: #fff; box-shadow: 0 1px 6px rgba(0,0,0,.35); }
+  input[type=range]::-moz-range-track { height: 4px; border-radius: 4px; background: rgba(255,255,255,.35); }
+  input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border: 0; border-radius: 50%; background: #fff; }
+  .back { position: fixed; top: max(16px, env(safe-area-inset-top)); left: 16px; padding: 10px 16px; border-radius: 999px; background: rgba(12,24,10,.42); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); color: #eef6e4; text-decoration: none; font: 500 13px/1 -apple-system, system-ui, sans-serif; }
+  .embed .back { top: 76px; }
+  .inner .back, .inner .ui, .inner .hint { display: none; }
+  .inner, .inner body { background: #f5f3ef; }
+  .inner canvas { left: 0; top: 0; width: 100vw; height: 100vh; border-radius: 0; -webkit-mask-image: none; mask-image: none; }
+  .inner .hint { top: 134px; }
+  .bubble { position: fixed; transform: translate(-50%, -100%); padding: 5px 10px; border-radius: 999px; background: #fff; color: #3a332d; font: 500 11px/1.2 -apple-system, system-ui, sans-serif; white-space: nowrap; box-shadow: 0 2px 10px rgba(44,36,32,.18); pointer-events: none; opacity: 0; transition: opacity .3s; z-index: 4; }
+  .bubble::after { content: ""; position: absolute; left: 50%; bottom: -4px; width: 8px; height: 8px; background: #fff; transform: translateX(-50%) rotate(45deg); }
+  .hint { position: fixed; top: max(18px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); color: rgba(44,36,32,.72);
+          font: 500 13px/1 -apple-system, system-ui, sans-serif; transition: opacity .8s; pointer-events: none; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<a class="back" id="back" href="/nature/index.html">← Scenes</a>
+<div class="hint" id="hint">Tap to plant flowers · they bloom · someone will come over</div>
+<div id="bubbles"></div>
+<div class="ui"><span>Wind</span><input id="wind" type="range" min="0" max="3" step="0.01" value="0.8" aria-label="Wind speed"><output id="label">Breeze</output></div>
+<script>
+if (location.search.includes("inner")) document.documentElement.classList.add("inner");
+if (location.search.includes("embed")) { document.documentElement.classList.add("embed"); document.getElementById("back").href += location.search; }
+window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind === "number" && window.__grassWind) window.__grassWind(e.data.wind); });
+(() => {
+  const canvas = document.getElementById("c");
+  const gl = canvas.getContext("webgl2", { antialias: true, alpha: false, powerPreference: "high-performance" });
+  if (!gl) { document.body.insertAdjacentHTML("beforeend", "<p style='color:#fff;padding:24px;font:16px system-ui'>WebGL2 is required.</p>"); return; }
+
+  const COARSE = matchMedia("(pointer: coarse)").matches;
+  const BLADES = +new URLSearchParams(location.search).get("n") || (COARSE ? 217800 : 415800);
+  const SEG = 6;                       // segments up the blade
+  const DPR_CAP = 2;
+
+  /* ---------- shaders ---------- */
+  const GRASS_VS = `#version 300 es
+  precision highp float;
+  layout(location=0) in vec2 aShape;     // x: -1..1 side, y: 0..1 up the blade
+  layout(location=1) in vec4 aA;         // x, z, height, width
+  layout(location=2) in vec4 aB;         // facing angle, lean angle, lean amount, rand
+  layout(location=3) in vec4 aC;         // radial position in clump 0..1, patch rand, clump rand, tuft height factor
+  uniform mat4 uVP;
+  uniform vec3 uCam;
+  uniform float uPhase;     // integrated wind phase (never jumps when speed changes)
+  uniform float uStrength;  // eased wind strength
+  uniform float uGust;      // eased click gust pulse
+  uniform vec2 uDir;
+  uniform vec2 uPtr;        // hover point on the ground (world xz)
+  uniform vec2 uPtrVel;     // eased pointer velocity: the wake
+  uniform float uPtrA;      // eased hover strength
+  out vec3 vCol;
+  out float vFog;
+  out vec3 vN;
+  out float vT;
+
+  float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
+  float vn(vec2 p){
+    vec2 i = floor(p), f = fract(p); f = f*f*(3.0-2.0*f);
+    return mix(mix(hash(i), hash(i+vec2(1,0)), f.x), mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), f.x), f.y);
+  }
+  void main(){
+    float t = aShape.y;
+    float rnd = aB.w;
+    vec2 base = aA.xy;
+    float h = aA.z;
+
+    // wind field: broad rolling waves + finer ripples travelling along uDir
+    vec2 along = vec2(dot(base, uDir), dot(base, vec2(-uDir.y, uDir.x)));
+    float w1 = vn(vec2(along.x * 0.11 - uPhase * 0.9, along.y * 0.16));
+    float w2 = vn(vec2(along.x * 0.42 - uPhase * 1.9, along.y * 0.55 + uPhase * 0.2));
+    float swell = 0.5 + 0.5 * sin(along.x * 0.35 - uPhase * 2.4 + along.y * 0.12);
+    float field = 0.55 * w1 + 0.25 * w2 + 0.35 * swell;
+    float push = (0.12 + field * 1.1 + uGust * (0.4 + 0.6 * swell)) * uStrength;
+
+    float tt = t * t;
+    float len = h;
+    // natural lean (tussock blades arc outward from the clump centre)
+    vec2 leanDir = vec2(cos(aB.y), sin(aB.y));
+    vec2 off = leanDir * aB.z * tt * len;
+    // wind bend along wind direction + small flutter across it
+    float flutter = sin(uPhase * 5.0 + rnd * 40.0 + base.x * 1.3) * (0.25 + 0.5 * w2);
+    off += uDir * push * 0.95 * tt * len;
+    off += vec2(-uDir.y, uDir.x) * flutter * min(push, 1.2) * 0.12 * tt * len;
+
+    // hover: the grass parts around the pointer, swirls a little and trails the movement
+    vec2 dp = base - uPtr; float dd = length(dp);
+    float fall = exp(-dd * dd / 2.6) * uPtrA;
+    vec2 away = dp / max(dd, 0.001);
+    off += away * fall * 1.5 * tt * len;
+    off += vec2(-away.y, away.x) * fall * 0.4 * tt * len;
+    off += uPtrVel * fall * 0.6 * tt * len;
+
+    float bendLen = length(off);
+    float y = t * len - 0.5 * bendLen * bendLen / max(len, 0.01) * t;  // blade shortens as it bows
+    y = max(y, 0.0);
+
+    // blade cross-section
+    vec2 face = vec2(cos(aB.x), sin(aB.x));
+    vec2 side = vec2(-face.y, face.x);
+    float dist = distance(base, uCam.xz);
+    float width = aA.w * (1.0 - pow(t, 1.2));
+    vec3 pos = vec3(base.x + off.x + side.x * aShape.x * width,
+                    y,
+                    base.y + off.y + side.y * aShape.x * width);
+
+    // colour: dark rooted base -> bright sun-lit tip, per-clump & per-blade variation
+    vec3 deep  = vec3(0.16, 0.36, 0.10);
+    vec3 mid   = mix(vec3(0.30, 0.58, 0.16), vec3(0.38, 0.66, 0.20), aC.z);
+    vec3 tip   = mix(vec3(0.56, 0.80, 0.28), vec3(0.68, 0.86, 0.36), rnd);
+    vec3 col = mix(deep, mid, smoothstep(0.0, 0.55, t));
+    col = mix(col, tip, smoothstep(0.45, 1.0, t) * (0.55 + 0.45 * aC.w));
+    float lp = vn(base * 0.28 + 4.0);
+    col = mix(col, col * vec3(1.10, 1.10, 0.85) + vec3(0.02, 0.04, 0.0), smoothstep(0.35, 0.8, lp) * t);
+    col *= mix(0.74, 1.0, smoothstep(0.02, 0.55, aC.x));   // soft tussock heart
+    // broad darker and lighter patches across the meadow, like mown and unmown grass
+    float pb = vn(base * 0.11 + vec2(7.3, 2.1)) * 0.65 + vn(base * 0.27 + vec2(1.7, 9.4)) * 0.35;
+    float light = smoothstep(0.40, 0.62, pb);
+    col = mix(col * vec3(0.66, 0.74, 0.80), col * vec3(1.20, 1.16, 1.02) + vec3(0.04, 0.05, 0.0) * t, light);
+    col *= 0.85 + 0.3 * rnd;
+    col += vec3(0.05, 0.05, 0.0) * push * smoothstep(0.4, 1.0, t); // wind-lit sheen
+    col *= 1.0 - 0.28 * fall;                                                   // pressed, shaded core
+    col += vec3(0.04, 0.11, 0.0) * exp(-pow((dd - 1.2) / 0.45, 2.0)) * uPtrA * t; // bright rim
+    vCol = col;
+
+    vec3 nrm = normalize(vec3(face.x * 0.55 + off.x * 0.4, 0.8, face.y * 0.55 + off.y * 0.4));
+    vN = nrm;
+    vT = t;
+    float d = distance(pos, uCam);
+    vFog = 0.0;
+    gl_Position = uVP * vec4(pos, 1.0);
+  }`;
+
+  const GRASS_FS = `#version 300 es
+  precision highp float;
+  in vec3 vCol; in float vFog; in vec3 vN; in float vT;
+  uniform vec3 uSun; uniform vec3 uFog;
+  out vec4 o;
+  void main(){
+    vec3 n = normalize(vN);
+    if (!gl_FrontFacing) n = vec3(-n.x, n.y, -n.z);
+    float lam = clamp(dot(n, uSun) * 0.5 + 0.5, 0.0, 1.0);
+    float trans = pow(clamp(dot(-n, uSun), 0.0, 1.0), 2.0) * 0.55 * smoothstep(0.2, 1.0, vT);
+    float ao = mix(0.68, 1.0, smoothstep(0.0, 0.5, vT));
+    vec3 light = vec3(0.62, 0.72, 0.86) * 0.58 + vec3(1.08, 0.98, 0.82) * lam * 0.62;
+    vec3 c = vCol * light * ao + vec3(0.55, 0.62, 0.15) * trans * vCol;
+    c = mix(c, uFog, vFog);
+    c = pow(c, vec3(0.92));
+    float g = fract(sin(dot(floor(gl_FragCoord.xy), vec2(12.9898, 78.233))) * 43758.5453) - 0.5;
+    c += g * 0.045;                                     // a fine paper grain over the paint
+    o = vec4(c, 1.0);
+  }`;
+
+  const GROUND_VS = `#version 300 es
+  precision highp float;
+  layout(location=0) in vec3 p;
+  uniform mat4 uVP;
+  out vec3 vW;
+  void main(){ gl_Position = uVP * vec4(p, 1.0); vW = p; }`;
+  const GROUND_FS = `#version 300 es
+  precision highp float;
+  in vec3 vW; uniform vec3 uFog; uniform vec3 uCam; out vec4 o;
+  void main(){ float f = 1.0 - exp(-pow(distance(vW, uCam) * 0.003, 1.35));
+    o = vec4(mix(vec3(0.24, 0.47, 0.13), uFog, f), 1.0); }`;
+
+  const SKY_VS = `#version 300 es
+  precision highp float;
+  out vec2 vUV;
+  void main(){ vec2 p = vec2(float((gl_VertexID & 1) << 2) - 1.0, float((gl_VertexID & 2) << 1) - 1.0);
+    vUV = p; gl_Position = vec4(p, 0.9999, 1.0); }`;
+  const SKY_FS = `#version 300 es
+  precision highp float;
+  in vec2 vUV; uniform vec3 uFog; uniform float uHorizon; out vec4 o;
+  void main(){
+    float k = clamp((vUV.y - uHorizon) * 0.9, 0.0, 1.0);
+    vec3 top = vec3(0.36, 0.58, 0.82);
+    o = vec4(mix(uFog, top, pow(k, 0.7)), 1.0);
+  }`;
+
+  function compile(vs, fs) {
+    const mk = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+    const p = gl.createProgram();
+    gl.attachShader(p, mk(gl.VERTEX_SHADER, vs)); gl.attachShader(p, mk(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+    const u = {}; const n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
+    for (let i = 0; i < n; i++) { const name = gl.getActiveUniform(p, i).name; u[name] = gl.getUniformLocation(p, name); }
+    return { p, u };
+  }
+  const grass = compile(GRASS_VS, GRASS_FS);
+  const ground = compile(GROUND_VS, GROUND_FS);
+  const sky = compile(SKY_VS, SKY_FS);
+
+  /* ---------- geometry ---------- */
+  // one blade: SEG+1 rows of two verts, indexed triangles
+  const shape = [];
+  for (let i = 0; i <= SEG; i++) { const t = i / SEG; shape.push(-1, t, 1, t); }
+  const idx = [];
+  for (let i = 0; i < SEG; i++) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+  // tip collapses to a point via width taper (t=1 -> 0)
+
+  // seeded random so the meadow is identical every load
+  let seed = 1337;
+  const rand = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+  const gauss = () => (rand() + rand() + rand() + rand() - 2) * 1.2;
+
+  const HALF = 6.2;                    // half-width of the square meadow seen from above
+  const CLUMPS = Math.round(BLADES / 190);
+  const A = new Float32Array(BLADES * 4), B = new Float32Array(BLADES * 4), C = new Float32Array(BLADES * 4);
+  let n = 0;
+  for (let c = 0; c < CLUMPS && n < BLADES; c++) {
+    const cx = (rand() * 2 - 1) * HALF, cz = (rand() * 2 - 1) * HALF;
+    const cr = 0.35 + rand() * 0.6;                // clump radius
+    const ch = 0.9 + rand() * 0.7;                 // clump height
+    const crand = rand();
+    const count = Math.min(BLADES - n, Math.round(150 + rand() * 80));
+    for (let k = 0; k < count; k++, n++) {
+      const dx = gauss() * cr, dz = gauss() * cr;
+      const r = Math.min(1, Math.hypot(dx, dz) / (cr * 1.5));
+      const h = ch * (1 - 0.35 * r) * (0.65 + rand() * 0.5);
+      const outward = Math.atan2(dz, dx);
+      A.set([cx + dx, cz + dz, h, 0.0055 + rand() * 0.006], n * 4);
+      B.set([rand() * Math.PI * 2, outward + (rand() - 0.5) * 0.7, 0.2 + r * 0.9 + rand() * 0.3, rand()], n * 4);
+      C.set([r, rand(), crand, 1 - 0.45 * r], n * 4);
+    }
+  }
+  const COUNT = n;
+
+  const vao = gl.createVertexArray(); gl.bindVertexArray(vao);
+  const buf = (data, loc, size, div) => {
+    const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0); if (div) gl.vertexAttribDivisor(loc, 1);
+  };
+  buf(new Float32Array(shape), 0, 2, 0);
+  buf(A, 1, 4, 1); buf(B, 2, 4, 1); buf(C, 3, 4, 1);
+  const ib = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), gl.STATIC_DRAW);
+
+  const gvao = gl.createVertexArray(); gl.bindVertexArray(gvao);
+  const gb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, gb);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-30, 0, -30, 30, 0, -30, -30, 0, 30, 30, 0, -30, 30, 0, 30, -30, 0, 30]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+  const svao = gl.createVertexArray();
+
+  /* ---------- camera ---------- */
+  const m4 = {
+    persp(fov, asp, n, f) { const t = 1 / Math.tan(fov / 2), nf = 1 / (n - f);
+      return [t / asp, 0, 0, 0, 0, t, 0, 0, 0, 0, (f + n) * nf, -1, 0, 0, 2 * f * n * nf, 0]; },
+    look(e, c) {
+      let fx = c[0] - e[0], fy = c[1] - e[1], fz = c[2] - e[2]; const fl = Math.hypot(fx, fy, fz); fx /= fl; fy /= fl; fz /= fl;
+      let sx = fy * 0 - fz * 1, sy = fz * 0 - fx * 0, sz = fx * 1 - fy * 0; // f x up(0,1,0)
+      sx = -fz; sy = 0; sz = fx; const sl = Math.hypot(sx, sz); sx /= sl; sz /= sl;
+      const ux = sy * fz - sz * fy, uy = sz * fx - sx * fz, uz = sx * fy - sy * fx;
+      return [sx, ux, -fx, 0, sy, uy, -fy, 0, sz, uz, -fz, 0,
+        -(sx * e[0] + sy * e[1] + sz * e[2]), -(ux * e[0] + uy * e[1] + uz * e[2]), fx * e[0] + fy * e[1] + fz * e[2], 1];
+    },
+    mul(a, b) { const o = new Array(16); for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) { let s = 0; for (let k = 0; k < 4; k++) s += a[k * 4 + j] * b[i * 4 + k]; o[i * 4 + j] = s; } return o; },
+  };
+
+  /* ---------- wind state ---------- */
+  const slider = document.getElementById("wind"), label = document.getElementById("label"), hint = document.getElementById("hint");
+  const NAMES = [[0.12, "Still"], [0.5, "Light air"], [1.0, "Breeze"], [1.7, "Windy"], [2.4, "Gale"], [9, "Storm"]];
+  const nameFor = (v) => NAMES.find(([m]) => v < m)[1];
+  const PRESETS = [0.15, 0.8, 1.6, 2.8];
+  let target = parseFloat(slider.value), speed = target, strength = target, gust = 0, phase = 0, presetIdx = 1;
+  let dirAngle = 0.35, dirTarget = 0.35;
+  const setTarget = (v) => { target = v; slider.value = v; label.textContent = nameFor(v); };
+  slider.addEventListener("input", () => { setTarget(parseFloat(slider.value)); hideHint(); });
+  const hideHint = () => { hint.style.opacity = 0; };
+
+  let down = null;
+  addEventListener("pointerdown", (e) => { if (e.target.closest(".ui")) return; down = { x: e.clientX, y: e.clientY }; });
+  addEventListener("pointerup", (e) => {
+    if (!down) return;
+    const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y); down = null;
+    if (moved > 10) return;
+    gust = Math.max(gust, 0.5);
+    plantAt(e.clientX, e.clientY);
+    dirTarget += (e.clientX / innerWidth - 0.5) * 0.8;           // gust leans the wind toward the tap side
+    hideHint();
+  });
+  let px = 0, py = 0, tx = 0, ty = 0;
+  const hover = { nx: 0, ny: 0, on: false, x: 0, z: 0, tx: 0, tz: 0, vx: 0, vz: 0, a: 0, init: false };
+  addEventListener("pointermove", (e) => {
+    tx = e.clientX / innerWidth - 0.5; ty = e.clientY / innerHeight - 0.5;
+    if (e.target.closest(".ui")) { hover.on = false; return; }
+    const cr = canvas.getBoundingClientRect(); hover.nx = ((e.clientX - cr.left) / cr.width) * 2 - 1; hover.ny = -(((e.clientY - cr.top) / cr.height) * 2 - 1); hover.on = true;
+  });
+  addEventListener("pointerdown", (e) => { if (!e.target.closest(".ui")) { const cr = canvas.getBoundingClientRect(); hover.nx = ((e.clientX - cr.left) / cr.width) * 2 - 1; hover.ny = -(((e.clientY - cr.top) / cr.height) * 2 - 1); hover.on = true; } });
+  addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") hover.on = false; });
+  document.documentElement.addEventListener("pointerleave", () => { hover.on = false; });
+
+  /* ---------- render ---------- */
+  const FOG = [0.24, 0.47, 0.13];
+  const SUN = (() => { const v = [-0.45, 0.55, -0.6]; const l = Math.hypot(...v); return v.map((x) => x / l); })();
+  let W = 0, H = 0;
+  function resize() {
+    const dpr = Math.min(devicePixelRatio || 1, DPR_CAP);
+    const cr = canvas.getBoundingClientRect();
+    W = Math.max(2, Math.round(cr.width * dpr)); H = Math.max(2, Math.round(cr.height * dpr));
+    canvas.width = W; canvas.height = H; gl.viewport(0, 0, W, H);
+  }
+  addEventListener("resize", resize); resize();
+
+  const ease = (cur, tgt, dt, tau) => cur + (tgt - cur) * (1 - Math.exp(-dt / tau));
+  let last = performance.now();
+
+  /* ---------- flowers and people (top-down sprites with soft cast shadows) ---------- */
+  const SPR_VS = `#version 300 es
+  layout(location=0) in vec4 aPS;   // x, z, sx, sz
+  layout(location=1) in vec4 aRT;   // rot, type, alpha, phase
+  layout(location=2) in vec4 aC;    // colour rgb, variant
+  uniform mat4 uVP; uniform vec2 uRight, uUp;
+  out vec2 vUV; flat out vec4 vRT; flat out vec4 vC; flat out vec2 vS;
+  void main(){
+    vec2 c = vec2(float(gl_VertexID & 1) * 2.0 - 1.0, float((gl_VertexID >> 1) & 1) * 2.0 - 1.0);
+    float cr = cos(aRT.x), sr = sin(aRT.x);
+    vec2 l = c * aPS.zw;
+    vec2 w = (aRT.y > 1.5 && aRT.y < 2.5) ? l.x * uRight + l.y * uUp : vec2(cr * l.x - sr * l.y, sr * l.x + cr * l.y);   // people stand upright on screen
+    vUV = c; vRT = aRT; vC = aC; vS = aPS.zw;
+    gl_Position = uVP * vec4(aPS.x + w.x, 1.9, aPS.y + w.y, 1.0);
+  }`;
+  const SPR_FS = `#version 300 es
+  precision highp float;
+  in vec2 vUV; flat in vec4 vRT; flat in vec4 vC; flat in vec2 vS;
+  uniform sampler2D uAtlas;
+  out vec4 o;
+  float sdCap(vec2 p, vec2 a, vec2 b, float r){ vec2 pa = p - a, ba = b - a; float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0); return length(pa - ba * h) - r; }
+  float sdEll(vec2 p, vec2 r){ return (length(p / r) - 1.0) * min(r.x, r.y); }
+  float cov(float d){ float w = max(fwidth(d), 1e-4) * 0.75; return smoothstep(w, -w, d); }
+  void main(){
+    vec2 p = vUV; float type = vRT.y, A = vRT.z, ph = vRT.w;
+    vec4 col = vec4(0.0);
+    if (type < 0.5) {                                   // shadow
+      float d = length(p);
+      float foot = mix(1.0, 0.55, clamp(p.x * 0.5 + 0.5, 0.0, 1.0));
+      col = vec4(0.20, 0.25, 0.55, smoothstep(1.0, 0.25, d) * 0.55 * A * foot);
+    } else if (type < 1.5) {                            // flower, seen from above
+      float bl = clamp(ph, 0.0, 1.0);                   // bloom progress: 0 = closed bud, 1 = fully open
+      float open = smoothstep(0.12, 0.95, bl);
+      float r = length(p), a = atan(p.y, p.x) + (1.0 - open) * 1.4;   // petals swirl as they unfurl
+      float n = 5.0 + floor(vC.w * 3.0);                // 5-7 petals
+      float pet = (0.58 + 0.34 * pow(abs(cos(n * 0.5 * a)), 0.7)) * mix(0.3, 1.0, open);
+      float petal = smoothstep(pet, pet - 0.07, r);
+      vec3 base = vC.rgb;
+      vec3 pc = mix(base * 0.75, base, smoothstep(0.1, 0.65, r));
+      pc = mix(pc, vec3(1.0), 0.18 * smoothstep(0.55, 0.95, r) * step(0.5, vC.w));
+      pc *= 0.88 + 0.12 * cos(n * a);                   // petal creases
+      vec3 cen = vec3(1.0, 0.78, 0.15);
+      float disc = smoothstep(0.2, 0.15, r);
+      vec3 c = mix(pc, cen, disc);
+      c = mix(c, vec3(0.75, 0.5, 0.05), smoothstep(0.1, 0.0, r - 0.02) * 0.5);
+      c = mix(c, c * 0.8 + vec3(0.06, 0.1, 0.0), (1.0 - open) * 0.5);   // a folded bud sits in shade
+      // the green calyx cups the bud, then the petals cover it as they open
+      float calyx = smoothstep(0.42, 0.36, r) * (1.0 - smoothstep(0.35, 0.75, bl));
+      c = mix(c, vec3(0.28, 0.5, 0.16), calyx * 0.85);
+      float disc2 = smoothstep(0.2, 0.15, r) * smoothstep(0.55, 0.9, bl);
+      c = mix(c, cen, disc2 * 0.0);
+      col = vec4(c, max(petal, calyx) * A);
+    } else if (type > 2.5) {                            // a walker from the drawn walk cycle, frame picked on the CPU
+      vec2 uv = vec2(vC.x + (p.x * 0.5 + 0.5) * vC.z, vC.y + (0.5 - p.y * 0.5) * vC.w);
+      vec4 tx = texture(uAtlas, uv);
+      col = vec4(tx.rgb / max(tx.a, 1e-4), tx.a * A);
+    } else {                                            // a small person seen from high above, upright on screen
+      vec2 f = vec2(p.x * 0.55, p.y);                   // figure space: the sprite is 0.55 as wide as tall
+      float s = sin(ph), face = vC.w;                   // stride phase, look variant
+      vec3 skin = mix(vec3(0.96, 0.78, 0.64), vec3(0.56, 0.37, 0.26), fract(face * 7.3));
+      vec3 hair = mix(vec3(0.14, 0.09, 0.06), vec3(0.80, 0.62, 0.32), step(0.72, fract(face * 3.1)));
+      vec3 shirt = vC.rgb;
+      vec3 pants = mix(vec3(0.22, 0.25, 0.36), vec3(0.88, 0.84, 0.76), step(0.55, fract(face * 5.7)));
+      vec3 c = vec3(0.0); float a = 0.0, m;
+      // legs and shoes, striding
+      for (int k = 0; k < 2; k++) {
+        float sd = k == 0 ? 1.0 : -1.0;
+        vec2 hip = vec2(sd * 0.1, -0.12), foot = vec2(sd * 0.11, -0.84 + 0.06 * abs(s)) + vec2(0.0, 0.1 * s * sd);
+        m = cov(sdCap(f, hip, foot, 0.075)); c = mix(c, pants * (0.9 - 0.08 * sd), m); a = max(a, m);
+        m = cov(sdEll(f - foot - vec2(0.0, -0.03), vec2(0.075, 0.05))); c = mix(c, vec3(0.16, 0.13, 0.12), m); a = max(a, m);
+      }
+      // arms swinging against the legs
+      for (int k = 0; k < 2; k++) {
+        float sd = k == 0 ? 1.0 : -1.0;
+        vec2 sh = vec2(sd * 0.23, 0.36), hand = vec2(sd * 0.29, -0.16) + vec2(0.0, -0.1 * s * sd);
+        m = cov(sdCap(f, sh, hand, 0.06)); c = mix(c, shirt * 0.86, m); a = max(a, m);
+        m = cov(length(f - hand) - 0.055); c = mix(c, skin * 0.95, m); a = max(a, m);
+      }
+      // torso, softly shaded so it reads as round
+      float dtor = sdEll(f - vec2(0.0, 0.12), vec2(0.24, 0.33));
+      m = cov(dtor);
+      vec3 tc = shirt * (0.82 + 0.3 * clamp(0.5 - f.x * 1.2 + f.y * 0.5, 0.0, 1.0));
+      c = mix(c, tc, m); a = max(a, m);
+      // head: mostly hair from up here, a sliver of face
+      vec2 hc = f - vec2(0.0, 0.62);
+      m = cov(length(hc) - 0.19);
+      vec3 hcol = mix(skin, hair, smoothstep(-0.09, -0.02, hc.y));
+      hcol *= 0.88 + 0.22 * clamp(0.6 - hc.x * 2.0 + hc.y * 2.0, 0.0, 1.0);
+      c = mix(c, hcol, m); a = max(a, m);
+      col = vec4(c, a * A);
+    }
+    o = col;
+  }`;
+  const spr = compile(SPR_VS, SPR_FS);
+  // the walk-cycle sheet: 6 people × 8 frames, each frame centred in its cell
+  const walkTex = gl.createTexture(); let walkInfo = null;
+  { const img = new Image();
+    img.onload = () => {
+      gl.bindTexture(gl.TEXTURE_2D, walkTex);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      fetch("./walkers.json").then((r) => r.json()).then((j) => (walkInfo = j));
+    };
+    img.src = "./walkers.png"; }
+  const SF = 12, SMAX = 600;
+  const sprData = new Float32Array(SMAX * SF);
+  const sprVao = gl.createVertexArray(); gl.bindVertexArray(sprVao);
+  const sprBuf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, sprBuf); gl.bufferData(gl.ARRAY_BUFFER, sprData.byteLength, gl.DYNAMIC_DRAW);
+  [[0, 4, 0], [1, 4, 4], [2, 4, 8]].forEach(([loc, size, off]) => { gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, size, gl.FLOAT, false, SF * 4, off * 4); gl.vertexAttribDivisor(loc, 1); });
+
+  const flowers = [], people = [], bubbles = [];
+  const BLOOMS = [[1, 1, 1], [1, 0.84, 0.2], [1, 0.45, 0.62], [0.5, 0.62, 1], [1, 0.58, 0.2], [0.78, 0.5, 0.92]];
+  const SHIRTS = [[0.96, 0.94, 0.88], [0.62, 0.78, 0.92], [0.95, 0.78, 0.25], [0.86, 0.4, 0.36], [0.98, 0.98, 0.96], [0.55, 0.7, 0.55], [0.92, 0.66, 0.72], [0.4, 0.5, 0.72]];
+  const LINES = ["oh, flowers!", "go ahead, sit down", "what a lovely meadow", "hello there", "so soft out here", "smells like spring"];
+  const rr = (a, b) => a + Math.random() * (b - a);
+  let SUN2N = [0.877, 0.479], SCR_UP = [0, -1], SCR_RIGHT = [1, 0];   // shadows fall toward the screen's lower right
+  let uDirX = 1, uDirY = 0;
+  let lastCam = [0, 8.5, -0.7], lastLook = [0, 0, 0.35], lastVP = null;
+
+  function groundFromNdc(nx, ny) {
+    const cam = lastCam, look = lastLook;
+    let fx = look[0] - cam[0], fy = look[1] - cam[1], fz = look[2] - cam[2]; const fl = Math.hypot(fx, fy, fz); fx /= fl; fy /= fl; fz /= fl;
+    let sx = -fz, sz = fx; const sl = Math.hypot(sx, sz); sx /= sl; sz /= sl;
+    const ux = -sz * fy, uy = sz * fx - sx * fz, uz = sx * fy;
+    const th = Math.tan(0.475), a = nx * th * (W / H), b = ny * th;
+    const dx = fx + a * sx + b * ux, dy = fy + b * uy, dz = fz + a * sz + b * uz;
+    const k = -cam[1] / dy; return [cam[0] + dx * k, cam[2] + dz * k];
+  }
+  function viewRect() {
+    const pts = [[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([x, y]) => groundFromNdc(x * 0.9, y * 0.9));
+    return { x0: Math.min(...pts.map((p) => p[0])), x1: Math.max(...pts.map((p) => p[0])), z0: Math.min(...pts.map((p) => p[1])), z1: Math.max(...pts.map((p) => p[1])) };
+  }
+  function plantAt(cx, cy) {
+    const cr = canvas.getBoundingClientRect();
+    const nx = ((cx - cr.left) / cr.width) * 2 - 1, ny = -(((cy - cr.top) / cr.height) * 2 - 1);
+    if (Math.abs(nx) > 1 || Math.abs(ny) > 1) return;
+    const [gx, gz] = groundFromNdc(nx, ny);
+    const t = performance.now() / 1000;
+    const base = BLOOMS[(Math.random() * BLOOMS.length) | 0];
+    for (let i = 0; i < 11; i++) {
+      const a = Math.random() * 6.283, d = Math.sqrt(Math.random()) * 0.6;
+      const c = Math.random() < 0.6 ? base : BLOOMS[(Math.random() * BLOOMS.length) | 0];
+      flowers.push({ x: gx + Math.cos(a) * d, z: gz + Math.sin(a) * d, s: rr(0.085, 0.14), rot: Math.random() * 6.283, c, v: Math.random(), t0: t + i * 0.16, ph: Math.random() * 6 });
+    }
+    while (flowers.length > 150) flowers.shift();
+    // someone walks over from the nearest edge of the view
+    if (people.length < 8) {
+      const R = viewRect(); const dl = gx - R.x0, dr = R.x1 - gx, dtp = gz - R.z0, db = R.z1 - gz, m = Math.min(dl, dr, dtp, db);
+      const sx = m === dl ? R.x0 - 0.6 : m === dr ? R.x1 + 0.6 : gx + rr(-1.5, 1.5), sz = m === dtp ? R.z0 - 0.6 : m === db ? R.z1 + 0.6 : gz + rr(-1.5, 1.5);
+      people.push({ x: sx, z: sz, tx: gx + rr(-0.45, 0.45) - SCR_UP[0] * 0.5, tz: gz + rr(-0.2, 0.2) - SCR_UP[1] * 0.5, state: "in", t0: t, stand: rr(5, 8), ph: Math.random() * 6, shirt: SHIRTS[(Math.random() * SHIRTS.length) | 0], v: Math.random(), rot: 0, say: LINES[(Math.random() * LINES.length) | 0], bubble: null, R, char: (Math.random() * 6) | 0 });
+    }
+  }
+  const bubbleHost = document.getElementById("bubbles");
+  function projectToScreen(x, y, z) {
+    const m = lastVP; const cx = m[0] * x + m[4] * y + m[8] * z + m[12], cy = m[1] * x + m[5] * y + m[9] * z + m[13], cw = m[3] * x + m[7] * y + m[11] * z + m[15];
+    const cr = canvas.getBoundingClientRect();
+    return [cr.left + (cx / cw * 0.5 + 0.5) * cr.width, cr.top + (-cy / cw * 0.5 + 0.5) * cr.height];
+  }
+  const ease3 = (t) => 1 - Math.pow(1 - t, 3), backOut = (t) => { const c = 1.7; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+  function updatePeople(dt, t) {
+    for (let i = people.length - 1; i >= 0; i--) {
+      const q = people[i];
+      let gx = q.tx, gz = q.tz;
+      if (q.state === "out") { gx = q.ox; gz = q.oz; }
+      const dx = gx - q.x, dz = gz - q.z, d = Math.hypot(dx, dz);
+      if (q.state === "stand") { q.stand -= dt; if (q.stand <= 0) { q.state = "out"; const R = q.R; const ex = q.x < (R.x0 + R.x1) / 2 ? R.x0 - 1 : R.x1 + 1; q.ox = ex; q.oz = q.z + rr(-1.5, 1.5); } continue; }
+      if (d < 0.08 && q.state === "in") { q.state = "stand"; q.t0 = t; continue; }
+      if (q.state === "out" && d < 0.3) { people.splice(i, 1); if (q.bubble) q.bubble.remove(); continue; }
+      const sp = 0.34, step = Math.min(d, sp * dt);
+      q.x += dx / d * step; q.z += dz / d * step; q.ph += step * 34.0;
+      q.rot += Math.atan2(Math.sin(Math.atan2(dz, dx) - q.rot), Math.cos(Math.atan2(dz, dx) - q.rot)) * Math.min(1, dt * 8);
+    }
+  }
+  function drawSprites(dt, t) {
+    { const o = groundFromNdc(0, 0), r = groundFromNdc(0.1, 0), u = groundFromNdc(0, 0.1);
+      const rl = Math.hypot(r[0] - o[0], r[1] - o[1]), ul = Math.hypot(u[0] - o[0], u[1] - o[1]);
+      SCR_RIGHT = [(r[0] - o[0]) / rl, (r[1] - o[1]) / rl]; SCR_UP = [(u[0] - o[0]) / ul, (u[1] - o[1]) / ul];
+      const sx = SCR_RIGHT[0] * 0.88 - SCR_UP[0] * 0.48, sz = SCR_RIGHT[1] * 0.88 - SCR_UP[1] * 0.48, sl = Math.hypot(sx, sz);
+      SUN2N = [sx / sl, sz / sl]; }
+    updatePeople(dt, t);
+    let n = 0; const put = (x, z, sx, sz, rot, type, a, ph, r, g, b, v) => { if (n >= SMAX) return; sprData.set([x, z, sx, sz, rot, type, a, ph, r, g, b, v], n * SF); n++; };
+    const sunRot = Math.atan2(SUN2N[1], SUN2N[0]);
+    const sway = (x) => Math.sin(phase * 1.7 + x * 0.6) * 0.06 * Math.min(1.5, strength);
+    for (const f of flowers) {                                  // shadows first
+      if (f.t0 > t) continue; const g = 0.45 + 0.55 * backOut(Math.min(1, (t - f.t0) / 1.1));
+      put(f.x + SUN2N[0] * f.s * 0.9 * g, f.z + SUN2N[1] * f.s * 0.9 * g, f.s * 1.4 * g, f.s * 0.8 * g, sunRot, 0, 0.75, 0, 0, 0, 0, 0);
+    }
+    for (const q of people) {
+      // a long soft shadow from the feet, toward the lower right
+      const L = 0.42;
+      put(q.x + SUN2N[0] * L, q.z + SUN2N[1] * L, L, 0.07, sunRot, 0, 1, 0, 0, 0, 0, 0);
+    }
+    for (const f of flowers) {
+      if (f.t0 > t) continue;
+      const age = t - f.t0, bloom = ease3(Math.min(1, age / 1.9)), g = 0.45 + 0.55 * backOut(Math.min(1, age / 1.1));
+      put(f.x + uDirX * sway(f.x), f.z + uDirY * sway(f.x), f.s * g, f.s * g, f.rot + sway(f.z) * 2 + (1 - bloom) * 0.8, 1, Math.min(1, age * 4), bloom, f.c[0], f.c[1], f.c[2], f.v);
+    }
+    for (const q of people) {
+      const moving = q.state !== "stand";
+      if (walkInfo) {
+        const c = ((q.ph / 6.2832) % 1 + 1) % 1, frame = moving ? Math.floor(c * 8) % 8 : 0;
+        const { w, h, cw, ch } = walkInfo, hh = 0.26, hw = hh * cw / ch;
+        put(q.x, q.z, hw, hh, q.rot + (walkInfo.faces === "down" ? Math.PI / 2 : -Math.PI / 2), 3, 1, 0, (frame * cw) / w, (q.char * ch) / h, cw / w, ch / h);
+      } else put(q.x, q.z, 0.1, 0.18, q.rot, 2, 1, moving ? q.ph : Math.sin(t * 1.5 + q.ph) * 0.2, q.shirt[0], q.shirt[1], q.shirt[2], q.v);
+    }
+    gl.useProgram(spr.p);
+    gl.uniformMatrix4fv(spr.u.uVP, false, lastVP);
+    gl.uniform2f(spr.u.uRight, SCR_RIGHT[0], SCR_RIGHT[1]); gl.uniform2f(spr.u.uUp, SCR_UP[0], SCR_UP[1]);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, walkTex); gl.uniform1i(spr.u.uAtlas, 0);
+    gl.bindVertexArray(sprVao); gl.bindBuffer(gl.ARRAY_BUFFER, sprBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, sprData, 0, n * SF);
+    gl.disable(gl.DEPTH_TEST); gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, n);
+    gl.disable(gl.BLEND); gl.enable(gl.DEPTH_TEST);
+    // speech bubbles follow the people who have stopped
+    for (const q of people) {
+      // only one or two people speak at a time; everyone else just enjoys the flowers
+      if (q.state === "stand" && q.talks === undefined) q.talks = people.filter((o) => o.bubble && o.state === "stand" && o.stand > 0.8).length < 2;
+      if (q.state === "stand" && q.talks && !q.bubble) { const el = document.createElement("div"); el.className = "bubble"; el.textContent = q.say; bubbleHost.appendChild(el); q.bubble = el; requestAnimationFrame(() => (el.style.opacity = 1)); }
+      if (q.bubble) {
+        const [sx, sy] = projectToScreen(q.x + SCR_UP[0] * 0.2, 1.9, q.z + SCR_UP[1] * 0.2);
+        q.bubble.style.left = sx + "px"; q.bubble.style.top = sy - 26 + "px";
+        if (q.state !== "stand") q.bubble.style.opacity = 0; else if (q.stand < 0.8) q.bubble.style.opacity = 0;
+      }
+    }
+  }
+
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    speed = ease(speed, target, dt, 0.9);          // everything glides to the new wind
+    strength = ease(strength, target, dt, 0.7);
+    gust = ease(gust, 0, dt, 1.6);
+    dirAngle = ease(dirAngle, dirTarget, dt, 1.2);
+    phase += speed * dt;
+    px = ease(px, tx, dt, 0.35); py = ease(py, ty, dt, 0.35);
+
+    const cam = [px * 0.9, 8.5, py * 0.9 - 0.7];
+    const look = [px * 0.9, 0, py * 0.9 + 0.35];
+    const vp = m4.mul(m4.persp(0.95, W / H, 0.1, 60), m4.look(cam, look));
+    lastCam = cam; lastLook = look; lastVP = vp; uDirX = Math.cos(dirAngle); uDirY = Math.sin(dirAngle);
+    {   // hover point: cast a ray from the camera through the pointer onto the ground
+      let fx = look[0] - cam[0], fy = look[1] - cam[1], fz = look[2] - cam[2]; const fl = Math.hypot(fx, fy, fz); fx /= fl; fy /= fl; fz /= fl;
+      let sx = -fz, sz = fx; const sl = Math.hypot(sx, sz); sx /= sl; sz /= sl;
+      const ux = -sz * fy, uy = sz * fx - sx * fz, uz = sx * fy;
+      const th = Math.tan(0.475), a = hover.nx * th * (W / H), b = hover.ny * th;
+      const dx = fx + a * sx + b * ux, dy = fy + b * uy, dz = fz + a * sz + b * uz;
+      if (dy < -1e-3) { const k = -cam[1] / dy; hover.tx = cam[0] + dx * k; hover.tz = cam[2] + dz * k; }
+      if (!hover.init) { hover.x = hover.tx; hover.z = hover.tz; hover.init = true; }
+      const ox = hover.x, oz = hover.z;
+      hover.x = ease(hover.x, hover.tx, dt, 0.09); hover.z = ease(hover.z, hover.tz, dt, 0.09);
+      const vx = Math.max(-2.5, Math.min(2.5, (hover.x - ox) / Math.max(dt, 1e-3) * 0.25)), vz = Math.max(-2.5, Math.min(2.5, (hover.z - oz) / Math.max(dt, 1e-3) * 0.25));
+      hover.vx = ease(hover.vx, vx, dt, 0.25); hover.vz = ease(hover.vz, vz, dt, 0.25);
+      hover.a = 0;                                          // the grass stays put; only planting changes the scene
+    }
+    gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL);
+    gl.clearColor(FOG[0], FOG[1], FOG[2], 1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    gl.useProgram(ground.p);
+    gl.uniformMatrix4fv(ground.u.uVP, false, vp); gl.uniform3fv(ground.u.uCam, cam); gl.uniform3fv(ground.u.uFog, FOG);
+    gl.bindVertexArray(gvao); gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    gl.useProgram(grass.p);
+    gl.uniformMatrix4fv(grass.u.uVP, false, vp); gl.uniform3fv(grass.u.uCam, cam);
+    gl.uniform1f(grass.u.uPhase, phase); gl.uniform1f(grass.u.uStrength, strength); gl.uniform1f(grass.u.uGust, gust);
+    gl.uniform2f(grass.u.uDir, Math.cos(dirAngle), Math.sin(dirAngle));
+    gl.uniform2f(grass.u.uPtr, hover.x, hover.z); gl.uniform2f(grass.u.uPtrVel, hover.vx, hover.vz); gl.uniform1f(grass.u.uPtrA, hover.a);
+    gl.uniform3fv(grass.u.uSun, SUN); gl.uniform3fv(grass.u.uFog, FOG);
+    gl.disable(gl.CULL_FACE);
+    gl.bindVertexArray(vao);
+    gl.drawElementsInstanced(gl.TRIANGLES, idx.length, gl.UNSIGNED_SHORT, 0, COUNT);
+    drawSprites(dt, now / 1000);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  window.__grassWind = (v) => setTarget(v);
+  window.__grass = { people, flowers, setTarget, get state() { return { speed, strength, phase, target, COUNT }; } };
+})();
+</script>
+</body>
+</html>

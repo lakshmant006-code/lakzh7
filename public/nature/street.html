@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Street</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #f5f3ef; touch-action: none; -webkit-user-select: none; user-select: none; }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  body.over canvas { cursor: pointer; }
+  /* a remembered afternoon: warm wash, softened edges, a slow breath of light */
+  .memory { position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    background: radial-gradient(ellipse 78% 74% at 50% 50%, rgba(255,236,206,0) 38%, rgba(255,232,198,.22) 70%, rgba(250,238,220,.62) 100%);
+    -webkit-backdrop-filter: blur(0px); animation: breathe 9s ease-in-out infinite; }
+  .memory::after { content: ""; position: absolute; inset: 0;
+    -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+    -webkit-mask-image: radial-gradient(ellipse 72% 68% at 50% 50%, transparent 55%, #000 100%);
+            mask-image: radial-gradient(ellipse 72% 68% at 50% 50%, transparent 55%, #000 100%); }
+  @keyframes breathe { 0%, 100% { opacity: .85; } 50% { opacity: 1; } }
+  body.cow-mode .memory { background: radial-gradient(ellipse 78% 74% at 50% 50%, rgba(255,236,206,0) 34%, rgba(255,226,186,.3) 68%, rgba(246,232,210,.72) 100%); }
+  .be-cow { all: unset; position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 3; cursor: pointer;
+    padding: 9px 16px; border-radius: 999px; background: rgba(245,243,239,.9); color: #2c2420; font: 500 13px/1 "DM Sans", -apple-system, system-ui, sans-serif;
+    box-shadow: 0 4px 18px rgba(44,36,32,.18); }
+  .be-cow[aria-pressed="true"] { background: #2c2420; color: #f5f3ef; }
+  body.cow-mode, body.cow-mode * { cursor: none !important; }
+  /* film grain over the finished picture, gently shifting like real grain */
+  .grain { position: fixed; inset: -40px; pointer-events: none; opacity: .7; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .48  0 0 0 0 .44  0 0 0 1.6 -.3'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    animation: grain .9s steps(6) infinite; }
+  .grain.fine { opacity: .42; mix-blend-mode: multiply; background-size: 140px 140px; animation-duration: 1.3s; }
+  @keyframes grain { 0% { transform: translate(0, 0); } 20% { transform: translate(-17px, 9px); } 40% { transform: translate(11px, -21px); }
+    60% { transform: translate(-7px, 15px); } 80% { transform: translate(19px, 4px); } 100% { transform: translate(0, 0); } }
+  @media (prefers-reduced-motion: reduce) { .grain { animation: none; } }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<button class="be-cow" type="button" aria-pressed="false">be the cow</button>
+<div class="memory"></div>
+<div class="grain"></div>
+<div class="grain fine"></div>
+<script type="module">
+import * as THREE from "./vendor/three.module.min.js";
+
+/* The street lives in its own 524 × 844 space (x right, y down), the size of the source layers. */
+const SW = 524, SH = 844;
+const ROAD = [170, 356], WALK_L = [118, 165], WALK_R = [362, 409];
+const LAYER_X = 135;                       // where the traffic layer sat on the street
+
+const canvas = document.getElementById("c");
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+renderer.setClearColor(0xf5f3ef);
+const scene = new THREE.Scene();
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 20);
+camera.position.z = 10;
+const world = new THREE.Group(); scene.add(world);
+
+const toWorld = (x, y) => [x - SW / 2, SH / 2 - y];
+const loader = new THREE.TextureLoader();
+const tex = (url) => { const t = loader.load(url); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; };
+function plane(map, w, h, x, y, z) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map, transparent: true, depthWrite: false }));
+  const [wx, wy] = toWorld(x + w / 2, y + h / 2); m.position.set(wx, wy, z); world.add(m); return m;
+}
+
+/* ---------- ground: sand, sidewalks, asphalt and lane paint, drawn once ---------- */
+{
+  const k = 2, c = document.createElement("canvas"); c.width = SW * k; c.height = SH * k;
+  const g = c.getContext("2d"); g.scale(k, k);
+  const band = (x0, x1, col) => { g.fillStyle = col; g.fillRect(x0, 0, x1 - x0, SH); };
+  band(0, SW, "#c9b18e"); band(WALK_L[0], WALK_L[1], "#b9977a"); band(WALK_R[0], WALK_R[1], "#b9977a"); band(WALK_L[1], WALK_R[0], "#8b8681");
+  for (let i = 0; i < 9000; i++) {          // grit
+    const x = Math.random() * SW, y = Math.random() * SH, r = Math.random() * 1.2 + 0.2;
+    g.fillStyle = `rgba(${Math.random() < 0.5 ? "40,34,28" : "255,250,240"},${Math.random() * 0.12})`; g.fillRect(x, y, r, r);
+  }
+  g.fillStyle = "rgba(255,255,255,.35)"; g.fillRect(ROAD[0], 0, 2, SH); g.fillRect(ROAD[1] - 2, 0, 2, SH);
+  // the divider is a low kerb, so it casts a soft shadow down and to the left, like everything else on the street
+  { const sh = g.createLinearGradient(262, 0, 249, 0);
+    sh.addColorStop(0, "rgba(6,8,18,.7)"); sh.addColorStop(0.45, "rgba(6,8,18,.32)"); sh.addColorStop(1, "rgba(6,8,18,0)");
+    g.fillStyle = sh; g.fillRect(249, 2.5, 13, SH);
+    const sh2 = g.createLinearGradient(0, 0, 0, 1);                      // and a hint below each stripe, where the light is blocked
+    void sh2; }
+  g.save(); g.shadowColor = "rgba(8,10,20,.5)"; g.shadowBlur = 2 * k; g.shadowOffsetX = -2 * k; g.shadowOffsetY = 1.6 * k;
+  for (let y = 0; y < SH; y += 30) { g.fillStyle = "#e7c33a"; g.fillRect(260, y, 6, 18); g.fillStyle = "#3a3530"; g.fillRect(260, y + 18, 6, 12); }
+  g.restore();
+  g.fillStyle = "rgba(255,255,255,.55)";                  // lane dashes
+  for (const x of [205, 232, 293, 320]) for (let y = 0; y < SH; y += 34) if (y < 390 || y > 470) g.fillRect(x, y, 2, 16);
+  g.fillStyle = "#3a3632"; g.fillRect(ROAD[0], 410, ROAD[1] - ROAD[0], 40);
+  g.fillStyle = "#efeae0";                                 // zebra crossing
+  for (let x = ROAD[0] + 4; x < ROAD[1] - 8; x += 13) g.fillRect(x, 412, 8, 36);
+  g.fillRect(266, 402, ROAD[1] - 266, 3); g.fillRect(ROAD[0], 455, 260 - ROAD[0], 3);   // stop lines
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  plane(t, SW, SH, 0, 0, 0);
+}
+plane(tex("./street/buildings-left.png"), 118, 844, 0, 0, 1);
+plane(tex("./street/buildings-right.png"), 115, 844, 409, 0, 1);
+// trees cast soft shadows down and to the left, the same way the traffic's shadows fall; they land on the road and on anything driving under them
+const treeTex = [tex("./street/trees-left.png"), tex("./street/trees-right.png")];
+const SHADOW_FS = `uniform sampler2D map; uniform vec2 texel; uniform float strength; varying vec2 vUv;
+  void main(){
+    float a = 0.0, wsum = 0.0;
+    for (int i = -3; i <= 3; i++) for (int j = -3; j <= 3; j++) {
+      float w = exp(-float(i * i + j * j) / 6.0);
+      a += texture2D(map, vUv + vec2(float(i), float(j)) * texel * 2.2).a * w; wsum += w;
+    }
+    gl_FragColor = vec4(0.11, 0.13, 0.22, (a / wsum) * strength);
+  }`;
+function treeShadow(map, w, h, x, y) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.ShaderMaterial({
+    uniforms: { map: { value: map }, texel: { value: new THREE.Vector2(1 / w, 1 / h) }, strength: { value: 0.68 } },
+    vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+    fragmentShader: SHADOW_FS, transparent: true, depthWrite: false,
+  }));
+  const [wx, wy] = toWorld(x + w / 2 - 24, y + h / 2 + 18);   // offset down-left
+  m.position.set(wx, wy, 4.6); m.scale.set(1.04, 1.02, 1); world.add(m); return m;
+}
+treeShadow(treeTex[0], 145, 844, 70, 0); treeShadow(treeTex[1], 131, 844, 330, 0);
+const trees = [plane(treeTex[0], 145, 844, 70, 0, 5), plane(treeTex[1], 131, 844, 330, 0, 5)];
+
+/* ---------- vehicles: each one cut from the traffic layer and driven the way it faces ---------- */
+const SCALE = { car: 0.78, auto: 0.78, truck: 0.78, scooter: 0.8, ped: 0.85 };
+const SPEED = { car: [52, 70], auto: [38, 52], truck: [28, 38], scooter: [42, 72], ped: [9, 15] };
+const vehicles = [];
+const atlas = await fetch("./street/vehicles.json").then((r) => r.json());
+const sheet = await new Promise((res) => loader.load("./street/vehicles.png", res));
+sheet.colorSpace = THREE.SRGBColorSpace;
+function spriteMesh(base, W, H, ax, ay, aw, ah) {
+  const t = base.clone();
+  t.repeat.set(aw / W, ah / H); t.offset.set(ax / W, 1 - (ay + ah) / H); t.needsUpdate = true;
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(aw, ah), new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false }));
+  world.add(mesh); return mesh;
+}
+for (const it of atlas.items) {
+  if (it.type === "cow" || it.type === "ped") continue;  // cows and people are drawn fresh below
+  const k = SCALE[it.type];
+  const mesh = spriteMesh(sheet, atlas.w, atlas.h, it.ax, it.ay, it.aw, it.ah);
+  const [a, b] = SPEED[it.type];
+  vehicles.push({
+    mesh, type: it.type, dir: it.dir, k, x: LAYER_X + it.cx, y: it.cy, w: it.aw * k, h: it.ah * k,
+    z: it.type === "ped" ? 2 : it.type === "scooter" ? 3 : 2.5,
+    base: a + Math.random() * (b - a), speed: 0, phase: Math.random() * 6.28, boost: 0, pop: 0, lastHonk: -9,
+    tx: null, stuck: 0, wob: 0, wobV: 0, bumpCool: 0,
+  });
+}
+// spread the traffic so nothing starts on top of something else
+for (const v of vehicles) if (v.type !== "ped") v.x = Math.min(ROAD[1] - v.w / 2, Math.max(ROAD[0] + v.w / 2, v.x));
+
+/* ---------- people: the drawn walk-cycle characters stroll along both sidewalks ---------- */
+const walkMeta = await fetch("./street/walkers.json").then((r) => r.json());
+const walkSheet = await new Promise((res) => loader.load("./street/walkers.png", res));
+walkSheet.colorSpace = THREE.SRGBColorSpace;
+const WALK_H = 24;                                        // a frame's height on the street
+const softShadow = () => new THREE.ShaderMaterial({ transparent: true, depthWrite: false,
+  vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+  fragmentShader: "varying vec2 vUv; void main(){ vec2 p = vUv * 2.0 - 1.0; float d = length(p); float a = smoothstep(1.0, 0.2, d) * mix(1.0, 0.45, vUv.x); gl_FragColor = vec4(0.11, 0.13, 0.22, a * 0.5); }" });
+for (let i = 0; i < 12; i++) {
+  const lane = i % 2 ? WALK_L : WALK_R, dir = Math.random() < 0.5 ? 1 : -1;
+  const t = walkSheet.clone(); t.repeat.set(walkMeta.cw / walkMeta.w, walkMeta.ch / walkMeta.h); t.needsUpdate = true;
+  const kw = WALK_H / walkMeta.ch, fw = walkMeta.cw * kw;
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(fw, WALK_H), new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false }));
+  const shadow = new THREE.Mesh(new THREE.PlaneGeometry(26, 7), softShadow());
+  world.add(shadow); world.add(mesh);
+  vehicles.push({
+    mesh, shadow, type: "ped", dir, k: 1, x: lane[0] + 9 + Math.random() * (lane[1] - lane[0] - 18), y: Math.random() * SH, w: fw * 0.6, h: WALK_H * 0.6, z: 3.2,
+    base: 8 + Math.random() * 6, speed: 0, phase: Math.random() * 6.28, boost: 0, pop: 0, lastHonk: -9, tx: null, stuck: 0, wob: 0, wobV: 0, bumpCool: 0,
+    walk: { tex: t, char: i % 6, dist: Math.random() * 20 },
+  });
+}
+
+/* ---------- cows: a few wander across the road; one can be you ---------- */
+const cowAtlas = await fetch("./street/cows.json").then((r) => r.json());
+const cowSheet = await new Promise((res) => loader.load("./street/cows.png", res));
+cowSheet.colorSpace = THREE.SRGBColorSpace;
+const COW_LEN = 58;                                      // body length on the street, head to tail
+const cows = [];
+function makeCow(i, player = false) {
+  const f = cowAtlas.items[i % cowAtlas.items.length];
+  const mesh = spriteMesh(cowSheet, cowAtlas.w, cowAtlas.h, f.ax, f.ay, f.aw, f.ah);
+  const k = COW_LEN / f.ah;
+  mesh.scale.setScalar(k);
+  const c = { mesh, f, k, len: f.ah * k * 0.8, wid: f.aw * k * 0.55, vx: 0, vy: 0, stride: Math.random() * 13, w: f.aw * k * 0.7, h: f.ah * k * 0.8, x: Math.random() < 0.5 ? 135 + Math.random() * 25 : 370 + Math.random() * 25, y: 120 + Math.random() * 600,
+    tx: 0, ty: 0, heading: Math.random() * 6.28, bump: 0, speed: 0, pause: 0, phase: Math.random() * 6, player, lastMoo: -9 };
+  pickTarget(c); cows.push(c); return c;
+}
+const now_s = () => performance.now() / 1000;
+const ring = new THREE.Mesh(new THREE.RingGeometry(7, 9, 28), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8, depthWrite: false }));
+ring.visible = false; world.add(ring);
+function pickTarget(c) {
+  // mostly amble along a kerb; now and then cross the road
+  const left = c.x < 263, clampY = (y) => Math.max(30, Math.min(SH - 30, y));
+  if (Math.random() < 0.72) { c.crossing = false; c.tx = left ? 128 + Math.random() * 32 : 366 + Math.random() * 32; c.ty = clampY(c.y + (Math.random() - 0.5) * 320); }
+  else { c.crossing = true; c.tx = left ? 380 : 142; c.ty = clampY(c.y + (Math.random() - 0.5) * 70); }
+}
+for (let i = 0; i < 3; i++) makeCow(i);
+let me = null;                                           // the cow you walk, when "be the cow" is on
+
+/* ---------- memory: the cow you walk leaves faint warm echoes of itself that dissolve behind it ---------- */
+const echoes = [];
+function dropEcho(c, strength = 1) {
+  let e = echoes.find((o) => o.life <= 0);
+  if (!e) {
+    if (echoes.length >= 24) return;
+    const mesh = spriteMesh(cowSheet, cowAtlas.w, cowAtlas.h, c.f.ax, c.f.ay, c.f.aw, c.f.ah);
+    mesh.material.color.setHex(0xffe3c0); mesh.renderOrder = 3;
+    e = { mesh, life: 0, max: 1 }; echoes.push(e);
+  }
+  e.life = e.max = 2.6 * strength; e.mesh.visible = true;
+  e.mesh.material.map.offset.copy(c.mesh.material.map.offset);
+  const [wx, wy] = toWorld(c.x, c.y);
+  e.mesh.position.set(wx, wy, 3.9); e.mesh.rotation.z = c.mesh.rotation.z; e.base = c.mesh.scale.x; e.mesh.scale.set(c.mesh.scale.x, c.mesh.scale.y, 1);
+}
+function updateEchoes(dt) {
+  for (const e of echoes) {
+    if (e.life <= 0) { e.mesh.visible = false; continue; }
+    e.life -= dt; const k = Math.max(0, e.life / e.max);
+    e.mesh.material.opacity = 0.5 * k * k;              // fades like a thought
+    const g = 1 + (1 - k) * 0.16; e.mesh.scale.set(e.base * g, e.base * g * (e.mesh.scale.y / e.mesh.scale.x || 1), 1);
+  }
+}
+let echoDist = 0;
+// the cow you steer is solid: it can never sit on top of a vehicle, it is stopped at the edge and slides along it
+function pushOut(c) {
+  const hit = () => cars.some((v) => Math.abs(c.x - v.x) < (c.w + v.w) / 2 && Math.abs(c.y - v.y) < (c.h + v.h) / 2);
+  for (let it = 0; it < 12; it++) {
+    let moved = false;
+    for (const v of cars) {
+      const ox = (c.w + v.w) / 2 + 1 - Math.abs(c.x - v.x), oy = (c.h + v.h) / 2 + 1 - Math.abs(c.y - v.y);
+      if (ox <= 0 || oy <= 0) continue;
+      if (ox < oy) c.x += (c.x >= v.x ? 1 : -1) * ox; else c.y += (c.y >= v.y ? 1 : -1) * oy;
+      moved = true;
+    }
+    if (!moved) break;
+  }
+  c.x = Math.max(14, Math.min(SW - 14, c.x)); c.y = Math.max(8, Math.min(SH - 8, c.y));
+  // squeezed between vehicles with no room: stay where it last stood freely, and make the nearby drivers stop
+  if (hit() && c.okx !== undefined) {
+    c.x = c.okx; c.y = c.oky; c.heading = c.okh;                // also undo any turn that made it too wide for the gap
+    const ca = Math.abs(Math.cos(c.heading)), sa = Math.abs(Math.sin(c.heading)); c.h = c.len * ca + c.wid * sa; c.w = c.len * sa + c.wid * ca;
+    for (const v of cars) if (Math.hypot(v.x - c.x, v.y - c.y) < 60) v.speed *= 0.5;
+  }
+  if (!hit()) { c.okx = c.x; c.oky = c.y; c.okh = c.heading; }
+}
+
+/* ---------- sound (ElevenLabs sound effects) ---------- */
+const SFX = { auto: "auto", car: "car", scooter: "scooter", truck: "truck", cow: "cow", ped: "whistle", chaos: "chaos" };
+const GAIN = { auto: 0.75, car: 0.6, scooter: 0.5, truck: 0.7, cow: 0.8, whistle: 0.45, chaos: 0.55 };
+let ctx = null, master = null, openUntil = 0; const buffers = {};
+// fetch the clips straight away so the first click already has something to play
+const raw = {};
+for (const name of new Set(Object.values(SFX))) fetch(`./street/sfx/${name}.mp3`).then((r) => r.arrayBuffer()).then((b) => { raw[name] = b; decode(name); }).catch(() => {});
+function decode(name) { if (ctx && raw[name] && !buffers[name]) ctx.decodeAudioData(raw[name].slice(0)).then((buf) => (buffers[name] = buf)).catch(() => {}); }
+function unlock() {
+  if (ctx) { if (ctx.state === "suspended") ctx.resume(); return; }
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
+  Object.keys(raw).forEach(decode);
+}
+// sound only plays for a short moment after a click, then fades out until the next click
+const SOUND_WINDOW = 2.5;
+function openSound() {
+  if (!ctx) return;
+  const n = ctx.currentTime; openUntil = n + SOUND_WINDOW;
+  master.gain.cancelScheduledValues(n); master.gain.setValueAtTime(1, n);
+  master.gain.setValueAtTime(1, openUntil); master.gain.linearRampToValueAtTime(0, openUntil + 0.4);
+}
+// while the cow stands in the traffic the street keeps honking, so the sound window is held open for as long as it's needed
+function keepSoundOpen() {
+  if (!ctx || !master) return;
+  const n = ctx.currentTime; if (openUntil - n > 1.4) return;
+  openUntil = n + SOUND_WINDOW; master.gain.cancelScheduledValues(n); master.gain.setValueAtTime(1, n);
+  master.gain.setValueAtTime(1, openUntil); master.gain.linearRampToValueAtTime(0, openUntil + 0.4);
+}
+let lastAny = 0;
+function play(name, gain = 1, delay = 0, wide = false) {
+  if (!ctx || !buffers[name] || ctx.currentTime + delay > openUntil) return;
+  const src = ctx.createBufferSource(), g = ctx.createGain();
+  src.buffer = buffers[name]; src.playbackRate.value = wide ? 0.84 + Math.random() * 0.4 : 0.92 + Math.random() * 0.16;
+  g.gain.value = (GAIN[name] ?? 0.6) * gain;
+  src.connect(g).connect(master); src.start(ctx.currentTime + delay);
+}
+["pointerdown", "keydown", "touchstart"].forEach((e) => addEventListener(e, unlock, { passive: true }));
+
+/* ---------- framing: the street lies along the longer side of the frame and covers it ---------- */
+let wide = false;
+function fit() {
+  const w = innerWidth, h = innerHeight; wide = w > h;
+  renderer.setSize(w, h, false);
+  world.rotation.z = wide ? Math.PI / 2 : 0;
+  const sw = wide ? SH : SW, sh = wide ? SW : SH, s = Math.max(w / sw, h / sh);
+  camera.left = -w / (2 * s); camera.right = w / (2 * s); camera.top = h / (2 * s); camera.bottom = -h / (2 * s);
+  camera.updateProjectionMatrix();
+}
+addEventListener("resize", fit); fit();
+
+/* ---------- pointer: hover honks, click sets off the whole street ---------- */
+const v3 = new THREE.Vector3();
+function streetAt(cx, cy) {
+  v3.set((cx / innerWidth) * 2 - 1, -(cy / innerHeight) * 2 + 1, 0).unproject(camera);
+  world.worldToLocal(v3);
+  return [v3.x + SW / 2, SH / 2 - v3.y];
+}
+function hit(cx, cy) {
+  const [x, y] = streetAt(cx, cy);
+  let best = null;
+  for (const v of vehicles) {
+    const hw = Math.max(5, v.w / 2 - 5), hh = Math.max(5, v.h / 2 - 5);
+    if (Math.abs(x - v.x) < hw && Math.abs(y - v.y) < hh && (!best || v.z > best.z)) best = v;
+  }
+  for (const c of cows) if (!c.player && Math.hypot(x - c.x, y - c.y) < 16) best = { cow: c };
+  return best;
+}
+function honk(v, gain = 1, delay = 0, quick = false) {
+  const now = performance.now() / 1000;
+  if (now - v.lastHonk < (quick ? 0.12 : 1.1)) return;
+  v.lastHonk = now; v.pop = 1; if (!quick) v.boost = Math.max(v.boost, 0.5);
+  play(SFX[v.type], gain, delay, quick);
+}
+function moo(c, gain = 1) { const now = performance.now() / 1000; if (now - c.lastMoo < 1.6) return; c.lastMoo = now; play("cow", gain); }
+let hovered = null, pointer = null;
+addEventListener("pointermove", (e) => {
+  pointer = streetAt(e.clientX, e.clientY);
+  if (me) { document.body.classList.remove("over"); return; }
+  const v = hit(e.clientX, e.clientY);
+  document.body.classList.toggle("over", !!v);
+  if (v && v !== hovered && !(hovered && v.cow && hovered.cow === v.cow)) {
+    const now = performance.now();
+    if (now - lastAny > 120) { v.cow ? moo(v.cow) : honk(v); lastAny = now; }
+  }
+  hovered = v;
+});
+addEventListener("pointerdown", (e) => {
+  unlock(); openSound();
+  if (e.target.closest(".be-cow")) return;
+  pointer = streetAt(e.clientX, e.clientY);
+  if (me) return;
+  const v = hit(e.clientX, e.clientY); if (!v) return;
+  if (v.cow) { v.cow.lastMoo = -9; moo(v.cow, 1.2); return; }
+  v.lastHonk = -9; honk(v, 1.2); v.boost = 0.5;
+  play("chaos", 1, 0.05);
+  const near = vehicles.filter((o) => o !== v && o.type !== "ped" && Math.hypot(o.x - v.x, o.y - v.y) < 170)
+    .sort(() => Math.random() - 0.5).slice(0, 4);
+  near.forEach((o, i) => { o.lastHonk = -9; honk(o, 0.7, 0.25 + i * 0.22); });
+});
+addEventListener("pointerleave", () => (pointer = null));
+
+/* ---------- "be the cow": you walk, the traffic waits ---------- */
+const beCow = document.querySelector(".be-cow");
+beCow.addEventListener("click", () => {
+  unlock();
+  if (me) { me.mesh.removeFromParent(); cows.splice(cows.indexOf(me), 1); me = null; }
+  else { me = makeCow(cows.length, true); me.heading = 0; me.crossing = false; if (pointer) { me.x = pointer[0]; me.y = pointer[1]; } else { me.x = 263; me.y = 560; } me.vx = me.vy = 0; moo(me); }
+  beCow.setAttribute("aria-pressed", String(!!me)); beCow.textContent = me ? "stop being the cow" : "be the cow";
+  document.body.classList.toggle("cow-mode", !!me);
+});
+
+/* ---------- traffic: lane-keeping, smooth car-following, and a signalled zebra crossing ---------- */
+// Down the street keeps to the right half, up the street to the left half (as in India, drive on the left).
+const LANES = { 1: [280, 307, 334], [-1]: [246, 219, 192] };
+const CROSS_Y = 430, STOP = { 1: 402, [-1]: 458 };      // zebra centre and where each direction stops
+const CYCLE = { green: 10, amber: 2, red: 7 };
+let light = "green", lightT = 0;
+const DYN = {                                            // desired speed range, comfortable acceleration and braking
+  car: { a: 34, b: 60 }, auto: { a: 28, b: 55 }, truck: { a: 18, b: 45 }, scooter: { a: 44, b: 70 },
+};
+const S0 = 7, HEADWAY = 0.9;
+const cars = vehicles.filter((v) => v.type !== "ped");
+const walkers = vehicles.filter((v) => v.type === "ped");
+for (const v of cars) {
+  const lanes = LANES[v.dir];
+  // scooters keep to the outer lane, everyone else picks the closest of the inner two
+  let li = v.type === "scooter" ? 2 : lanes.slice(0, 2).reduce((bi, x, i) => (Math.abs(x - v.x) < Math.abs(lanes[bi] - v.x) ? i : bi), 0);
+  if (v.type === "scooter" && Math.random() < 0.35) li = 1;
+  Object.assign(v, { lane: li, x: lanes[li], vx: 0, laneT: Math.random() * 2, speed: v.base * 0.5, ...DYN[v.type] });
+}
+// space everyone out along their lane so nothing starts overlapping
+for (const d of [1, -1]) for (let li = 0; li < 3; li++) {
+  const q = cars.filter((v) => v.dir === d && v.lane === li).sort((a, b) => (a.y - b.y) * d);
+  for (let i = 1; i < q.length; i++) {
+    const need = (q[i - 1].h + q[i].h) / 2 + S0 + 6;
+    if ((q[i].y - q[i - 1].y) * d < need) q[i].y = q[i - 1].y + d * need;
+  }
+}
+
+// little signal heads on both kerbs
+const lamps = [];
+for (const [x, y] of [[160, CROSS_Y - 34], [366, CROSS_Y + 34]]) {
+  const box = new THREE.Mesh(new THREE.PlaneGeometry(9, 9), new THREE.MeshBasicMaterial({ color: 0x2a2622 }));
+  const lamp = new THREE.Mesh(new THREE.CircleGeometry(3, 20), new THREE.MeshBasicMaterial({ color: 0x5ad06a }));
+  const [wx, wy] = toWorld(x, y); box.position.set(wx, wy, 5.5); lamp.position.set(wx, wy, 5.6);
+  world.add(box); world.add(lamp); lamps.push(lamp);
+}
+const LIGHT_COL = { green: 0x5ad06a, amber: 0xf2b23a, red: 0xe5483e };
+
+function idm(v, gap, leaderSpeed) {
+  const v0 = v.base * (1 + v.boost), dv = v.speed - leaderSpeed;
+  const sStar = S0 + Math.max(0, v.speed * HEADWAY + (v.speed * dv) / (2 * Math.sqrt(v.a * v.b)));
+  const free = 1 - Math.pow(Math.max(0, v.speed) / v0, 4);
+  return v.a * (free - (gap < 1e5 ? Math.pow(sStar / Math.max(gap, 0.5), 2) : 0));
+}
+// bumper-to-bumper distance to whatever is ahead of v if it drove at lateral position x
+function aheadOf(v, x) {
+  let gap = Infinity, sp = 0; aheadOf.why = "";
+  for (const o of cars) {
+    if (o === v || o.dir !== v.dir || Math.abs(o.x - x) > (o.w + v.w) * 0.45) continue;
+    const d = (o.y - v.y) * v.dir; if (d <= 0) continue;
+    const g = d - (o.h + v.h) / 2; if (g < gap) { gap = g; sp = o.speed; aheadOf.why = "car"; }
+  }
+  for (const c of cows) {
+    // look ahead along the cow's motion: a cow about to step into the lane counts now, not once it's there
+    let blocked = false, cy = c.y;
+    for (const lead of [0, 0.5, 1.1]) {
+      const px = c.x + c.vx * lead, py = c.y + c.vy * lead;
+      if (Math.abs(px - x) <= (c.w + v.w) * 0.5 + (c.player ? 9 : 3)) { blocked = true; cy = py; break; }
+    }
+    if (!blocked) continue;
+    const d = (cy - v.y) * v.dir; if (d <= -c.h * 0.3) continue;
+    const g = d - v.h / 2 - c.h / 2 - (c.player ? 11 : 3); if (g < gap) { gap = g; sp = Math.max(0, (c.vx * 0 + c.vy * v.dir)); aheadOf.why = "cow"; }
+  }
+  for (const p of walkers) {
+    if (p.mode !== "cross" || Math.abs(p.x - x) > v.w * 0.5 + 10) continue;
+    const d = (p.y - v.y) * v.dir; if (d <= 0) continue;
+    const g = d - v.h / 2 - 8; if (g < gap) { gap = g; sp = 0; aheadOf.why = "ped"; }
+  }
+  return [gap, sp];
+}
+function laneFreeBeside(v, x) {
+  for (const o of cars) {
+    if (o === v || o.dir !== v.dir || Math.abs(o.x - x) > (o.w + v.w) * 0.5) continue;
+    const d = (o.y - v.y) * v.dir;
+    if (d > -((o.h + v.h) / 2 + 8 + Math.max(0, o.speed - v.speed) * 1.2) && d < (o.h + v.h) / 2 + 10) return false;
+  }
+  return true;
+}
+function respawn(v) {
+  const lanes = LANES[v.dir], x = lanes[v.lane];
+  let edge = v.dir > 0 ? -v.h / 2 - 20 : SH + v.h / 2 + 20;
+  for (const o of cars) {                                 // join the back of the queue coming in, never on top of it
+    if (o === v || o.dir !== v.dir || Math.abs(o.x - x) > 12) continue;
+    if (v.dir > 0 && o.y < 60) edge = Math.min(edge, o.y - (o.h + v.h) / 2 - S0 - 8);
+    if (v.dir < 0 && o.y > SH - 60) edge = Math.max(edge, o.y + (o.h + v.h) / 2 + S0 + 8);
+  }
+  v.y = edge; v.x = x; v.vx = 0; v.speed = v.base * 0.7;
+}
+
+/* walkers stroll along the kerbs; on red some of them use the zebra */
+for (const p of walkers) { p.mode = "walk"; p.side = p.x < 263 ? 0 : 1; }
+function startCrossing() {
+  const near = walkers.filter((p) => p.mode === "walk" && Math.abs(p.y - CROSS_Y) < 170).sort(() => Math.random() - 0.5).slice(0, 3);
+  for (const p of near) { p.mode = "toCross"; p.crossY = CROSS_Y - 10 + Math.random() * 20; }
+}
+
+let last = performance.now(), t = 0;
+const TIME_SCALE = +new URLSearchParams(location.search).get("ts") || 1;   // for testing only
+function frame(now) {
+  const real = Math.min(0.05, (now - last) / 1000); last = now;
+  for (let n = 0; n < TIME_SCALE; n++) step(real);
+  draw(real);
+  requestAnimationFrame(frame);
+}
+function step(dt) {
+  t += dt;
+
+  // signal cycle
+  lightT += dt;
+  if (lightT > CYCLE[light]) { lightT = 0; light = light === "green" ? "amber" : light === "amber" ? "red" : "green"; if (light === "red") startCrossing(); }
+  lamps.forEach((l) => l.material.color.setHex(LIGHT_COL[light]));
+
+  // cows: velocity-based. They accelerate, turn through a limited angle, slow for sharp turns and swing their legs as they walk.
+  for (const c of cows) {
+    if (c.player) {
+      // the cursor *is* the cow: it sits exactly where the pointer is, and its velocity is whatever your hand does
+      const px = pointer ? Math.max(14, Math.min(SW - 14, pointer[0])) : c.x, py = pointer ? Math.max(8, Math.min(SH - 8, pointer[1])) : c.y;
+      const k = 1 - Math.exp(-dt / 0.022);                  // a hair of smoothing, ~1 frame, only to iron out pointer jitter
+      const nx = c.x + (px - c.x) * k, ny = c.y + (py - c.y) * k;
+      const mvx = (nx - c.x) / dt, mvy = (ny - c.y) / dt;
+      c.x = nx; c.y = ny;
+      c.vx += (mvx - c.vx) * (1 - Math.exp(-dt / 0.06)); c.vy += (mvy - c.vy) * (1 - Math.exp(-dt / 0.06));
+      const cap = Math.hypot(c.vx, c.vy); if (cap > 70) { c.vx *= 70 / cap; c.vy *= 70 / cap; }
+      c.speed = Math.hypot(c.vx, c.vy);
+      if (c.speed > 4) {                                    // turn to face the way you're moving, at a natural rate
+        const h = Math.atan2(c.vx, -c.vy), err = Math.atan2(Math.sin(h - c.heading), Math.cos(h - c.heading));
+        c.heading += Math.max(-9 * dt, Math.min(9 * dt, err));
+      }
+      c.stride += c.speed * dt;
+      const ca = Math.abs(Math.cos(c.heading)), sa = Math.abs(Math.sin(c.heading));
+      c.h = c.len * ca + c.wid * sa; c.w = c.len * sa + c.wid * ca;
+      pushOut(c);
+      continue;
+    }
+    let tx = c.tx, ty = c.ty, vmax = c.crossing ? 16 : 10, acc = 14, turn = 1.8;
+    const dx = tx - c.x, dy = ty - c.y, d = Math.hypot(dx, dy);
+    let want = 0, dirx = Math.sin(c.heading), diry = -Math.cos(c.heading);
+    if (!c.player && c.pause > 0) c.pause -= dt;
+    else if (!c.player && d < 7) { c.pause = 1.5 + Math.random() * 3; pickTarget(c); }
+    else if (d > (c.player ? 5 : 7)) {
+      const h = Math.atan2(dx, -dy), err = Math.atan2(Math.sin(h - c.heading), Math.cos(h - c.heading));
+      c.heading += Math.max(-turn * dt, Math.min(turn * dt, err));        // limited turn rate, like a heavy animal
+      dirx = Math.sin(c.heading); diry = -Math.cos(c.heading);
+      want = Math.min(vmax, d * (c.player ? 3.2 : 1.2)) * Math.max(0.15, Math.cos(Math.min(1.4, Math.abs(err))));
+      if (!c.player) want *= 0.75 + 0.25 * Math.sin(t * 0.5 + c.phase);
+    }
+    // accelerate toward the wanted velocity; braking is stronger than speeding up
+    const wvx = dirx * want, wvy = diry * want, ex = wvx - c.vx, ey = wvy - c.vy, el = Math.hypot(ex, ey);
+    const a = (want < c.speed ? acc * 1.6 : acc) * dt;
+    if (el > 1e-6) { const k = Math.min(1, a / el); c.vx += ex * k; c.vy += ey * k; }
+    c.vx *= Math.exp(-dt * 0.25); c.vy *= Math.exp(-dt * 0.25);
+    c.speed = Math.hypot(c.vx, c.vy);
+    c.x += c.vx * dt; c.y += c.vy * dt;
+    c.x = Math.max(20, Math.min(SW - 20, c.x)); c.y = Math.max(10, Math.min(SH - 10, c.y));
+    // the body really is long: its box depends on which way it faces
+    const ca = Math.abs(Math.cos(c.heading)), sa = Math.abs(Math.sin(c.heading)), L = c.len, Wd = c.wid;
+    c.h = L * ca + Wd * sa; c.w = L * sa + Wd * ca;
+    c.stride += c.speed * dt;
+    if (!c.player) {
+      c.watch = (c.watch || 0) + dt;
+      if (c.watch > 5) { if (Math.hypot(c.x - (c.wx ?? c.x), c.y - (c.wy ?? c.y)) < 6 && c.pause <= 0) { pickTarget(c); c.pause = 0; } c.watch = 0; c.wx = c.x; c.wy = c.y; }
+    }
+  }
+  // cows don't walk through cars or each other: they're nudged out, slowed, and the driver leans on the horn
+  for (const c of cows) {
+    for (const v of cars) {
+      const ox = (c.w + v.w) / 2 - Math.abs(c.x - v.x), oy = (c.h + v.h) / 2 - Math.abs(c.y - v.y);
+      if (ox <= 0 || oy <= 0) continue;
+      if (c.player) { v.speed *= Math.exp(-dt * 9); if (!v.honkedAtCow || now_s() - v.honkedAtCow > 1.5) { v.honkedAtCow = now_s(); honk(v, 0.8); c.bump = 1; } continue; }
+      if (v.speed < 4) continue;
+      if (ox < oy) c.x += Math.sign(c.x - v.x || 1) * ox; else c.y += Math.sign(c.y - v.y || 1) * oy;
+      c.vx *= 0.5; c.vy *= 0.5;
+      v.speed = Math.min(v.speed, 3);
+      if (!v.honkedAtCow || now_s() - v.honkedAtCow > 2) { v.honkedAtCow = now_s(); honk(v, 0.7); if (c.player) c.bump = 1; }
+    }
+    for (const o of cows) {
+      if (o === c) continue;
+      const dx = c.x - o.x, dy = c.y - o.y, d = Math.hypot(dx, dy) || 1, min = 24;
+      if (d < min) { const push = (min - d) * 0.5; c.x += (dx / d) * push; c.y += (dy / d) * push; o.x -= (dx / d) * push; o.y -= (dy / d) * push; }
+    }
+  }
+  for (const c of cows) {
+    const [wx, wy] = toWorld(c.x, c.y);
+    const sp = Math.min(1, c.speed / 14), st = c.stride / 13;
+    // a walking cow rocks: shoulders roll side to side, the body lengthens and shortens with each stride
+    const roll = Math.sin(st * Math.PI) * 0.07 * sp + (c.bump ? Math.sin(c.bump * 18) * 0.08 * c.bump : 0);
+    const stretch = 1 + Math.cos(st * 2 * Math.PI) * 0.035 * sp;
+    c.bump = Math.max(0, (c.bump || 0) - dt * 2.5);
+    c.mesh.position.set(wx, wy, 4); c.mesh.rotation.z = -c.heading + roll;
+    c.mesh.scale.set(c.k * (1 - (stretch - 1) * 0.5), c.k * stretch, 1);
+  }
+  if (me) {
+    echoDist += me.speed * dt;
+    if (echoDist > 26 && me.speed > 6) { echoDist = 0; dropEcho(me); }
+  }
+  updateEchoes(dt);
+  if (ring) { ring.visible = false; if (false) { if (ring.visible) { const [rx, ry] = toWorld(pointer[0], pointer[1]); ring.position.set(rx, ry, 6); ring.scale.setScalar(1 + 0.12 * Math.sin(t * 5)); } } }
+
+  // vehicles: car-following along the lane, a stop line on amber/red, unhurried lane changes when stuck
+  for (const v of cars) {
+    v.px = v.x; v.py = v.y;                                   // remember where it was, in case this move would put it on the cow
+    let [gap, sp] = aheadOf(v, v.x); v.why = aheadOf.why;
+    const front = v.y + v.dir * v.h / 2, toLine = (STOP[v.dir] - front) * v.dir;
+    if (light === "green" && toLine > -2 && toLine < 45 && gap < toLine + 44 + v.h) { gap = Math.max(0, toLine); sp = 0; v.why = "box"; }
+    if (light !== "green" && toLine > -2) {
+      const canStop = light === "red" || toLine > (v.speed * v.speed) / (2 * v.b) + 2;   // on amber, go if too close to stop
+      if (canStop && toLine < gap) { gap = Math.max(0, toLine); sp = 0; v.why = "line"; }
+    }
+    let acc = idm(v, gap, sp);
+    acc = Math.max(-v.b * 2.2, Math.min(v.a, acc));
+    v.speed = Math.max(0, v.speed + acc * dt);
+    v.y += v.dir * v.speed * dt;
+
+    // lane change: only when held up, there's room beside, and the other lane is clearly better
+    v.laneT -= dt;
+    if (v.laneT <= 0 && gap < 70 && sp < v.base * 0.7 && Math.abs(toLine) > 50) {
+      const lanes = LANES[v.dir]; let best = -1, bestGap = gap + 30;
+      for (const li of [v.lane - 1, v.lane + 1]) {
+        if (li < 0 || li > 2 || (li === 0 && v.type === "truck" && false)) continue;
+        if (!laneFreeBeside(v, lanes[li])) continue;
+        const [g2] = aheadOf(v, lanes[li]); if (g2 > bestGap) { bestGap = g2; best = li; }
+      }
+      if (best >= 0) { v.lane = best; v.laneT = v.type === "scooter" ? 1.4 : 3.5; } else v.laneT = 0.6;
+    }
+    // smooth lateral move into the lane, like a steering wheel easing round
+    const tx = LANES[v.dir][v.lane], k = v.type === "scooter" ? 9 : 5;
+    v.vx += ((tx - v.x) * k - v.vx * 2 * Math.sqrt(k)) * dt;
+    v.x += v.vx * dt;
+    v.boost = Math.max(0, v.boost - dt * 0.4);
+
+    if (v.dir > 0 && v.y - v.h / 2 > SH + 10) respawn(v);
+    if (v.dir < 0 && v.y + v.h / 2 < -10) respawn(v);
+  }
+
+  // an angry Indian street: with the cow in the road, nearby drivers lean on the horn in rhythmic, overlapping bursts
+  if (me && me.x > ROAD[0] - 6 && me.x < ROAD[1] + 6) {
+    let honkers = 0;
+    for (const v of cars) {
+      const dx = Math.abs(v.x - me.x), ahead = (me.y - v.y) * v.dir, dist = Math.hypot(v.x - me.x, v.y - me.y);
+      if (dist > 150 || dx > 80 || ahead < -60) continue;
+      honkers++;
+      v.hornT = (v.hornT ?? Math.random() * 0.8) - dt;
+      if (v.hornT > 0) continue;
+      if ((v.burst = (v.burst ?? 0) - 1) > 0) v.hornT = 0.1 + Math.random() * 0.12;        // beep-beep-beep
+      else { v.burst = 1 + Math.floor(Math.random() * 3.2); v.hornT = 0.7 + Math.random() * 1.8 + (dist / 150) * 1.2; }
+      keepSoundOpen();
+      honk(v, 0.35 + 0.65 * (1 - dist / 150), Math.random() * 0.05, true);
+    }
+    me.chaosT = (me.chaosT ?? 1.5) - dt;
+    if (honkers >= 3 && me.chaosT <= 0) { me.chaosT = 3.6 + Math.random() * 2; keepSoundOpen(); play("chaos", 0.5); }
+  }
+
+  // never let one vehicle slide into another: the one behind settles just short of the one ahead
+  for (let i = 0; i < cars.length; i++) for (let j = i + 1; j < cars.length; j++) {
+    const a = cars[i], b = cars[j];
+    if (a.dir !== b.dir || Math.abs(a.x - b.x) > (a.w + b.w) * 0.45) continue;
+    const need = (a.h + b.h) / 2 + 1, d = (b.y - a.y) * a.dir;
+    if (Math.abs(d) >= need) continue;
+    const [back, front] = d > 0 ? [a, b] : [b, a];
+    back.y = front.y - back.dir * need; back.speed = Math.min(back.speed, front.speed);
+  }
+
+  // walkers
+  for (const p of walkers) {
+    const sp = p.base;
+    if (p.mode === "walk") { p.speed = sp; p.y += p.dir * sp * dt; p.face = p.dir > 0 ? 0 : Math.PI; }
+    else if (p.mode === "toCross") {
+      const d = p.crossY - p.y; p.speed = sp; p.y += Math.sign(d) * Math.min(Math.abs(d), sp * dt); p.face = d > 0 ? 0 : Math.PI;
+      if (Math.abs(d) < 1 && light === "red") { p.mode = "cross"; p.toX = p.side === 0 ? WALK_R[0] + 10 + Math.random() * 25 : WALK_L[0] + 10 + Math.random() * 25; }
+      if (light === "green") p.mode = "walk";
+    } else if (p.mode === "cross") {
+      const d = p.toX - p.x; p.speed = sp * 2.2; p.x += Math.sign(d) * Math.min(Math.abs(d), p.speed * dt);
+      p.face = d > 0 ? Math.PI / 2 : -Math.PI / 2;
+      if (Math.abs(d) < 1) { p.mode = "walk"; p.side = 1 - p.side; p.dir = Math.random() < 0.5 ? 1 : -1; }
+    }
+    if (p.y > SH + 20) p.y = -20; if (p.y < -20) p.y = SH + 20;
+  }
+
+  // last word of every step: the cow you steer is never left on top of a vehicle
+  if (me) {
+    for (const v of cars) {                                    // a vehicle that moved onto the cow is put back and stops dead
+      if (Math.abs(me.x - v.x) < (me.w + v.w) / 2 && Math.abs(me.y - v.y) < (me.h + v.h) / 2 && v.px !== undefined) { v.x = v.px; v.y = v.py; v.speed = 0; v.vx = 0; }
+    }
+    pushOut(me); const [mx, my] = toWorld(me.x, me.y); me.mesh.position.set(mx, my, 4);
+  }
+}
+function draw(dt) {
+  for (const v of vehicles) {
+    v.pop = Math.max(0, v.pop - dt * 3);
+    const s = v.k * (1 + 0.12 * Math.sin(v.pop * Math.PI));
+    const [wx, wy] = toWorld(v.x, v.y);
+    v.mesh.position.set(wx, wy, v.z); v.mesh.scale.set(s, s, 1);
+    if (v.walk) {                                         // step through the walk cycle as they cover ground
+      v.walk.dist += Math.abs(v.speed) * dt;
+      const frame = Math.floor((v.walk.dist / 9) * 8) % 8;
+      v.walk.tex.offset.set((frame * walkMeta.cw) / walkMeta.w, 1 - ((v.walk.char + 1) * walkMeta.ch) / walkMeta.h);
+      v.mesh.rotation.z = v.face ?? (v.dir > 0 ? 0 : Math.PI);   // the drawings face down the street
+      const [sx, sy] = toWorld(v.x - 9, v.y + 7);
+      v.shadow.position.set(sx, sy, v.z - 0.1); v.shadow.rotation.z = Math.atan2(-7, -9);
+    } else {
+      // yaw a little into a lane change, the way a car noses over
+      v.mesh.rotation.z = v.dir * Math.atan2(v.vx, Math.max(v.speed, 6)) * 0.9;
+    }
+  }
+  renderer.render(scene, camera);
+}
+requestAnimationFrame(frame);
+window.__street = { vehicles, cows, streetAt, beCow, pushOut, pointer: () => pointer, get light() { return light; } };
+
+</script>
+</body>
+</html>

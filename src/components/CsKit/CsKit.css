@@ -359,14 +359,13 @@
 .cs-next-media {
   position: relative;
   margin-bottom: 20px;
-}
-/* Same hand-drawn frame as the home page cards */
-.cs-next-media::after {
-  content: "";
-  position: absolute;
-  inset: -2.35% -1.92% -3.73% -2.19%;
-  background: url("/home/frame-plain.webp") center / 100% 100% no-repeat;
-  pointer-events: none;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid rgba(20, 20, 20, 0.08);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.05),
+    0 10px 28px rgba(0, 0, 0, 0.09);
 }
 .cs-next-title {
   font-family: var(--cs-serif);
@@ -460,6 +459,17 @@
   .cs-shot-grid {
     grid-template-columns: 1fr;
     padding: 12px;
+  }
+}
+
+/* With the section menu showing, wide panels start to its right instead of running underneath it */
+@media (min-width: 1180px) {
+  .cs-panel--wide {
+    --cs-nav-r: max(204px, calc(50vw - 380px));                   /* right edge of the fixed menu */
+    --cs-wl: max(calc(50vw - var(--cs-wide) / 2), calc(var(--cs-nav-r) + 36px));   /* where a wide panel may start */
+    --cs-wide-w: min(var(--cs-wide), calc(100vw - var(--cs-wl) - var(--cs-gutter) - 16px));
+    width: var(--cs-wide-w);
+    margin-left: calc(var(--cs-wl) - (50vw - var(--cs-col) / 2));
   }
 }
 

@@ -10,7 +10,6 @@ import {
   CsText,
   CsCallout,
   CsPanel,
-  CsGrid3,
   CsSide,
   CsHmw,
   CsImg,
@@ -19,20 +18,6 @@ import {
 } from "../../components/CsKit/CsKit";
 // Still provides the app-screens embed and full-screen prototype styles.
 import "./HikuCaseStudy.css";
-
-const DS_BASE = "/work/Hiku/Hiku%20Design%20System";
-const HIKU_DS_CARDS = [
-  { name: "Logo & Mark",                    src: `${DS_BASE}/guidelines/brand-logo.card.html`,           height: 180 },
-  { name: "Brand Greens",                   src: `${DS_BASE}/guidelines/color-brand.card.html`,          height: 150 },
-  { name: "Neutrals & Ink",                 src: `${DS_BASE}/guidelines/color-neutral.card.html`,        height: 150 },
-  { name: "Semantic Roles",                 src: `${DS_BASE}/guidelines/color-semantic.card.html`,       height: 150 },
-  { name: "Buttons & Icon Buttons",         src: `${DS_BASE}/components/core/buttons.card.html`,         height: 210 },
-  { name: "Content, Rows, Cards, Avatars", src: `${DS_BASE}/components/core/content.card.html`,         height: 300 },
-  { name: "Search & Filters",              src: `${DS_BASE}/components/core/search.card.html`,           height: 260 },
-  { name: "Elevation",                      src: `${DS_BASE}/guidelines/elevation.card.html`,            height: 150 },
-  { name: "Type Scale",                     src: `${DS_BASE}/guidelines/type-scale.card.html`,           height: 180 },
-  { name: "Weights",                        src: `${DS_BASE}/guidelines/type-weights.card.html`,         height: 150 },
-];
 
 const HIKU_FEATURES = [
   {
@@ -135,49 +120,7 @@ const HikuCaseStudy = () => {
         </CsPanel>
       </CsSection>
 
-      <CsSection id="solution-section" label="Final product" title="Visual Identity">
-        <CsText>
-          Hiku&apos;s visual language is earthy and vibrant, brand greens
-          anchored at #8DCAAF, #4FB889, and #349369, carried by Satoshi across
-          five weights. Every token, component, and spacing rule was codified
-          into a living design system so the whole app feels cohesive from
-          splash screen to community feed.
-        </CsText>
-        <CsPanel title="Hiku design system" wide>
-          <div className="cs-panel-stack">
-            {HIKU_DS_CARDS.map((card) => (
-              <div key={card.src} className="hiku-ds-card">
-                <p className="hiku-ds-card-label">{card.name}</p>
-                <iframe
-                  src={card.src}
-                  title={card.name}
-                  className="hiku-ds-card-frame"
-                  style={{ height: `${card.height}px` }}
-                  scrolling="no"
-                />
-              </div>
-            ))}
-          </div>
-        </CsPanel>
-
-        <CsH3>Wire Frames (Low Fidelity)</CsH3>
-        <CsText>
-          Early low-fidelity wireframes mapped out the splash, filtering, map,
-          registration, shop, and community screens, quick grayscale sketches
-          used to test flow and structure before any visual design began.
-        </CsText>
-        <CsPanel title="Lo-fi wireframes">
-          <div className="hiku-wireframe-container">
-            <iframe
-              src="/work/Hiku/wireframe-lofi-prototypes.html"
-              title="Lo-Fi Wireframes, Hiking App"
-              className="hiku-wireframe-frame"
-              scrolling="no"
-            />
-          </div>
-        </CsPanel>
-
-        <CsH3>App Screens</CsH3>
+      <CsSection id="solution-section" label="Final product" title="Final Screens">
         <CsText>
           From onboarding to community, every screen was designed end to end in
           Figma. Swipe through the intro, sign in, and explore the app just
@@ -206,43 +149,6 @@ const HikuCaseStudy = () => {
             </button>
           </div>
         </CsPanel>
-
-        <CsH3>Onboarding Illustrations</CsH3>
-        <CsText>
-          The onboarding screens are hand-painted. Each illustration was built
-          up from first sketch to final art: community, gear, and food.
-        </CsText>
-        <CsGrid3
-          items={[
-            {
-              media: (
-                <CsVideo
-                  src="/work/Hiku/onboarding-community.mp4"
-                  label="Community onboarding illustration being painted"
-                />
-              ),
-              caption: "Community",
-            },
-            {
-              media: (
-                <CsVideo
-                  src="/work/Hiku/onboarding-gear.mp4"
-                  label="Gear onboarding illustration being painted"
-                />
-              ),
-              caption: "Gear",
-            },
-            {
-              media: (
-                <CsVideo
-                  src="/work/Hiku/onboarding-food.mp4"
-                  label="Food onboarding illustration being painted"
-                />
-              ),
-              caption: "Food",
-            },
-          ]}
-        />
       </CsSection>
 
       <CsSection
@@ -359,14 +265,14 @@ const HikuCaseStudy = () => {
         items={[
           {
             to: "/quizai",
-            video: "/work/quizai/thumbnail.mp4",
-            title: "Quizzy: AI Powered Notetaking Application",
+            video: "/work/reef/reef-thumb.mp4",
+            title: "Reef: AI Powered Notetaking Application",
             description:
               "Helping students turn uploaded notes into personalized quizzes and summaries through a centralized study dashboard.",
           },
           {
             to: "/time-management",
-            video: "/work/time-management/thumbnail.mp4",
+            video: "/work/time-management/summer-launch.mp4",
             title: "Summer: A Productivity Tracking Web App",
             description:
               "Helping a company track employee productivity through an intuitive, easy to navigate time management dashboard.",

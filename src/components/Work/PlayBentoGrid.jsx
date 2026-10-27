@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useLenis } from "@studio-freight/react-lenis";
 import NaturalPlayBentoItem from "./PlayBentoItem";
-import CursorPill from "../CursorPill/CursorPill";
 import { playProjects } from "../../data/playProjects";
 import {
   preserveScrollAtBottom,
@@ -192,10 +191,6 @@ const PlayBentoGridNatural = ({ onProjectClick, sectionIntro = null }) => {
 
   return (
     <>
-      <CursorPill
-        isHovering={hoveredCaseStudyId !== null}
-        text="View case study"
-      />
       {sectionIntro != null ? (
         <div className="home-play-bento-intro-outside">{sectionIntro}</div>
       ) : null}

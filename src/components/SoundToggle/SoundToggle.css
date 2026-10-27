@@ -1,0 +1,36 @@
+.sound-toggle {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 150;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(20, 20, 20, 0.14);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #1b1b1b;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 6px 16px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.sound-toggle[aria-pressed="false"] {
+  color: #9a9a9a;
+}
+.sound-toggle:hover {
+  transform: scale(1.06);
+}
+.sound-toggle:focus-visible {
+  outline: 2px solid #1b1b1b;
+  outline-offset: 3px;
+}
+/* On touch screens (iPad, phones) it sits above the home indicator. */
+@media (hover: none), (pointer: coarse) {
+  .sound-toggle {
+    left: max(16px, env(safe-area-inset-left));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    width: 44px;
+    height: 44px;
+  }
+}

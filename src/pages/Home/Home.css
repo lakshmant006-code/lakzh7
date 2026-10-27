@@ -29,22 +29,18 @@
   z-index: 1;
 }
 
-/* Bento: the hero illustration as the large card, two small cards beside
-   it. Sized so the whole grid fits in one screen under the nav. */
+/* The hero illustration sits on the page background, centred, with no card.
+   Sized so it fits in one screen under the nav. */
 .home-bento {
-  display: grid;
-  grid-template-columns: minmax(0, 2.3fr) minmax(0, 1fr);
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  display: block;
   max-width: 1240px;
   margin: 0 auto;
   height: clamp(440px, calc(100vh - 120px), 760px);
   height: clamp(440px, calc(100svh - 120px), 760px);
 }
 
-/* Hero illustration card: plain white, no tint */
+/* Hero illustration: no card, border or shadow */
 .home-hero-card {
-  grid-row: 1 / span 2;
   width: 100%;
   height: 100%;
   min-height: 0;
@@ -55,125 +51,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ffffff;
+  background: transparent;
   position: relative;
-  /* Plain card: rounded corners, hairline border, soft lift */
-  border: 1px solid #ececec;
-  border-radius: 28px;
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    0 12px 32px rgba(0, 0, 0, 0.06);
+  border: 0;
+  box-shadow: none;
   overflow: hidden;
   animation: home-hero-card-in 0.9s ease both;
 }
-@media (max-width: 640px) {
-  .home-hero-card {
-    border-radius: 18px;
-  }
-}
 
-/* The two small bento cards */
-.home-bento-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 16px;
-  min-height: 0;
-  padding: clamp(1.1rem, 2vw, 1.75rem);
-  background: #ffffff;
-  border: 1px solid #ececec;
-  border-radius: 28px;
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    0 12px 32px rgba(0, 0, 0, 0.06);
-  animation: home-hero-card-in 0.9s ease both;
-}
-.home-bento-work {
-  animation-delay: 0.1s;
-}
-.home-bento-label {
-  margin: 0;
-  font-family: "Satoshi", sans-serif;
-  font-size: 0.85rem;
-  color: #9a9a9a;
-}
-.home-bento-title {
-  margin: 0 0 6px;
-  font-family: "Crimson Pro", Georgia, serif;
-  font-weight: 500;
-  font-size: clamp(1.4rem, 2.1vw, 1.9rem);
-  line-height: 1.15;
-  color: #1b1b1b;
-}
-.home-bento-text {
-  margin: 0;
-  font-family: "Satoshi", sans-serif;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: #666666;
-}
-.home-bento-link {
-  align-self: flex-start;
-  font-family: "Satoshi", sans-serif;
-  font-size: 0.95rem;
-  color: #1b1b1b;
-  text-decoration: none;
-  border-bottom: 1px solid #1b1b1b;
-  padding-bottom: 1px;
-}
-.home-bento-link span {
-  display: inline-block;
-  transition: transform 0.2s ease;
-}
-.home-bento-link:hover span {
-  transform: translateX(3px);
-}
-.home-bento-button {
-  align-self: flex-start;
-  padding: 10px 18px;
-  border: none;
-  border-radius: 999px;
-  background: #1b1b1b;
-  color: #ffffff;
-  font-family: "Satoshi", sans-serif;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.2s ease;
-}
-.home-bento-button:hover {
-  background: #000000;
-  transform: translateY(-1px);
-}
-.home-bento-button:focus-visible,
-.home-bento-link:focus-visible {
-  outline: 2px solid #1b1b1b;
-  outline-offset: 3px;
-}
-
-/* Tablets and phones: hero on top at full width, small cards side by side */
+/* Tablets and phones: the illustration takes the full width */
 @media (max-width: 900px) {
   .home-bento {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: auto auto;
     height: auto;
   }
   .home-hero-card {
-    grid-row: auto;
-    grid-column: 1 / -1;
     height: auto;
     container-type: inline-size;
   }
   .home-hero-stage {
     width: 100%;
-  }
-  .home-bento-card {
-    border-radius: 18px;
-  }
-}
-@media (max-width: 520px) {
-  .home-bento {
-    grid-template-columns: 1fr;
-    gap: 12px;
   }
 }
 
@@ -229,6 +125,9 @@
   overflow: hidden;
   z-index: 5;
   pointer-events: none;
+  /* No card edge to hide the strip's ends, so fade them out */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
 }
 .home-hero-clouds-track {
   display: flex;
@@ -307,72 +206,6 @@
   to {
     opacity: 1;
     transform: none;
-  }
-}
-
-/* The illustration card and the work section use the custom eye cursor. */
-@media (hover: hover) and (pointer: fine) {
-  .home-hero-card,
-  .home-hero-card *,
-  .home-work,
-  .home-work * {
-    cursor: none;
-  }
-}
-
-/* Fullscreen intro animation overlay */
-.home-intro-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: rgba(8, 8, 8, 0.96);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  cursor: zoom-out;
-  transform: translateY(0);
-  animation: home-intro-fade 0.25s ease both;
-}
-/* The black screen lifts up to reveal the work, ~9 frames at 90ms, eased. */
-.home-intro-overlay--lifting {
-  transform: translateY(-100%);
-  transition: transform 1400ms cubic-bezier(0.76, 0, 0.24, 1);
-  animation: none;
-}
-.home-intro-gif {
-  width: 100vw;
-  height: 100vh;
-  max-width: 100vw;
-  max-height: 100vh;
-  object-fit: contain;
-  background: #000;
-  cursor: default;
-}
-.home-intro-close {
-  position: fixed;
-  top: 18px;
-  right: 24px;
-  z-index: 2;
-  width: 44px;
-  height: 44px;
-  border: none;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  font-size: 28px;
-  line-height: 1;
-  cursor: pointer;
-}
-.home-intro-close:hover {
-  background: rgba(0, 0, 0, 0.72);
-}
-@keyframes home-intro-fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
   }
 }
 
@@ -608,7 +441,13 @@
 
 /* ----- Work: 2x2 case studies ----- */
 .home-work {
+  position: relative;
   padding: calc(var(--home-section-gap) / 2) 0 calc(var(--home-section-gap) / 2);
+}
+/* The dot field fills the section behind the cards. */
+.home-work > .home-work-inner {
+  position: relative;
+  z-index: 1;
 }
 
 .home-work-section-intro .home-play-subtitle {
@@ -672,8 +511,13 @@
 .home-case-study-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2rem;
+  gap: 2.5rem;
   width: 100%;
+  /* Smaller cards with air around them: capped width, centred, side padding */
+  max-width: 1080px;
+  margin-inline: auto;
+  padding-inline: clamp(0.75rem, 3vw, 2.5rem);
+  box-sizing: border-box;
   position: relative;
   grid-auto-rows: auto;
 }
@@ -701,7 +545,8 @@
 @media (min-width: 1025px) {
   .home-case-study-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 2.5rem;
+    column-gap: 4rem;
+    row-gap: 3.5rem;
   }
 }
 

@@ -6,12 +6,16 @@ import { Analytics } from "@vercel/analytics/react";
 import Nav from "./components/Nav/Nav";
 import ScrollToTop from "./components/ScrollToTop";
 import BackToTop from "./components/BackToTop/BackToTop";
+import SoundToggle from "./components/SoundToggle/SoundToggle";
 import Home from "./pages/Home/Home";
 import About from "./pages/About/About";
 import Work from "./pages/Work/Work";
 import TimeManagementCaseStudy from "./pages/TimeManagementCaseStudy/TimeManagementCaseStudy";
 import QuizAICaseStudy from "./pages/QuizAICaseStudy/QuizAICaseStudy";
 import HikuCaseStudy from "./pages/HikuCaseStudy/HikuCaseStudy";
+import ProMoveCaseStudy from "./pages/ProMoveCaseStudy/ProMoveCaseStudy";
+import Scenes from "./pages/Scenes/Scenes";
+import ScenesOverlay from "./components/ScenesOverlay/ScenesOverlay";
 import PixelCatPage from "./pages/PixelCat/PixelCat";
 import NotFound from "./pages/NotFound/NotFound";
 import "./App.css";
@@ -61,6 +65,8 @@ function App() {
         <LenisScrollTriggerIntegration />
         <ScrollToTop />
         <BackToTop />
+        <SoundToggle />
+        <ScenesOverlay />
         <div className="app min-h-screen relative">
           <div
             className="fixed top-0 left-0 w-full"
@@ -81,6 +87,8 @@ function App() {
             <Route path="/time-management" element={<TimeManagementCaseStudy />} />
             <Route path="/quizai" element={<QuizAICaseStudy />} />
             <Route path="/hiku" element={<HikuCaseStudy />} />
+            <Route path="/pro-move" element={<ProMoveCaseStudy />} />
+            <Route path="/scenes" element={<Scenes />} />
             <Route path="/pixel-cat" element={<PixelCatPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

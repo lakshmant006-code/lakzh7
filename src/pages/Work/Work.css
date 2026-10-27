@@ -36,3 +36,51 @@
     margin-bottom: 2rem;
   }
 }
+
+/* The dot field lives in the margins either side of the cards, which sit in a
+   wider, airier middle column. */
+.work-page-dots {
+  --dot-band: clamp(24px, 5.5vw, 100px);
+  position: relative;
+  padding: 1.5rem 0;
+}
+.work-page-dots-inner {
+  position: relative;
+  z-index: 1;
+  padding-inline: var(--dot-band);
+}
+.work-page-dots-inner .work-bento-grid {
+  row-gap: 3rem;
+}
+@media (min-width: 1025px) {
+  .work-page-dots-inner .work-bento-grid {
+    column-gap: 3.5rem;
+    row-gap: 3.5rem;
+    --work-bento-row-h: 720px;
+  }
+}
+
+/* Tablets (iPad): visible margins for the dots, and cards tall enough that
+   their text never clips at the narrower width. */
+@media (min-width: 640px) and (max-width: 1279px) {
+  .work-page-dots {
+    --dot-band: clamp(48px, 7vw, 80px);
+  }
+}
+@media (min-width: 640px) and (max-width: 1024px) {
+  .work-page-dots-inner .work-bento-grid {
+    --work-bento-row-h: 560px;
+  }
+}
+@media (min-width: 1025px) and (max-width: 1279px) {
+  .work-page-dots-inner .work-bento-grid {
+    column-gap: 2.5rem;
+    --work-bento-row-h: 760px;
+  }
+}
+/* Phones: slim margins, the cards keep their width. */
+@media (max-width: 639px) {
+  .work-page-dots {
+    --dot-band: 12px;
+  }
+}

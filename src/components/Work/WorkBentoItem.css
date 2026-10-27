@@ -765,26 +765,22 @@
   border-radius: var(--bento-card-radius);
 }
 
-/* Hand-drawn frame around case study thumbnails */
-.work-bento-item.case-study-card .work-bento-image-container {
-  border-radius: 0;
-  background-color: transparent;
-  overflow: visible;
+/* Case study thumbnails are plain rounded cards (no drawn frame) */
+.work-bento-item.case-study-card .work-bento-image-container,
+.work-bento-item.work-bento-item--compact.case-study-card
+  .work-bento-image-container {
+  border-radius: 18px;
+  background-color: #ffffff;
+  overflow: hidden;
+  border: 1px solid rgba(20, 20, 20, 0.08);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.05),
+    0 10px 28px rgba(0, 0, 0, 0.09);
 }
 .work-bento-item.case-study-card .work-bento-image,
 .work-bento-item.case-study-card .work-bento-image-container video,
 .work-bento-item.case-study-card .work-bento-image-container img {
   border-radius: 0;
-}
-.work-bento-item.case-study-card .work-bento-image-container::after {
-  content: "";
-  position: absolute;
-  /* Box frame: the opening matches the thumbnail; the drawn line sits
-     just outside it. */
-  inset: -2.35% -1.92% -3.73% -2.19%;
-  background: url("/home/frame-plain.webp") center / 100% 100% no-repeat;
-  pointer-events: none;
-  z-index: 4;
 }
 
 @media (min-width: 1026px) and (hover: hover) {
@@ -863,12 +859,11 @@
   font-weight: 500;
   line-height: 1.15;
   font-size: calc(var(--compact-tag-size) * 0.82);
-  padding: calc(var(--compact-tag-pad-y) + 1px) calc(var(--compact-tag-pad-x) + 7px)
-    calc(var(--compact-tag-pad-y) + 7px);
-  background: url("/home/speech-bubble.svg") center / 100% 100% no-repeat;
+  padding: var(--compact-tag-pad-y) var(--compact-tag-pad-x);
+  background: #ffffff;
   color: #141414;
-  border: none;
-  border-radius: 0;
+  border: 1px solid rgba(20, 20, 20, 0.14);
+  border-radius: 4px;
   box-shadow: none;
   white-space: nowrap;
 }
@@ -943,4 +938,10 @@
     font-size: 0.75rem;
     padding: 0.45rem 0.875rem;
   }
+}
+
+/* Home cards sit on a white tile so the dots never run behind their text */
+.work-bento-item.work-bento-item--compact {
+  background-color: #ffffff;
+  border-radius: 18px;
 }

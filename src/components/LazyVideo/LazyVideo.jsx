@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import { playMutedVideo } from "../../utils/playMutedVideo";
 
 /**
  * Drop-in replacement for an autoplaying background <video>.
@@ -43,8 +44,7 @@ const LazyVideo = ({
               video.src = src;
               loaded.current = true;
             }
-            const played = video.play();
-            if (played && played.catch) played.catch(() => {});
+            playMutedVideo(video);
           } else {
             video.pause();
           }
