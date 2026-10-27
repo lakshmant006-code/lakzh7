@@ -462,6 +462,17 @@
   }
 }
 
+/* With the section menu showing, wide panels start to its right instead of running underneath it */
+@media (min-width: 1180px) {
+  .cs-panel--wide {
+    --cs-nav-r: max(204px, calc(50vw - 380px));                   /* right edge of the fixed menu */
+    --cs-wl: max(calc(50vw - var(--cs-wide) / 2), calc(var(--cs-nav-r) + 36px));   /* where a wide panel may start */
+    --cs-wide-w: min(var(--cs-wide), calc(100vw - var(--cs-wl) - var(--cs-gutter) - 16px));
+    width: var(--cs-wide-w);
+    margin-left: calc(var(--cs-wl) - (50vw - var(--cs-col) / 2));
+  }
+}
+
 /* Section menu, fixed to the left of the reading column */
 .cs-sidenav {
   display: none;
