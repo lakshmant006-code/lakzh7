@@ -35,13 +35,14 @@ const KeepCaseStudy = () => {
 
       <CsIntro
         title="Keep: A Memory Calendar That Answers Back"
-        lead="Drop anything worth keeping into one calendar, then ask for it later. Keep brings it back with the original photo, note, or voice memo."
+        lead="A concept for Meta AI: a personal memory calendar you can simply ask, that answers with your original photo, note, or voice memo and keeps everything on your own device."
         meta={[
           { label: "Role", value: ["Product Designer", "Developer"] },
-          { label: "Platform", value: "Installable web app (PWA)" },
+          { label: "Type", value: ["Concept for Meta AI", "Self initiated"] },
+          { label: "Built as", value: "Working web app (PWA)" },
           {
             label: "Tools",
-            value: ["HTML and JavaScript", "three.js", "IndexedDB", "Google Maps"],
+            value: ["JavaScript", "three.js", "IndexedDB", "Google Maps"],
           },
           {
             label: "Scope",
@@ -51,6 +52,12 @@ const KeepCaseStudy = () => {
       />
 
       <CsSection id="keep-overview" label="Overview" title="What is Keep?">
+        <CsText>
+          Keep is a concept I designed for <strong>Meta AI</strong>, a way for
+          an assistant to help you remember your own life without taking it
+          over. It is not a Meta product and was not made with Meta; I built it
+          myself as a working app to test the idea for real.
+        </CsText>
         <CsText>
           Photos, voice notes, quotes, and places pile up across a dozen apps,
           and the moment you want one back, you cannot remember where you put
@@ -65,7 +72,7 @@ const KeepCaseStudy = () => {
         </CsText>
         <CsH3>My role</CsH3>
         <CsText>
-          I designed and built it end to end: the calendar and its interactions,
+          As the only designer and developer on this self initiated concept, I made it end to end: the calendar and its interactions,
           the way answers show the original memory, the 3D Re-live view, and the
           on-device people matching, then wrote the code for all of it.
         </CsText>
@@ -85,6 +92,30 @@ const KeepCaseStudy = () => {
             },
           ]}
         />
+      </CsSection>
+
+      <CsSection id="keep-why" label="The concept" title="Why Meta AI?">
+        <CsText>
+          Most of what people want to remember already passes through Meta
+          apps: the photos they post, the people they message, the places they
+          tag. An assistant sitting there is well placed to help, and equally
+          easy to distrust, because the memories are personal and the people in
+          them did not agree to be analysed.
+        </CsText>
+        <CsText>
+          Keep explores one answer: an assistant that <strong>answers from your
+          own memories, on your own device</strong>, and always shows you the
+          original. Meta&apos;s own avatars only work inside Meta&apos;s apps,
+          so the concept also imagines how a person you remember could stand
+          in the same place again, with an avatar you can restyle or replace
+          with your own.
+        </CsText>
+        <CsPanel title="The characters the concept grew from">
+          <CsImg
+            src="/work/keep/meta-ai-characters.webp"
+            alt="A line up of colourful 3D avatar characters standing together outdoors"
+          />
+        </CsPanel>
       </CsSection>
 
       <CsSection id="keep-problem" label="Problem" title="Keeping is easy. Finding is not.">
@@ -239,11 +270,12 @@ const KeepCaseStudy = () => {
 
       <CsSection id="keep-reflection" label="Reflections" title="Answer, but never replace.">
         <CsText>
-          Building Keep taught me that the hard part of an AI memory product is
+          Designing this as a concept for Meta AI taught me that the hard part of an AI memory product is
           restraint. Every feature that could guess, summarize, or tidy up also
           risked putting words between a person and their own memory. Keeping
           the original in front, and keeping everything on the device, made the
-          product feel smaller and a lot more trustworthy.
+          product feel smaller and a lot more trustworthy. If Meta AI ever
+          helped people remember, I would want it to work the same way.
         </CsText>
       </CsSection>
 
