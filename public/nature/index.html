@@ -23,14 +23,23 @@
   input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border: 0; border-radius: 50%; background: #fff; }
   .hint { position: fixed; top: calc(max(16px, env(safe-area-inset-top)) + 58px); left: 50%; transform: translateX(-50%); color: rgba(255,255,255,.95);
           font: 500 13px/1 -apple-system, system-ui, sans-serif; text-shadow: 0 1px 8px rgba(0,0,0,.4); transition: opacity .8s; pointer-events: none; white-space: nowrap; }
+  .embed .scenes { top: 76px; }
+  .embed .hint { top: 134px; }
+  #mites { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; display: none; }
+  body.is-mites #mites { display: block; }
+  body.is-mites .wind, body.is-mites .hint { display: none; }
+  body.is-mites canvas { visibility: hidden; }
+  .scenes { z-index: 5; }
   @media (max-width: 520px) { .scenes a, .scenes button { padding: 9px 10px; } }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
+<iframe id="mites" title="Mite Burrow" data-src="./mites.html"></iframe>
 <nav class="bar scenes" id="scenes" aria-label="Scenes"></nav>
 <div class="hint" id="hint"></div>
 <div class="bar wind"><span>Wind</span><input id="wind" type="range" min="0" max="3" step="0.01" value="0.8" aria-label="Wind speed"><output id="label">Breeze</output></div>
+<script>if (new URLSearchParams(location.search).has("embed")) document.documentElement.classList.add("embed");</script>
 <script type="module" src="./nature.js"></script>
 </body>
 </html>

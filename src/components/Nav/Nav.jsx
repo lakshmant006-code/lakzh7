@@ -34,7 +34,7 @@ const Nav = () => {
   const navItems = [
     { label: "work", href: "/", isLink: true },
     { label: "about", href: "/about", isLink: true },
-    { label: "grass", href: "/grass/", isLink: true, external: true },
+    { label: "grass", href: "/scenes", isLink: true },
   ];
 
   const handleLogoClick = (e) => {
@@ -57,6 +57,7 @@ const Nav = () => {
       if (item.label === "about") return false;
     }
     if (item.label === "about") return path === "/about";
+    if (item.label === "grass") return path === "/scenes";
     return false;
   };
 

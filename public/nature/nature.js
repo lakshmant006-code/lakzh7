@@ -565,14 +565,25 @@ SCENES.pond = () => {
 };
 
 /* ---------- scene manager ---------- */
-const NAV = [["tulips", "Tulips"], ["meadow", "Meadow"], ["pond", "Pond"]];
+const NAV = [["tulips", "Tulips"], ["meadow", "Meadow"], ["pond", "Pond"], ["mites", "Mites"]];
 const nav = document.getElementById("scenes");
 const hint = document.getElementById("hint");
 const built = {};
-let current = null, currentId = null;
+let current = null, currentId = null, mitesing = false;
 const root = new THREE.Scene();
 
+const mitesFrame = document.getElementById("mites");
 function show(id) {
+  const isMites = id === "mites";
+  document.body.classList.toggle("is-mites", isMites);
+  if (isMites) {
+    if (!mitesFrame.src) mitesFrame.src = mitesFrame.dataset.src;
+    [...nav.children].forEach((el) => el.setAttribute("aria-current", String(el.dataset.id === id)));
+    history.replaceState(null, "", location.search + "#mites");
+    mitesing = true;
+    return;
+  }
+  mitesing = false;
   if (!SCENES[id]) id = "tulips";
   if (current?.leave) current.leave();
   if (current) root.remove(current.group);
@@ -585,12 +596,12 @@ function show(id) {
   [...nav.children].forEach((el) => el.setAttribute("aria-current", String(el.dataset.id === id)));
   hint.textContent = current.hint; hint.style.opacity = 1;
   clearTimeout(show.t); show.t = setTimeout(() => (hint.style.opacity = 0), 4200);
-  history.replaceState(null, "", "#" + id);
+  history.replaceState(null, "", location.search + "#" + id);
 }
 NAV.forEach(([id, label]) => {
   const b = document.createElement("button"); b.textContent = label; b.dataset.id = id; b.onclick = () => show(id); nav.appendChild(b);
 });
-const g = document.createElement("a"); g.textContent = "Grass"; g.href = "/grass/"; nav.appendChild(g);
+const g = document.createElement("a"); g.textContent = "Grass"; g.href = "/grass/" + location.search; nav.appendChild(g);
 
 /* ---------- wind controls ---------- */
 const slider = document.getElementById("wind"), label = document.getElementById("label");
@@ -633,8 +644,7 @@ function frame(now) {
   phase += speed * dt;
   U.uPhase.value = phase; U.uStrength.value = strength; U.uGust.value = gust; U.uTime.value = time;
   U.uDir.value.set(Math.cos(dirAngle), Math.sin(dirAngle));
-  current.update(dt, { strength, dir: U.uDir.value, time });
-  renderer.render(root, camera);
+  if (!mitesing && current) { current.update(dt, { strength, dir: U.uDir.value, time }); renderer.render(root, camera); }
   requestAnimationFrame(frame);
 }
 show(location.hash.slice(1) || "tulips");
