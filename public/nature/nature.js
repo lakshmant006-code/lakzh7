@@ -596,7 +596,7 @@ const postMat = new THREE.ShaderMaterial({
 postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), postMat));
 
 /* ---------- scene manager ---------- */
-const NAV = [["tulips", "Tulips"], ["meadow", "Meadow"], ["pond", "Pond"], ["mites", "Mites"]];
+const NAV = [["tulips", "Tulips"], ["meadow", "Meadow"], ["pond", "Pond"], ["mites", "Mites"], ["grass", "Grass"]];
 const nav = document.getElementById("scenes");
 const hint = document.getElementById("hint");
 const built = {};
@@ -604,13 +604,17 @@ let current = null, currentId = null, mitesing = false;
 const root = new THREE.Scene();
 
 const mitesFrame = document.getElementById("mites");
+const grassFrame = document.getElementById("grass");
 function show(id) {
-  const isMites = id === "mites";
+  // "mites" and "grass" are separate pages shown in-place in a frame, so switching never leaves this page
+  const isMites = id === "mites", isGrass = id === "grass";
   document.body.classList.toggle("is-mites", isMites);
-  if (isMites) {
-    if (!mitesFrame.src) mitesFrame.src = mitesFrame.dataset.src + (pixelOn ? "?px=1" : "");
+  document.body.classList.toggle("is-grass", isGrass);
+  if (isMites || isGrass) {
+    if (isMites && !mitesFrame.src) mitesFrame.src = mitesFrame.dataset.src + (pixelOn ? "?px=1" : "");
+    if (isGrass && !grassFrame.src) grassFrame.src = grassFrame.dataset.src;
     [...nav.children].forEach((el) => el.setAttribute("aria-current", String(el.dataset.id === id)));
-    history.replaceState(null, "", location.search + "#mites");
+    history.replaceState(null, "", location.search + "#" + id);
     mitesing = true;
     return;
   }
@@ -632,7 +636,6 @@ function show(id) {
 NAV.forEach(([id, label]) => {
   const b = document.createElement("button"); b.textContent = label; b.dataset.id = id; b.onclick = () => show(id); nav.appendChild(b);
 });
-const g = document.createElement("a"); g.textContent = "Grass"; g.href = "/grass/" + location.search; nav.appendChild(g);
 
 /* ---------- pixel toggle ---------- */
 const pxBtn = document.getElementById("px");

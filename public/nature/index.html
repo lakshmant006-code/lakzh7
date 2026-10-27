@@ -31,15 +31,17 @@
   .embed .scenes { top: 76px; }
   .embed .hint { top: 134px; }
   #mites { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; display: none; }
-  body.is-mites #mites { display: block; }
-  body.is-mites .wind, body.is-mites .hint { display: none; }
-  body.is-mites canvas { visibility: hidden; }
+  #grass { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; display: none; }
+  body.is-mites #mites, body.is-grass #grass { display: block; }
+  body.is-mites .wind, body.is-mites .hint, body.is-grass .wind, body.is-grass .hint { display: none; }
+  body.is-mites canvas, body.is-grass canvas { visibility: hidden; }
   .scenes { z-index: 5; }
   @media (max-width: 520px) { .scenes a, .scenes button { padding: 9px 10px; } }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
+<iframe id="grass" title="Grass" data-src="/grass/?inner=1"></iframe>
 <iframe id="mites" title="Mite Burrow" data-src="./mites.html"></iframe>
 <nav class="bar scenes" id="scenes" aria-label="Scenes"></nav>
 <div class="hint" id="hint"></div>
