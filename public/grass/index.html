@@ -514,7 +514,9 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     gl.disable(gl.BLEND); gl.enable(gl.DEPTH_TEST);
     // speech bubbles follow the people who have stopped
     for (const q of people) {
-      if (q.state === "stand" && !q.bubble) { const el = document.createElement("div"); el.className = "bubble"; el.textContent = q.say; bubbleHost.appendChild(el); q.bubble = el; requestAnimationFrame(() => (el.style.opacity = 1)); }
+      // only one or two people speak at a time; everyone else just enjoys the flowers
+      if (q.state === "stand" && q.talks === undefined) q.talks = people.filter((o) => o.bubble && o.state === "stand" && o.stand > 0.8).length < 2;
+      if (q.state === "stand" && q.talks && !q.bubble) { const el = document.createElement("div"); el.className = "bubble"; el.textContent = q.say; bubbleHost.appendChild(el); q.bubble = el; requestAnimationFrame(() => (el.style.opacity = 1)); }
       if (q.bubble) {
         const [sx, sy] = projectToScreen(q.x + SCR_UP[0] * 0.2, 1.9, q.z + SCR_UP[1] * 0.2);
         q.bubble.style.left = sx + "px"; q.bubble.style.top = sy - 26 + "px";
