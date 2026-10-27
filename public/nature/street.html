@@ -70,7 +70,28 @@ function plane(map, w, h, x, y, z) {
 }
 plane(tex("./street/buildings-left.png"), 118, 844, 0, 0, 1);
 plane(tex("./street/buildings-right.png"), 115, 844, 409, 0, 1);
-const trees = [plane(tex("./street/trees-left.png"), 145, 844, 70, 0, 5), plane(tex("./street/trees-right.png"), 131, 844, 330, 0, 5)];
+// trees cast soft shadows down and to the left, the same way the traffic's shadows fall; they land on the road and on anything driving under them
+const treeTex = [tex("./street/trees-left.png"), tex("./street/trees-right.png")];
+const SHADOW_FS = `uniform sampler2D map; uniform vec2 texel; uniform float strength; varying vec2 vUv;
+  void main(){
+    float a = 0.0, wsum = 0.0;
+    for (int i = -3; i <= 3; i++) for (int j = -3; j <= 3; j++) {
+      float w = exp(-float(i * i + j * j) / 6.0);
+      a += texture2D(map, vUv + vec2(float(i), float(j)) * texel * 2.2).a * w; wsum += w;
+    }
+    gl_FragColor = vec4(0.11, 0.13, 0.22, (a / wsum) * strength);
+  }`;
+function treeShadow(map, w, h, x, y) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.ShaderMaterial({
+    uniforms: { map: { value: map }, texel: { value: new THREE.Vector2(1 / w, 1 / h) }, strength: { value: 0.68 } },
+    vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+    fragmentShader: SHADOW_FS, transparent: true, depthWrite: false,
+  }));
+  const [wx, wy] = toWorld(x + w / 2 - 24, y + h / 2 + 18);   // offset down-left
+  m.position.set(wx, wy, 4.6); m.scale.set(1.04, 1.02, 1); world.add(m); return m;
+}
+treeShadow(treeTex[0], 145, 844, 70, 0); treeShadow(treeTex[1], 131, 844, 330, 0);
+const trees = [plane(treeTex[0], 145, 844, 70, 0, 5), plane(treeTex[1], 131, 844, 330, 0, 5)];
 
 /* ---------- vehicles: each one cut from the traffic layer and driven the way it faces ---------- */
 const SCALE = { car: 0.78, auto: 0.78, truck: 0.78, scooter: 0.8, ped: 0.85 };

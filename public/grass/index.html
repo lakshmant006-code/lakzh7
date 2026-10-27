@@ -339,13 +339,14 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     vec2 c = vec2(float(gl_VertexID & 1) * 2.0 - 1.0, float((gl_VertexID >> 1) & 1) * 2.0 - 1.0);
     float cr = cos(aRT.x), sr = sin(aRT.x);
     vec2 l = c * aPS.zw;
-    vec2 w = aRT.y > 1.5 ? l.x * uRight + l.y * uUp : vec2(cr * l.x - sr * l.y, sr * l.x + cr * l.y);   // people stand upright on screen
+    vec2 w = (aRT.y > 1.5 && aRT.y < 2.5) ? l.x * uRight + l.y * uUp : vec2(cr * l.x - sr * l.y, sr * l.x + cr * l.y);   // people stand upright on screen
     vUV = c; vRT = aRT; vC = aC; vS = aPS.zw;
     gl_Position = uVP * vec4(aPS.x + w.x, 1.9, aPS.y + w.y, 1.0);
   }`;
   const SPR_FS = `#version 300 es
   precision highp float;
   in vec2 vUV; flat in vec4 vRT; flat in vec4 vC; flat in vec2 vS;
+  uniform sampler2D uAtlas;
   out vec4 o;
   float sdCap(vec2 p, vec2 a, vec2 b, float r){ vec2 pa = p - a, ba = b - a; float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0); return length(pa - ba * h) - r; }
   float sdEll(vec2 p, vec2 r){ return (length(p / r) - 1.0) * min(r.x, r.y); }
@@ -371,6 +372,10 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
       vec3 c = mix(pc, cen, disc);
       c = mix(c, vec3(0.75, 0.5, 0.05), smoothstep(0.1, 0.0, r - 0.02) * 0.5);
       col = vec4(c, petal * A);
+    } else if (type > 2.5) {                            // a walker from the drawn walk cycle, frame picked on the CPU
+      vec2 uv = vec2(vC.x + (p.x * 0.5 + 0.5) * vC.z, vC.y + (0.5 - p.y * 0.5) * vC.w);
+      vec4 tx = texture(uAtlas, uv);
+      col = vec4(tx.rgb / max(tx.a, 1e-4), tx.a * A);
     } else {                                            // a small person seen from high above, upright on screen
       vec2 f = vec2(p.x * 0.55, p.y);                   // figure space: the sprite is 0.55 as wide as tall
       float s = sin(ph), face = vC.w;                   // stride phase, look variant
@@ -409,6 +414,21 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     o = col;
   }`;
   const spr = compile(SPR_VS, SPR_FS);
+  // the walk-cycle sheet: 6 people × 8 frames, each frame centred in its cell
+  const walkTex = gl.createTexture(); let walkInfo = null;
+  { const img = new Image();
+    img.onload = () => {
+      gl.bindTexture(gl.TEXTURE_2D, walkTex);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      fetch("./walkers.json").then((r) => r.json()).then((j) => (walkInfo = j));
+    };
+    img.src = "./walkers.png"; }
   const SF = 12, SMAX = 600;
   const sprData = new Float32Array(SMAX * SF);
   const sprVao = gl.createVertexArray(); gl.bindVertexArray(sprVao);
@@ -454,7 +474,7 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     if (people.length < 8) {
       const R = viewRect(); const dl = gx - R.x0, dr = R.x1 - gx, dtp = gz - R.z0, db = R.z1 - gz, m = Math.min(dl, dr, dtp, db);
       const sx = m === dl ? R.x0 - 0.6 : m === dr ? R.x1 + 0.6 : gx + rr(-1.5, 1.5), sz = m === dtp ? R.z0 - 0.6 : m === db ? R.z1 + 0.6 : gz + rr(-1.5, 1.5);
-      people.push({ x: sx, z: sz, tx: gx + rr(-0.45, 0.45) - SCR_UP[0] * 0.5, tz: gz + rr(-0.2, 0.2) - SCR_UP[1] * 0.5, state: "in", t0: t, stand: rr(5, 8), ph: Math.random() * 6, shirt: SHIRTS[(Math.random() * SHIRTS.length) | 0], v: Math.random(), rot: 0, say: LINES[(Math.random() * LINES.length) | 0], bubble: null, R });
+      people.push({ x: sx, z: sz, tx: gx + rr(-0.45, 0.45) - SCR_UP[0] * 0.5, tz: gz + rr(-0.2, 0.2) - SCR_UP[1] * 0.5, state: "in", t0: t, stand: rr(5, 8), ph: Math.random() * 6, shirt: SHIRTS[(Math.random() * SHIRTS.length) | 0], v: Math.random(), rot: 0, say: LINES[(Math.random() * LINES.length) | 0], bubble: null, R, char: (Math.random() * 6) | 0 });
     }
   }
   const bubbleHost = document.getElementById("bubbles");
@@ -494,8 +514,8 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     }
     for (const q of people) {
       // a long soft shadow from the feet, toward the lower right
-      const fx = q.x - SCR_UP[0] * 0.17, fz = q.z - SCR_UP[1] * 0.17, L = 0.42;
-      put(fx + SUN2N[0] * L, fz + SUN2N[1] * L, L, 0.065, sunRot, 0, 1, 0, 0, 0, 0, 0);
+      const L = 0.42;
+      put(q.x + SUN2N[0] * L, q.z + SUN2N[1] * L, L, 0.07, sunRot, 0, 1, 0, 0, 0, 0, 0);
     }
     for (const f of flowers) {
       const g = f.t0 > t ? 0 : backOut(Math.min(1, (t - f.t0) / 0.9)); if (g <= 0.01) continue;
@@ -503,11 +523,16 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     }
     for (const q of people) {
       const moving = q.state !== "stand";
-      put(q.x, q.z, 0.1, 0.18, q.rot, 2, 1, moving ? q.ph : Math.sin(t * 1.5 + q.ph) * 0.2, q.shirt[0], q.shirt[1], q.shirt[2], q.v);
+      if (walkInfo) {
+        const c = ((q.ph / 6.2832) % 1 + 1) % 1, frame = moving ? Math.floor(c * 8) % 8 : 0;
+        const { w, h, cw, ch } = walkInfo, hh = 0.26, hw = hh * cw / ch;
+        put(q.x, q.z, hw, hh, q.rot - Math.PI / 2, 3, 1, 0, (frame * cw) / w, (q.char * ch) / h, cw / w, ch / h);
+      } else put(q.x, q.z, 0.1, 0.18, q.rot, 2, 1, moving ? q.ph : Math.sin(t * 1.5 + q.ph) * 0.2, q.shirt[0], q.shirt[1], q.shirt[2], q.v);
     }
     gl.useProgram(spr.p);
     gl.uniformMatrix4fv(spr.u.uVP, false, lastVP);
     gl.uniform2f(spr.u.uRight, SCR_RIGHT[0], SCR_RIGHT[1]); gl.uniform2f(spr.u.uUp, SCR_UP[0], SCR_UP[1]);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, walkTex); gl.uniform1i(spr.u.uAtlas, 0);
     gl.bindVertexArray(sprVao); gl.bindBuffer(gl.ARRAY_BUFFER, sprBuf); gl.bufferSubData(gl.ARRAY_BUFFER, 0, sprData, 0, n * SF);
     gl.disable(gl.DEPTH_TEST); gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.drawArraysInstanced(gl.TRIANGLE_STRIP, 0, 4, n);
@@ -573,7 +598,7 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
   }
   requestAnimationFrame(frame);
   window.__grassWind = (v) => setTarget(v);
-  window.__grass = { setTarget, get state() { return { speed, strength, phase, target, COUNT }; } };
+  window.__grass = { people, flowers, setTarget, get state() { return { speed, strength, phase, target, COUNT }; } };
 })();
 </script>
 </body>
