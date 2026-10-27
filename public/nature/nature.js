@@ -808,7 +808,7 @@ const META = {
   canopy: ["Jungle canopy", "Understory · broad leaves in dappled light", "Move to open a gap in the canopy · tap to shake the leaves", "canopy"],
   mites: ["Rainy velvets", "A memory · velvet mites after the rain", "Move over a mite · press and hold to make it curl up", "rainy velvets"],
   street: ["Street", "Midday · a city street from above", "Traffic keeps its lanes and stops at the signal · hover to honk · or be the cow", "street"],
-  bollywood: ["Bollywood", "A memory · a dance under the arch, the Taj Mahal behind", "Move to stir the wind · tap for a gust · the slider sets the breeze", "bollywood"],
+  bollywood: ["Bollywood", "A memory · a dance under the arch, the Taj Mahal behind", "Move to stir the wind · tap to wrap the dupatta around him, tap again to let go · the slider sets the breeze", "bollywood"],
   grass: ["Grass from above", "Meadow · combed by the wind", "Tap to plant flowers and watch them bloom · someone will come over", "grass"],
 };
 const ORDER = ["tulips", "meadow", "pond", "canopy", "mites", "grass", "street", "bollywood"];

@@ -16,8 +16,10 @@
   .frame { left: 14.286%; top: 4.2%;  width: 71.429%; }
   .lady  { left: 41.4%;   top: 62.2%; width: 17.3%; }   /* placed from SCALE in the script */
   .taj, .frame { filter: brightness(1.07) contrast(.97) saturate(.96); }   /* a touch lighter */
+  .taj { opacity: .8; }                                                      /* a little cloudy, the haze of the paper shows through */
+  .man { transition: opacity .5s ease; }
   .man   { left: 24.64%;  top: 60.5%; width: 7.93%; }   /* the photographer, on the left of the platform */
-  canvas { inset: 0; width: 100%; height: 100%; pointer-events: auto; touch-action: none; }
+  .world > canvas { inset: 0; width: 100%; height: 100%; pointer-events: auto; cursor: pointer; touch-action: none; }
 </style>
 </head>
 <body>
@@ -57,8 +59,8 @@ new ResizeObserver(fit).observe(canvas); fit();
 
 
 /* ---------- the dupatta: a gathered silk rectangle ---------- */
-const COLS = 17, ROWS = 64;       // fine grid so folds stay silky
-const LENGTH = 600 * SCALE, W_TOP = 40 * SCALE, W_FULL = 205 * SCALE;
+const COLS = 19, ROWS = 90;       // fine grid so folds stay silky
+const LENGTH = 600, W_TOP = 28, W_FULL = 150;   // a big dupatta, in world pixels
 const ANCHOR = { x: LADY_LEFT + 85 * 0.7 * SCALE, y: LADY_TOP + 275.7 * 0.7 * SCALE }; // her left hand (on the left of the picture), in world pixels (y down)
 const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 const widthAt = (v) => W_TOP + (W_FULL - W_TOP) * smooth(0, 0.2, v);
@@ -70,7 +72,7 @@ for (let j = 0; j < ROWS; j++) {
   const v = j / (ROWS - 1), w = widthAt(v);
   for (let i = 0; i < COLS; i++) {
     const u = i / (COLS - 1), k = idx(i, j) * 3;
-    px[k] = ANCHOR.x - v * LENGTH * 0.9;
+    px[k] = ANCHOR.x - v * LENGTH;
     px[k + 1] = ANCHOR.y + (u - 0.5) * w;
     px[k + 2] = ((Math.random() - 0.5) * 6 + Math.sin(u * 6.28) * 4) * SCALE;
     pv[k] = px[k]; pv[k + 1] = px[k + 1]; pv[k + 2] = px[k + 2];
@@ -90,6 +92,52 @@ for (let j = 0; j < ROWS; j++) for (let i = 0; i < COLS; i++) {
 // keep the gathered edge from collapsing: the pinned row holds its spacing
 const pinRest = [];
 for (let i = 0; i < COLS; i++) pinRest.push({ i, dy: (i / (COLS - 1) - 0.5) * W_TOP });
+
+/* ---------- the photographer's silhouette, and where the dupatta lies when it wraps him ----------
+   BODY holds one row per few pixels of him: [y, centre x, half width], measured from his cut-out.
+   Click the scene and the dupatta flies from her hand, loops over his head and settles over that outline. */
+const BODY = [[607,392.2,10.9],[613,391.8,13.9],[619,392.3,17.1],[625,394.2,21.5],[631,396.5,23.7],[637,397.3,24.8],[643,397.3,27.6],[649,396.5,30.9],[655,394.7,33.7],[661,393.1,37.4],[667,393.2,41.2],[673,394.1,43.2],[679,394.3,44],[685,392.6,41.9],[691,390.4,39.7],[697,387.9,37.9],[703,385.8,36.1],[709,385,34.4],[715,385.8,35],[721,387,35.3],[727,388.2,34.8],[733,389.3,33.8],[739,390.3,32.9],[745,391.2,31.8],[751,391.8,30.8],[757,392.8,30.6],[763,393.5,30.9],[769,393.7,31.7],[775,393.9,32.3],[781,393.9,32.6],[787,393.8,32.3],[793,393.7,31.8],[799,393.9,31.4],[805,394,31.1],[811,394.2,31.7],[817,394.5,31.7],[823,395.1,32.4],[829,395.5,33.1],[835,396,33.8],[841,396.8,34.4],[847,397.6,35.5],[853,399.8,36.9],[859,402.2,38.8],[865,404.2,40.7],[871,403.8,39.6],[877,403,37.9],[883,400.8,35.8]];
+const bodyAt = (y) => {
+  const f = (Math.min(Math.max(y, BODY[0][0]), BODY[BODY.length - 1][0]) - BODY[0][0]) / 6, i = Math.min(BODY.length - 2, Math.floor(f)), t = f - i;
+  return [BODY[i][1] + (BODY[i + 1][1] - BODY[i][1]) * t, BODY[i][2] + (BODY[i + 1][2] - BODY[i][2]) * t];
+};
+const HEAD_Y = BODY[0][0] - 6, FEET_Y = BODY[BODY.length - 1][0] + 4;
+const tgt = new Float32Array(N * 3);
+{
+  // the way in: from her hand, up and over, then down onto his head
+  const H = { x: ANCHOR.x, y: ANCHOR.y }, P = { x: BODY[0][1], y: HEAD_Y }, C = { x: (H.x + P.x) / 2 + 30, y: HEAD_Y - 60 };
+  const bez = (t) => { const a = (1 - t) * (1 - t), b = 2 * t * (1 - t), c = t * t; return [a * H.x + b * C.x + c * P.x, a * H.y + b * C.y + c * P.y]; };
+  const arc = [[...bez(0), 0]];
+  for (let q = 1; q <= 80; q++) { const [x, y] = bez(q / 80), o = arc[q - 1]; arc.push([x, y, o[2] + Math.hypot(x - o[0], y - o[1])]); }
+  const S1 = arc[80][2], bodyLen = Math.min(LENGTH - S1, FEET_Y - HEAD_Y + 20);
+  const slack = Math.max(0, (LENGTH - S1) - bodyLen);                  // cloth left over: it pools in folds at his feet
+  for (let j = 0; j < ROWS; j++) {
+    const s = j / (ROWS - 1) * LENGTH;
+    let cx, cy, tx, ty, w;
+    if (s <= S1) {
+      let q = 0; while (q < 79 && arc[q + 1][2] < s) q++;
+      const f = (s - arc[q][2]) / ((arc[q + 1][2] - arc[q][2]) || 1);
+      cx = arc[q][0] + (arc[q + 1][0] - arc[q][0]) * f; cy = arc[q][1] + (arc[q + 1][1] - arc[q][1]) * f;
+      tx = arc[q + 1][0] - arc[q][0]; ty = arc[q + 1][1] - arc[q][1];
+      w = W_FULL;
+    } else {
+      const d = Math.min(s - S1, bodyLen), y = HEAD_Y + d * ((FEET_Y - HEAD_Y) / bodyLen);
+      const [bx, hw] = bodyAt(y); cx = bx; cy = y + Math.max(0, s - S1 - bodyLen) * 0.12; tx = 0; ty = 1;
+      w = Math.max(hw * 2.3, 28);
+    }
+    const tl = Math.hypot(tx, ty) || 1; tx /= tl; ty /= tl;
+    const wj = s <= S1 ? W_FULL + (Math.max(bodyAt(HEAD_Y + 10)[1] * 2.3, 28) - W_FULL) * smooth(S1 * 0.3, S1, s) : w;
+    for (let i = 0; i < COLS; i++) {
+      const u = i / (COLS - 1) - 0.5, k = idx(i, j) * 3;
+      tgt[k] = cx + ty * u * wj;                              // across the cloth: perpendicular to its path
+      tgt[k + 1] = cy - tx * u * wj;
+      const round = Math.sqrt(Math.max(0, 1 - 4 * u * u));
+      tgt[k + 2] = (s <= S1 ? 4 + 10 * smooth(S1 * 0.6, S1, s) : 12 + 18 * round) * SCALE * 2.4 + Math.sin(u * 22 + j * 0.45) * (2 + slack * 0.02);
+    }
+  }
+}
+let wrap = 0, wrapOn = false;                                              // wrap: 0 free in the wind, 1 lying over him
+const manEl = document.querySelector(".man");
 
 /* mesh, textured with the dupatta pattern from the reference */
 const geo = new THREE.BufferGeometry();
@@ -136,11 +184,11 @@ canvas.addEventListener("pointermove", (ev) => {
   gust = Math.min(1.6, gust + Math.hypot(ptrVel.x, ptrVel.y) * 0.004);
 });
 canvas.addEventListener("pointerleave", () => { ptr = null; ptrVel = { x: 0, y: 0 }; });
-canvas.addEventListener("pointerdown", () => { kick = 1; });
+canvas.addEventListener("pointerdown", () => { wrapOn = !wrapOn; if (!wrapOn) kick = 1.6; });   // click: wrap him; click again: let it go
 
 /* ---------- physics (fixed step, sub-stepped, then relaxed for silk smoothness) ---------- */
 const STEP = 1 / 60, SUB = 3, DT = STEP / SUB, ITER = 6;
-const GRAVITY = 820 * SCALE, DRAG = 0.994, AIR = 0.012, AIRDRAG = 1.5;
+const WS = 0.5, GRAVITY = 820 * SCALE, DRAG = 0.994, AIR = 0.012, AIRDRAG = 1.5;
 const nrm = new Float32Array(N * 3);
 function normals() {
   nrm.fill(0);
@@ -161,27 +209,31 @@ function simulate(t) {
   const flutter = noise(t * 2.2, 4.1);
   gust *= 0.985; kick *= 0.96;
   const base = strength * (0.9 + 1.5 * swell) + gust * 1.8 + kick * 2.4;
-  const wx = -540 * SCALE * base, wy = -150 * SCALE * base * (0.8 + 0.6 * flutter), wz = 300 * SCALE * base * noise(t * 0.8, 7.7);
+  const wx = -470 * WS * base, wy = -400 * WS * base * (0.8 + 0.5 * flutter), wz = 140 * WS * base * noise(t * 0.8, 7.7);
+  wrap = wrapOn ? Math.min(1, wrap + STEP / 1.7) : Math.max(0, wrap - STEP / 0.7);
   // her hand: a gentle sway that lifts a little with each gust
   const ax = ANCHOR.x + Math.sin(t * 0.7) * 4 * SCALE, ay = ANCHOR.y + Math.sin(t * 0.93) * 6 * SCALE - Math.min(14, base * 5) * SCALE;
   for (let s = 0; s < SUB; s++) {
     normals();
     for (let p = 0; p < N; p++) {
       if (pinned[p]) continue;
-      const k = p * 3;
+      const k = p * 3, loc = smooth(0, 1, wrap * 1.9 - Math.floor(p / COLS) / (ROWS - 1) * 0.9), fr = 1 - 0.92 * loc;
       let vx = (px[k] - pv[k]) / DT, vy = (px[k + 1] - pv[k + 1]) / DT, vz = (px[k + 2] - pv[k + 2]) / DT;
       // aerodynamic push: the part of the relative wind that strikes the surface
-      const rx = wx * (1 + 0.35 * noise(t * 1.4, p * 0.013)) - vx, ry = wy - vy, rz = wz - vz;
+      const rx = wx * fr * (1 + 0.35 * noise(t * 1.4, p * 0.013)) - vx, ry = wy * fr - vy, rz = wz * fr - vz;
       const dn = rx * nrm[k] + ry * nrm[k + 1] + rz * nrm[k + 2];
       // light silk is carried by the air itself (drag toward the wind) and billows where the wind meets its face
       let fx = rx * AIRDRAG + nrm[k] * dn * AIR * 60, fy = ry * AIRDRAG + nrm[k + 1] * dn * AIR * 60 + GRAVITY, fz = rz * AIRDRAG * 0.6 + nrm[k + 2] * dn * AIR * 60;
       // the pointer stirs the air nearby
-      if (ptr) { const dx = px[k] - ptr.x, dy = px[k + 1] - ptr.y, d2 = dx * dx + dy * dy; if (d2 < 14000 * SCALE) { const f = (1 - d2 / (14000 * SCALE)) * 5200 * SCALE; const d = Math.sqrt(d2) || 1; fx += dx / d * f + ptrVel.x * 30 * SCALE; fy += dy / d * f + ptrVel.y * 30 * SCALE; fz += f * 0.35; } }
+      if (loc > 0) {   // lying over him: drawn onto his outline
+        fx += (tgt[k] - px[k]) * 110 * loc - vx * 9 * loc; fy += (tgt[k + 1] - px[k + 1]) * 110 * loc - vy * 9 * loc; fz += (tgt[k + 2] - px[k + 2]) * 110 * loc - vz * 9 * loc;
+      }
+      if (ptr && loc < 0.5) { const dx = px[k] - ptr.x, dy = px[k + 1] - ptr.y, d2 = dx * dx + dy * dy; if (d2 < 14000 * SCALE) { const f = (1 - d2 / (14000 * SCALE)) * 5200 * SCALE; const d = Math.sqrt(d2) || 1; fx += dx / d * f + ptrVel.x * 30 * SCALE; fy += dy / d * f + ptrVel.y * 30 * SCALE; fz += f * 0.35; } }
       const nx = px[k] + (px[k] - pv[k]) * DRAG + fx * DT * DT;
       const ny = px[k + 1] + (px[k + 1] - pv[k + 1]) * DRAG + fy * DT * DT;
       const nz = px[k + 2] + (px[k + 2] - pv[k + 2]) * DRAG + fz * DT * DT;
       pv[k] = px[k]; pv[k + 1] = px[k + 1]; pv[k + 2] = px[k + 2];
-      px[k] = nx; px[k + 1] = ny; px[k + 2] = Math.max(-420 * SCALE, Math.min(420 * SCALE, nz));
+      px[k] = nx; px[k + 1] = Math.min(ny, 930); px[k + 2] = Math.max(-420 * SCALE, Math.min(420 * SCALE, nz));
     }
     for (const { i, dy } of pinRest) { const k = idx(i, 0) * 3; px[k] = ax; px[k + 1] = ay + dy; px[k + 2] = Math.sin(i * 0.9) * 3 * SCALE; pv[k] = px[k]; pv[k + 1] = px[k + 1]; pv[k + 2] = px[k + 2]; }
     for (let it = 0; it < ITER; it++) {
@@ -215,11 +267,12 @@ function frame(now) {
   if (!running) return;
   acc += Math.min(0.05, (now - last) / 1000); last = now;
   while (acc >= STEP) { time += STEP; simulate(time); acc -= STEP; }
+  manEl.style.opacity = 1 - smooth(0.92, 1, wrap);
   upload(); renderer.render(scene, camera);
 }
 for (let i = 0; i < 240; i++) { time += STEP; simulate(time); }   // let it settle before the first frame
 requestAnimationFrame(frame);
-window.__cloth = { px, N, COLS, ROWS };
+window.__cloth = { px, N, COLS, ROWS, get wrap() { return wrap; }, get on() { return wrapOn; } };
 </script>
 </body>
 </html>
