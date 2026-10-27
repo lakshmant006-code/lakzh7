@@ -9,7 +9,7 @@
   html, body { margin: 0; height: 100%; background: #f5f3ef; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; }
   /* the meadow sits in a soft-edged rounded plate on the paper, like the other scenes */
   :root { --mx: clamp(16px, 5vw, 64px); --mt: clamp(20px, 5vh, 56px); --mb: clamp(76px, 14vh, 120px); }
-  canvas { position: fixed; left: var(--mx); top: var(--mt); width: calc(100vw - 2 * var(--mx)); height: calc(100vh - var(--mt) - var(--mb)); display: block; border-radius: 44px;
+  canvas { position: fixed; left: var(--mx); top: var(--mt); width: calc(100vw - 2 * var(--mx)); height: calc(100vh - var(--mt) - var(--mb)); display: block; border-radius: 44px; filter: blur(0.35px) saturate(1.04);
     -webkit-mask-image: linear-gradient(to right, transparent, #000 5.5%, #000 94.5%, transparent), linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
     -webkit-mask-composite: source-in;
             mask-image: linear-gradient(to right, transparent, #000 5.5%, #000 94.5%, transparent), linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
@@ -128,18 +128,18 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
                     base.y + off.y + side.y * aShape.x * width);
 
     // colour: dark rooted base -> bright sun-lit tip, per-clump & per-blade variation
-    vec3 deep  = vec3(0.03, 0.09, 0.02);
-    vec3 mid   = mix(vec3(0.13, 0.36, 0.07), vec3(0.20, 0.46, 0.10), aC.z);
-    vec3 tip   = mix(vec3(0.38, 0.62, 0.17), vec3(0.50, 0.72, 0.22), rnd);
+    vec3 deep  = vec3(0.16, 0.36, 0.10);
+    vec3 mid   = mix(vec3(0.30, 0.58, 0.16), vec3(0.38, 0.66, 0.20), aC.z);
+    vec3 tip   = mix(vec3(0.56, 0.80, 0.28), vec3(0.68, 0.86, 0.36), rnd);
     vec3 col = mix(deep, mid, smoothstep(0.0, 0.55, t));
     col = mix(col, tip, smoothstep(0.45, 1.0, t) * (0.55 + 0.45 * aC.w));
     float lp = vn(base * 0.28 + 4.0);
     col = mix(col, col * vec3(1.10, 1.10, 0.85) + vec3(0.02, 0.04, 0.0), smoothstep(0.35, 0.8, lp) * t);
-    col *= mix(0.42, 1.0, smoothstep(0.02, 0.55, aC.x));   // dark tussock heart
+    col *= mix(0.74, 1.0, smoothstep(0.02, 0.55, aC.x));   // soft tussock heart
     // broad darker and lighter patches across the meadow, like mown and unmown grass
     float pb = vn(base * 0.11 + vec2(7.3, 2.1)) * 0.65 + vn(base * 0.27 + vec2(1.7, 9.4)) * 0.35;
     float light = smoothstep(0.40, 0.62, pb);
-    col = mix(col * vec3(0.48, 0.55, 0.60), col * vec3(1.55, 1.50, 1.10) + vec3(0.05, 0.08, 0.0) * t, light);
+    col = mix(col * vec3(0.66, 0.74, 0.80), col * vec3(1.20, 1.16, 1.02) + vec3(0.04, 0.05, 0.0) * t, light);
     col *= 0.85 + 0.3 * rnd;
     col += vec3(0.05, 0.05, 0.0) * push * smoothstep(0.4, 1.0, t); // wind-lit sheen
     col *= 1.0 - 0.28 * fall;                                                   // pressed, shaded core
@@ -164,11 +164,14 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     if (!gl_FrontFacing) n = vec3(-n.x, n.y, -n.z);
     float lam = clamp(dot(n, uSun) * 0.5 + 0.5, 0.0, 1.0);
     float trans = pow(clamp(dot(-n, uSun), 0.0, 1.0), 2.0) * 0.55 * smoothstep(0.2, 1.0, vT);
-    float ao = mix(0.35, 1.0, smoothstep(0.0, 0.5, vT));
-    vec3 light = vec3(0.50, 0.58, 0.62) * 0.55 + vec3(1.05, 0.95, 0.78) * lam * 0.85;
+    float ao = mix(0.68, 1.0, smoothstep(0.0, 0.5, vT));
+    vec3 light = vec3(0.62, 0.72, 0.86) * 0.58 + vec3(1.08, 0.98, 0.82) * lam * 0.62;
     vec3 c = vCol * light * ao + vec3(0.55, 0.62, 0.15) * trans * vCol;
     c = mix(c, uFog, vFog);
-    o = vec4(pow(c, vec3(0.92)), 1.0);
+    c = pow(c, vec3(0.92));
+    float g = fract(sin(dot(floor(gl_FragCoord.xy), vec2(12.9898, 78.233))) * 43758.5453) - 0.5;
+    c += g * 0.045;                                     // a fine paper grain over the paint
+    o = vec4(c, 1.0);
   }`;
 
   const GROUND_VS = `#version 300 es
@@ -181,7 +184,7 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
   precision highp float;
   in vec3 vW; uniform vec3 uFog; uniform vec3 uCam; out vec4 o;
   void main(){ float f = 1.0 - exp(-pow(distance(vW, uCam) * 0.003, 1.35));
-    o = vec4(mix(vec3(0.05, 0.11, 0.03), uFog, f), 1.0); }`;
+    o = vec4(mix(vec3(0.24, 0.47, 0.13), uFog, f), 1.0); }`;
 
   const SKY_VS = `#version 300 es
   precision highp float;
@@ -311,7 +314,7 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
   document.documentElement.addEventListener("pointerleave", () => { hover.on = false; });
 
   /* ---------- render ---------- */
-  const FOG = [0.05, 0.11, 0.03];
+  const FOG = [0.24, 0.47, 0.13];
   const SUN = (() => { const v = [-0.45, 0.55, -0.6]; const l = Math.hypot(...v); return v.map((x) => x / l); })();
   let W = 0, H = 0;
   function resize() {
@@ -353,7 +356,7 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     if (type < 0.5) {                                   // shadow
       float d = length(p);
       float foot = mix(1.0, 0.55, clamp(p.x * 0.5 + 0.5, 0.0, 1.0));
-      col = vec4(0.10, 0.14, 0.30, smoothstep(1.0, 0.25, d) * 0.8 * A * foot);
+      col = vec4(0.20, 0.25, 0.55, smoothstep(1.0, 0.25, d) * 0.55 * A * foot);
     } else if (type < 1.5) {                            // flower, seen from above
       float r = length(p), a = atan(p.y, p.x);
       float n = 5.0 + floor(vC.w * 3.0);                // 5-7 petals
