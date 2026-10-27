@@ -6,7 +6,7 @@
 <title>Grass</title>
 <style>
   :root { color-scheme: dark; }
-  html, body { margin: 0; height: 100%; background: #9fc3d6; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; }
+  html, body { margin: 0; height: 100%; background: #1a3410; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; }
   canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
   .ui { position: fixed; left: 50%; bottom: max(20px, env(safe-area-inset-bottom)); transform: translateX(-50%);
         display: flex; align-items: center; gap: 14px; padding: 10px 16px; border-radius: 999px;
@@ -43,7 +43,7 @@
   layout(location=0) in vec2 aShape;     // x: -1..1 side, y: 0..1 up the blade
   layout(location=1) in vec4 aA;         // x, z, height, width
   layout(location=2) in vec4 aB;         // facing angle, lean angle, lean amount, rand
-  layout(location=3) in vec4 aC;         // clump x, clump z, clump rand, tuft height factor
+  layout(location=3) in vec4 aC;         // radial position in clump 0..1, patch rand, clump rand, tuft height factor
   uniform mat4 uVP;
   uniform vec3 uCam;
   uniform float uPhase;     // integrated wind phase (never jumps when speed changes)
@@ -81,7 +81,7 @@
     vec2 off = leanDir * aB.z * tt * len;
     // wind bend along wind direction + small flutter across it
     float flutter = sin(uPhase * 5.0 + rnd * 40.0 + base.x * 1.3) * (0.25 + 0.5 * w2);
-    off += uDir * push * 0.55 * tt * len;
+    off += uDir * push * 0.95 * tt * len;
     off += vec2(-uDir.y, uDir.x) * flutter * min(push, 1.2) * 0.12 * tt * len;
 
     float bendLen = length(off);
@@ -92,17 +92,20 @@
     vec2 face = vec2(cos(aB.x), sin(aB.x));
     vec2 side = vec2(-face.y, face.x);
     float dist = distance(base, uCam.xz);
-    float width = aA.w * (1.0 - pow(t, 1.4)) * (1.0 + dist * 0.018);
+    float width = aA.w * (1.0 - pow(t, 1.2));
     vec3 pos = vec3(base.x + off.x + side.x * aShape.x * width,
                     y,
                     base.y + off.y + side.y * aShape.x * width);
 
     // colour: dark rooted base -> bright sun-lit tip, per-clump & per-blade variation
-    vec3 deep  = vec3(0.045, 0.13, 0.03);
-    vec3 mid   = mix(vec3(0.20, 0.42, 0.08), vec3(0.30, 0.50, 0.11), aC.z);
-    vec3 tip   = mix(vec3(0.62, 0.70, 0.22), vec3(0.78, 0.80, 0.34), rnd);
+    vec3 deep  = vec3(0.03, 0.09, 0.02);
+    vec3 mid   = mix(vec3(0.30, 0.52, 0.10), vec3(0.42, 0.62, 0.14), aC.z);
+    vec3 tip   = mix(vec3(0.72, 0.82, 0.26), vec3(0.88, 0.92, 0.40), rnd);
     vec3 col = mix(deep, mid, smoothstep(0.0, 0.55, t));
     col = mix(col, tip, smoothstep(0.45, 1.0, t) * (0.55 + 0.45 * aC.w));
+    float lp = vn(base * 0.28 + 4.0);
+    col = mix(col, col * vec3(1.18, 1.12, 0.7) + vec3(0.06, 0.07, 0.0), smoothstep(0.35, 0.8, lp) * t);
+    col *= mix(0.42, 1.0, smoothstep(0.02, 0.55, aC.x));   // dark tussock heart
     col *= 0.85 + 0.3 * rnd;
     col += vec3(0.05, 0.05, 0.0) * push * smoothstep(0.4, 1.0, t); // wind-lit sheen
     vCol = col;
@@ -111,7 +114,7 @@
     vN = nrm;
     vT = t;
     float d = distance(pos, uCam);
-    vFog = 1.0 - exp(-pow(d * 0.019, 1.35));
+    vFog = 0.0;
     gl_Position = uVP * vec4(pos, 1.0);
   }`;
 
@@ -141,7 +144,7 @@
   const GROUND_FS = `#version 300 es
   precision highp float;
   in vec3 vW; uniform vec3 uFog; uniform vec3 uCam; out vec4 o;
-  void main(){ float f = 1.0 - exp(-pow(distance(vW, uCam) * 0.019, 1.35));
+  void main(){ float f = 1.0 - exp(-pow(distance(vW, uCam) * 0.003, 1.35));
     o = vec4(mix(vec3(0.05, 0.11, 0.03), uFog, f), 1.0); }`;
 
   const SKY_VS = `#version 300 es
@@ -186,27 +189,24 @@
   const rand = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
   const gauss = () => (rand() + rand() + rand() + rand() - 2) * 1.2;
 
-  const FAR = 46, NEAR = 0.8;
-  const CLUMPS = Math.round(BLADES / 85);
+  const HALF = 6.2;                    // half-width of the square meadow seen from above
+  const CLUMPS = Math.round(BLADES / 190);
   const A = new Float32Array(BLADES * 4), B = new Float32Array(BLADES * 4), C = new Float32Array(BLADES * 4);
   let n = 0;
   for (let c = 0; c < CLUMPS && n < BLADES; c++) {
-    const z = NEAR + (FAR - NEAR) * Math.pow(rand(), 1.7);
-    const half = 3 + z * 0.95;
-    const cx = (rand() * 2 - 1) * half;
-    const cr = 0.28 + rand() * 0.42;               // clump radius
-    const ch = 0.55 + rand() * 0.55;               // clump height
+    const cx = (rand() * 2 - 1) * HALF, cz = (rand() * 2 - 1) * HALF;
+    const cr = 0.35 + rand() * 0.6;                // clump radius
+    const ch = 0.9 + rand() * 0.7;                 // clump height
     const crand = rand();
-    const count = Math.min(BLADES - n, Math.round(60 + rand() * 50));
+    const count = Math.min(BLADES - n, Math.round(150 + rand() * 80));
     for (let k = 0; k < count; k++, n++) {
       const dx = gauss() * cr, dz = gauss() * cr;
-      const r = Math.min(1, Math.hypot(dx, dz) / (cr * 1.6));
-      const mound = 1 - 0.45 * r;
-      const h = ch * mound * (0.6 + rand() * 0.55);
+      const r = Math.min(1, Math.hypot(dx, dz) / (cr * 1.5));
+      const h = ch * (1 - 0.35 * r) * (0.65 + rand() * 0.5);
       const outward = Math.atan2(dz, dx);
-      A.set([cx + dx, z + dz, h, 0.012 + rand() * 0.011], n * 4);
-      B.set([rand() * Math.PI * 2, outward + (rand() - 0.5) * 0.9, 0.18 + r * 0.55 + rand() * 0.25, rand()], n * 4);
-      C.set([cx, z, crand, mound], n * 4);
+      A.set([cx + dx, cz + dz, h, 0.0055 + rand() * 0.006], n * 4);
+      B.set([rand() * Math.PI * 2, outward + (rand() - 0.5) * 0.7, 0.2 + r * 0.9 + rand() * 0.3, rand()], n * 4);
+      C.set([r, rand(), crand, 1 - 0.45 * r], n * 4);
     }
   }
   const COUNT = n;
@@ -222,7 +222,7 @@
 
   const gvao = gl.createVertexArray(); gl.bindVertexArray(gvao);
   const gb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, gb);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-200, 0, -5, 200, 0, -5, -200, 0, 120, 200, 0, -5, 200, 0, 120, -200, 0, 120]), gl.STATIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-30, 0, -30, 30, 0, -30, -30, 0, 30, 30, 0, -30, 30, 0, 30, -30, 0, 30]), gl.STATIC_DRAW);
   gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
   const svao = gl.createVertexArray();
 
@@ -268,7 +268,7 @@
   addEventListener("pointermove", (e) => { tx = e.clientX / innerWidth - 0.5; ty = e.clientY / innerHeight - 0.5; });
 
   /* ---------- render ---------- */
-  const FOG = [0.74, 0.84, 0.82];
+  const FOG = [0.05, 0.11, 0.03];
   const SUN = (() => { const v = [-0.45, 0.55, -0.6]; const l = Math.hypot(...v); return v.map((x) => x / l); })();
   let W = 0, H = 0;
   function resize() {
@@ -289,19 +289,11 @@
     phase += speed * dt;
     px = ease(px, tx, dt, 0.35); py = ease(py, ty, dt, 0.35);
 
-    const cam = [px * 1.4, 1.25 + py * -0.25, -0.6];
-    const look = [px * 4, 0.55 + py * -0.6, 12];
-    const vp = m4.mul(m4.persp(1.0, W / H, 0.1, 160), m4.look(cam, look));
-    const horizon = (() => { // screen-space y of the horizon for the sky gradient
-      const pitch = Math.atan2(look[1] - cam[1], look[2] - cam[2]); return Math.tan(-pitch) / Math.tan(0.5);
-    })();
-
+    const cam = [px * 0.9, 8.5, py * 0.9 - 0.7];
+    const look = [px * 0.9, 0, py * 0.9 + 0.35];
+    const vp = m4.mul(m4.persp(0.95, W / H, 0.1, 60), m4.look(cam, look));
     gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL);
     gl.clearColor(FOG[0], FOG[1], FOG[2], 1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    gl.depthMask(false); gl.useProgram(sky.p);
-    gl.uniform3fv(sky.u.uFog, FOG); gl.uniform1f(sky.u.uHorizon, horizon);
-    gl.bindVertexArray(svao); gl.drawArrays(gl.TRIANGLES, 0, 3); gl.depthMask(true);
 
     gl.useProgram(ground.p);
     gl.uniformMatrix4fv(ground.u.uVP, false, vp); gl.uniform3fv(ground.u.uCam, cam); gl.uniform3fv(ground.u.uFog, FOG);
