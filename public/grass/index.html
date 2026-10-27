@@ -23,7 +23,9 @@
   input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border: 0; border-radius: 50%; background: #fff; }
   .back { position: fixed; top: max(16px, env(safe-area-inset-top)); left: 16px; padding: 10px 16px; border-radius: 999px; background: rgba(12,24,10,.42); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); color: #eef6e4; text-decoration: none; font: 500 13px/1 -apple-system, system-ui, sans-serif; }
   .embed .back { top: 76px; }
-  .inner .back { display: none; }
+  .inner .back, .inner .ui, .inner .hint { display: none; }
+  .inner, .inner body { background: #f5f3ef; }
+  .inner canvas { -webkit-mask-image: none; mask-image: none; }
   .inner .hint { top: 134px; }
   .hint { position: fixed; top: max(18px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); color: rgba(44,36,32,.72);
           font: 500 13px/1 -apple-system, system-ui, sans-serif; transition: opacity .8s; pointer-events: none; }
@@ -37,6 +39,7 @@
 <script>
 if (location.search.includes("inner")) document.documentElement.classList.add("inner");
 if (location.search.includes("embed")) { document.documentElement.classList.add("embed"); document.getElementById("back").href += location.search; }
+window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind === "number" && window.__grassWind) window.__grassWind(e.data.wind); });
 (() => {
   const canvas = document.getElementById("c");
   const gl = canvas.getContext("webgl2", { antialias: true, alpha: false, powerPreference: "high-performance" });
@@ -356,6 +359,7 @@ if (location.search.includes("embed")) { document.documentElement.classList.add(
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
+  window.__grassWind = (v) => setTarget(v);
   window.__grass = { setTarget, get state() { return { speed, strength, phase, target, COUNT }; } };
 })();
 </script>

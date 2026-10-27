@@ -317,13 +317,15 @@ const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 200);
 const ray = new THREE.Raycaster();
 const ndc = new THREE.Vector2();
 function pickPlane(x, y, planeY) {
-  ndc.set((x / innerWidth) * 2 - 1, -(y / innerHeight) * 2 + 1);
+  const r = canvas.getBoundingClientRect();
+  ndc.set(((x - r.left) / r.width) * 2 - 1, -((y - r.top) / r.height) * 2 + 1);
   ray.setFromCamera(ndc, camera);
   const t = (planeY - ray.ray.origin.y) / ray.ray.direction.y;
   return t > 0 ? ray.ray.at(t, new THREE.Vector3()) : null;
 }
 function pickZ(x, y, z) {
-  ndc.set((x / innerWidth) * 2 - 1, -(y / innerHeight) * 2 + 1);
+  const r = canvas.getBoundingClientRect();
+  ndc.set(((x - r.left) / r.width) * 2 - 1, -((y - r.top) / r.height) * 2 + 1);
   ray.setFromCamera(ndc, camera);
   const t = (z - ray.ray.origin.z) / ray.ray.direction.z;
   return t > 0 ? ray.ray.at(t, new THREE.Vector3()) : null;
@@ -593,7 +595,7 @@ const postMat = new THREE.ShaderMaterial({
       c = floor(c * (uLevels - 1.0) + 0.5 + t * 0.95) / (uLevels - 1.0);
       // halftone dissolve to the page colour while switching scenes
       float th = bayer(floor(vUv * uRes * 0.5) * 2.0 + vec2(mod(floor(vUv.x * uRes.x), 2.0), 0.0));
-      c = mix(c, vec3(1.0), step(th * 0.96 + 0.02, uFade));
+      c = mix(c, vec3(0.961, 0.953, 0.937), step(th * 0.96 + 0.02, uFade));
       gl_FragColor = vec4(c, 1.0);
     }`,
   depthTest: false, depthWrite: false,
@@ -602,11 +604,11 @@ postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), postMat));
 
 /* ---------- scene manager ---------- */
 const META = {
-  tulips: ["Tulip field", "Spring · pink tulips over the hill", "Tap a flower to scatter its petals · tap to call the butterfly · drag to fly"],
-  meadow: ["Buttercup meadow", "Spring · dandelion clocks and clover", "Tap a dandelion to blow it · tap to call the butterfly · drag to fly"],
-  pond: ["Lily pond", "Summer · pads, lotus and ripples", "Move over the water · tap for a big ripple · drag to fly"],
-  mites: ["Mite burrow", "Damp soil · velvet mites", "Move over a mite · press and hold to make it curl up"],
-  grass: ["Grass from above", "Meadow · combed by the wind", "Hover to part the grass · tap to change the wind"],
+  tulips: ["Tulip field", "Spring · pink tulips over the hill", "Tap a flower to scatter its petals · tap to call the butterfly · drag to fly", "tulips"],
+  meadow: ["Buttercup meadow", "Spring · dandelion clocks and clover", "Tap a dandelion to blow it · tap to call the butterfly · drag to fly", "meadow"],
+  pond: ["Lily pond", "Summer · pads, lotus and ripples", "Move over the water · tap for a big ripple · drag to fly", "pond"],
+  mites: ["Mite burrow", "Damp soil · velvet mites", "Move over a mite · press and hold to make it curl up", "mites"],
+  grass: ["Grass from above", "Meadow · combed by the wind", "Hover to part the grass · tap to change the wind", "grass"],
 };
 const ORDER = ["tulips", "meadow", "pond", "mites", "grass"];
 const nav = document.getElementById("scenes");
@@ -640,7 +642,7 @@ function showNow(id) {
   const [t, sub, hintText] = META[id];
   document.getElementById("cap-title").textContent = t; document.getElementById("cap-sub").textContent = sub;
   document.getElementById("cap-hint").textContent = hintText;
-  [...nav.querySelectorAll(".thumb")].forEach((el) => el.setAttribute("aria-current", String(el.dataset.id === id)));
+  [...nav.querySelectorAll(".name")].forEach((el) => el.setAttribute("aria-current", String(el.dataset.id === id)));
   history.replaceState(null, "", location.search + "#" + id);
 }
 
@@ -662,19 +664,18 @@ function stepFade(dt) {
   } else if (fadeDir < 0 && fade <= 0) fadeDir = 0;
 }
 ORDER.forEach((id) => {
-  const b = document.createElement("button"); b.className = "thumb"; b.dataset.id = id; b.setAttribute("aria-label", META[id][0]);
-  b.style.backgroundImage = `url(./thumbs/${id}.jpg)`; b.innerHTML = "<i></i>";
+  const b = document.createElement("button"); b.className = "name"; b.dataset.id = id; b.innerHTML = META[id][3] + "<i></i>";
   b.onclick = () => goto(id, true); nav.appendChild(b);
 });
 const playBtn = document.createElement("button"); playBtn.id = "play"; playBtn.type = "button";
-const syncPlay = () => { playBtn.textContent = autoplay ? "❚❚" : "▶"; playBtn.setAttribute("aria-label", autoplay ? "Pause" : "Play"); };
+const syncPlay = () => { playBtn.textContent = autoplay ? "pause" : "play"; playBtn.setAttribute("aria-label", autoplay ? "Pause" : "Play"); };
 playBtn.onclick = () => { autoplay = !autoplay; syncPlay(); };
 nav.appendChild(playBtn); syncPlay();
 
 /* ---------- pixel toggle ---------- */
 const pxBtn = document.getElementById("px");
 const syncPx = () => {
-  pxBtn.setAttribute("aria-pressed", String(pixelOn)); pxBtn.textContent = pixelOn ? "Pixel: on" : "Pixel: off";
+  pxBtn.setAttribute("aria-pressed", String(pixelOn)); pxBtn.textContent = pixelOn ? "pixel: on" : "pixel: off";
   if (mitesFrame.src) mitesFrame.src = mitesFrame.dataset.src + (pixelOn ? "?px=1" : "");
 };
 pxBtn.addEventListener("click", () => { pixelOn = !pixelOn; syncPx(); resize(); });
@@ -683,31 +684,34 @@ pxBtn.addEventListener("click", () => { pixelOn = !pixelOn; syncPx(); resize(); 
 const slider = document.getElementById("wind"), label = document.getElementById("label");
 const NAMES = [[0.12, "Still"], [0.5, "Light air"], [1.0, "Breeze"], [1.7, "Windy"], [2.4, "Gale"], [9, "Storm"]];
 let target = parseFloat(slider.value), speed = target, strength = target, gust = 0, phase = 0, dirAngle = 0.35, dirTarget = 0.35;
-const setTarget = (v) => { target = v; slider.value = v; label.textContent = NAMES.find(([m]) => v < m)[1]; };
+const sendWind = () => { try { grassFrame.contentWindow?.postMessage({ wind: target }, "*"); } catch (_) {} };
+const setTarget = (v) => { target = v; slider.value = v; label.textContent = NAMES.find(([m]) => v < m)[1]; sendWind(); };
+grassFrame.addEventListener("load", sendWind);
 slider.addEventListener("input", () => setTarget(parseFloat(slider.value)));
 setTarget(target);
 syncPx();
 
 let down = null;
-addEventListener("pointerdown", (e) => { if (e.target.closest(".bar")) return; down = { x: e.clientX, y: e.clientY }; });
-addEventListener("pointermove", (e) => { if (!e.target.closest(".bar")) current?.move?.(e.clientX, e.clientY); });
+addEventListener("pointerdown", (e) => { if (e.target !== canvas) return; down = { x: e.clientX, y: e.clientY }; });
+addEventListener("pointermove", (e) => { if (e.target === canvas) current?.move?.(e.clientX, e.clientY); });
 addEventListener("pointerup", (e) => {
   if (!down) return;
   const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y); down = null;
   if (moved > 12) return;
   gust = Math.max(gust, 1.0);
-  dirTarget += (e.clientX / innerWidth - 0.5) * 0.6;
+  const sr = canvas.getBoundingClientRect(); dirTarget += ((e.clientX - sr.left) / sr.width - 0.5) * 0.6;
   current?.tap?.(e.clientX, e.clientY);
 });
 
 /* ---------- loop ---------- */
 function resize() {
   const dpr = Math.min(devicePixelRatio || 1, DPR_CAP);
-  renderer.setPixelRatio(dpr); renderer.setSize(innerWidth, innerHeight, false);
-  const rw = Math.ceil(innerWidth / PX), rh = Math.ceil(innerHeight / PX);
+  const sw = Math.max(2, canvas.clientWidth), sh = Math.max(2, canvas.clientHeight);
+  renderer.setPixelRatio(dpr); renderer.setSize(sw, sh, false);
+  const rw = Math.ceil(sw / PX), rh = Math.ceil(sh / PX);
   rt.setSize(rw, rh); postMat.uniforms.uRes.value.set(rw, rh);
-  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
-  const px = (pixelOn ? rh : innerHeight * dpr) * 0.5;
+  camera.aspect = sw / sh; camera.updateProjectionMatrix();
+  const px = (pixelOn ? rh : sh * dpr) * 0.5;
   Object.values(built).forEach((s) => s.group.traverse((o) => { if (o.material?.uniforms?.uPx) o.material.uniforms.uPx.value = px; }));
   current?.resize?.();
 }
@@ -727,7 +731,7 @@ function frame(now) {
     elapsed += dt;
     if (elapsed >= DURATION) goto(ORDER[(ORDER.indexOf(currentId) + 1) % ORDER.length]);
   }
-  const prog = nav.querySelector('.thumb[aria-current="true"]'); if (prog) prog.style.setProperty("--p", autoplay ? Math.min(1, elapsed / DURATION) : 0);
+  const prog = nav.querySelector('.name[aria-current="true"]'); if (prog) prog.style.setProperty("--p", autoplay ? Math.min(1, elapsed / DURATION) : 0);
   if (!mitesing && current) {
     current.update(dt, { strength, dir: U.uDir.value, time });
     if (pixelOn) {
