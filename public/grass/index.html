@@ -526,7 +526,7 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
       if (walkInfo) {
         const c = ((q.ph / 6.2832) % 1 + 1) % 1, frame = moving ? Math.floor(c * 8) % 8 : 0;
         const { w, h, cw, ch } = walkInfo, hh = 0.26, hw = hh * cw / ch;
-        put(q.x, q.z, hw, hh, q.rot - Math.PI / 2, 3, 1, 0, (frame * cw) / w, (q.char * ch) / h, cw / w, ch / h);
+        put(q.x, q.z, hw, hh, q.rot + (walkInfo.faces === "down" ? Math.PI / 2 : -Math.PI / 2), 3, 1, 0, (frame * cw) / w, (q.char * ch) / h, cw / w, ch / h);
       } else put(q.x, q.z, 0.1, 0.18, q.rot, 2, 1, moving ? q.ph : Math.sin(t * 1.5 + q.ph) * 0.2, q.shirt[0], q.shirt[1], q.shirt[2], q.v);
     }
     gl.useProgram(spr.p);
