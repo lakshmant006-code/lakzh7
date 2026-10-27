@@ -104,8 +104,8 @@ const bodyAt = (y) => {
 const HEAD_Y = BODY[0][0] - 6, FEET_Y = BODY[BODY.length - 1][0] + 4;
 const tgt = new Float32Array(N * 3);
 {
-  // the way in: from her hand, up and over, then down onto his head
-  const H = { x: ANCHOR.x, y: ANCHOR.y }, P = { x: BODY[0][1], y: HEAD_Y }, C = { x: (H.x + P.x) / 2 + 30, y: HEAD_Y - 60 };
+  // where it lands: blown in over the top of his head from the upper right (the wind is blowing from her toward him), then down his body
+  const H = { x: BODY[0][1] + 150, y: HEAD_Y - 150 }, P = { x: BODY[0][1], y: HEAD_Y }, C = { x: (H.x + P.x) / 2 + 30, y: HEAD_Y - 60 };
   const bez = (t) => { const a = (1 - t) * (1 - t), b = 2 * t * (1 - t), c = t * t; return [a * H.x + b * C.x + c * P.x, a * H.y + b * C.y + c * P.y]; };
   const arc = [[...bez(0), 0]];
   for (let q = 1; q <= 80; q++) { const [x, y] = bez(q / 80), o = arc[q - 1]; arc.push([x, y, o[2] + Math.hypot(x - o[0], y - o[1])]); }
@@ -137,6 +137,19 @@ const tgt = new Float32Array(N * 3);
   }
 }
 let wrap = 0, wrapOn = false;                                              // wrap: 0 free in the wind, 1 lying over him
+/* The dupatta's life, like the film shot: it streams from her hand, then a gust tears it loose, it tumbles through the air
+   as a floppy white streamer, is carried to him, opens up like a sail and drapes over his head. Click again and the wind
+   peels it off and brings it home to her hand.
+   held -> flying -> wrapped -> returning -> held */
+let mode = "held", flyT = 0;
+const hand = () => ({ x: ANCHOR.x, y: ANCHOR.y });
+const centre = { x: ANCHOR.x, y: ANCHOR.y, vx: 0, vy: 0 };
+function updateCentre() { let sx = 0, sy = 0; for (let p = 0; p < N; p++) { sx += px[p * 3]; sy += px[p * 3 + 1]; } const nx = sx / N, ny = sy / N; centre.vx = (nx - centre.x) / STEP * 0.35 + centre.vx * 0.65; centre.vy = (ny - centre.y) / STEP * 0.35 + centre.vy * 0.65; centre.x = nx; centre.y = ny; }
+function release() {
+  mode = "flying"; flyT = 0;
+  for (let i = 0; i < COLS; i++) pinned[idx(i, 0)] = 0;
+  for (let p = 0; p < N; p++) { const k = p * 3, j = Math.floor(p / COLS) / (ROWS - 1); pv[k] -= (-170 - 120 * j) * STEP; pv[k + 1] -= (-300 + 150 * j) * STEP; }   // the toss: up and away from her hand
+}
 const manEl = document.querySelector(".man");
 
 /* mesh, textured with the dupatta pattern from the reference */
@@ -184,7 +197,11 @@ canvas.addEventListener("pointermove", (ev) => {
   gust = Math.min(1.6, gust + Math.hypot(ptrVel.x, ptrVel.y) * 0.004);
 });
 canvas.addEventListener("pointerleave", () => { ptr = null; ptrVel = { x: 0, y: 0 }; });
-canvas.addEventListener("pointerdown", () => { wrapOn = !wrapOn; if (!wrapOn) kick = 1.6; });   // click: wrap him; click again: let it go
+canvas.addEventListener("pointerdown", () => {
+  if (mode === "held") release();
+  else if (mode === "wrapped") { mode = "returning"; wrapOn = false; kick = 1.8; }       // the wind peels it off him and sends it home
+  else gust = Math.min(1.6, gust + 0.8);                                                  // mid-flight: just a puff to stir it
+});
 
 /* ---------- physics (fixed step, sub-stepped, then relaxed for silk smoothness) ---------- */
 const STEP = 1 / 60, SUB = 3, DT = STEP / SUB, ITER = 6;
@@ -210,14 +227,34 @@ function simulate(t) {
   gust *= 0.985; kick *= 0.96;
   const base = strength * (0.9 + 1.5 * swell) + gust * 1.8 + kick * 2.4;
   const wx = -470 * WS * base, wy = -400 * WS * base * (0.8 + 0.5 * flutter), wz = 140 * WS * base * noise(t * 0.8, 7.7);
+  if (mode === "flying") {
+    flyT += STEP; updateCentre();
+    const head = { x: BODY[0][1], y: HEAD_Y + 30 };
+    if ((Math.hypot(centre.x - head.x, centre.y - head.y) < 120 && flyT > 0.9) || flyT > 4.2) { mode = "wrapped"; wrapOn = true; }
+  } else if (mode === "returning") {
+    flyT += STEP; updateCentre();
+    let near = true; for (let i = 0; i < COLS; i++) { const k = idx(i, 0) * 3; if (Math.hypot(px[k] - hand().x, px[k + 1] - hand().y) > 36) near = false; }
+    if (near || flyT > 6) { mode = "held"; for (let i = 0; i < COLS; i++) pinned[idx(i, 0)] = 1; }
+  }
+  const free = mode === "flying" || mode === "returning";
   wrap = wrapOn ? Math.min(1, wrap + STEP / 1.7) : Math.max(0, wrap - STEP / 0.7);
   // her hand: a gentle sway that lifts a little with each gust
   const ax = ANCHOR.x + Math.sin(t * 0.7) * 4 * SCALE, ay = ANCHOR.y + Math.sin(t * 0.93) * 6 * SCALE - Math.min(14, base * 5) * SCALE;
+  // where free flight is headed: up and across, then down onto his head (or, going home, back toward her hand)
+  let gx = 0, gy = 0;
+  if (mode === "flying") {
+    // a spring-damper toward a waypoint that starts up and to the right of him and settles onto his head: an arc, never an overshoot
+    const arc = Math.max(0, 1 - flyT / 1.25), Tx = BODY[0][1] + 110 * arc, Ty = HEAD_Y + 20 - 150 * arc;
+    gx = (Tx - centre.x) * 3.4 - centre.vx * 3.3; gy = (Ty - centre.y) * 3.4 - centre.vy * 3.3;
+  } else if (mode === "returning") {
+    const Ty = ay - (flyT < 1.2 ? 130 * (1 - flyT / 1.2) : 0);
+    gx = (ax - centre.x) * 3.2 - centre.vx * 3.2; gy = (Ty - centre.y) * 3.2 - centre.vy * 3.2;
+  }
   for (let s = 0; s < SUB; s++) {
     normals();
     for (let p = 0; p < N; p++) {
       if (pinned[p]) continue;
-      const k = p * 3, loc = smooth(0, 1, wrap * 1.9 - Math.floor(p / COLS) / (ROWS - 1) * 0.9), fr = 1 - 0.92 * loc;
+      const k = p * 3, loc = smooth(0, 1, wrap * 1.9 - Math.floor(p / COLS) / (ROWS - 1) * 0.9), fr = (free ? 0.3 : 1) * (1 - 0.92 * loc);
       let vx = (px[k] - pv[k]) / DT, vy = (px[k + 1] - pv[k + 1]) / DT, vz = (px[k + 2] - pv[k + 2]) / DT;
       // aerodynamic push: the part of the relative wind that strikes the surface
       const rx = wx * fr * (1 + 0.35 * noise(t * 1.4, p * 0.013)) - vx, ry = wy * fr - vy, rz = wz * fr - vz;
@@ -228,6 +265,13 @@ function simulate(t) {
       if (loc > 0) {   // lying over him: drawn onto his outline
         fx += (tgt[k] - px[k]) * 110 * loc - vx * 9 * loc; fy += (tgt[k + 1] - px[k + 1]) * 110 * loc - vy * 9 * loc; fz += (tgt[k + 2] - px[k + 2]) * 110 * loc - vz * 9 * loc;
       }
+      if (free) {
+        const j = Math.floor(p / COLS), i = p % COLS, ph = t * 3.4 + j * 0.16 + i * 0.5;
+        fx += gx + Math.sin(ph) * 230 * SCALE * 3 * (0.4 + j / ROWS);
+        fy += gy - GRAVITY * 0.78 + Math.cos(ph * 0.8 + i) * 180 * SCALE * 3 * (0.3 + j / ROWS);
+        fz += Math.sin(ph * 1.3 + i * 0.9) * 700 * SCALE * 3 * (0.3 + j / ROWS);              // the flapping and rolling that makes it tumble
+        if (mode === "returning" && j === 0) { fx += (ax - px[k]) * 40; fy += (ay + (i / (COLS - 1) - 0.5) * W_TOP - px[k + 1]) * 40; }
+      }
       if (ptr && loc < 0.5) { const dx = px[k] - ptr.x, dy = px[k + 1] - ptr.y, d2 = dx * dx + dy * dy; if (d2 < 14000 * SCALE) { const f = (1 - d2 / (14000 * SCALE)) * 5200 * SCALE; const d = Math.sqrt(d2) || 1; fx += dx / d * f + ptrVel.x * 30 * SCALE; fy += dy / d * f + ptrVel.y * 30 * SCALE; fz += f * 0.35; } }
       const nx = px[k] + (px[k] - pv[k]) * DRAG + fx * DT * DT;
       const ny = px[k + 1] + (px[k + 1] - pv[k + 1]) * DRAG + fy * DT * DT;
@@ -235,7 +279,7 @@ function simulate(t) {
       pv[k] = px[k]; pv[k + 1] = px[k + 1]; pv[k + 2] = px[k + 2];
       px[k] = nx; px[k + 1] = Math.min(ny, 930); px[k + 2] = Math.max(-420 * SCALE, Math.min(420 * SCALE, nz));
     }
-    for (const { i, dy } of pinRest) { const k = idx(i, 0) * 3; px[k] = ax; px[k + 1] = ay + dy; px[k + 2] = Math.sin(i * 0.9) * 3 * SCALE; pv[k] = px[k]; pv[k + 1] = px[k + 1]; pv[k + 2] = px[k + 2]; }
+    if (mode === "held") for (const { i, dy } of pinRest) { const k = idx(i, 0) * 3; px[k] = ax; px[k + 1] = ay + dy; px[k + 2] = Math.sin(i * 0.9) * 3 * SCALE; pv[k] = px[k]; pv[k + 1] = px[k + 1]; pv[k + 2] = px[k + 2]; }
     for (let it = 0; it < ITER; it++) {
       for (let c = 0; c < rest.length; c++) {
         const [a, b, len, sf] = rest[c], ka = a * 3, kb = b * 3;
@@ -272,7 +316,7 @@ function frame(now) {
 }
 for (let i = 0; i < 240; i++) { time += STEP; simulate(time); }   // let it settle before the first frame
 requestAnimationFrame(frame);
-window.__cloth = { px, N, COLS, ROWS, get wrap() { return wrap; }, get on() { return wrapOn; } };
+window.__cloth = { px, N, COLS, ROWS, get mode() { return mode; }, get centre() { return centre; }, click: () => canvas.dispatchEvent(new PointerEvent("pointerdown")), get wrap() { return wrap; }, get on() { return wrapOn; } };
 </script>
 </body>
 </html>
