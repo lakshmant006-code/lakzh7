@@ -603,6 +603,40 @@ const ProMoveCaseStudy = () => {
       </CsSection>
 
       <CsSection
+        id="promove-feedback"
+        label="Feedback"
+        title="Iterating with a product designer"
+      >
+        <CsText>
+          Once the prototype could move a drawing, we put it in front of
+          someone who designs products for a living. Naheel is a product
+          designer at Google, and we walked him through the working prototype
+          over a call, with the character on an iPad canvas and the live
+          rig beside it.
+        </CsText>
+        <CsPanel title="Reviewing the prototype with Naheel" wide>
+          <CsVideo
+            src={`${BASE}/feedback-naheel.mp4`}
+            label="A video call with Naheel, a product designer at Google, reviewing the pro-move prototype on an iPad"
+          />
+        </CsPanel>
+        <CsH3>Design iteration</CsH3>
+        <CsText>
+          A fresh set of eyes showed us what we had stopped noticing. His
+          feedback went straight back into the next round of design, from how
+          the controls read to which parts of the motion felt right and which
+          needed more work.
+        </CsText>
+        <CsH3>Prototyping, then feedback, then prototyping</CsH3>
+        <CsText>
+          Each round followed the same loop: change the prototype, show it
+          running rather than describing it, listen, and fold what we heard
+          back in. Seeing the character move in front of him made the feedback
+          specific, so we could act on it the same day.
+        </CsText>
+      </CsSection>
+
+      <CsSection
         id="promove-takeaways"
         label="Reflections"
         title="Measure first, then make it move."
