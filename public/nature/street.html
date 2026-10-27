@@ -107,7 +107,7 @@ function spriteMesh(base, W, H, ax, ay, aw, ah) {
   world.add(mesh); return mesh;
 }
 for (const it of atlas.items) {
-  if (it.type === "cow") continue;                       // the cows are drawn fresh below
+  if (it.type === "cow" || it.type === "ped") continue;  // cows and people are drawn fresh below
   const k = SCALE[it.type];
   const mesh = spriteMesh(sheet, atlas.w, atlas.h, it.ax, it.ay, it.aw, it.ah);
   const [a, b] = SPEED[it.type];
@@ -120,6 +120,28 @@ for (const it of atlas.items) {
 }
 // spread the traffic so nothing starts on top of something else
 for (const v of vehicles) if (v.type !== "ped") v.x = Math.min(ROAD[1] - v.w / 2, Math.max(ROAD[0] + v.w / 2, v.x));
+
+/* ---------- people: the drawn walk-cycle characters stroll along both sidewalks ---------- */
+const walkMeta = await fetch("./street/walkers.json").then((r) => r.json());
+const walkSheet = await new Promise((res) => loader.load("./street/walkers.png", res));
+walkSheet.colorSpace = THREE.SRGBColorSpace;
+const WALK_H = 24;                                        // a frame's height on the street
+const softShadow = () => new THREE.ShaderMaterial({ transparent: true, depthWrite: false,
+  vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+  fragmentShader: "varying vec2 vUv; void main(){ vec2 p = vUv * 2.0 - 1.0; float d = length(p); float a = smoothstep(1.0, 0.2, d) * mix(1.0, 0.45, vUv.x); gl_FragColor = vec4(0.11, 0.13, 0.22, a * 0.5); }" });
+for (let i = 0; i < 12; i++) {
+  const lane = i % 2 ? WALK_L : WALK_R, dir = Math.random() < 0.5 ? 1 : -1;
+  const t = walkSheet.clone(); t.repeat.set(walkMeta.cw / walkMeta.w, walkMeta.ch / walkMeta.h); t.needsUpdate = true;
+  const kw = WALK_H / walkMeta.ch, fw = walkMeta.cw * kw;
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(fw, WALK_H), new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false }));
+  const shadow = new THREE.Mesh(new THREE.PlaneGeometry(26, 7), softShadow());
+  world.add(shadow); world.add(mesh);
+  vehicles.push({
+    mesh, shadow, type: "ped", dir, k: 1, x: lane[0] + 9 + Math.random() * (lane[1] - lane[0] - 18), y: Math.random() * SH, w: fw * 0.6, h: WALK_H * 0.6, z: 3.2,
+    base: 8 + Math.random() * 6, speed: 0, phase: Math.random() * 6.28, boost: 0, pop: 0, lastHonk: -9, tx: null, stuck: 0, wob: 0, wobV: 0, bumpCool: 0,
+    walk: { tex: t, char: i % 6, dist: Math.random() * 20 },
+  });
+}
 
 /* ---------- cows: a few wander across the road; one can be you ---------- */
 const cowAtlas = await fetch("./street/cows.json").then((r) => r.json());
@@ -348,6 +370,14 @@ function frame(now) {
     const s = v.k * (1 + 0.12 * Math.sin(v.pop * Math.PI));
     const [wx, wy] = toWorld(v.x, v.y);
     v.mesh.position.set(wx, wy, v.z); v.mesh.scale.set(s, s, 1); v.mesh.rotation.z = v.wob * 0.35;
+    if (v.walk) {                                         // step through the walk cycle as they cover ground
+      v.walk.dist += Math.abs(v.speed) * dt;
+      const frame = Math.floor((v.walk.dist / 9) * 8) % 8;
+      v.walk.tex.offset.set((frame * walkMeta.cw) / walkMeta.w, 1 - ((v.walk.char + 1) * walkMeta.ch) / walkMeta.h);
+      v.mesh.rotation.z = v.dir > 0 ? 0 : Math.PI;        // the drawings face down the street
+      const [sx, sy] = toWorld(v.x - 9, v.y + 7);
+      v.shadow.position.set(sx, sy, v.z - 0.1); v.shadow.rotation.z = Math.atan2(-7, -9);
+    }
   }
   renderer.render(scene, camera);
   requestAnimationFrame(frame);
