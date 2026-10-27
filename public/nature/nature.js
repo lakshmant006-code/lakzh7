@@ -807,9 +807,10 @@ const META = {
   pond: ["Lily pond", "Summer · pads, lotus and ripples", "Move over the water · tap for a big ripple · drag to fly", "pond"],
   canopy: ["Jungle canopy", "Understory · broad leaves in dappled light", "Move to open a gap in the canopy · tap to shake the leaves", "canopy"],
   mites: ["Rainy velvets", "A memory · velvet mites after the rain", "Move over a mite · press and hold to make it curl up", "rainy velvets"],
+  street: ["Street", "Midday · a city street from above", "Layers stacked: buildings, traffic and people, trees", "street"],
   grass: ["Grass from above", "Meadow · combed by the wind", "Hover to part the grass · tap to plant flowers · someone will come over", "grass"],
 };
-const ORDER = ["tulips", "meadow", "pond", "canopy", "mites", "grass"];
+const ORDER = ["tulips", "meadow", "pond", "canopy", "mites", "grass", "street"];
 const nav = document.getElementById("scenes");
 const deck = document.getElementById("deck");
 const built = {};
@@ -817,19 +818,22 @@ let current = null, currentId = null, mitesing = false;
 const root = new THREE.Scene();
 const mitesFrame = document.getElementById("mites");
 const grassFrame = document.getElementById("grass");
+const streetFrame = document.getElementById("street");
 
 /** swap what is on screen right now (no animation) */
 function showNow(id) {
-  const isMites = id === "mites", isGrass = id === "grass";
+  const isMites = id === "mites", isGrass = id === "grass", isStreet = id === "street";
+  document.body.classList.toggle("is-street", isStreet);
   document.body.classList.toggle("is-mites", isMites);
   document.body.classList.toggle("is-grass", isGrass);
   // frames only run while visible
   if (isMites && !mitesFrame.src) mitesFrame.src = mitesFrame.dataset.src + (pixelOn ? "?px=1" : "");
   if (isGrass && !grassFrame.src) grassFrame.src = grassFrame.dataset.src;
+  if (isStreet && !streetFrame.src) streetFrame.src = streetFrame.dataset.src;
   if (!isMites && mitesFrame.src) setTimeout(() => { if (currentId !== "mites") mitesFrame.removeAttribute("src"); }, 700);
   if (!isGrass && grassFrame.src) setTimeout(() => { if (currentId !== "grass") grassFrame.removeAttribute("src"); }, 700);
   currentId = id;
-  if (isMites || isGrass) { mitesing = true; }
+  if (isMites || isGrass || isStreet) { mitesing = true; }
   else {
     mitesing = false;
     if (current?.leave) current.leave();
@@ -849,7 +853,7 @@ function showNow(id) {
 let fade = 0, fadeDir = 0, pending = null, elapsed = 0, autoplay = params.get("auto") !== "0";
 const DURATION = 11;
 function goto(id, manual) {
-  if (!SCENES[id] && id !== "mites" && id !== "grass") id = "tulips";
+  if (!SCENES[id] && id !== "mites" && id !== "grass" && id !== "street") id = "tulips";
   elapsed = 0;
   if (manual && id === currentId) return;
   if (currentId === null) { showNow(id); return; }
