@@ -97,6 +97,7 @@ const Nav = () => {
     "/time-management",
     "/quizai",
     "/hiku",
+    "/keep",
   ];
   const NAV_FADE_DELAY = isDefaultHomePath(location.pathname)
     ? LANDING_NAV_DELAY

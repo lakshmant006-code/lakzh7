@@ -15,7 +15,8 @@ const workProjects = [
     summary:
       "Photos, voice notes, and quotes end up scattered and forgotten. Keep files everything on one calendar, then lets you ask for it later, with Re-live avatars, a places map, face-matched people, and insights.",
     shortSummary: "Keep what matters, then just ask for it later.",
-    image: "/work/keep/keep-thumb.jpg",
+    video: "/work/keep/keep-thumb.mp4",
+    thumbnailImage: "/work/keep/keep-thumb-frame.jpg",
     liveUrl: "https://lakshmant006-code.github.io/keepxmeta/",
     category: "case-study",
   },
@@ -78,6 +79,7 @@ const workProjects = [
 const routeMap = {
   "time-management-pain-detection": "/time-management",
   "quizai-approval-flow": "/quizai",
+  "keep-memory-calendar": "/keep",
   "hiku-bio-smart-wearable": "/hiku",
   "promove-svsd-hackathon": "/pro-move",
 };
@@ -109,6 +111,7 @@ function WorkCard({
   const isClickable =
     project.id === "time-management-pain-detection" ||
     project.id === "quizai-approval-flow" ||
+    project.id === "keep-memory-calendar" ||
     project.id === "hiku-bio-smart-wearable" ||
     project.id === "promove-svsd-hackathon";
 

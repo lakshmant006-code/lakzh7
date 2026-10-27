@@ -1,0 +1,273 @@
+import React from "react";
+import useScrollReset from "../../hooks/useScrollReset";
+import {
+  CsPage,
+  CsBreadcrumb,
+  CsHero,
+  CsIntro,
+  CsSection,
+  CsH3,
+  CsText,
+  CsCallout,
+  CsPanel,
+  CsGrid3,
+  CsChips,
+  CsHmw,
+  CsImg,
+  CsVideo,
+  CsSeeNext,
+} from "../../components/CsKit/CsKit";
+
+const SHOTS = "/work/keep/screens";
+
+const KeepCaseStudy = () => {
+  useScrollReset();
+
+  return (
+    <CsPage project="keep" accent="#0866FF" tint="#E7F0FF">
+      <CsBreadcrumb current="Keep" />
+      <CsHero>
+        <CsVideo
+          src="/work/keep/keep-thumb.mp4"
+          label="Keep and Meta AI, the title animation"
+        />
+      </CsHero>
+
+      <CsIntro
+        title="Keep: A Memory Calendar That Answers Back"
+        lead="Drop anything worth keeping into one calendar, then ask for it later. Keep brings it back with the original photo, note, or voice memo."
+        meta={[
+          { label: "Role", value: ["Product Designer", "Developer"] },
+          { label: "Platform", value: "Installable web app (PWA)" },
+          {
+            label: "Tools",
+            value: ["HTML and JavaScript", "three.js", "IndexedDB", "Google Maps"],
+          },
+          {
+            label: "Scope",
+            value: ["Mobile", "AI Interaction", "Personal Data", "Privacy"],
+          },
+        ]}
+      />
+
+      <CsSection id="keep-overview" label="Overview" title="What is Keep?">
+        <CsText>
+          Photos, voice notes, quotes, and places pile up across a dozen apps,
+          and the moment you want one back, you cannot remember where you put
+          it. Keep is a single calendar for all of it. Everything you keep is
+          filed on the day it happened, and a search bar at the bottom answers
+          in plain language.
+        </CsText>
+        <CsText>
+          It is one static web app you can install on a phone. There is no
+          server and no account: <strong>everything lives on the device</strong>
+          , photos included.
+        </CsText>
+        <CsH3>My role</CsH3>
+        <CsText>
+          I designed and built it end to end: the calendar and its interactions,
+          the way answers show the original memory, the 3D Re-live view, and the
+          on-device people matching, then wrote the code for all of it.
+        </CsText>
+        <CsGrid3
+          items={[
+            {
+              media: <CsImg src={`${SHOTS}/calendar.webp`} alt="Keep calendar with a thumbnail on every day that has a memory" />,
+              caption: "A day per circle",
+            },
+            {
+              media: <CsImg src={`${SHOTS}/ask.webp`} alt="Searching coffee in Keep and getting the original memories back" />,
+              caption: "Ask in plain words",
+            },
+            {
+              media: <CsImg src={`${SHOTS}/insights.webp`} alt="Keep Insights page with streaks and activity charts" />,
+              caption: "See what you keep",
+            },
+          ]}
+        />
+      </CsSection>
+
+      <CsSection id="keep-problem" label="Problem" title="Keeping is easy. Finding is not.">
+        <CsText>
+          Most apps are good at collecting and bad at remembering. A photo sits
+          in a camera roll, a voice note in another app, a quote in a notes
+          file, and none of them know about each other. The only way back is to
+          scroll.
+        </CsText>
+        <CsHmw
+          items={[
+            {
+              question:
+                "How might we let people keep anything without choosing where it goes?",
+              solution:
+                "One calendar takes photos, video, voice, notes, quotes, people, places, and files, and files each on the day it happened.",
+            },
+            {
+              question:
+                "How might we make finding a memory feel like asking a friend?",
+              solution:
+                "A single ask bar answers in plain language and always shows the original memory, and says so when nothing matches.",
+            },
+            {
+              question:
+                "How might we use faces, places, and maps without handing them to a server?",
+              solution:
+                "Everything runs on the phone: the face models ship inside the app, memories sit in the browser's own storage, and nothing is uploaded.",
+            },
+          ]}
+        />
+      </CsSection>
+
+      <CsSection id="keep-approach" label="Design approach" title="Three rules I held to">
+        <CsH3>1. The original always wins</CsH3>
+        <CsText>
+          An answer is never a summary that replaces the memory. Search shows
+          the real photo, video, voice note, or quote, and says so when nothing
+          matches, so Keep never invents a memory to be helpful.
+        </CsText>
+        <CsH3>2. Private by design</CsH3>
+        <CsText>
+          People matching, 3D avatars, and the map all run on the device. A
+          face is stored as a list of numbers in the browser, never uploaded.
+          Meta and Instagram avatars cannot be used outside Meta&apos;s own
+          apps, so Keep ships its own avatar editor and also accepts your own
+          avatar file.
+        </CsText>
+        <CsH3>3. Quiet by default</CsH3>
+        <CsText>
+          Name someone once and Keep quietly finds them in other photos in the
+          background, with nothing to confirm. Anything it adds is labeled
+          &quot;Tagged automatically&quot; and one tap removes a wrong match,
+          for good.
+        </CsText>
+      </CsSection>
+
+      <CsSection id="solution-section" label="Solutions" title="How it works">
+        <CsH3>Solution #1: Ask your memories</CsH3>
+        <CsCallout>
+          Ask in plain words and get the{" "}
+          <span className="cs-accent">original memory</span> back.
+        </CsCallout>
+        <CsPanel title="Searching the calendar">
+          <CsVideo
+            src="/work/keep/sol-ask.mp4"
+            label="Asking Keep where the user had coffee and opening the matching memories"
+          />
+        </CsPanel>
+        <CsText>
+          The bar at the bottom of every screen takes a question and answers
+          with the places, days, and notes it found, each one tappable. Related
+          questions appear as chips, and a row of past dates shows where it
+          sits in your life.
+        </CsText>
+
+        <CsH3>Solution #2: Re-live a place</CsH3>
+        <CsCallout>
+          Stand where a photo was taken and{" "}
+          <span className="cs-accent">see who was there</span>.
+        </CsCallout>
+        <CsPanel title="Re-live">
+          <CsVideo
+            src="/work/keep/sol-relive.mp4"
+            label="A 3D avatar of a tagged person standing in the same place as their photo and changing pose"
+          />
+        </CsPanel>
+        <CsText>
+          Tag a photo with who is in it, their pose, and the spot. Later, point
+          the camera at the same place and a 3D avatar of that person appears in
+          the same pose, with a glass card of every journal kept about that
+          moment. Drag to turn them, change their pose, or restyle their skin
+          tone, hair, and clothes.
+        </CsText>
+        <CsPanel title="Matched on the phone">
+          <CsImg
+            src={`${SHOTS}/relive.webp`}
+            alt="Re-live showing a matched memory with a 3D avatar and its journals"
+            style={{ maxWidth: 300, margin: "0 auto" }}
+          />
+        </CsPanel>
+
+        <CsH3>Solution #3: One calendar, with insights</CsH3>
+        <CsCallout>
+          Everything lands on <span className="cs-accent">the day it happened</span>.
+        </CsCallout>
+        <CsPanel title="Calendar, a day, and Insights">
+          <CsVideo
+            src="/work/keep/sol-calendar.mp4"
+            label="Scrolling the calendar, opening a day with a voice note, and browsing the Insights page"
+          />
+        </CsPanel>
+        <CsText>
+          Each day with a memory shows a circle with its first photo. Opening a
+          day lists everything kept, from photos to voice notes with a waveform.
+          The Insights page counts what you keep and when, with streaks, a
+          busiest day, time of day, people, places, and the words you use most.
+          Any chart also switches to a plain table.
+        </CsText>
+      </CsSection>
+
+      <CsSection id="keep-product" label="Final product" title="Features at a glance">
+        <CsChips
+          items={[
+            "Photos, video, voice, notes, quotes",
+            "People matched on device",
+            "Places map and Street view",
+            "3D avatars and style editor",
+            "Insights and streaks",
+            "Instagram import",
+            "Back up and restore",
+            "Works offline",
+          ]}
+        />
+        <CsText>
+          Install it from the browser and it behaves like a native app, with
+          pull to refresh, an update banner when a new version is ready, and a
+          swipe down gesture to close a photo.
+        </CsText>
+      </CsSection>
+
+      <CsSection id="keep-limits" label="Honest limits" title="What it does not do yet">
+        <CsText>
+          Memories stay on one device, so there is no sync across phones yet and
+          Back up and Restore carry them between devices. Search is keyword
+          matching, not a language model. Re-live matches a similar view of the
+          same place with a fingerprint of the image, so it does not track you as
+          you walk. Instagram no longer lets apps read friends, so Keep imports
+          Instagram&apos;s own data export instead.
+        </CsText>
+      </CsSection>
+
+      <CsSection id="keep-reflection" label="Reflections" title="Answer, but never replace.">
+        <CsText>
+          Building Keep taught me that the hard part of an AI memory product is
+          restraint. Every feature that could guess, summarize, or tidy up also
+          risked putting words between a person and their own memory. Keeping
+          the original in front, and keeping everything on the device, made the
+          product feel smaller and a lot more trustworthy.
+        </CsText>
+      </CsSection>
+
+      <CsSeeNext
+        id="keep-see-next"
+        items={[
+          {
+            to: "/quizai",
+            video: "/work/reef/reef-thumb.mp4",
+            title: "Reef: AI Powered Notetaking Application",
+            description:
+              "Helping students turn uploaded notes into personalized quizzes and summaries.",
+          },
+          {
+            to: "/hiku",
+            video: "/work/Hiku/hiku-promo.mp4",
+            title: "Hiku: A Mobile Application for Hiking Enthusiasts",
+            description:
+              "Connecting hiking enthusiasts through community, shared experiences, and gear.",
+          },
+        ]}
+      />
+    </CsPage>
+  );
+};
+
+export default KeepCaseStudy;
