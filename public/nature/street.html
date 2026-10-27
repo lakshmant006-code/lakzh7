@@ -12,7 +12,7 @@
     padding: 9px 16px; border-radius: 999px; background: rgba(245,243,239,.9); color: #2c2420; font: 500 13px/1 "DM Sans", -apple-system, system-ui, sans-serif;
     box-shadow: 0 4px 18px rgba(44,36,32,.18); }
   .be-cow[aria-pressed="true"] { background: #2c2420; color: #f5f3ef; }
-  body.cow-mode canvas { cursor: none; }
+  body.cow-mode, body.cow-mode * { cursor: none !important; }
   /* film grain over the finished picture, gently shifting like real grain */
   .grain { position: fixed; inset: -40px; pointer-events: none; opacity: .7; mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .48  0 0 0 0 .44  0 0 0 1.6 -.3'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
@@ -284,7 +284,7 @@ const beCow = document.querySelector(".be-cow");
 beCow.addEventListener("click", () => {
   unlock();
   if (me) { me.mesh.removeFromParent(); cows.splice(cows.indexOf(me), 1); me = null; }
-  else { me = makeCow(cows.length, true); if (pointer) { me.x = pointer[0]; me.y = pointer[1]; } moo(me); }
+  else { me = makeCow(cows.length, true); me.heading = 0; me.crossing = false; if (pointer) { me.x = pointer[0]; me.y = pointer[1]; } else { me.x = 263; me.y = 560; } me.vx = me.vy = 0; moo(me); }
   beCow.setAttribute("aria-pressed", String(!!me)); beCow.textContent = me ? "stop being the cow" : "be the cow";
   document.body.classList.toggle("cow-mode", !!me);
 });
@@ -403,8 +403,26 @@ function step(dt) {
 
   // cows: velocity-based. They accelerate, turn through a limited angle, slow for sharp turns and swing their legs as they walk.
   for (const c of cows) {
+    if (c.player) {
+      // the cursor *is* the cow: it sits exactly where the pointer is, and its velocity is whatever your hand does
+      const px = pointer ? Math.max(14, Math.min(SW - 14, pointer[0])) : c.x, py = pointer ? Math.max(8, Math.min(SH - 8, pointer[1])) : c.y;
+      const k = 1 - Math.exp(-dt / 0.022);                  // a hair of smoothing, ~1 frame, only to iron out pointer jitter
+      const nx = c.x + (px - c.x) * k, ny = c.y + (py - c.y) * k;
+      const mvx = (nx - c.x) / dt, mvy = (ny - c.y) / dt;
+      c.x = nx; c.y = ny;
+      c.vx += (mvx - c.vx) * (1 - Math.exp(-dt / 0.06)); c.vy += (mvy - c.vy) * (1 - Math.exp(-dt / 0.06));
+      const cap = Math.hypot(c.vx, c.vy); if (cap > 70) { c.vx *= 70 / cap; c.vy *= 70 / cap; }
+      c.speed = Math.hypot(c.vx, c.vy);
+      if (c.speed > 4) {                                    // turn to face the way you're moving, at a natural rate
+        const h = Math.atan2(c.vx, -c.vy), err = Math.atan2(Math.sin(h - c.heading), Math.cos(h - c.heading));
+        c.heading += Math.max(-9 * dt, Math.min(9 * dt, err));
+      }
+      c.stride += c.speed * dt;
+      const ca = Math.abs(Math.cos(c.heading)), sa = Math.abs(Math.sin(c.heading));
+      c.h = c.len * ca + c.wid * sa; c.w = c.len * sa + c.wid * ca;
+      continue;
+    }
     let tx = c.tx, ty = c.ty, vmax = c.crossing ? 16 : 10, acc = 14, turn = 1.8;
-    if (c.player) { if (pointer) { tx = pointer[0]; ty = pointer[1]; } else { tx = c.x; ty = c.y; } vmax = 40; acc = 70; turn = 5.5; }
     const dx = tx - c.x, dy = ty - c.y, d = Math.hypot(dx, dy);
     let want = 0, dirx = Math.sin(c.heading), diry = -Math.cos(c.heading);
     if (!c.player && c.pause > 0) c.pause -= dt;
@@ -436,9 +454,10 @@ function step(dt) {
   // cows don't walk through cars or each other: they're nudged out, slowed, and the driver leans on the horn
   for (const c of cows) {
     for (const v of cars) {
-      if (v.speed < 4) continue;
       const ox = (c.w + v.w) / 2 - Math.abs(c.x - v.x), oy = (c.h + v.h) / 2 - Math.abs(c.y - v.y);
       if (ox <= 0 || oy <= 0) continue;
+      if (c.player) { v.speed *= Math.exp(-dt * 9); if (!v.honkedAtCow || now_s() - v.honkedAtCow > 1.5) { v.honkedAtCow = now_s(); honk(v, 0.8); c.bump = 1; } continue; }
+      if (v.speed < 4) continue;
       if (ox < oy) c.x += Math.sign(c.x - v.x || 1) * ox; else c.y += Math.sign(c.y - v.y || 1) * oy;
       c.vx *= 0.5; c.vy *= 0.5;
       v.speed = Math.min(v.speed, 3);
@@ -460,7 +479,7 @@ function step(dt) {
     c.mesh.position.set(wx, wy, 4); c.mesh.rotation.z = -c.heading + roll;
     c.mesh.scale.set(c.k * (1 - (stretch - 1) * 0.5), c.k * stretch, 1);
   }
-  if (ring) { ring.visible = !!(me && pointer); if (ring.visible) { const [rx, ry] = toWorld(pointer[0], pointer[1]); ring.position.set(rx, ry, 6); ring.scale.setScalar(1 + 0.12 * Math.sin(t * 5)); } }
+  if (ring) { ring.visible = false; if (false) { if (ring.visible) { const [rx, ry] = toWorld(pointer[0], pointer[1]); ring.position.set(rx, ry, 6); ring.scale.setScalar(1 + 0.12 * Math.sin(t * 5)); } } }
 
   // vehicles: car-following along the lane, a stop line on amber/red, unhurried lane changes when stuck
   for (const v of cars) {
@@ -545,7 +564,7 @@ function draw(dt) {
   renderer.render(scene, camera);
 }
 requestAnimationFrame(frame);
-window.__street = { vehicles, cows, streetAt, beCow, get light() { return light; } };
+window.__street = { vehicles, cows, streetAt, beCow, pointer: () => pointer, get light() { return light; } };
 
 </script>
 </body>
