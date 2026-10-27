@@ -18,7 +18,7 @@ body{background:var(--ground);color:var(--ink);font-family:var(--ui);margin:0;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px;
   min-height:100vh;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
 .stage{width:min(100%,720px);aspect-ratio:1;position:relative}
-canvas{width:100%;height:100%;display:block;touch-action:none;cursor:default;overflow:visible}
+canvas{image-rendering:pixelated;width:100%;height:100%;display:block;touch-action:none;cursor:default;overflow:visible}
 .cap{display:flex;gap:12px 28px;flex-wrap:wrap;justify-content:center;font-size:13px;letter-spacing:.04em;color:var(--ink-soft)}
 .cap b{font-family:var(--display);font-weight:600;color:var(--ink);letter-spacing:0}
 </style>
@@ -29,7 +29,8 @@ canvas{width:100%;height:100%;display:block;touch-action:none;cursor:default;ove
 
 <script>
 (function(){
-const W=640, dpr=Math.min(2,window.devicePixelRatio||1);
+const PIXEL=new URLSearchParams(location.search).has('px');
+const W=640, dpr=PIXEL?.42:Math.min(2,window.devicePixelRatio||1);
 const cv=document.getElementById('c'); cv.width=cv.height=W*dpr;
 const ctx=cv.getContext('2d');
 const rnd=(a,b)=>a+Math.random()*(b-a);
@@ -39,9 +40,9 @@ const mk=()=>{const c=document.createElement('canvas');c.width=c.height=W*dpr;re
 /* soft, irregular cloud mask: the scene fades into the page like a memory */
 const maskC=mk();
 (function(){
-  const m=maskC.getContext('2d'); m.scale(dpr,dpr); m.filter='blur('+(26*dpr)+'px)'; m.fillStyle='#fff'; m.beginPath();
+  const m=maskC.getContext('2d'); m.scale(dpr,dpr); m.filter='blur('+(30*dpr)+'px)'; m.fillStyle='#fff'; m.beginPath();
   for(let i=0;i<=140;i++){const t=i/140*6.2832;
-    const r=W*.43*(1+.07*Math.sin(2*t+.6)+.06*Math.sin(3*t+1.3)+.04*Math.sin(5*t+2.1));
+    const r=W*.335*(1+.07*Math.sin(2*t+.6)+.06*Math.sin(3*t+1.3)+.04*Math.sin(5*t+2.1));
     const x=W/2+Math.cos(t)*r*1.02, y=W/2+Math.sin(t)*r*.92; i?m.lineTo(x,y):m.moveTo(x,y);}
   m.closePath(); m.fill();
 })();

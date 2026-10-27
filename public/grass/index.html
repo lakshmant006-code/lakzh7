@@ -6,8 +6,11 @@
 <title>Grass</title>
 <style>
   :root { color-scheme: dark; }
-  html, body { margin: 0; height: 100%; background: #1a3410; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; }
-  canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  html, body { margin: 0; height: 100%; background: #fff; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; }
+  /* the meadow dissolves softly into the page at its edges, like a memory */
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block;
+    -webkit-mask-image: radial-gradient(ellipse 57% 55% at 50% 50%, #000 36%, rgba(0,0,0,.55) 66%, transparent 100%);
+            mask-image: radial-gradient(ellipse 57% 55% at 50% 50%, #000 36%, rgba(0,0,0,.55) 66%, transparent 100%); }
   .ui { position: fixed; left: 50%; bottom: max(20px, env(safe-area-inset-bottom)); transform: translateX(-50%);
         display: flex; align-items: center; gap: 14px; padding: 10px 16px; border-radius: 999px;
         background: rgba(12,24,10,.42); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
@@ -20,8 +23,8 @@
   input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border: 0; border-radius: 50%; background: #fff; }
   .back { position: fixed; top: max(16px, env(safe-area-inset-top)); left: 16px; padding: 10px 16px; border-radius: 999px; background: rgba(12,24,10,.42); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); color: #eef6e4; text-decoration: none; font: 500 13px/1 -apple-system, system-ui, sans-serif; }
   .embed .back { top: 76px; }
-  .hint { position: fixed; top: max(18px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); color: rgba(255,255,255,.9);
-          font: 500 13px/1 -apple-system, system-ui, sans-serif; text-shadow: 0 1px 8px rgba(0,0,0,.35); transition: opacity .8s; pointer-events: none; }
+  .hint { position: fixed; top: max(18px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); color: rgba(44,36,32,.72);
+          font: 500 13px/1 -apple-system, system-ui, sans-serif; transition: opacity .8s; pointer-events: none; }
 </style>
 </head>
 <body>
@@ -37,7 +40,7 @@ if (location.search.includes("embed")) { document.documentElement.classList.add(
   if (!gl) { document.body.insertAdjacentHTML("beforeend", "<p style='color:#fff;padding:24px;font:16px system-ui'>WebGL2 is required.</p>"); return; }
 
   const COARSE = matchMedia("(pointer: coarse)").matches;
-  const BLADES = +new URLSearchParams(location.search).get("n") || (COARSE ? 220000 : 420000);
+  const BLADES = +new URLSearchParams(location.search).get("n") || (COARSE ? 217800 : 415800);
   const SEG = 6;                       // segments up the blade
   const DPR_CAP = 2;
 
@@ -54,6 +57,9 @@ if (location.search.includes("embed")) { document.documentElement.classList.add(
   uniform float uStrength;  // eased wind strength
   uniform float uGust;      // eased click gust pulse
   uniform vec2 uDir;
+  uniform vec2 uPtr;        // hover point on the ground (world xz)
+  uniform vec2 uPtrVel;     // eased pointer velocity: the wake
+  uniform float uPtrA;      // eased hover strength
   out vec3 vCol;
   out float vFog;
   out vec3 vN;
@@ -88,6 +94,14 @@ if (location.search.includes("embed")) { document.documentElement.classList.add(
     off += uDir * push * 0.95 * tt * len;
     off += vec2(-uDir.y, uDir.x) * flutter * min(push, 1.2) * 0.12 * tt * len;
 
+    // hover: the grass parts around the pointer, swirls a little and trails the movement
+    vec2 dp = base - uPtr; float dd = length(dp);
+    float fall = exp(-dd * dd / 2.6) * uPtrA;
+    vec2 away = dp / max(dd, 0.001);
+    off += away * fall * 1.5 * tt * len;
+    off += vec2(-away.y, away.x) * fall * 0.4 * tt * len;
+    off += uPtrVel * fall * 0.6 * tt * len;
+
     float bendLen = length(off);
     float y = t * len - 0.5 * bendLen * bendLen / max(len, 0.01) * t;  // blade shortens as it bows
     y = max(y, 0.0);
@@ -103,15 +117,17 @@ if (location.search.includes("embed")) { document.documentElement.classList.add(
 
     // colour: dark rooted base -> bright sun-lit tip, per-clump & per-blade variation
     vec3 deep  = vec3(0.03, 0.09, 0.02);
-    vec3 mid   = mix(vec3(0.30, 0.52, 0.10), vec3(0.42, 0.62, 0.14), aC.z);
-    vec3 tip   = mix(vec3(0.72, 0.82, 0.26), vec3(0.88, 0.92, 0.40), rnd);
+    vec3 mid   = mix(vec3(0.13, 0.36, 0.07), vec3(0.20, 0.46, 0.10), aC.z);
+    vec3 tip   = mix(vec3(0.38, 0.62, 0.17), vec3(0.50, 0.72, 0.22), rnd);
     vec3 col = mix(deep, mid, smoothstep(0.0, 0.55, t));
     col = mix(col, tip, smoothstep(0.45, 1.0, t) * (0.55 + 0.45 * aC.w));
     float lp = vn(base * 0.28 + 4.0);
-    col = mix(col, col * vec3(1.18, 1.12, 0.7) + vec3(0.06, 0.07, 0.0), smoothstep(0.35, 0.8, lp) * t);
+    col = mix(col, col * vec3(1.10, 1.10, 0.85) + vec3(0.02, 0.04, 0.0), smoothstep(0.35, 0.8, lp) * t);
     col *= mix(0.42, 1.0, smoothstep(0.02, 0.55, aC.x));   // dark tussock heart
     col *= 0.85 + 0.3 * rnd;
     col += vec3(0.05, 0.05, 0.0) * push * smoothstep(0.4, 1.0, t); // wind-lit sheen
+    col *= 1.0 - 0.28 * fall;                                                   // pressed, shaded core
+    col += vec3(0.04, 0.11, 0.0) * exp(-pow((dd - 1.2) / 0.45, 2.0)) * uPtrA * t; // bright rim
     vCol = col;
 
     vec3 nrm = normalize(vec3(face.x * 0.55 + off.x * 0.4, 0.8, face.y * 0.55 + off.y * 0.4));
@@ -269,7 +285,15 @@ if (location.search.includes("embed")) { document.documentElement.classList.add(
     hideHint();
   });
   let px = 0, py = 0, tx = 0, ty = 0;
-  addEventListener("pointermove", (e) => { tx = e.clientX / innerWidth - 0.5; ty = e.clientY / innerHeight - 0.5; });
+  const hover = { nx: 0, ny: 0, on: false, x: 0, z: 0, tx: 0, tz: 0, vx: 0, vz: 0, a: 0, init: false };
+  addEventListener("pointermove", (e) => {
+    tx = e.clientX / innerWidth - 0.5; ty = e.clientY / innerHeight - 0.5;
+    if (e.target.closest(".ui")) { hover.on = false; return; }
+    hover.nx = (e.clientX / innerWidth) * 2 - 1; hover.ny = -((e.clientY / innerHeight) * 2 - 1); hover.on = true;
+  });
+  addEventListener("pointerdown", (e) => { if (!e.target.closest(".ui")) { hover.nx = (e.clientX / innerWidth) * 2 - 1; hover.ny = -((e.clientY / innerHeight) * 2 - 1); hover.on = true; } });
+  addEventListener("pointerup", (e) => { if (e.pointerType !== "mouse") hover.on = false; });
+  document.documentElement.addEventListener("pointerleave", () => { hover.on = false; });
 
   /* ---------- render ---------- */
   const FOG = [0.05, 0.11, 0.03];
@@ -296,6 +320,20 @@ if (location.search.includes("embed")) { document.documentElement.classList.add(
     const cam = [px * 0.9, 8.5, py * 0.9 - 0.7];
     const look = [px * 0.9, 0, py * 0.9 + 0.35];
     const vp = m4.mul(m4.persp(0.95, W / H, 0.1, 60), m4.look(cam, look));
+    {   // hover point: cast a ray from the camera through the pointer onto the ground
+      let fx = look[0] - cam[0], fy = look[1] - cam[1], fz = look[2] - cam[2]; const fl = Math.hypot(fx, fy, fz); fx /= fl; fy /= fl; fz /= fl;
+      let sx = -fz, sz = fx; const sl = Math.hypot(sx, sz); sx /= sl; sz /= sl;
+      const ux = -sz * fy, uy = sz * fx - sx * fz, uz = sx * fy;
+      const th = Math.tan(0.475), a = hover.nx * th * (W / H), b = hover.ny * th;
+      const dx = fx + a * sx + b * ux, dy = fy + b * uy, dz = fz + a * sz + b * uz;
+      if (dy < -1e-3) { const k = -cam[1] / dy; hover.tx = cam[0] + dx * k; hover.tz = cam[2] + dz * k; }
+      if (!hover.init) { hover.x = hover.tx; hover.z = hover.tz; hover.init = true; }
+      const ox = hover.x, oz = hover.z;
+      hover.x = ease(hover.x, hover.tx, dt, 0.09); hover.z = ease(hover.z, hover.tz, dt, 0.09);
+      const vx = Math.max(-2.5, Math.min(2.5, (hover.x - ox) / Math.max(dt, 1e-3) * 0.25)), vz = Math.max(-2.5, Math.min(2.5, (hover.z - oz) / Math.max(dt, 1e-3) * 0.25));
+      hover.vx = ease(hover.vx, vx, dt, 0.25); hover.vz = ease(hover.vz, vz, dt, 0.25);
+      hover.a = ease(hover.a, hover.on ? 1 : 0, dt, hover.on ? 0.25 : 0.6);
+    }
     gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL);
     gl.clearColor(FOG[0], FOG[1], FOG[2], 1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -307,6 +345,7 @@ if (location.search.includes("embed")) { document.documentElement.classList.add(
     gl.uniformMatrix4fv(grass.u.uVP, false, vp); gl.uniform3fv(grass.u.uCam, cam);
     gl.uniform1f(grass.u.uPhase, phase); gl.uniform1f(grass.u.uStrength, strength); gl.uniform1f(grass.u.uGust, gust);
     gl.uniform2f(grass.u.uDir, Math.cos(dirAngle), Math.sin(dirAngle));
+    gl.uniform2f(grass.u.uPtr, hover.x, hover.z); gl.uniform2f(grass.u.uPtrVel, hover.vx, hover.vz); gl.uniform1f(grass.u.uPtrA, hover.a);
     gl.uniform3fv(grass.u.uSun, SUN); gl.uniform3fv(grass.u.uFog, FOG);
     gl.disable(gl.CULL_FACE);
     gl.bindVertexArray(vao);

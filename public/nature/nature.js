@@ -1,5 +1,9 @@
 import * as THREE from "./vendor/three.module.min.js";
 
+// Everything (custom shaders, canvas textures, built-in materials) works in display colour space,
+// so the pixel/dither pass can quantise the final colours directly.
+THREE.ColorManagement.enabled = false;
+
 const params = new URLSearchParams(location.search);
 const COARSE = matchMedia("(pointer: coarse)").matches;
 const Q = +params.get("q") || (COARSE ? 0.6 : 1); // density multiplier
@@ -8,6 +12,7 @@ const DPR_CAP = 2;
 const canvas = document.getElementById("c");
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
 renderer.setPixelRatio(Math.min(devicePixelRatio || 1, DPR_CAP));
+renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 
 /* ---------- seeded random ---------- */
 function rng(seed) {
@@ -328,7 +333,7 @@ function skyTexture(stops) {
   const x = c.getContext("2d"), g = x.createLinearGradient(0, 0, 0, 256);
   stops.forEach(([p, col]) => g.addColorStop(p, col));
   x.fillStyle = g; x.fillRect(0, 0, 2, 256);
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.NoColorSpace; return t;
 }
 function hillMesh(z, baseY, amp, freq, colTop, colBot, seed, width = 220) {
   const r = rng(seed), N = 90, pos = [], col = [], idx = [];
@@ -564,6 +569,32 @@ SCENES.pond = () => {
   };
 };
 
+
+/* ---------- pixel + ordered-dither pass ---------- */
+const PX = +params.get("px") || (innerWidth < 700 ? 2 : 3);       // CSS pixels per "big pixel"
+const LEVELS = 9;                                                   // colour steps per channel
+let pixelOn = params.get("px") !== "0";
+const rt = new THREE.WebGLRenderTarget(2, 2, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: true });
+const postScene = new THREE.Scene(), postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+const postMat = new THREE.ShaderMaterial({
+  uniforms: { tDiffuse: { value: rt.texture }, uRes: { value: new THREE.Vector2(2, 2) }, uLevels: { value: LEVELS } },
+  vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
+  fragmentShader: `uniform sampler2D tDiffuse; uniform vec2 uRes; uniform float uLevels; varying vec2 vUv;
+    float bayer(vec2 p){
+      int x = int(mod(p.x, 4.0)), y = int(mod(p.y, 4.0));
+      float m[16] = float[16](0.,8.,2.,10., 12.,4.,14.,6., 3.,11.,1.,9., 15.,7.,13.,5.);
+      return (m[y*4+x] + 0.5) / 16.0;
+    }
+    void main(){
+      vec3 c = texture2D(tDiffuse, vUv).rgb;
+      float t = bayer(floor(vUv * uRes)) - 0.5;
+      c = floor(c * (uLevels - 1.0) + 0.5 + t * 0.95) / (uLevels - 1.0);
+      gl_FragColor = vec4(c, 1.0);
+    }`,
+  depthTest: false, depthWrite: false,
+});
+postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), postMat));
+
 /* ---------- scene manager ---------- */
 const NAV = [["tulips", "Tulips"], ["meadow", "Meadow"], ["pond", "Pond"], ["mites", "Mites"]];
 const nav = document.getElementById("scenes");
@@ -577,7 +608,7 @@ function show(id) {
   const isMites = id === "mites";
   document.body.classList.toggle("is-mites", isMites);
   if (isMites) {
-    if (!mitesFrame.src) mitesFrame.src = mitesFrame.dataset.src;
+    if (!mitesFrame.src) mitesFrame.src = mitesFrame.dataset.src + (pixelOn ? "?px=1" : "");
     [...nav.children].forEach((el) => el.setAttribute("aria-current", String(el.dataset.id === id)));
     history.replaceState(null, "", location.search + "#mites");
     mitesing = true;
@@ -603,6 +634,14 @@ NAV.forEach(([id, label]) => {
 });
 const g = document.createElement("a"); g.textContent = "Grass"; g.href = "/grass/" + location.search; nav.appendChild(g);
 
+/* ---------- pixel toggle ---------- */
+const pxBtn = document.getElementById("px");
+const syncPx = () => {
+  pxBtn.setAttribute("aria-pressed", String(pixelOn)); pxBtn.textContent = pixelOn ? "Pixel: on" : "Pixel: off";
+  if (mitesFrame.src) mitesFrame.src = mitesFrame.dataset.src + (pixelOn ? "?px=1" : "");
+};
+pxBtn.addEventListener("click", () => { pixelOn = !pixelOn; syncPx(); resize(); });
+
 /* ---------- wind controls ---------- */
 const slider = document.getElementById("wind"), label = document.getElementById("label");
 const NAMES = [[0.12, "Still"], [0.5, "Light air"], [1.0, "Breeze"], [1.7, "Windy"], [2.4, "Gale"], [9, "Storm"]];
@@ -610,6 +649,7 @@ let target = parseFloat(slider.value), speed = target, strength = target, gust =
 const setTarget = (v) => { target = v; slider.value = v; label.textContent = NAMES.find(([m]) => v < m)[1]; };
 slider.addEventListener("input", () => setTarget(parseFloat(slider.value)));
 setTarget(target);
+syncPx();
 
 let down = null;
 addEventListener("pointerdown", (e) => { if (e.target.closest(".bar")) return; down = { x: e.clientX, y: e.clientY }; });
@@ -627,9 +667,10 @@ addEventListener("pointerup", (e) => {
 function resize() {
   const dpr = Math.min(devicePixelRatio || 1, DPR_CAP);
   renderer.setPixelRatio(dpr); renderer.setSize(innerWidth, innerHeight, false);
+  const rw = Math.ceil(innerWidth / PX), rh = Math.ceil(innerHeight / PX);
+  rt.setSize(rw, rh); postMat.uniforms.uRes.value.set(rw, rh);
   camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
-  Object.values(built).forEach((s) => { if (s.petals) s.petals.mat.uniforms.uPx.value = innerHeight * dpr * 0.5; });
-  const px = innerHeight * dpr * 0.5;
+  const px = (pixelOn ? rh : innerHeight * dpr) * 0.5;
   Object.values(built).forEach((s) => s.group.traverse((o) => { if (o.material?.uniforms?.uPx) o.material.uniforms.uPx.value = px; }));
   current?.resize?.();
 }
@@ -644,7 +685,10 @@ function frame(now) {
   phase += speed * dt;
   U.uPhase.value = phase; U.uStrength.value = strength; U.uGust.value = gust; U.uTime.value = time;
   U.uDir.value.set(Math.cos(dirAngle), Math.sin(dirAngle));
-  if (!mitesing && current) { current.update(dt, { strength, dir: U.uDir.value, time }); renderer.render(root, camera); }
+  if (!mitesing && current) { current.update(dt, { strength, dir: U.uDir.value, time }); 
+    if (pixelOn) { renderer.setRenderTarget(rt); renderer.render(root, camera); renderer.setRenderTarget(null); renderer.render(postScene, postCam); }
+    else renderer.render(root, camera);
+  }
   requestAnimationFrame(frame);
 }
 show(location.hash.slice(1) || "tulips");
