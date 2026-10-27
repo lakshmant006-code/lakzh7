@@ -65,6 +65,12 @@ function plane(map, w, h, x, y, z) {
   }
   g.fillStyle = "rgba(255,255,255,.35)"; g.fillRect(ROAD[0], 0, 2, SH); g.fillRect(ROAD[1] - 2, 0, 2, SH);
   for (let y = 0; y < SH; y += 30) { g.fillStyle = "#e7c33a"; g.fillRect(260, y, 6, 18); g.fillStyle = "#3a3530"; g.fillRect(260, y + 18, 6, 12); }
+  g.fillStyle = "rgba(255,255,255,.55)";                  // lane dashes
+  for (const x of [205, 232, 293, 320]) for (let y = 0; y < SH; y += 34) if (y < 390 || y > 470) g.fillRect(x, y, 2, 16);
+  g.fillStyle = "#3a3632"; g.fillRect(ROAD[0], 410, ROAD[1] - ROAD[0], 40);
+  g.fillStyle = "#efeae0";                                 // zebra crossing
+  for (let x = ROAD[0] + 4; x < ROAD[1] - 8; x += 13) g.fillRect(x, 412, 8, 36);
+  g.fillRect(266, 402, ROAD[1] - 266, 3); g.fillRect(ROAD[0], 455, 260 - ROAD[0], 3);   // stop lines
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
   plane(t, SW, SH, 0, 0, 0);
 }
@@ -154,13 +160,15 @@ function makeCow(i, player = false) {
   const mesh = spriteMesh(cowSheet, cowAtlas.w, cowAtlas.h, f.ax, f.ay, f.aw, f.ah);
   const k = COW_LEN / f.ah;
   mesh.scale.setScalar(k);
-  const c = { mesh, k, w: f.aw * k * 0.7, h: f.ah * k * 0.8, x: 140 + Math.random() * 240, y: 120 + Math.random() * 600,
+  const c = { mesh, k, w: f.aw * k * 0.7, h: f.ah * k * 0.8, x: Math.random() < 0.5 ? 135 + Math.random() * 25 : 370 + Math.random() * 25, y: 120 + Math.random() * 600,
     tx: 0, ty: 0, heading: Math.random() * 6.28, speed: 0, pause: 0, phase: Math.random() * 6, player, lastMoo: -9 };
   pickTarget(c); cows.push(c); return c;
 }
 function pickTarget(c) {
-  // cross the road at an angle, or amble along it
-  c.tx = 120 + Math.random() * 290; c.ty = Math.max(30, Math.min(SH - 30, c.y + (Math.random() - 0.5) * 360));
+  // mostly amble along a kerb; now and then cross the road
+  const left = c.x < 263, clampY = (y) => Math.max(30, Math.min(SH - 30, y));
+  if (Math.random() < 0.72) { c.crossing = false; c.tx = left ? 128 + Math.random() * 32 : 366 + Math.random() * 32; c.ty = clampY(c.y + (Math.random() - 0.5) * 320); }
+  else { c.crossing = true; c.tx = left ? 380 : 142; c.ty = clampY(c.y + (Math.random() - 0.5) * 70); }
 }
 for (let i = 0; i < 3; i++) makeCow(i);
 let me = null;                                           // the cow you walk, when "be the cow" is on
@@ -241,7 +249,7 @@ addEventListener("pointerdown", (e) => {
   if (me) return;
   const v = hit(e.clientX, e.clientY); if (!v) return;
   if (v.cow) { v.cow.lastMoo = -9; moo(v.cow, 1.2); return; }
-  v.lastHonk = -9; honk(v, 1.2); v.boost = 1.6;
+  v.lastHonk = -9; honk(v, 1.2); v.boost = 0.5;
   play("chaos", 1, 0.05);
   const near = vehicles.filter((o) => o !== v && o.type !== "ped" && Math.hypot(o.x - v.x, o.y - v.y) < 170)
     .sort(() => Math.random() - 0.5).slice(0, 4);
@@ -259,30 +267,115 @@ beCow.addEventListener("click", () => {
   document.body.classList.toggle("cow-mode", !!me);
 });
 
-/* ---------- traffic ---------- */
-const LANES = []; for (let x = ROAD[0] + 14; x <= ROAD[1] - 14; x += 16) LANES.push(x);
-const clampX = (v) => { if (v.type !== "ped") v.x = Math.min(ROAD[1] - v.w / 2 + 4, Math.max(ROAD[0] + v.w / 2 - 4, v.x)); };
-function freeAhead(v, x) {                                  // how far a vehicle could drive in lane x before meeting something
-  let best = 260;
-  for (const o of vehicles) {
-    if (o === v || o.type === "ped" || Math.abs(o.x - x) > (v.w + o.w) * 0.5) continue;
-    const ahead = (o.y - v.y) * v.dir; if (ahead > 0) best = Math.min(best, ahead - (v.h + o.h) * 0.5);
+/* ---------- traffic: lane-keeping, smooth car-following, and a signalled zebra crossing ---------- */
+// Down the street keeps to the right half, up the street to the left half (as in India, drive on the left).
+const LANES = { 1: [280, 307, 334], [-1]: [246, 219, 192] };
+const CROSS_Y = 430, STOP = { 1: 402, [-1]: 458 };      // zebra centre and where each direction stops
+const CYCLE = { green: 10, amber: 2, red: 7 };
+let light = "green", lightT = 0;
+const DYN = {                                            // desired speed range, comfortable acceleration and braking
+  car: { a: 34, b: 60 }, auto: { a: 28, b: 55 }, truck: { a: 18, b: 45 }, scooter: { a: 44, b: 70 },
+};
+const S0 = 7, HEADWAY = 0.9;
+const cars = vehicles.filter((v) => v.type !== "ped");
+const walkers = vehicles.filter((v) => v.type === "ped");
+for (const v of cars) {
+  const lanes = LANES[v.dir];
+  // scooters keep to the outer lane, everyone else picks the closest of the inner two
+  let li = v.type === "scooter" ? 2 : lanes.slice(0, 2).reduce((bi, x, i) => (Math.abs(x - v.x) < Math.abs(lanes[bi] - v.x) ? i : bi), 0);
+  if (v.type === "scooter" && Math.random() < 0.35) li = 1;
+  Object.assign(v, { lane: li, x: lanes[li], vx: 0, laneT: Math.random() * 2, speed: v.base * 0.5, ...DYN[v.type] });
+}
+// space everyone out along their lane so nothing starts overlapping
+for (const d of [1, -1]) for (let li = 0; li < 3; li++) {
+  const q = cars.filter((v) => v.dir === d && v.lane === li).sort((a, b) => (a.y - b.y) * d);
+  for (let i = 1; i < q.length; i++) {
+    const need = (q[i - 1].h + q[i].h) / 2 + S0 + 6;
+    if ((q[i].y - q[i - 1].y) * d < need) q[i].y = q[i - 1].y + d * need;
   }
-  for (const c of cows) { if (Math.abs(c.x - x) > (v.w + c.w) * 0.5 + 6) continue; const ahead = (c.y - v.y) * v.dir; if (ahead > 0) best = Math.min(best, ahead - v.h * 0.5 - 20); }
-  return best;
 }
-function reroute(v) {
-  let bestX = v.x, bestFree = freeAhead(v, v.x) + 8;          // only move if another lane is clearly better
-  for (const x of LANES) { if (Math.abs(x - v.x) > 70) continue; const f = freeAhead(v, x) - Math.abs(x - v.x) * 0.15; if (f > bestFree) { bestFree = f; bestX = x; } }
-  if (bestX !== v.x) v.tx = bestX;
+
+// little signal heads on both kerbs
+const lamps = [];
+for (const [x, y] of [[160, CROSS_Y - 34], [366, CROSS_Y + 34]]) {
+  const box = new THREE.Mesh(new THREE.PlaneGeometry(9, 9), new THREE.MeshBasicMaterial({ color: 0x2a2622 }));
+  const lamp = new THREE.Mesh(new THREE.CircleGeometry(3, 20), new THREE.MeshBasicMaterial({ color: 0x5ad06a }));
+  const [wx, wy] = toWorld(x, y); box.position.set(wx, wy, 5.5); lamp.position.set(wx, wy, 5.6);
+  world.add(box); world.add(lamp); lamps.push(lamp);
 }
+const LIGHT_COL = { green: 0x5ad06a, amber: 0xf2b23a, red: 0xe5483e };
+
+function idm(v, gap, leaderSpeed) {
+  const v0 = v.base * (1 + v.boost), dv = v.speed - leaderSpeed;
+  const sStar = S0 + Math.max(0, v.speed * HEADWAY + (v.speed * dv) / (2 * Math.sqrt(v.a * v.b)));
+  const free = 1 - Math.pow(Math.max(0, v.speed) / v0, 4);
+  return v.a * (free - (gap < 1e5 ? Math.pow(sStar / Math.max(gap, 0.5), 2) : 0));
+}
+// bumper-to-bumper distance to whatever is ahead of v if it drove at lateral position x
+function aheadOf(v, x) {
+  let gap = Infinity, sp = 0;
+  for (const o of cars) {
+    if (o === v || o.dir !== v.dir || Math.abs(o.x - x) > (o.w + v.w) * 0.45) continue;
+    const d = (o.y - v.y) * v.dir; if (d <= 0) continue;
+    const g = d - (o.h + v.h) / 2; if (g < gap) { gap = g; sp = o.speed; }
+  }
+  for (const c of cows) {
+    if (Math.abs(c.x - x) > (c.w + v.w) * 0.5 + 3) continue;
+    const d = (c.y - v.y) * v.dir; if (d <= -c.h * 0.3) continue;
+    const g = d - v.h / 2 - c.h / 2 - 2; if (g < gap) { gap = g; sp = 0; }
+  }
+  for (const p of walkers) {
+    if (p.mode !== "cross" || Math.abs(p.x - x) > v.w * 0.5 + 10) continue;
+    const d = (p.y - v.y) * v.dir; if (d <= 0) continue;
+    const g = d - v.h / 2 - 8; if (g < gap) { gap = g; sp = 0; }
+  }
+  return [gap, sp];
+}
+function laneFreeBeside(v, x) {
+  for (const o of cars) {
+    if (o === v || o.dir !== v.dir || Math.abs(o.x - x) > (o.w + v.w) * 0.5) continue;
+    const d = (o.y - v.y) * v.dir;
+    if (d > -((o.h + v.h) / 2 + 8 + Math.max(0, o.speed - v.speed) * 1.2) && d < (o.h + v.h) / 2 + 10) return false;
+  }
+  return true;
+}
+function respawn(v) {
+  const lanes = LANES[v.dir], x = lanes[v.lane];
+  let edge = v.dir > 0 ? -v.h / 2 - 20 : SH + v.h / 2 + 20;
+  for (const o of cars) {                                 // join the back of the queue coming in, never on top of it
+    if (o === v || o.dir !== v.dir || Math.abs(o.x - x) > 12) continue;
+    if (v.dir > 0 && o.y < 60) edge = Math.min(edge, o.y - (o.h + v.h) / 2 - S0 - 8);
+    if (v.dir < 0 && o.y > SH - 60) edge = Math.max(edge, o.y + (o.h + v.h) / 2 + S0 + 8);
+  }
+  v.y = edge; v.x = x; v.vx = 0; v.speed = v.base * 0.7;
+}
+
+/* walkers stroll along the kerbs; on red some of them use the zebra */
+for (const p of walkers) { p.mode = "walk"; p.side = p.x < 263 ? 0 : 1; }
+function startCrossing() {
+  const near = walkers.filter((p) => p.mode === "walk" && Math.abs(p.y - CROSS_Y) < 170).sort(() => Math.random() - 0.5).slice(0, 3);
+  for (const p of near) { p.mode = "toCross"; p.crossY = CROSS_Y - 10 + Math.random() * 20; }
+}
+
 let last = performance.now(), t = 0;
+const TIME_SCALE = +new URLSearchParams(location.search).get("ts") || 1;   // for testing only
 function frame(now) {
-  const dt = Math.min(0.05, (now - last) / 1000); last = now; t += dt;
+  const real = Math.min(0.05, (now - last) / 1000); last = now;
+  for (let n = 0; n < TIME_SCALE; n++) step(real);
+  draw(real);
+  requestAnimationFrame(frame);
+}
+function step(dt) {
+  t += dt;
+
+  // signal cycle
+  lightT += dt;
+  if (lightT > CYCLE[light]) { lightT = 0; light = light === "green" ? "amber" : light === "amber" ? "red" : "green"; if (light === "red") startCrossing(); }
+  lamps.forEach((l) => l.material.color.setHex(LIGHT_COL[light]));
 
   // cows amble toward a target, pause, chew, move on; yours follows the pointer
   for (const c of cows) {
-    let tx = c.tx, ty = c.ty, max = 9;
+    let tx = c.tx, ty = c.ty, max = c.crossing ? 15 : 9;
     if (c.player) { if (pointer) { tx = pointer[0]; ty = pointer[1]; } max = 70; }
     const dx = tx - c.x, dy = ty - c.y, d = Math.hypot(dx, dy);
     if (!c.player && c.pause > 0) { c.pause -= dt; c.speed *= 0.9; }
@@ -303,87 +396,92 @@ function frame(now) {
     c.mesh.position.set(wx, wy, 4); c.mesh.rotation.z = -c.heading; c.mesh.scale.set(c.k * bob, c.k / bob, 1);
   }
 
-  for (const v of vehicles) {
-    let want = v.base * (1 + 0.18 * Math.sin(t * 0.6 + v.phase)) * (1 + v.boost);
-    let blocked = false;
-    if (v.type !== "ped") {
-      for (const o of vehicles) {
-        if (o === v || o.dir !== v.dir || o.type === "ped") continue;
-        if (Math.abs(o.x - v.x) > (v.w + o.w) * 0.42) continue;
-        const ahead = (o.y - v.y) * v.dir; if (ahead <= 0) continue;
-        const gap = ahead - (v.h + o.h) * 0.5;
-        if (gap < 14) { want = Math.min(want, Math.max(0, o.speed * (gap / 14))); blocked = true; }
-      }
-      // everyone stops for a cow
-      for (const c of cows) {
-        if (Math.abs(c.x - v.x) > (v.w + c.w) * 0.5 + 4) continue;
-        const ahead = (c.y - v.y) * v.dir; if (ahead <= -c.h * 0.3) continue;
-        const gap = ahead - v.h * 0.5 - c.h * 0.4;
-        if (gap < 30) {
-          want = Math.min(want, Math.max(0, v.base * (gap - 6) / 24)); blocked = true;
-          if (gap < 18 && Math.random() < dt * 0.25) honk(v, 0.6);
-        }
-      }
+
+  // vehicles: car-following along the lane, a stop line on amber/red, unhurried lane changes when stuck
+  for (const v of cars) {
+    let [gap, sp] = aheadOf(v, v.x);
+    const front = v.y + v.dir * v.h / 2, toLine = (STOP[v.dir] - front) * v.dir;
+    if (light === "green" && toLine > -2 && toLine < 45 && gap < toLine + 44 + v.h) { gap = Math.max(0, toLine); sp = 0; }
+    if (light !== "green" && toLine > -2) {
+      const canStop = light === "red" || toLine > (v.speed * v.speed) / (2 * v.b) + 2;   // on amber, go if too close to stop
+      if (canStop && toLine < gap) { gap = Math.max(0, toLine); sp = 0; }
     }
-    v.stuck = blocked ? v.stuck + dt : Math.max(0, v.stuck - dt * 2);
-    if (v.type !== "ped" && v.stuck > (v.type === "scooter" ? 0.25 : 0.9) && v.tx === null) { reroute(v); v.stuck = 0; }
-    // steer toward the chosen lane
-    if (v.tx !== null) {
-      const dx = v.tx - v.x, s = (v.type === "scooter" ? 48 : 30) * dt;
-      v.x += Math.max(-s, Math.min(s, dx)); v.wobV += -Math.sign(dx) * dt * 0.4 * (Math.abs(dx) > 1 ? 1 : 0);
-      if (Math.abs(dx) < 0.8) v.tx = null;
-    } else if (v.type === "scooter") v.x += Math.sin(t * 0.9 + v.phase) * 3 * dt;
-    clampX(v);
-    v.speed += (want - v.speed) * Math.min(1, dt * 2.4);
-    v.boost = Math.max(0, v.boost - dt * 0.7);
+    let acc = idm(v, gap, sp);
+    acc = Math.max(-v.b * 2.2, Math.min(v.a, acc));
+    v.speed = Math.max(0, v.speed + acc * dt);
     v.y += v.dir * v.speed * dt;
-    if (v.dir > 0 && v.y - v.h / 2 > SH + 8) { v.y = -v.h / 2 - Math.random() * 60; v.tx = null; }
-    if (v.dir < 0 && v.y + v.h / 2 < -8) { v.y = SH + v.h / 2 + Math.random() * 60; v.tx = null; }
-    v.bumpCool = Math.max(0, v.bumpCool - dt);
-  }
 
-  // bumps: when two vehicles touch, they jolt apart, wobble, and the one behind finds another way
-  for (let i = 0; i < vehicles.length; i++) {
-    const a = vehicles[i]; if (a.type === "ped") continue;
-    for (let j = i + 1; j < vehicles.length; j++) {
-      const b = vehicles[j]; if (b.type === "ped") continue;
-      const ox = (a.w + b.w) * 0.5 * 0.82 - Math.abs(a.x - b.x), oy = (a.h + b.h) * 0.5 * 0.82 - Math.abs(a.y - b.y);
-      if (ox <= 0 || oy <= 0) continue;
-      if (ox < oy) { const s = Math.sign(a.x - b.x) || 1; a.x += s * ox * 0.5; b.x -= s * ox * 0.5; }
-      else { const s = Math.sign(a.y - b.y) || 1; a.y += s * oy * 0.5; b.y -= s * oy * 0.5; }
-      if (a.bumpCool <= 0 && b.bumpCool <= 0) {
-        const rear = a.dir === b.dir ? ((a.y - b.y) * a.dir < 0 ? a : b) : (a.speed > b.speed ? a : b);
-        const hard = Math.min(1, (Math.abs(a.speed - b.speed * (a.dir === b.dir ? 1 : -1)) + 10) / 60);
-        a.wobV += (Math.random() - 0.5) * 3 * hard; b.wobV += (Math.random() - 0.5) * 3 * hard;
-        a.pop = b.pop = 0.6; rear.speed *= 0.3; rear.tx = null; reroute(rear);
-        if (rear.tx === null) rear.tx = Math.max(ROAD[0] + 14, Math.min(ROAD[1] - 14, rear.x + (Math.random() < 0.5 ? -24 : 24)));
-        a.bumpCool = b.bumpCool = 1.2;
-        honk(rear, 0.75);
+    // lane change: only when held up, there's room beside, and the other lane is clearly better
+    v.laneT -= dt;
+    if (v.laneT <= 0 && gap < 70 && sp < v.base * 0.7 && Math.abs(toLine) > 50) {
+      const lanes = LANES[v.dir]; let best = -1, bestGap = gap + 30;
+      for (const li of [v.lane - 1, v.lane + 1]) {
+        if (li < 0 || li > 2 || (li === 0 && v.type === "truck" && false)) continue;
+        if (!laneFreeBeside(v, lanes[li])) continue;
+        const [g2] = aheadOf(v, lanes[li]); if (g2 > bestGap) { bestGap = g2; best = li; }
       }
+      if (best >= 0) { v.lane = best; v.laneT = v.type === "scooter" ? 1.4 : 3.5; } else v.laneT = 0.6;
     }
+    // smooth lateral move into the lane, like a steering wheel easing round
+    const tx = LANES[v.dir][v.lane], k = v.type === "scooter" ? 9 : 5;
+    v.vx += ((tx - v.x) * k - v.vx * 2 * Math.sqrt(k)) * dt;
+    v.x += v.vx * dt;
+    v.boost = Math.max(0, v.boost - dt * 0.4);
+
+    if (v.dir > 0 && v.y - v.h / 2 > SH + 10) respawn(v);
+    if (v.dir < 0 && v.y + v.h / 2 < -10) respawn(v);
   }
 
+  // never let one vehicle slide into another: the one behind settles just short of the one ahead
+  for (let i = 0; i < cars.length; i++) for (let j = i + 1; j < cars.length; j++) {
+    const a = cars[i], b = cars[j];
+    if (a.dir !== b.dir || Math.abs(a.x - b.x) > (a.w + b.w) * 0.45) continue;
+    const need = (a.h + b.h) / 2 + 1, d = (b.y - a.y) * a.dir;
+    if (Math.abs(d) >= need) continue;
+    const [back, front] = d > 0 ? [a, b] : [b, a];
+    back.y = front.y - back.dir * need; back.speed = Math.min(back.speed, front.speed);
+  }
+
+  // walkers
+  for (const p of walkers) {
+    const sp = p.base;
+    if (p.mode === "walk") { p.speed = sp; p.y += p.dir * sp * dt; p.face = p.dir > 0 ? 0 : Math.PI; }
+    else if (p.mode === "toCross") {
+      const d = p.crossY - p.y; p.speed = sp; p.y += Math.sign(d) * Math.min(Math.abs(d), sp * dt); p.face = d > 0 ? 0 : Math.PI;
+      if (Math.abs(d) < 1 && light === "red") { p.mode = "cross"; p.toX = p.side === 0 ? WALK_R[0] + 10 + Math.random() * 25 : WALK_L[0] + 10 + Math.random() * 25; }
+      if (light === "green") p.mode = "walk";
+    } else if (p.mode === "cross") {
+      const d = p.toX - p.x; p.speed = sp * 2.2; p.x += Math.sign(d) * Math.min(Math.abs(d), p.speed * dt);
+      p.face = d > 0 ? Math.PI / 2 : -Math.PI / 2;
+      if (Math.abs(d) < 1) { p.mode = "walk"; p.side = 1 - p.side; p.dir = Math.random() < 0.5 ? 1 : -1; }
+    }
+    if (p.y > SH + 20) p.y = -20; if (p.y < -20) p.y = SH + 20;
+  }
+
+}
+function draw(dt) {
   for (const v of vehicles) {
-    clampX(v);
-    v.wobV += -v.wob * 40 * dt; v.wobV *= Math.exp(-dt * 6); v.wob += v.wobV * dt;
     v.pop = Math.max(0, v.pop - dt * 3);
     const s = v.k * (1 + 0.12 * Math.sin(v.pop * Math.PI));
     const [wx, wy] = toWorld(v.x, v.y);
-    v.mesh.position.set(wx, wy, v.z); v.mesh.scale.set(s, s, 1); v.mesh.rotation.z = v.wob * 0.35;
+    v.mesh.position.set(wx, wy, v.z); v.mesh.scale.set(s, s, 1);
     if (v.walk) {                                         // step through the walk cycle as they cover ground
       v.walk.dist += Math.abs(v.speed) * dt;
       const frame = Math.floor((v.walk.dist / 9) * 8) % 8;
       v.walk.tex.offset.set((frame * walkMeta.cw) / walkMeta.w, 1 - ((v.walk.char + 1) * walkMeta.ch) / walkMeta.h);
-      v.mesh.rotation.z = v.dir > 0 ? 0 : Math.PI;        // the drawings face down the street
+      v.mesh.rotation.z = v.face ?? (v.dir > 0 ? 0 : Math.PI);   // the drawings face down the street
       const [sx, sy] = toWorld(v.x - 9, v.y + 7);
       v.shadow.position.set(sx, sy, v.z - 0.1); v.shadow.rotation.z = Math.atan2(-7, -9);
+    } else {
+      // yaw a little into a lane change, the way a car noses over
+      v.mesh.rotation.z = v.dir * Math.atan2(v.vx, Math.max(v.speed, 6)) * 0.9;
     }
   }
   renderer.render(scene, camera);
-  requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
-window.__street = { vehicles, cows, streetAt, beCow };
+window.__street = { vehicles, cows, streetAt, beCow, get light() { return light; } };
+
 </script>
 </body>
 </html>
