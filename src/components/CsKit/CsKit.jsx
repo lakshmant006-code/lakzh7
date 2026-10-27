@@ -317,6 +317,38 @@ export function CsEmbed({ src, title, height }) {
   );
 }
 
+const SEE_NEXT_PROJECTS = [
+  {
+    key: "keep",
+    to: "/keep",
+    video: "/work/keep/keep-thumb.mp4",
+    title: "Keep: A Memory Calendar That Answers Back",
+    description: "A concept for Meta AI that answers from your own memories.",
+  },
+  {
+    key: "reef",
+    to: "/quizai",
+    video: "/work/reef/reef-thumb.mp4",
+    title: "Reef: AI Powered Notetaking Application",
+    description: "Turning uploaded notes into quizzes and summaries.",
+  },
+  {
+    key: "hiku",
+    to: "/hiku",
+    video: "/work/Hiku/hiku-promo.mp4",
+    title: "Hiku: A Mobile Application for Hiking Enthusiasts",
+    description: "Connecting hikers around shared trails and gear.",
+  },
+  {
+    key: "summer",
+    to: "/time-management",
+    video: "/work/time-management/summer-launch.mp4",
+    title: "Summer: A Productivity Tracking Web App",
+    description: "Making where the workday went easy to see.",
+  },
+];
+
+/** Shows every other project. Pass the key of the page you are on. */
 export function CsSeeNext({ id, items }) {
   return (
     <section id={id} className="cs-section cs-col cs-next" data-nav-label="See next">

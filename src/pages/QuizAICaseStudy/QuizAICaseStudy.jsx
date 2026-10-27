@@ -345,25 +345,7 @@ const QuizAICaseStudy = () => {
         </CsText>
       </CsSection>
 
-      <CsSeeNext
-        id="quizai-see-next"
-        items={[
-          {
-            to: "/time-management",
-            video: "/work/time-management/summer-launch.mp4",
-            title: "Summer: A Productivity Tracking Web App",
-            description:
-              "Helping a company track employee productivity through an intuitive, easy-to-navigate time management dashboard.",
-          },
-          {
-            to: "/hiku",
-            video: "/work/Hiku/hiku-promo.mp4",
-            title: "Hiku: A Mobile Application for Hiking Enthusiasts",
-            description:
-              "Connecting hiking enthusiasts through community, shared experiences, and a convenient way to buy or rent outdoor gear.",
-          },
-        ]}
-      />
+      <CsSeeNext id="quizai-see-next" current="reef" />
     </CsPage>
   );
 };
