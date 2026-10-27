@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Grass</title>
+<style>
+  :root { color-scheme: dark; }
+  html, body { margin: 0; height: 100%; background: #9fc3d6; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  .ui { position: fixed; left: 50%; bottom: max(20px, env(safe-area-inset-bottom)); transform: translateX(-50%);
+        display: flex; align-items: center; gap: 14px; padding: 10px 16px; border-radius: 999px;
+        background: rgba(12,24,10,.42); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+        color: #eef6e4; font: 500 13px/1 -apple-system, "SF Pro Text", system-ui, sans-serif; letter-spacing: .02em; }
+  .ui output { min-width: 4.6em; text-align: right; font-variant-numeric: tabular-nums; opacity: .9; }
+  input[type=range] { -webkit-appearance: none; appearance: none; width: min(34vw, 220px); height: 28px; background: transparent; }
+  input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 4px; background: rgba(255,255,255,.35); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -9px; border-radius: 50%; background: #fff; box-shadow: 0 1px 6px rgba(0,0,0,.35); }
+  input[type=range]::-moz-range-track { height: 4px; border-radius: 4px; background: rgba(255,255,255,.35); }
+  input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border: 0; border-radius: 50%; background: #fff; }
+  .hint { position: fixed; top: max(18px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); color: rgba(255,255,255,.9);
+          font: 500 13px/1 -apple-system, system-ui, sans-serif; text-shadow: 0 1px 8px rgba(0,0,0,.35); transition: opacity .8s; pointer-events: none; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="hint" id="hint">Tap anywhere to change the wind</div>
+<div class="ui"><span>Wind</span><input id="wind" type="range" min="0" max="3" step="0.01" value="0.8" aria-label="Wind speed"><output id="label">Breeze</output></div>
+<script>
+(() => {
+  const canvas = document.getElementById("c");
+  const gl = canvas.getContext("webgl2", { antialias: true, alpha: false, powerPreference: "high-performance" });
+  if (!gl) { document.body.insertAdjacentHTML("beforeend", "<p style='color:#fff;padding:24px;font:16px system-ui'>WebGL2 is required.</p>"); return; }
+
+  const COARSE = matchMedia("(pointer: coarse)").matches;
+  const BLADES = +new URLSearchParams(location.search).get("n") || (COARSE ? 220000 : 420000);
+  const SEG = 6;                       // segments up the blade
+  const DPR_CAP = 2;
+
+  /* ---------- shaders ---------- */
+  const GRASS_VS = `#version 300 es
+  precision highp float;
+  layout(location=0) in vec2 aShape;     // x: -1..1 side, y: 0..1 up the blade
+  layout(location=1) in vec4 aA;         // x, z, height, width
+  layout(location=2) in vec4 aB;         // facing angle, lean angle, lean amount, rand
+  layout(location=3) in vec4 aC;         // clump x, clump z, clump rand, tuft height factor
+  uniform mat4 uVP;
+  uniform vec3 uCam;
+  uniform float uPhase;     // integrated wind phase (never jumps when speed changes)
+  uniform float uStrength;  // eased wind strength
+  uniform float uGust;      // eased click gust pulse
+  uniform vec2 uDir;
+  out vec3 vCol;
+  out float vFog;
+  out vec3 vN;
+  out float vT;
+
+  float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
+  float vn(vec2 p){
+    vec2 i = floor(p), f = fract(p); f = f*f*(3.0-2.0*f);
+    return mix(mix(hash(i), hash(i+vec2(1,0)), f.x), mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), f.x), f.y);
+  }
+  void main(){
+    float t = aShape.y;
+    float rnd = aB.w;
+    vec2 base = aA.xy;
+    float h = aA.z;
+
+    // wind field: broad rolling waves + finer ripples travelling along uDir
+    vec2 along = vec2(dot(base, uDir), dot(base, vec2(-uDir.y, uDir.x)));
+    float w1 = vn(vec2(along.x * 0.11 - uPhase * 0.9, along.y * 0.16));
+    float w2 = vn(vec2(along.x * 0.42 - uPhase * 1.9, along.y * 0.55 + uPhase * 0.2));
+    float swell = 0.5 + 0.5 * sin(along.x * 0.35 - uPhase * 2.4 + along.y * 0.12);
+    float field = 0.55 * w1 + 0.25 * w2 + 0.35 * swell;
+    float push = (0.12 + field * 1.1 + uGust * (0.4 + 0.6 * swell)) * uStrength;
+
+    float tt = t * t;
+    float len = h;
+    // natural lean (tussock blades arc outward from the clump centre)
+    vec2 leanDir = vec2(cos(aB.y), sin(aB.y));
+    vec2 off = leanDir * aB.z * tt * len;
+    // wind bend along wind direction + small flutter across it
+    float flutter = sin(uPhase * 5.0 + rnd * 40.0 + base.x * 1.3) * (0.25 + 0.5 * w2);
+    off += uDir * push * 0.55 * tt * len;
+    off += vec2(-uDir.y, uDir.x) * flutter * min(push, 1.2) * 0.12 * tt * len;
+
+    float bendLen = length(off);
+    float y = t * len - 0.5 * bendLen * bendLen / max(len, 0.01) * t;  // blade shortens as it bows
+    y = max(y, 0.0);
+
+    // blade cross-section
+    vec2 face = vec2(cos(aB.x), sin(aB.x));
+    vec2 side = vec2(-face.y, face.x);
+    float dist = distance(base, uCam.xz);
+    float width = aA.w * (1.0 - pow(t, 1.4)) * (1.0 + dist * 0.018);
+    vec3 pos = vec3(base.x + off.x + side.x * aShape.x * width,
+                    y,
+                    base.y + off.y + side.y * aShape.x * width);
+
+    // colour: dark rooted base -> bright sun-lit tip, per-clump & per-blade variation
+    vec3 deep  = vec3(0.045, 0.13, 0.03);
+    vec3 mid   = mix(vec3(0.20, 0.42, 0.08), vec3(0.30, 0.50, 0.11), aC.z);
+    vec3 tip   = mix(vec3(0.62, 0.70, 0.22), vec3(0.78, 0.80, 0.34), rnd);
+    vec3 col = mix(deep, mid, smoothstep(0.0, 0.55, t));
+    col = mix(col, tip, smoothstep(0.45, 1.0, t) * (0.55 + 0.45 * aC.w));
+    col *= 0.85 + 0.3 * rnd;
+    col += vec3(0.05, 0.05, 0.0) * push * smoothstep(0.4, 1.0, t); // wind-lit sheen
+    vCol = col;
+
+    vec3 nrm = normalize(vec3(face.x * 0.55 + off.x * 0.4, 0.8, face.y * 0.55 + off.y * 0.4));
+    vN = nrm;
+    vT = t;
+    float d = distance(pos, uCam);
+    vFog = 1.0 - exp(-pow(d * 0.019, 1.35));
+    gl_Position = uVP * vec4(pos, 1.0);
+  }`;
+
+  const GRASS_FS = `#version 300 es
+  precision highp float;
+  in vec3 vCol; in float vFog; in vec3 vN; in float vT;
+  uniform vec3 uSun; uniform vec3 uFog;
+  out vec4 o;
+  void main(){
+    vec3 n = normalize(vN);
+    if (!gl_FrontFacing) n = vec3(-n.x, n.y, -n.z);
+    float lam = clamp(dot(n, uSun) * 0.5 + 0.5, 0.0, 1.0);
+    float trans = pow(clamp(dot(-n, uSun), 0.0, 1.0), 2.0) * 0.55 * smoothstep(0.2, 1.0, vT);
+    float ao = mix(0.35, 1.0, smoothstep(0.0, 0.5, vT));
+    vec3 light = vec3(0.50, 0.58, 0.62) * 0.55 + vec3(1.05, 0.95, 0.78) * lam * 0.85;
+    vec3 c = vCol * light * ao + vec3(0.55, 0.62, 0.15) * trans * vCol;
+    c = mix(c, uFog, vFog);
+    o = vec4(pow(c, vec3(0.92)), 1.0);
+  }`;
+
+  const GROUND_VS = `#version 300 es
+  precision highp float;
+  layout(location=0) in vec3 p;
+  uniform mat4 uVP;
+  out vec3 vW;
+  void main(){ gl_Position = uVP * vec4(p, 1.0); vW = p; }`;
+  const GROUND_FS = `#version 300 es
+  precision highp float;
+  in vec3 vW; uniform vec3 uFog; uniform vec3 uCam; out vec4 o;
+  void main(){ float f = 1.0 - exp(-pow(distance(vW, uCam) * 0.019, 1.35));
+    o = vec4(mix(vec3(0.05, 0.11, 0.03), uFog, f), 1.0); }`;
+
+  const SKY_VS = `#version 300 es
+  precision highp float;
+  out vec2 vUV;
+  void main(){ vec2 p = vec2(float((gl_VertexID & 1) << 2) - 1.0, float((gl_VertexID & 2) << 1) - 1.0);
+    vUV = p; gl_Position = vec4(p, 0.9999, 1.0); }`;
+  const SKY_FS = `#version 300 es
+  precision highp float;
+  in vec2 vUV; uniform vec3 uFog; uniform float uHorizon; out vec4 o;
+  void main(){
+    float k = clamp((vUV.y - uHorizon) * 0.9, 0.0, 1.0);
+    vec3 top = vec3(0.36, 0.58, 0.82);
+    o = vec4(mix(uFog, top, pow(k, 0.7)), 1.0);
+  }`;
+
+  function compile(vs, fs) {
+    const mk = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; };
+    const p = gl.createProgram();
+    gl.attachShader(p, mk(gl.VERTEX_SHADER, vs)); gl.attachShader(p, mk(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+    const u = {}; const n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
+    for (let i = 0; i < n; i++) { const name = gl.getActiveUniform(p, i).name; u[name] = gl.getUniformLocation(p, name); }
+    return { p, u };
+  }
+  const grass = compile(GRASS_VS, GRASS_FS);
+  const ground = compile(GROUND_VS, GROUND_FS);
+  const sky = compile(SKY_VS, SKY_FS);
+
+  /* ---------- geometry ---------- */
+  // one blade: SEG+1 rows of two verts, indexed triangles
+  const shape = [];
+  for (let i = 0; i <= SEG; i++) { const t = i / SEG; shape.push(-1, t, 1, t); }
+  const idx = [];
+  for (let i = 0; i < SEG; i++) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+  // tip collapses to a point via width taper (t=1 -> 0)
+
+  // seeded random so the meadow is identical every load
+  let seed = 1337;
+  const rand = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+  const gauss = () => (rand() + rand() + rand() + rand() - 2) * 1.2;
+
+  const FAR = 46, NEAR = 0.8;
+  const CLUMPS = Math.round(BLADES / 85);
+  const A = new Float32Array(BLADES * 4), B = new Float32Array(BLADES * 4), C = new Float32Array(BLADES * 4);
+  let n = 0;
+  for (let c = 0; c < CLUMPS && n < BLADES; c++) {
+    const z = NEAR + (FAR - NEAR) * Math.pow(rand(), 1.7);
+    const half = 3 + z * 0.95;
+    const cx = (rand() * 2 - 1) * half;
+    const cr = 0.28 + rand() * 0.42;               // clump radius
+    const ch = 0.55 + rand() * 0.55;               // clump height
+    const crand = rand();
+    const count = Math.min(BLADES - n, Math.round(60 + rand() * 50));
+    for (let k = 0; k < count; k++, n++) {
+      const dx = gauss() * cr, dz = gauss() * cr;
+      const r = Math.min(1, Math.hypot(dx, dz) / (cr * 1.6));
+      const mound = 1 - 0.45 * r;
+      const h = ch * mound * (0.6 + rand() * 0.55);
+      const outward = Math.atan2(dz, dx);
+      A.set([cx + dx, z + dz, h, 0.012 + rand() * 0.011], n * 4);
+      B.set([rand() * Math.PI * 2, outward + (rand() - 0.5) * 0.9, 0.18 + r * 0.55 + rand() * 0.25, rand()], n * 4);
+      C.set([cx, z, crand, mound], n * 4);
+    }
+  }
+  const COUNT = n;
+
+  const vao = gl.createVertexArray(); gl.bindVertexArray(vao);
+  const buf = (data, loc, size, div) => {
+    const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0); if (div) gl.vertexAttribDivisor(loc, 1);
+  };
+  buf(new Float32Array(shape), 0, 2, 0);
+  buf(A, 1, 4, 1); buf(B, 2, 4, 1); buf(C, 3, 4, 1);
+  const ib = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(idx), gl.STATIC_DRAW);
+
+  const gvao = gl.createVertexArray(); gl.bindVertexArray(gvao);
+  const gb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, gb);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-200, 0, -5, 200, 0, -5, -200, 0, 120, 200, 0, -5, 200, 0, 120, -200, 0, 120]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+  const svao = gl.createVertexArray();
+
+  /* ---------- camera ---------- */
+  const m4 = {
+    persp(fov, asp, n, f) { const t = 1 / Math.tan(fov / 2), nf = 1 / (n - f);
+      return [t / asp, 0, 0, 0, 0, t, 0, 0, 0, 0, (f + n) * nf, -1, 0, 0, 2 * f * n * nf, 0]; },
+    look(e, c) {
+      let fx = c[0] - e[0], fy = c[1] - e[1], fz = c[2] - e[2]; const fl = Math.hypot(fx, fy, fz); fx /= fl; fy /= fl; fz /= fl;
+      let sx = fy * 0 - fz * 1, sy = fz * 0 - fx * 0, sz = fx * 1 - fy * 0; // f x up(0,1,0)
+      sx = -fz; sy = 0; sz = fx; const sl = Math.hypot(sx, sz); sx /= sl; sz /= sl;
+      const ux = sy * fz - sz * fy, uy = sz * fx - sx * fz, uz = sx * fy - sy * fx;
+      return [sx, ux, -fx, 0, sy, uy, -fy, 0, sz, uz, -fz, 0,
+        -(sx * e[0] + sy * e[1] + sz * e[2]), -(ux * e[0] + uy * e[1] + uz * e[2]), fx * e[0] + fy * e[1] + fz * e[2], 1];
+    },
+    mul(a, b) { const o = new Array(16); for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) { let s = 0; for (let k = 0; k < 4; k++) s += a[k * 4 + j] * b[i * 4 + k]; o[i * 4 + j] = s; } return o; },
+  };
+
+  /* ---------- wind state ---------- */
+  const slider = document.getElementById("wind"), label = document.getElementById("label"), hint = document.getElementById("hint");
+  const NAMES = [[0.12, "Still"], [0.5, "Light air"], [1.0, "Breeze"], [1.7, "Windy"], [2.4, "Gale"], [9, "Storm"]];
+  const nameFor = (v) => NAMES.find(([m]) => v < m)[1];
+  const PRESETS = [0.15, 0.8, 1.6, 2.8];
+  let target = parseFloat(slider.value), speed = target, strength = target, gust = 0, phase = 0, presetIdx = 1;
+  let dirAngle = 0.35, dirTarget = 0.35;
+  const setTarget = (v) => { target = v; slider.value = v; label.textContent = nameFor(v); };
+  slider.addEventListener("input", () => { setTarget(parseFloat(slider.value)); hideHint(); });
+  const hideHint = () => { hint.style.opacity = 0; };
+
+  let down = null;
+  addEventListener("pointerdown", (e) => { if (e.target.closest(".ui")) return; down = { x: e.clientX, y: e.clientY }; });
+  addEventListener("pointerup", (e) => {
+    if (!down) return;
+    const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y); down = null;
+    if (moved > 10) return;
+    presetIdx = (presetIdx + 1) % PRESETS.length;
+    setTarget(PRESETS[presetIdx]);
+    gust = Math.max(gust, 1.0);                                 // eased out below: a swell rolls through
+    dirTarget += (e.clientX / innerWidth - 0.5) * 0.8;           // gust leans the wind toward the tap side
+    hideHint();
+  });
+  let px = 0, py = 0, tx = 0, ty = 0;
+  addEventListener("pointermove", (e) => { tx = e.clientX / innerWidth - 0.5; ty = e.clientY / innerHeight - 0.5; });
+
+  /* ---------- render ---------- */
+  const FOG = [0.74, 0.84, 0.82];
+  const SUN = (() => { const v = [-0.45, 0.55, -0.6]; const l = Math.hypot(...v); return v.map((x) => x / l); })();
+  let W = 0, H = 0;
+  function resize() {
+    const dpr = Math.min(devicePixelRatio || 1, DPR_CAP);
+    W = Math.round(innerWidth * dpr); H = Math.round(innerHeight * dpr);
+    canvas.width = W; canvas.height = H; gl.viewport(0, 0, W, H);
+  }
+  addEventListener("resize", resize); resize();
+
+  const ease = (cur, tgt, dt, tau) => cur + (tgt - cur) * (1 - Math.exp(-dt / tau));
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    speed = ease(speed, target, dt, 0.9);          // everything glides to the new wind
+    strength = ease(strength, target, dt, 0.7);
+    gust = ease(gust, 0, dt, 1.6);
+    dirAngle = ease(dirAngle, dirTarget, dt, 1.2);
+    phase += speed * dt;
+    px = ease(px, tx, dt, 0.35); py = ease(py, ty, dt, 0.35);
+
+    const cam = [px * 1.4, 1.25 + py * -0.25, -0.6];
+    const look = [px * 4, 0.55 + py * -0.6, 12];
+    const vp = m4.mul(m4.persp(1.0, W / H, 0.1, 160), m4.look(cam, look));
+    const horizon = (() => { // screen-space y of the horizon for the sky gradient
+      const pitch = Math.atan2(look[1] - cam[1], look[2] - cam[2]); return Math.tan(-pitch) / Math.tan(0.5);
+    })();
+
+    gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL);
+    gl.clearColor(FOG[0], FOG[1], FOG[2], 1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    gl.depthMask(false); gl.useProgram(sky.p);
+    gl.uniform3fv(sky.u.uFog, FOG); gl.uniform1f(sky.u.uHorizon, horizon);
+    gl.bindVertexArray(svao); gl.drawArrays(gl.TRIANGLES, 0, 3); gl.depthMask(true);
+
+    gl.useProgram(ground.p);
+    gl.uniformMatrix4fv(ground.u.uVP, false, vp); gl.uniform3fv(ground.u.uCam, cam); gl.uniform3fv(ground.u.uFog, FOG);
+    gl.bindVertexArray(gvao); gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    gl.useProgram(grass.p);
+    gl.uniformMatrix4fv(grass.u.uVP, false, vp); gl.uniform3fv(grass.u.uCam, cam);
+    gl.uniform1f(grass.u.uPhase, phase); gl.uniform1f(grass.u.uStrength, strength); gl.uniform1f(grass.u.uGust, gust);
+    gl.uniform2f(grass.u.uDir, Math.cos(dirAngle), Math.sin(dirAngle));
+    gl.uniform3fv(grass.u.uSun, SUN); gl.uniform3fv(grass.u.uFog, FOG);
+    gl.disable(gl.CULL_FACE);
+    gl.bindVertexArray(vao);
+    gl.drawElementsInstanced(gl.TRIANGLES, idx.length, gl.UNSIGNED_SHORT, 0, COUNT);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  window.__grass = { setTarget, get state() { return { speed, strength, phase, target, COUNT }; } };
+})();
+</script>
+</body>
+</html>
