@@ -61,6 +61,18 @@ const workProjects = [
     category: "hackathon",
     wide: true,
   },
+  {
+    id: "keep-memory-journal",
+    title: "Keep: A Private Memory Journal",
+    role: "Design Engineer",
+    tags: ["PWA", "On-device ML", "Product Design"],
+    summary:
+      "Camera rolls are a pile, not a story. Keep turns the moments you save into a calendar of small circles, with faces, places and streaks that all stay on your phone.",
+    shortSummary: "One calendar, one circle a day, all on your phone.",
+    video: "/projects/keep/keep.mp4",
+    thumbnailImage: "/projects/keep/poster.jpg",
+    category: "case-study",
+  },
 ];
 
 const routeMap = {
@@ -68,6 +80,7 @@ const routeMap = {
   "quizai-approval-flow": "/quizai",
   "hiku-bio-smart-wearable": "/hiku",
   "promove-svsd-hackathon": "/pro-move",
+  "keep-memory-journal": "/keep",
 };
 
 /** Single work card (full layout on Work page; compact footer on Home) */
@@ -98,7 +111,8 @@ function WorkCard({
     project.id === "time-management-pain-detection" ||
     project.id === "quizai-approval-flow" ||
     project.id === "hiku-bio-smart-wearable" ||
-    project.id === "promove-svsd-hackathon";
+    project.id === "promove-svsd-hackathon" ||
+    project.id === "keep-memory-journal";
 
   const videoSource = project.video;
   const useThumbnailImage = isMobile && project.thumbnailImage;
