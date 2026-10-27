@@ -39,7 +39,7 @@
 <body>
 <canvas id="c"></canvas>
 <a class="back" id="back" href="/nature/index.html">← Scenes</a>
-<div class="hint" id="hint">Tap to plant flowers · someone will come over</div>
+<div class="hint" id="hint">Tap to plant flowers · they bloom · someone will come over</div>
 <div id="bubbles"></div>
 <div class="ui"><span>Wind</span><input id="wind" type="range" min="0" max="3" step="0.01" value="0.8" aria-label="Wind speed"><output id="label">Breeze</output></div>
 <script>
@@ -359,9 +359,11 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
       float foot = mix(1.0, 0.55, clamp(p.x * 0.5 + 0.5, 0.0, 1.0));
       col = vec4(0.20, 0.25, 0.55, smoothstep(1.0, 0.25, d) * 0.55 * A * foot);
     } else if (type < 1.5) {                            // flower, seen from above
-      float r = length(p), a = atan(p.y, p.x);
+      float bl = clamp(ph, 0.0, 1.0);                   // bloom progress: 0 = closed bud, 1 = fully open
+      float open = smoothstep(0.12, 0.95, bl);
+      float r = length(p), a = atan(p.y, p.x) + (1.0 - open) * 1.4;   // petals swirl as they unfurl
       float n = 5.0 + floor(vC.w * 3.0);                // 5-7 petals
-      float pet = 0.58 + 0.34 * pow(abs(cos(n * 0.5 * a)), 0.7);
+      float pet = (0.58 + 0.34 * pow(abs(cos(n * 0.5 * a)), 0.7)) * mix(0.3, 1.0, open);
       float petal = smoothstep(pet, pet - 0.07, r);
       vec3 base = vC.rgb;
       vec3 pc = mix(base * 0.75, base, smoothstep(0.1, 0.65, r));
@@ -371,7 +373,13 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
       float disc = smoothstep(0.2, 0.15, r);
       vec3 c = mix(pc, cen, disc);
       c = mix(c, vec3(0.75, 0.5, 0.05), smoothstep(0.1, 0.0, r - 0.02) * 0.5);
-      col = vec4(c, petal * A);
+      c = mix(c, c * 0.8 + vec3(0.06, 0.1, 0.0), (1.0 - open) * 0.5);   // a folded bud sits in shade
+      // the green calyx cups the bud, then the petals cover it as they open
+      float calyx = smoothstep(0.42, 0.36, r) * (1.0 - smoothstep(0.35, 0.75, bl));
+      c = mix(c, vec3(0.28, 0.5, 0.16), calyx * 0.85);
+      float disc2 = smoothstep(0.2, 0.15, r) * smoothstep(0.55, 0.9, bl);
+      c = mix(c, cen, disc2 * 0.0);
+      col = vec4(c, max(petal, calyx) * A);
     } else if (type > 2.5) {                            // a walker from the drawn walk cycle, frame picked on the CPU
       vec2 uv = vec2(vC.x + (p.x * 0.5 + 0.5) * vC.z, vC.y + (0.5 - p.y * 0.5) * vC.w);
       vec4 tx = texture(uAtlas, uv);
@@ -467,7 +475,7 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     for (let i = 0; i < 11; i++) {
       const a = Math.random() * 6.283, d = Math.sqrt(Math.random()) * 0.6;
       const c = Math.random() < 0.6 ? base : BLOOMS[(Math.random() * BLOOMS.length) | 0];
-      flowers.push({ x: gx + Math.cos(a) * d, z: gz + Math.sin(a) * d, s: rr(0.085, 0.14), rot: Math.random() * 6.283, c, v: Math.random(), t0: t + i * 0.07, ph: Math.random() * 6 });
+      flowers.push({ x: gx + Math.cos(a) * d, z: gz + Math.sin(a) * d, s: rr(0.085, 0.14), rot: Math.random() * 6.283, c, v: Math.random(), t0: t + i * 0.16, ph: Math.random() * 6 });
     }
     while (flowers.length > 150) flowers.shift();
     // someone walks over from the nearest edge of the view
@@ -509,7 +517,7 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     const sunRot = Math.atan2(SUN2N[1], SUN2N[0]);
     const sway = (x) => Math.sin(phase * 1.7 + x * 0.6) * 0.06 * Math.min(1.5, strength);
     for (const f of flowers) {                                  // shadows first
-      const g = f.t0 > t ? 0 : backOut(Math.min(1, (t - f.t0) / 0.9)); if (g <= 0.01) continue;
+      if (f.t0 > t) continue; const g = 0.45 + 0.55 * backOut(Math.min(1, (t - f.t0) / 1.1));
       put(f.x + SUN2N[0] * f.s * 0.9 * g, f.z + SUN2N[1] * f.s * 0.9 * g, f.s * 1.4 * g, f.s * 0.8 * g, sunRot, 0, 0.75, 0, 0, 0, 0, 0);
     }
     for (const q of people) {
@@ -518,8 +526,9 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
       put(q.x + SUN2N[0] * L, q.z + SUN2N[1] * L, L, 0.07, sunRot, 0, 1, 0, 0, 0, 0, 0);
     }
     for (const f of flowers) {
-      const g = f.t0 > t ? 0 : backOut(Math.min(1, (t - f.t0) / 0.9)); if (g <= 0.01) continue;
-      put(f.x + Math.cos(phase) * 0.0 + uDirX * sway(f.x), f.z + uDirY * sway(f.x), f.s * g, f.s * g, f.rot + sway(f.z) * 2, 1, Math.min(1, g * 1.4), 0, f.c[0], f.c[1], f.c[2], f.v);
+      if (f.t0 > t) continue;
+      const age = t - f.t0, bloom = ease3(Math.min(1, age / 1.9)), g = 0.45 + 0.55 * backOut(Math.min(1, age / 1.1));
+      put(f.x + uDirX * sway(f.x), f.z + uDirY * sway(f.x), f.s * g, f.s * g, f.rot + sway(f.z) * 2 + (1 - bloom) * 0.8, 1, Math.min(1, age * 4), bloom, f.c[0], f.c[1], f.c[2], f.v);
     }
     for (const q of people) {
       const moving = q.state !== "stand";
@@ -575,7 +584,7 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
       hover.x = ease(hover.x, hover.tx, dt, 0.09); hover.z = ease(hover.z, hover.tz, dt, 0.09);
       const vx = Math.max(-2.5, Math.min(2.5, (hover.x - ox) / Math.max(dt, 1e-3) * 0.25)), vz = Math.max(-2.5, Math.min(2.5, (hover.z - oz) / Math.max(dt, 1e-3) * 0.25));
       hover.vx = ease(hover.vx, vx, dt, 0.25); hover.vz = ease(hover.vz, vz, dt, 0.25);
-      hover.a = ease(hover.a, hover.on ? 1 : 0, dt, hover.on ? 0.25 : 0.6);
+      hover.a = 0;                                          // the grass stays put; only planting changes the scene
     }
     gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL);
     gl.clearColor(FOG[0], FOG[1], FOG[2], 1); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

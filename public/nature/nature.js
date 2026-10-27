@@ -808,7 +808,7 @@ const META = {
   canopy: ["Jungle canopy", "Understory · broad leaves in dappled light", "Move to open a gap in the canopy · tap to shake the leaves", "canopy"],
   mites: ["Rainy velvets", "A memory · velvet mites after the rain", "Move over a mite · press and hold to make it curl up", "rainy velvets"],
   street: ["Street", "Midday · a city street from above", "Traffic keeps its lanes and stops at the signal · hover to honk · or be the cow", "street"],
-  grass: ["Grass from above", "Meadow · combed by the wind", "Hover to part the grass · tap to plant flowers · someone will come over", "grass"],
+  grass: ["Grass from above", "Meadow · combed by the wind", "Tap to plant flowers and watch them bloom · someone will come over", "grass"],
 };
 const ORDER = ["tulips", "meadow", "pond", "canopy", "mites", "grass", "street"];
 const nav = document.getElementById("scenes");
