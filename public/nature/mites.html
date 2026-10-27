@@ -131,92 +131,67 @@ const grass=mk();
   tufts.forEach(([x,y])=>{c.fillStyle='#244a14';c.beginPath();c.arc(x,y,2.6,0,7);c.fill()});
 })();
 
-/* ---------- mite body sprite: smooth velvety red, grainy, drawn once ---------- */
-const spr=document.createElement('canvas'); spr.width=280; spr.height=360;
-(function(){
-  const c=spr.getContext('2d'); c.save(); c.scale(2,2);
-  const body=()=>{c.beginPath(); c.ellipse(70,102,38,54,0,0,7); c.moveTo(81,44); c.ellipse(70,44,11,9,0,0,7);};
-  // head sits slightly darker, then the body over it
-  c.fillStyle='#6e1b0d'; c.beginPath(); c.ellipse(70,44,11,9,0,0,7); c.fill();
-  let g=c.createRadialGradient(56,80,4,70,104,62);
-  g.addColorStop(0,'#cb4f2b'); g.addColorStop(.55,'#a8321a'); g.addColorStop(1,'#6a190c');
-  c.fillStyle=g; c.beginPath(); c.ellipse(70,102,38,54,0,0,7); c.fill();
-  c.save(); c.beginPath(); c.ellipse(70,102,38,54,0,0,7); c.clip();
-  // creases and dimples
-  c.filter='blur(1.6px)'; c.lineCap='round';
-  c.strokeStyle='rgba(55,8,2,.55)'; c.lineWidth=3.2;
-  c.beginPath(); c.moveTo(70,72); c.lineTo(70,138); c.stroke();
-  c.lineWidth=2.4; c.strokeStyle='rgba(55,8,2,.4)';
-  c.beginPath(); c.moveTo(48,90); c.quadraticCurveTo(70,84,92,90); c.stroke();
-  c.beginPath(); c.moveTo(46,116); c.quadraticCurveTo(70,122,94,116); c.stroke();
-  c.fillStyle='rgba(55,8,2,.4)';
-  c.beginPath(); c.ellipse(47,100,5,7,.1,0,7); c.fill(); c.beginPath(); c.ellipse(93,100,5,7,-.1,0,7); c.fill();
-  c.filter='none';
-  // soft sheen
-  const sh=c.createRadialGradient(54,72,2,56,76,30);
-  sh.addColorStop(0,'rgba(255,170,130,.30)'); sh.addColorStop(1,'rgba(255,170,130,0)');
-  c.fillStyle=sh; c.fillRect(0,0,140,200);
-  // velvet nap: tiny strokes
-  c.lineWidth=.7;
-  for(let i=0;i<5200;i++){
-    const x=rnd(30,110), y=rnd(46,156), a=rnd(0,6.28);
-    c.strokeStyle=Math.random()<.5?'rgba(255,150,110,.22)':'rgba(60,8,2,.22)';
-    c.beginPath(); c.moveTo(x,y); c.lineTo(x+Math.cos(a)*2.2,y+Math.sin(a)*2.2); c.stroke();
-  }
-  c.restore(); c.restore();
-  // film grain over the whole sprite
-  const id=c.getImageData(0,0,280,360), d=id.data;
-  for(let i=0;i<d.length;i+=4){ if(d[i+3]>30){ const n=(Math.random()-.5)*52; d[i]+=n; d[i+1]+=n*.7; d[i+2]+=n*.6; } }
-  c.putImageData(id,0,0);
-})();
-
-/* ---------- mites ---------- */
-const mites=[]; let nextSpawn=400;
+/* ---------- mites: the real velvet mite, cut into a body, eight legs and a pair of palps, walking like an arthropod ---------- */
+const mites=[]; let nextSpawn=400; window.__mites=mites;
+const MA={ready:false,img:null,sil:null,j:null};
+{ const a=new Image(), b=new Image();
+  let got=0; const ok=()=>{ if(++got===3) MA.ready=true; };
+  a.onload=ok; b.onload=ok; a.src='./mites/mite.png'; b.src='./mites/mite-sil.png';
+  fetch('./mites/mite.json').then(r=>r.json()).then(j=>{MA.j=j; MA.body=j.items.find(i=>i.kind==='body'); MA.legs=j.items.filter(i=>i.kind==='leg'); MA.palps=j.items.find(i=>i.kind==='palp'); ok();});
+  MA.img=a; MA.sil=b; }
+const MS=.085;                        // world units per source pixel: a mite is ~90 units across
+const STRIDE=11;                      // ground covered by one full leg cycle (foot planted = no sliding)
 function spawn(now){
+  if(!MA.ready) return;
   const free=holes.filter(h=>now-h.last>3500); if(!free.length) return;
   const h=free[(Math.random()*free.length)|0]; h.last=now;
-  mites.push({x:h.x,y:h.y,h:rnd(0,6.28),cur:0,turn:0,wait:0,lp:rnd(0,6),s:rnd(.85,1.1),t0:now,life:rnd(14000,26000),
-    home:h,leave:false,dive:0,curl:0,hold:0,sc:.25});
+  const hd=rnd(0,6.28);
+  mites.push({x:h.x,y:h.y,h:hd,s:rnd(.85,1.1),t0:now,life:rnd(16000,28000),home:h,leave:false,dive:0,curl:0,hold:0,sc:.25,
+    state:'walk',st:rnd(.8,2),speed:0,yaw:0,ph:rnd(0,1),turnNoise:rnd(-.3,.3),goal:hd,wob:0,probe:rnd(0,6),flee:0,rock:0,ox:0,oy:0,vx:0,vy:0,sA:0,sV:0,sq:0,sqV:0,pressed:false});
 }
-function legs(c,m,k,mode){
-  const L=[-34,-12,10,32], reach=[24,8,-8,-20], ext=[42,26,26,30], bend=[7,2,-3,-7], cu=m.curl;
-  for(let side=-1;side<=1;side+=2) for(let i=0;i<4;i++){
-    const ly=L[i], w=38*Math.sqrt(1-(ly/54)**2);
-    const hx=-ly*k, hy=side*w*.8*k;
-    const phi=m.lp+(((i+(side>0?1:0))%2)*Math.PI);
-    let rx=hx+reach[i]*k+Math.cos(phi)*10*k*(1-cu);
-    let ry=side*(w+ext[i])*k-side*Math.max(0,Math.sin(phi))*5*k;
-    let kx=(hx+rx)/2+bend[i]*k, ky=(hy+ry)/2+side*9*k;
-    const tx=hx+(reach[i]>0?3:-3)*k, ty=hy+side*7*k, qx=hx+(reach[i]>0?1:-1)*k, qy=hy+side*4*k;
-    rx+=(tx-rx)*cu; ry+=(ty-ry)*cu; kx+=(qx-kx)*cu; ky+=(qy-ky)*cu;
-    c.lineCap='round'; c.lineJoin='round';
-    if(mode==='shadow'){
-      c.strokeStyle='rgba(0,0,0,.6)'; c.lineWidth=4.6*k;
-      c.beginPath(); c.moveTo(hx,hy); c.lineTo(kx,ky); c.lineTo(rx,ry); c.stroke();
-    } else {
-      c.strokeStyle='#a23722'; c.lineWidth=4.6*k; c.beginPath(); c.moveTo(hx,hy); c.lineTo(kx,ky); c.stroke();
-      c.strokeStyle='#bb4f36'; c.lineWidth=3.4*k; c.beginPath(); c.moveTo(kx,ky); c.lineTo(rx,ry); c.stroke();
-      c.fillStyle='#7b2313'; c.beginPath(); c.arc(kx,ky,2*k,0,7); c.fill();
-      c.fillStyle='#d98c72'; c.beginPath(); c.arc(rx,ry,1.5*k,0,7); c.fill();
-    }
-  }
+// leg angle across one cycle: stance sweeps the foot back at constant speed, swing snaps it forward and lifts it
+function gait(p){
+  p=p-Math.floor(p); const ST=.62;
+  if(p<ST) return {a:1-2*(p/ST),lift:0};
+  const q=(p-ST)/(1-ST), e=q*q*(3-2*q);
+  return {a:-1+2*e,lift:Math.sin(q*Math.PI)};
 }
-function drawMite(c,m,shadow){
-  const k=.44*m.s*m.sc, cu=m.curl, along=1-.1*cu, across=1+.05*cu;
+function drawPieces(c,m,atlas,sh){
+  const k=MS*m.s*m.sc, cu=m.curl, j=MA.j, sc=j.sc, th0=j.theta0;
+  const spd=Math.min(1,m.speed/18);
   c.save();
-  if(shadow) c.translate(m.x+7*m.sc,m.y+9*m.sc); else c.translate(m.x,m.y);
-  if(cu>.5) c.translate(rnd(-.35,.35),rnd(-.35,.35));
-  c.rotate(m.h);
-  legs(c,m,k,shadow?'shadow':'real');
-  if(shadow){
-    c.fillStyle='rgba(0,0,0,.6)';
-    c.beginPath(); c.ellipse(0,0,50*k*1.04*along,40*k*1.04*across,0,0,7); c.fill();
-    c.beginPath(); c.ellipse(57*k*along,0,12*k,11*k,0,0,7); c.fill();
-  } else {
-    c.rotate(Math.PI/2);
-    c.drawImage(spr,-70*k*across,-100*k*along,140*k*across,180*k*along);
+  if(sh) c.translate(m.x+m.ox+7*m.sc,m.y+m.oy+9*m.sc); else c.translate(m.x+m.ox,m.y+m.oy);
+  if(cu>.5) c.translate(rnd(-.28,.28)*cu,rnd(-.28,.28)*cu);
+  c.rotate(m.h-th0+m.rock+m.sA);
+  { const q=1+m.sq; c.scale(q,q); }
+  const draw=(it,ang,scl,lift)=>{
+    c.save();
+    const hx=(it.hx??0)*k, hy=(it.hy??0)*k;
+    c.translate(hx,hy); c.rotate(ang); const f=scl*(1+.05*lift); c.scale(f,f);
+    c.drawImage(atlas,it.ax,it.ay,it.sw,it.sh,(it.ox-(it.hx??0))*k,(it.oy-(it.hy??0))*k,it.w*k,it.h*k);
+    c.restore();
+  };
+  // legs first (they sit under the body): tetrapod gait, outside legs stride wider when turning
+  for(const it of MA.legs){
+    const grp=((it.side>0?it.idx:it.idx+1)%2), ph=m.ph+grp*.5+it.idx*.025;
+    const g=gait(ph), amp=(.30-it.idx*.03)*(1+(it.side>0?1:-1)*m.yaw*.18)*(.25+.75*spd);
+    let ang=it.swing*g.a*amp*(m.state==='pause'?.0:1);
+    // while stopped, the front pair waves about to feel what's ahead
+    if(m.state==='pause'&&it.idx===0) ang+=it.swing*Math.sin(now_t*9+m.probe+it.side*1.7)*.16;
+    ang=ang*(1-cu)+cu*-it.swing*.9;                       // curled: legs fold in against the body
+    draw(it,ang,1-cu*.42,g.lift);
   }
+  if(sh){ c.restore(); return; }                           // only the legs cast a drop shadow: the body sits right on the soil
+  c.save(); const bs=1-.07*cu; c.scale(bs,bs);
+  draw(MA.body,0,1,0);
   c.restore();
+  const pal=MA.palps; draw(pal,Math.sin(now_t*21+m.probe)*.07*(m.state==='pause'?2.2:1)+(m.state==='pause'?Math.sin(now_t*5.5+m.probe)*.05:0),1-cu*.3,0);
+  c.restore();
+}
+let now_t=0;
+function drawMite(c,m,shadow){
+  if(!MA.ready) return;
+  drawPieces(c,m,shadow?MA.sil:MA.img,shadow);
 }
 
 /* ---------- hand (drawn in code, index finger is the pointer) ---------- */
@@ -255,44 +230,80 @@ const up=()=>{P.down=false};
 cv.addEventListener('pointerup',up); cv.addEventListener('pointercancel',up);
 cv.addEventListener('pointerleave',()=>{if(!P.down)P.on=false});
 
-/* ---------- behaviour ---------- */
+/* ---------- behaviour: arthropod locomotion ----------
+   No inertia: a mite's speed and turning follow its legs. It walks in bursts, stops to feel with its front legs,
+   pivots in place by stepping around, steers around its neighbours, and sprints away from a hovering finger. */
 const FOOT=30;
 function step(m,dt,now){
-  const age=now-m.t0, e=Math.min(1,age/1500);
+  const sec=dt/1000, age=now-m.t0, e=Math.min(1,age/1500);
   m.sc=(.25+.75*(1-Math.pow(1-e,3)))*(1-m.dive);
   const under=P.on&&H.press>.5&&Math.hypot(m.x-P.x,m.y-P.y)<FOOT;
   if(under) m.hold=500; else if(m.hold>0) m.hold-=dt;
   const tgt=(under||m.hold>0)?1:0;
-  m.curl+=(tgt-m.curl)*(tgt?.22:.05);
-  if(m.curl<.01&&!tgt) m.curl=0;
-  if(m.curl>.25){m.cur*=.8;return}
-  if(m.wait>0){m.wait-=dt;m.cur*=.88;return}
-  if(!m.leave&&age>m.life) m.leave=true;
-  if(Math.random()<.02) m.turn=rnd(-.05,.05);
-  let want=m.h+m.turn, rate=.05, spd=.38;
-  if(age<1500){spd=.5;}
-  else if(m.leave){
-    const dx=m.home.x-m.x, dy=m.home.y-m.y, d=Math.hypot(dx,dy);
-    want=m.h+wrap(Math.atan2(dy,dx)-m.h); rate=.08; spd=.7;
-    if(d<12) m.dive+=dt/650;
-  } else {
-    for(const o of mites){ if(o===m) continue;
-      const dx=o.x-m.x, dy=o.y-m.y, d=Math.hypot(dx,dy);
-      if(d<62) want+=wrap(Math.atan2(-dy,-dx)-m.h)*.07; }
-    if(Math.hypot((m.x-WX/2)/(WX*.46),(m.y-WY/2)/(WY*.44))>1) want+=wrap(Math.atan2(WY/2-m.y,WX/2-m.x)-m.h)*.1;
-    if(Math.random()<.0016) m.wait=rnd(500,1700);
+  if(under&&!m.pressed){                                            // the instant a finger lands: a jolt, a shudder, a squash
+    m.pressed=true;
+    const a=Math.atan2(m.y-P.y,m.x-P.x)+rnd(-.5,.5), kick=rnd(115,150);
+    m.vx+=Math.cos(a)*kick; m.vy+=Math.sin(a)*kick;               // nudged away from the finger
+    m.sV+=rnd(-1,1)<0?-9:9;                                         // rotational shudder
+    m.sqV-=2.6;                                                      // body squashes smaller
   }
-  m.h+=wrap(want-m.h)*rate;
-  m.cur+=(spd*.8-m.cur)*.06;
-  const sp=m.cur*dt*.06*(RM?.5:1);
-  m.x+=Math.cos(m.h)*sp; m.y+=Math.sin(m.h)*sp; m.lp+=sp*.16;
+  if(!under&&m.hold<=0) m.pressed=false;
+  m.curl+=(tgt-m.curl)*(tgt?.3:.05);
+  if(m.curl<.01&&!tgt) m.curl=0;
+  m.rock+=(0-m.rock)*.2;
+  { const K=240, C=13;                                              // damped springs: offset, shudder angle, squash
+    m.vx+=(-K*m.ox-C*m.vx)*sec; m.vy+=(-K*m.oy-C*m.vy)*sec; m.ox+=m.vx*sec; m.oy+=m.vy*sec;
+    m.sV+=(-420*m.sA-9*m.sV)*sec; m.sA+=m.sV*sec;
+    const sqT=-.13*m.curl; m.sqV+=(-300*(m.sq-sqT)-12*m.sqV)*sec; m.sq+=m.sqV*sec; }
+  if(m.curl>.25){ m.speed*=.5; m.state='pause'; return; }          // frozen, curled up: thanatosis
+  if(!m.leave&&age>m.life) m.leave=true;
+
+  // how fast and which way does it want to go?
+  let vmax=17*(RM?.5:1), turnMax=1.1, wantH=m.h;
+  const dxp=m.x-P.x, dyp=m.y-P.y, dp=Math.hypot(dxp,dyp);
+  const nearFinger=P.on&&H.a>.3&&dp<78&&!P.down&&Pv>40;      // only a finger that is moving fast scares them; a still one can pin a mite
+  if(age<1500){ vmax=14; }                                         // climbing out of the burrow, straight ahead
+  else if(nearFinger){                                             // a hovering finger: sprint away, legs flying
+    m.state='flee'; m.flee=.8; wantH=Math.atan2(dyp,dxp); vmax=46; turnMax=6;
+  } else if(m.flee>0){ m.flee-=sec; vmax=30; turnMax=3; if(m.flee<=0) m.state='pause', m.st=rnd(.5,1.1); }
+  else if(m.leave){ wantH=Math.atan2(m.home.y-m.y,m.home.x-m.x); vmax=22; turnMax=2.2; if(Math.hypot(m.home.x-m.x,m.home.y-m.y)<12) m.dive+=dt/650; }
+  else {
+    // stop-and-go: walk, pause to feel about, then pivot onto a new heading
+    m.st-=sec;
+    if(m.state==='walk'&&m.st<=0){ m.state='pause'; m.st=rnd(.45,1.5); }
+    else if(m.state==='pause'&&m.st<=0){ m.state='walk'; m.st=rnd(.9,2.6); m.goal=m.h+rnd(-1.3,1.3); }
+    wantH=m.goal+Math.sin(now/1000*.9+m.probe)*.25;               // a lazy zig-zag as it goes
+    for(const o of mites){ if(o===m||o.dive>0) continue;
+      const dx=o.x-m.x, dy=o.y-m.y, d=Math.hypot(dx,dy);
+      if(d<70){ const rel=wrap(Math.atan2(dy,dx)-m.h);
+        if(Math.abs(rel)<1.1){ if(d<46){ m.state='pause'; m.st=Math.max(m.st,.35); } m.goal=m.h-Math.sign(rel||1)*1.2; } } }  // feel a neighbour ahead, stop, sidestep
+    if(Math.hypot((m.x-WX/2)/(WX*.46),(m.y-WY/2)/(WY*.44))>1){ m.goal=Math.atan2(WY/2-m.y,WX/2-m.x); if(m.state==='pause') m.st=Math.min(m.st,.2); }
+  }
+  // turning is done by the legs: faster when walking slowly, never more than the gait allows
+  const err=wrap(wantH-m.h), moving=(m.state==='walk'||m.state==='flee')||age<1500;
+  const wantYaw=Math.max(-turnMax,Math.min(turnMax,err*(moving?3.2:5)));
+  m.yaw+=(wantYaw-m.yaw)*Math.min(1,sec*14);
+  if(m.state==='pause'&&Math.abs(err)<.08) m.yaw*=.7;
+  m.h+=m.yaw*sec;
+  // speed follows the legs within a few frames: no sliding, no momentum
+  const vt=(moving&&Math.abs(err)<1.6)?vmax*(1-.45*Math.min(1,Math.abs(m.yaw)/3)):0;
+  m.speed+=(vt-m.speed)*Math.min(1,sec*12);
+  // each step shoves the body forward in a little pulse, and it rocks side to side with the alternating legs
+  const pulse=1+.22*Math.sin(m.ph*4*Math.PI+.4);
+  const v=m.speed*pulse*(RM?.6:1);
+  m.x+=Math.cos(m.h)*v*sec; m.y+=Math.sin(m.h)*v*sec;
+  // legs only cycle when they are carrying the body: forward walking or pivoting on the spot
+  const legRate=(m.speed+Math.abs(m.yaw)*26*m.s*m.sc)/STRIDE;
+  m.ph+=legRate*sec*(m.state==='pause'&&Math.abs(m.yaw)<.15?0:1);
+  m.rock=Math.sin(m.ph*2*Math.PI)*.045*Math.min(1,m.speed/10)+m.yaw*.04;
 }
 
 /* ---------- loop ---------- */
 const sh=mk(), sx=sh.getContext('2d');
-const cnt=document.getElementById('count'); let last=performance.now();
+const cnt=document.getElementById('count'); let last=performance.now(), Pv=0, lastPx=P.x, lastPy=P.y;
 function frame(now){
-  const dt=Math.min(40,now-last); last=now;
+  const dt=Math.min(40,now-last); last=now; now_t=now/1000;
+  { const sp=Math.hypot(P.x-lastPx,P.y-lastPy)/Math.max(dt/1000,.001); Pv+=(sp-Pv)*.25; lastPx=P.x; lastPy=P.y; }
   if(now>nextSpawn && mites.length<9){ spawn(now); nextSpawn=now+(mites.length<4?900:rnd(2500,6000)); }
   H.x+=(P.x-H.x)*.35; H.y+=(P.y-H.y)*.35;
   H.a+=((P.on?1:0)-H.a)*.12;
