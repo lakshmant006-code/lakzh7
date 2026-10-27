@@ -17,7 +17,7 @@ const workProjects = [
     shortSummary: "Keep what matters, then just ask for it later.",
     video: "/work/keep/keep-thumb.mp4",
     thumbnailImage: "/work/keep/keep-thumb-frame.jpg",
-    liveUrl: "https://lakshmant006-code.github.io/keepxmeta/",
+    liveUrl: "https://keepxmeta.onrender.com/",
     category: "case-study",
   },
   {

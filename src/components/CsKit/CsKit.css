@@ -526,3 +526,37 @@
     outline-offset: 2px;
   }
 }
+
+/* "Try it" button under a case study's intro */
+.cs-try {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px 18px;
+  padding-top: 28px;
+}
+.cs-try-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  border-radius: 999px;
+  background: var(--cs-accent);
+  color: #ffffff;
+  font: 500 1rem/1 var(--cs-sans);
+  text-decoration: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.cs-try-btn:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
+.cs-try-btn:focus-visible {
+  outline: 2px solid var(--cs-ink);
+  outline-offset: 3px;
+}
+.cs-try-note {
+  margin: 0;
+  font: 400 0.9rem/1.4 var(--cs-sans);
+  color: var(--cs-faint);
+}

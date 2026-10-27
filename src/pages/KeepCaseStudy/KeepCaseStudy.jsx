@@ -39,7 +39,7 @@ const KeepCaseStudy = () => {
         meta={[
           { label: "Role", value: ["Product Designer", "Developer"] },
           { label: "Type", value: ["Concept for Meta AI", "Self initiated"] },
-          { label: "Built as", value: "Working web app (PWA)" },
+          { label: "Status", value: ["Shipped", "Live web app (PWA)"] },
           {
             label: "Tools",
             value: ["JavaScript", "three.js", "IndexedDB", "Google Maps"],
@@ -51,12 +51,24 @@ const KeepCaseStudy = () => {
         ]}
       />
 
+      <div className="cs-col cs-try">
+        <a
+          className="cs-try-btn"
+          href="https://keepxmeta.onrender.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Try Keep <span aria-hidden="true">↗</span>
+        </a>
+        <p className="cs-try-note">Shipped and live. Best on a phone, and your memories stay on your device.</p>
+      </div>
+
       <CsSection id="keep-overview" label="Overview" title="What is Keep?">
         <CsText>
           Keep is a concept I designed for <strong>Meta AI</strong>, a way for
           an assistant to help you remember your own life without taking it
-          over. It is not a Meta product and was not made with Meta; I built it
-          myself as a working app to test the idea for real.
+          over. It is not a Meta product and was not made with Meta; I built and
+          shipped it myself as a live app, so the idea could be tested for real.
         </CsText>
         <CsText>
           Photos, voice notes, quotes, and places pile up across a dozen apps,
