@@ -824,6 +824,7 @@ const streetFrame = document.getElementById("street");
 function showNow(id) {
   const isMites = id === "mites", isGrass = id === "grass", isStreet = id === "street";
   document.body.classList.toggle("is-street", isStreet);
+  document.body.classList.toggle("is-canopy", id === "canopy");
   document.body.classList.toggle("is-mites", isMites);
   document.body.classList.toggle("is-grass", isGrass);
   // frames only run while visible
@@ -937,7 +938,7 @@ function frame(now) {
   const prog = nav.querySelector('.name[aria-current="true"]'); if (prog) prog.style.setProperty("--p", autoplay ? Math.min(1, elapsed / DURATION) : 0);
   if (!mitesing && current) {
     current.update(dt, { strength, dir: U.uDir.value, time });
-    if (pixelOn) {
+    if (pixelOn && currentId !== "canopy") {          // the canopy keeps its original, undithered render
       postMat.uniforms.uFade.value = fade;
       renderer.setRenderTarget(rt); renderer.render(root, camera); renderer.setRenderTarget(null); renderer.render(postScene, postCam);
       canvas.style.opacity = 1;
