@@ -36,7 +36,7 @@ const WORLD_W = 1400, WORLD_H = 1000;
    (her place on the platform, the dupatta, and its physics) is derived from this one number. */
 const SCALE = 0.34;
 const LADY_W = 714 * SCALE, LADY_H = 700 * SCALE;
-const LADY_LEFT = 700 - LADY_W / 2, LADY_TOP = 870 - LADY_H;      // feet on the middle of the platform
+const LADY_LEFT = 700 - LADY_W / 2, LADY_TOP = 614;      // head top sits on y=616 (the line the user marked)
 { const el = document.querySelector(".lady"); el.style.left = (LADY_LEFT / WORLD_W * 100) + "%"; el.style.top = (LADY_TOP / WORLD_H * 100) + "%"; el.style.width = (LADY_W / WORLD_W * 100) + "%"; }
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
