@@ -147,24 +147,35 @@ for (const it of atlas.items) {
 for (const v of vehicles) if (v.type !== "ped") v.x = Math.min(ROAD[1] - v.w / 2, Math.max(ROAD[0] + v.w / 2, v.x));
 
 /* ---------- people: the drawn walk-cycle characters stroll along both sidewalks ---------- */
-const walkMeta = await fetch("./street/walkers.json").then((r) => r.json());
-const walkSheet = await new Promise((res) => loader.load("./street/walkers.png", res));
+const walkMeta = await fetch("./street/walkers-cycle.json").then((r) => r.json());
+const walkSheet = await new Promise((res) => loader.load("./street/walkers-cycle.png", res));
 walkSheet.colorSpace = THREE.SRGBColorSpace;
 const WALK_H = 24;                                        // a frame's height on the street
 const softShadow = () => new THREE.ShaderMaterial({ transparent: true, depthWrite: false,
   vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
   fragmentShader: "varying vec2 vUv; void main(){ vec2 p = vUv * 2.0 - 1.0; float d = length(p); float a = smoothstep(1.0, 0.2, d) * mix(1.0, 0.45, vUv.x); gl_FragColor = vec4(0.11, 0.13, 0.22, a * 0.5); }" });
+/* each walker blends from one pose of its cycle into the next, so the legs swing through instead of snapping between drawings */
+const walkMaterial = () => new THREE.ShaderMaterial({ transparent: true, depthWrite: false,
+  uniforms: { map: { value: walkSheet }, rep: { value: new THREE.Vector2(walkMeta.cw / walkMeta.w, walkMeta.ch / walkMeta.h) },
+              o0: { value: new THREE.Vector2() }, o1: { value: new THREE.Vector2() }, f: { value: 0 } },
+  vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+  fragmentShader: `uniform sampler2D map; uniform vec2 rep, o0, o1; uniform float f; varying vec2 vUv;
+    void main(){ vec4 a = texture2D(map, o0 + vUv * rep), b = texture2D(map, o1 + vUv * rep);
+      float al = mix(a.a, b.a, f); vec3 c = mix(a.rgb * a.a, b.rgb * b.a, f) / max(al, 1e-4);
+      gl_FragColor = vec4(c, al);
+      #include <colorspace_fragment>
+    }` });
+const STRIDE_CYCLE = 21;                                  // ground covered by one full cycle of the sheet (two steps), so feet never skate
 for (let i = 0; i < 12; i++) {
   const lane = i % 2 ? WALK_L : WALK_R, dir = Math.random() < 0.5 ? 1 : -1;
-  const t = walkSheet.clone(); t.repeat.set(walkMeta.cw / walkMeta.w, walkMeta.ch / walkMeta.h); t.needsUpdate = true;
   const kw = WALK_H / walkMeta.ch, fw = walkMeta.cw * kw;
-  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(fw, WALK_H), new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false }));
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(fw, WALK_H), walkMaterial());
   const shadow = new THREE.Mesh(new THREE.PlaneGeometry(26, 7), softShadow());
   world.add(shadow); world.add(mesh);
   vehicles.push({
     mesh, shadow, type: "ped", dir, k: 1, x: lane[0] + 9 + Math.random() * (lane[1] - lane[0] - 18), y: Math.random() * SH, w: fw * 0.6, h: WALK_H * 0.6, z: 3.2,
-    base: 8 + Math.random() * 6, speed: 0, phase: Math.random() * 6.28, boost: 0, pop: 0, lastHonk: -9, tx: null, stuck: 0, wob: 0, wobV: 0, bumpCool: 0,
-    walk: { tex: t, char: i % 6, dist: Math.random() * 20 },
+    base: 11 + Math.random() * 5, speed: 0, phase: Math.random() * 6.28, boost: 0, pop: 0, lastHonk: -9, tx: null, stuck: 0, wob: 0, wobV: 0, bumpCool: 0,
+    walk: { char: i % 6, dist: Math.random() * 40, v: 0, head: dir > 0 ? 0 : Math.PI },
   });
 }
 
@@ -627,14 +638,17 @@ function step(dt) {
 
   // walkers
   for (const p of walkers) {
-    const sp = p.base;
+    // they ease into and out of their pace, a little quicker mid-stride, like a person rather than a conveyor
+    const want = p.base * (p.mode === "cross" ? 2.2 : 1) * (p.mode === "toCross" && Math.abs((p.crossY ?? p.y) - p.y) < 6 ? 0.3 : 1);
+    p.walk.v += (want - p.walk.v) * (1 - Math.exp(-dt / 0.45));
+    const sp = p.walk.v * (1 + 0.12 * Math.cos(p.walk.dist / STRIDE_CYCLE * Math.PI * 4));
     if (p.mode === "walk") { p.speed = sp; p.y += p.dir * sp * dt; p.face = p.dir > 0 ? 0 : Math.PI; }
     else if (p.mode === "toCross") {
-      const d = p.crossY - p.y; p.speed = sp; p.y += Math.sign(d) * Math.min(Math.abs(d), sp * dt); p.face = d > 0 ? 0 : Math.PI;
+      const d = p.crossY - p.y, mv = Math.min(Math.abs(d), sp * dt); p.speed = mv / Math.max(dt, 1e-4); p.y += Math.sign(d) * mv;   // waiting at the kerb: feet still p.face = d > 0 ? 0 : Math.PI;
       if (Math.abs(d) < 1 && light === "red") { p.mode = "cross"; p.toX = p.side === 0 ? WALK_R[0] + 10 + Math.random() * 25 : WALK_L[0] + 10 + Math.random() * 25; }
       if (light === "green") p.mode = "walk";
     } else if (p.mode === "cross") {
-      const d = p.toX - p.x; p.speed = sp * 2.2; p.x += Math.sign(d) * Math.min(Math.abs(d), p.speed * dt);
+      const d = p.toX - p.x, mv = Math.min(Math.abs(d), sp * dt); p.speed = mv / Math.max(dt, 1e-4); p.x += Math.sign(d) * mv;
       p.face = d > 0 ? Math.PI / 2 : -Math.PI / 2;
       if (Math.abs(d) < 1) { p.mode = "walk"; p.side = 1 - p.side; p.dir = Math.random() < 0.5 ? 1 : -1; }
     }
@@ -657,9 +671,19 @@ function draw(dt) {
     v.mesh.position.set(wx, wy, v.z); v.mesh.scale.set(s, s, 1);
     if (v.walk) {                                         // step through the walk cycle as they cover ground
       v.walk.dist += Math.abs(v.speed) * dt;
-      const frame = Math.floor((v.walk.dist / 9) * 8) % 8;
-      v.walk.tex.offset.set((frame * walkMeta.cw) / walkMeta.w, 1 - ((v.walk.char + 1) * walkMeta.ch) / walkMeta.h);
-      v.mesh.rotation.z = v.face ?? (v.dir > 0 ? 0 : Math.PI);   // the drawings face down the street
+      const fp = (v.walk.dist / STRIDE_CYCLE) * 8, f0 = Math.floor(fp) % 8, f1 = (f0 + 1) % 8, fr = fp - Math.floor(fp);
+      const u = v.mesh.material.uniforms, row = 1 - ((v.walk.char + 1) * walkMeta.ch) / walkMeta.h;
+      u.o0.value.set((f0 * walkMeta.cw) / walkMeta.w, row); u.o1.value.set((f1 * walkMeta.cw) / walkMeta.w, row);
+      u.f.value = fr * fr * (3 - 2 * fr);
+      // turn the body round smoothly, not in one frame
+      const goal = v.face ?? (v.dir > 0 ? 0 : Math.PI); let dh = goal - v.walk.head; dh = Math.atan2(Math.sin(dh), Math.cos(dh));
+      v.walk.head += dh * (1 - Math.exp(-dt / 0.18));
+      v.mesh.rotation.z = v.walk.head;                    // the drawings face down the street
+      // each step the body rises a touch toward the camera and sways over the planted foot
+      const ph = v.walk.dist / STRIDE_CYCLE * Math.PI * 2, moving = Math.min(1, v.speed / 6);
+      const bob = 1 + 0.035 * moving * Math.abs(Math.cos(ph)), sway = 0.45 * moving * Math.sin(ph);
+      v.mesh.scale.set(s * bob, s * bob, 1);
+      v.mesh.position.x += Math.cos(v.walk.head) * sway; v.mesh.position.y += Math.sin(v.walk.head) * sway;
       const [sx, sy] = toWorld(v.x - 9, v.y + 7);
       v.shadow.position.set(sx, sy, v.z - 0.1); v.shadow.rotation.z = Math.atan2(-7, -9);
     } else {
