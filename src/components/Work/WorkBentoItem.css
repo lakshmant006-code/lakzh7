@@ -769,7 +769,7 @@
 .work-bento-item.case-study-card .work-bento-image-container,
 .work-bento-item.work-bento-item--compact.case-study-card
   .work-bento-image-container {
-  border-radius: 18px;
+  border-radius: 6px;
   background-color: #ffffff;
   overflow: hidden;
   border: 1px solid rgba(20, 20, 20, 0.08);
@@ -943,5 +943,5 @@
 /* Home cards sit on a white tile so the dots never run behind their text */
 .work-bento-item.work-bento-item--compact {
   background-color: #ffffff;
-  border-radius: 18px;
+  border-radius: 6px;
 }

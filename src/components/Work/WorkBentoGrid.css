@@ -2,7 +2,7 @@
 .work-bento-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.5rem;
+  gap: 1rem;
   width: 100%;
   position: relative;
   --work-bento-row-h: 480px;
@@ -12,7 +12,7 @@
 @media (min-width: 1025px) {
   .work-bento-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 2.5rem;
+    gap: 1.25rem;
     --work-bento-row-h: 600px;
   }
 }

@@ -511,7 +511,7 @@
 .home-case-study-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2.5rem;
+  gap: 1.25rem;
   width: 100%;
   /* Smaller cards with air around them: capped width, centred, side padding */
   max-width: 1080px;
@@ -526,27 +526,27 @@
 @media (max-width: 1024px) {
   .home-case-study-grid {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1rem;
   }
 }
 
 @media (max-width: 767px) {
   .home-case-study-grid {
-    gap: 1.75rem;
+    gap: 1rem;
   }
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
   .home-case-study-grid {
-    gap: 2rem;
+    gap: 1rem;
   }
 }
 
 @media (min-width: 1025px) {
   .home-case-study-grid {
     grid-template-columns: repeat(2, 1fr);
-    column-gap: 4rem;
-    row-gap: 3.5rem;
+    column-gap: 1.25rem;
+    row-gap: 1.5rem;
   }
 }
 
