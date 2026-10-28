@@ -59,7 +59,7 @@ new ResizeObserver(fit).observe(canvas); fit();
 
 
 /* ---------- the dupatta: a gathered silk rectangle ---------- */
-const COLS = 30, ROWS = 140;      // a fine weave of simulated points, so even small folds and creases hold their shape
+const COLS = 24, ROWS = 110;      // fine enough for soft folds, light enough to run at full frame rate on a phone
 const LENGTH = 600, W_TOP = 28, W_FULL = 150;   // a big dupatta, in world pixels
 const ANCHOR = { x: LADY_LEFT + 85 * 0.7 * SCALE, y: LADY_TOP + 275.7 * 0.7 * SCALE }; // her left hand (on the left of the picture), in world pixels (y down)
 const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
@@ -221,7 +221,7 @@ canvas.addEventListener("pointerdown", () => {
 });
 
 /* ---------- physics (fixed step, sub-stepped, then relaxed for silk smoothness) ---------- */
-const STEP = 1 / 60, SUB = 3, DT = STEP / SUB, ITER = 9;
+const STEP = 1 / 60, SUB = 3, DT = STEP / SUB, ITER = 6;
 const WS = 0.5, GRAVITY = 820 * SCALE, DRAG = 0.994, AIR = 0.012, AIRDRAG = 1.5;
 const nrm = new Float32Array(N * 3);
 function normals() {
@@ -297,15 +297,15 @@ function simulate(t) {
   if (mode === "flying") {
     flyT += STEP; updateCentre();
     const head = { x: BODY[0][1], y: HEAD_Y + 30 };
-    if ((Math.hypot(centre.x - head.x, centre.y - head.y) < 120 && flyT > 0.9) || flyT > 4.2) { mode = "wrapped"; wrapOn = true; flip = chooseFlip(); }
+    if ((Math.hypot(centre.x - head.x, centre.y - head.y) < 170 && flyT > 0.8) || flyT > 2.2) { mode = "wrapped"; wrapOn = true; flip = chooseFlip(); }
   } else if (mode === "returning") {
     flyT += STEP; updateCentre();
     let near = true; for (let i = 0; i < COLS; i++) { const k = idx(i, 0) * 3; if (Math.hypot(px[k] - hand().x, px[k + 1] - hand().y) > 36) near = false; }
     if (near || flyT > 6) { mode = "held"; for (let i = 0; i < COLS; i++) pinned[idx(i, 0)] = 1; }
   }
   const free = mode === "flying" || mode === "returning";
-  wrap = wrapOn ? Math.min(1, wrap + STEP / 2.4) : Math.max(0, wrap - STEP / 0.7);
-  settle = wrapOn ? Math.min(1, settle + STEP / 3.2) : 0;
+  wrap = wrapOn ? Math.min(1, wrap + STEP / 1.9) : Math.max(0, wrap - STEP / 0.7);
+  settle = wrapOn ? Math.min(1, settle + STEP / 2.6) : 0;
   // her hand: a gentle sway that lifts a little with each gust
   const ax = ANCHOR.x + Math.sin(t * 0.7) * 4 * SCALE, ay = ANCHOR.y + Math.sin(t * 0.93) * 6 * SCALE - Math.min(14, base * 5) * SCALE;
   // where free flight is headed: up and across, then down onto his head (or, going home, back toward her hand)
@@ -341,13 +341,13 @@ function simulate(t) {
         fx += (Tx - px[k]) * ks - vx * kd; fy += (tgt[tk + 1] - px[k + 1]) * ks * 0.8 - vy * kd; fz += (Tz - px[k + 2]) * ks - vz * kd;
       }
       if (free) {
-        const j = Math.floor(p / COLS), i = p % COLS, ph = t * 3.4 + j * 0.16 + i * 0.5;
-        fx += gx + Math.sin(ph) * 230 * SCALE * 3 * (0.4 + j / ROWS);
-        fy += gy - GRAVITY * 0.78 + Math.cos(ph * 0.8 + i) * 180 * SCALE * 3 * (0.3 + j / ROWS);
-        fz += Math.sin(ph * 1.3 + i * 0.9) * 700 * SCALE * 3 * (0.3 + j / ROWS);              // the flapping and rolling that makes it tumble
+        const j = Math.floor(p / COLS), i = p % COLS, ph = t * 2.6 + j * 0.2 + i * 0.62;
+        fx += gx + Math.sin(ph) * 120 * SCALE * 3 * (0.4 + j / ROWS);
+        fy += gy - GRAVITY * 0.78 + Math.cos(ph * 0.8 + i) * 90 * SCALE * 3 * (0.3 + j / ROWS);
+        fz += Math.sin(ph * 1.3 + i * 0.9) * 340 * SCALE * 3 * (0.3 + j / ROWS);              // the flapping and rolling that makes it tumble
         { const k0 = Math.min(1, flyT / 0.5) * (mode === "flying" ? 1 : 0.6), dx = centre.x - px[k], dy = centre.y - px[k + 1], dd = Math.hypot(dx, dy), over = Math.max(0, dd - 150);
-          fx += dx / (dd || 1) * over * 7 * k0; fy += dy / (dd || 1) * over * 7 * k0;                    // gather toward the middle: it crumples instead of staying a flat ribbon
-          const spin = Math.sin(t * 1.7 + 0.6) * 2.4 * k0;                                                // and the whole bundle rolls end over end
+          fx += dx / (dd || 1) * over * 4 * k0; fy += dy / (dd || 1) * over * 4 * k0;                    // gather toward the middle: it crumples instead of staying a flat ribbon
+          const spin = Math.sin(t * 1.7 + 0.6) * 1.1 * k0;                                                // and the whole bundle rolls end over end
           fx += -(px[k + 1] - centre.y) * spin * 6; fy += (px[k] - centre.x) * spin * 6; }
         if (mode === "returning" && j === 0) { fx += (ax - px[k]) * 40; fy += (ay + (i / (COLS - 1) - 0.5) * W_TOP - px[k + 1]) * 40; }
       }
@@ -359,7 +359,7 @@ function simulate(t) {
       px[k] = nx; px[k + 1] = Math.min(ny, 930); px[k + 2] = Math.max(-420 * SCALE, Math.min(420 * SCALE, nz));
     }
     if (mode === "held") for (const { i, dy } of pinRest) { const k = idx(i, 0) * 3; px[k] = ax; px[k + 1] = ay + dy; px[k + 2] = Math.sin(i * 0.9) * 3 * SCALE; pv[k] = px[k]; pv[k + 1] = px[k + 1]; pv[k + 2] = px[k + 2]; }
-    if ((mode !== "held" || wrap > 0.02) && (frameNo++ & 1) === 0 && s === 0) selfCollide();
+    if ((mode !== "held" || wrap > 0.02) && s === 0 && (frameNo++ % 3) === 0) selfCollide();
     for (let it = 0; it < ITER; it++) {
       for (let c = 0; c < rest.length; c++) {
         const [a, b, len, sf] = rest[c], ka = a * 3, kb = b * 3;
@@ -387,8 +387,11 @@ function simulate(t) {
     bodyCollide(1);                        // smoothing a loop shrinks it: lay it back out on him
   }
 }
+// drawn between the last two physics steps, so it glides at any refresh rate (60, 90 or 120 Hz) instead of stepping
+const prevPx = new Float32Array(N * 3); let alphaT = 1;
 function upload() {
-  for (let p = 0; p < N; p++) { const k = p * 3; pos[k] = px[k]; pos[k + 1] = WORLD_H - px[k + 1]; pos[k + 2] = px[k + 2]; }
+  const a = alphaT, b = 1 - a;
+  for (let p = 0; p < N; p++) { const k = p * 3; pos[k] = px[k] * a + prevPx[k] * b; pos[k + 1] = WORLD_H - (px[k + 1] * a + prevPx[k + 1] * b); pos[k + 2] = px[k + 2] * a + prevPx[k + 2] * b; }
   geo.attributes.position.needsUpdate = true; geo.computeVertexNormals(); geo.computeBoundingSphere();
   // how sharply the silk is folded here (neighbouring normals disagreeing) and whether it is squeezed or stretched
   const nr = geo.attributes.normal.array;
@@ -411,13 +414,17 @@ function frame(now) {
   requestAnimationFrame(frame);
   if (!running) return;
   acc += Math.min(0.05, (now - last) / 1000); last = now;
-  while (acc >= STEP) { time += STEP; simulate(time); acc -= STEP; }
+  let n = 0;
+  while (acc >= STEP && n < 2) { prevPx.set(px); time += STEP; simulate(time); acc -= STEP; n++; }
+  if (acc > STEP) acc = STEP * 0.5;                                  // a slow device skips ahead gently instead of falling behind
+  alphaT = acc / STEP;
   manEl.style.opacity = 1 - 0.6 * smooth(0.6, 1, wrap);        // he shows faintly through the silk
   mat.uniforms.alpha.value = 1 - 0.2 * smooth(0.5, 1, wrap); mat.uniforms.wrap.value = smooth(0.3, 1, wrap); mat.uniforms.time.value = time;
   for (const m of shadows) m.visible = wrap < 0.7;                         // the shadow falls on the scene, not on him once it covers him
   upload(); renderer.render(scene, camera);
 }
 for (let i = 0; i < 240; i++) { time += STEP; simulate(time); }   // let it settle before the first frame
+prevPx.set(px);
 requestAnimationFrame(frame);
 window.__cloth = { px, N, COLS, ROWS, get mode() { return mode; }, get centre() { return centre; }, click: () => canvas.dispatchEvent(new PointerEvent("pointerdown")), get wrap() { return wrap; }, get on() { return wrapOn; } };
 </script>
