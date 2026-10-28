@@ -9,11 +9,12 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: var(--paper); overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none;
     font: 400 14px/1.4 "DM Sans", -apple-system, system-ui, sans-serif; color: var(--ink); }
-  .page { height: 100%; display: flex; flex-direction: column; align-items: center; padding: max(24px, env(safe-area-inset-top)) clamp(16px, 5vw, 64px) max(14px, env(safe-area-inset-bottom)); }
+  .page { height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: max(24px, env(safe-area-inset-top)) clamp(16px, 5vw, 64px) max(14px, env(safe-area-inset-bottom)); }
   .embed .page { padding-top: 92px; }
 
   /* the picture: a soft-edged rounded plate with a little grain, set into the paper */
-  .stage { position: relative; flex: 1; min-height: 0; width: 100%; max-width: 1240px; border-radius: 44px; overflow: hidden;
+  /* a smaller memory, centred in the page */
+  .stage { position: relative; flex: 0 1 auto; min-height: 0; width: 100%; max-width: 820px; height: min(62vh, 600px); border-radius: 40px; overflow: hidden;
     -webkit-mask-image: linear-gradient(to right, transparent, #000 5.5%, #000 94.5%, transparent), linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
     -webkit-mask-composite: source-in;
             mask-image: linear-gradient(to right, transparent, #000 5.5%, #000 94.5%, transparent), linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
@@ -27,7 +28,7 @@
   body.is-mites canvas, body.is-grass canvas, body.is-street canvas, body.is-bollywood > .page canvas#c { visibility: hidden; }
   body.is-mites .wind-group, body.is-grass #px, body.is-street .controls, body.is-canopy #px, body.is-bollywood #px { display: none; }
 
-  .rule { width: 100%; max-width: 1240px; height: 1px; margin-top: 14px; background: linear-gradient(90deg, transparent, #b9c5a6 18%, #8fa070 50%, #b9c5a6 82%, transparent); opacity: .8; }
+  .rule { width: 100%; max-width: 820px; height: 1px; margin-top: 14px; background: linear-gradient(90deg, transparent, #b9c5a6 18%, #8fa070 50%, #b9c5a6 82%, transparent); opacity: .8; }
   .names { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 26px; margin-top: 16px; }
   .name { all: unset; cursor: pointer; position: relative; color: var(--soft); font-size: 14px; letter-spacing: .01em; padding: 4px 0; transition: color .25s; }
   .name:hover { color: var(--ink); }
@@ -50,7 +51,7 @@
   input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; margin-top: -7px; border-radius: 50%; background: var(--ink); }
   input[type=range]::-moz-range-track { height: 2px; border-radius: 2px; background: rgba(44,36,32,.2); }
   input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: var(--ink); }
-  @media (max-width: 560px) { .names { gap: 4px 16px; } .stage { border-radius: 28px; } }
+  @media (max-width: 560px) { .names { gap: 4px 16px; } .stage { border-radius: 28px; height: min(54vh, 520px); } }
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap">
 </head>
