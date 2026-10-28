@@ -28,7 +28,7 @@ export const playProjects = [
     category: "digital",
     media: {
       video: "/projects/concentrix/concentrix.mp4",
-      poster: "/projects/concentrix/poster.jpg",
+      poster: "/projects/concentrix/poster.webp",
       staticThumbnail: true,
     },
     actions: [
@@ -65,7 +65,7 @@ export const playProjects = [
     category: "digital",
     media: {
       video: "/projects/ascii-studio/ascii%20art.mp4",
-      poster: "/projects/ascii-studio/poster.jpg",
+      poster: "/projects/ascii-studio/poster.webp",
     },
     actions: [
       {

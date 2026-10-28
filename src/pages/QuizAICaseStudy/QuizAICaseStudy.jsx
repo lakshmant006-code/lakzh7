@@ -140,7 +140,7 @@ const QuizAICaseStudy = () => {
         </CsText>
         <CsPanel title="Landing page, dashboard, and AI study assistant">
           <CsImg
-            src="/work/quizai/hero-new.png"
+            src="/work/quizai/hero-new.webp"
             alt="Quizzy landing page, dashboard, and AI study assistant screens"
           />
         </CsPanel>
@@ -228,7 +228,7 @@ const QuizAICaseStudy = () => {
           feel lighter, or just add one more thing to do?
         </CsText>
         <CsPanel title="User journey">
-          <CsImg src="/work/quizai/user-journey.png" alt="User Journey" />
+          <CsImg src="/work/quizai/user-journey.webp" alt="User Journey" />
         </CsPanel>
         <CsPanel title="Design process" wide>
           <CsEmbed

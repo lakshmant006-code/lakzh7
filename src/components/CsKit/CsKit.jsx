@@ -349,12 +349,13 @@ const SEE_NEXT_PROJECTS = [
 ];
 
 /** Shows every other project. Pass the key of the page you are on. */
-export function CsSeeNext({ id, items }) {
+export function CsSeeNext({ id, items, current }) {
+  const list = items || SEE_NEXT_PROJECTS.filter((p) => p.key !== current);
   return (
     <section id={id} className="cs-section cs-col cs-next" data-nav-label="See next">
       <p className="cs-label">See next</p>
       <div className="cs-next-grid">
-        {items.map((item) => (
+        {list.map((item) => (
           <Link
             key={item.to}
             to={item.to}

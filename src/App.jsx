@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense, lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ReactLenis, useLenis } from "@studio-freight/react-lenis";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -8,17 +8,18 @@ import ScrollToTop from "./components/ScrollToTop";
 import BackToTop from "./components/BackToTop/BackToTop";
 import SoundToggle from "./components/SoundToggle/SoundToggle";
 import Home from "./pages/Home/Home";
-import About from "./pages/About/About";
-import Work from "./pages/Work/Work";
-import TimeManagementCaseStudy from "./pages/TimeManagementCaseStudy/TimeManagementCaseStudy";
-import KeepCaseStudy from "./pages/KeepCaseStudy/KeepCaseStudy";
-import QuizAICaseStudy from "./pages/QuizAICaseStudy/QuizAICaseStudy";
-import HikuCaseStudy from "./pages/HikuCaseStudy/HikuCaseStudy";
-import ProMoveCaseStudy from "./pages/ProMoveCaseStudy/ProMoveCaseStudy";
-import Scenes from "./pages/Scenes/Scenes";
+const About = lazy(() => import("./pages/About/About"));
+const Work = lazy(() => import("./pages/Work/Work"));
+const TimeManagementCaseStudy = lazy(() => import("./pages/TimeManagementCaseStudy/TimeManagementCaseStudy"));
+const KeepCaseStudy = lazy(() => import("./pages/KeepCaseStudy/KeepCaseStudy"));
+const QuizAICaseStudy = lazy(() => import("./pages/QuizAICaseStudy/QuizAICaseStudy"));
+const HikuCaseStudy = lazy(() => import("./pages/HikuCaseStudy/HikuCaseStudy"));
+const ProMoveCaseStudy = lazy(() => import("./pages/ProMoveCaseStudy/ProMoveCaseStudy"));
+const Scenes = lazy(() => import("./pages/Scenes/Scenes"));
+import RouteSeo from "./components/Seo/RouteSeo";
 import ScenesOverlay from "./components/ScenesOverlay/ScenesOverlay";
-import PixelCatPage from "./pages/PixelCat/PixelCat";
-import NotFound from "./pages/NotFound/NotFound";
+const PixelCatPage = lazy(() => import("./pages/PixelCat/PixelCat"));
+const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
 import "./App.css";
 
 const LenisScrollTriggerIntegration = () => {
@@ -64,6 +65,7 @@ function App() {
     >
       <Router>
         <LenisScrollTriggerIntegration />
+        <RouteSeo />
         <ScrollToTop />
         <BackToTop />
         <SoundToggle />
@@ -80,6 +82,7 @@ function App() {
               <Nav />
             </div>
           </div>
+          <Suspense fallback={null}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/google-creative" element={<Home />} />
@@ -94,6 +97,7 @@ function App() {
             <Route path="/pixel-cat" element={<PixelCatPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </Suspense>
         </div>
         <Analytics />
       </Router>

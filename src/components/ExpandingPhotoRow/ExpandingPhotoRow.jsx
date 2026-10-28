@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, useMotionValue, animate } from "framer-motion";
 import enjoy1 from "../../assets/img/about-pictures/enjoy 1.jpeg";
-import enjoy2 from "../../assets/img/about-pictures/enjoy 2.jpeg";
+import enjoy2 from "../../assets/img/about-pictures/enjoy 2.webp";
 import enjoy3 from "../../assets/img/about-pictures/enjoy 3.jpeg";
 import enjoy4 from "../../assets/img/about-pictures/enjoy 4.jpeg";
 import enjoy5 from "../../assets/img/about-pictures/enjoy 5.jpeg";

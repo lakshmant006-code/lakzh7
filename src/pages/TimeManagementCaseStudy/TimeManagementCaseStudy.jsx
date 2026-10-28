@@ -122,7 +122,7 @@ const TimeManagementCaseStudy = () => {
         </CsText>
         <CsPanel title="Requirements, user flow, and roles" wide>
           <CsImg
-            src="/work/time-management/user-flow.png"
+            src="/work/time-management/user-flow.webp"
             alt="Time Management Requirements, User Flow, and Roles Diagram"
           />
         </CsPanel>

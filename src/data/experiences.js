@@ -1,7 +1,7 @@
 // Experience Timeline Data
-import arcadiaExp from "../assets/img/experience-pictures/arcadia-exp.png";
-import ddsExp from "../assets/img/experience-pictures/23dds-exp.png";
-import ubcImpexExp from "../assets/img/experience-pictures/ubc-impex-exp.png";
+import arcadiaExp from "../assets/img/experience-pictures/arcadia-exp.webp";
+import ddsExp from "../assets/img/experience-pictures/23dds-exp.webp";
+import ubcImpexExp from "../assets/img/experience-pictures/ubc-impex-exp.webp";
 
 export const experiences = [
   {

@@ -1,10 +1,10 @@
 import figmaVinyl from "../assets/img/about-pictures/vinyl/figma.png";
-import nyuVinyl from "../assets/img/about-pictures/vinyl/nyu.png";
-import interactionDVinyl from "../assets/img/about-pictures/vinyl/interaction-d.png";
+import nyuVinyl from "../assets/img/about-pictures/vinyl/nyu.webp";
+import interactionDVinyl from "../assets/img/about-pictures/vinyl/interaction-d.webp";
 import figmaFundVinyl from "../assets/img/about-pictures/vinyl/figma-fund.png";
 import graceHopperVinyl from "../assets/img/about-pictures/vinyl/grace-hopper.png";
-import sase1Vinyl from "../assets/img/about-pictures/vinyl/sase-1.png";
-import sase2Vinyl from "../assets/img/about-pictures/vinyl/sase-2.png";
+import sase1Vinyl from "../assets/img/about-pictures/vinyl/sase-1.webp";
+import sase2Vinyl from "../assets/img/about-pictures/vinyl/sase-2.webp";
 
 // Awards and Certifications Data
 // Rack layout: top row = first 3 entries, bottom row = last 4 (newest → oldest)

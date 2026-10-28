@@ -78,7 +78,7 @@ const HikuCaseStudy = () => {
       <CsBreadcrumb current="Hiku" />
       <CsHero>
         <img
-          src="/work/Hiku/HIKU-SET.png"
+          src="/work/Hiku/HIKU-SET.webp"
           alt="Hiku, a mobile application for hiking enthusiasts"
         />
       </CsHero>
@@ -114,7 +114,7 @@ const HikuCaseStudy = () => {
         </CsText>
         <CsPanel title="The final screens">
           <CsImg
-            src="/work/Hiku/HIKU- HERO.png"
+            src="/work/Hiku/HIKU- HERO.webp"
             alt="Hiku, a mobile application for hiking enthusiasts"
           />
         </CsPanel>
@@ -218,7 +218,7 @@ const HikuCaseStudy = () => {
         <CsSide
           media={
             <CsImg
-              src="/work/Hiku/stat-1.png"
+              src="/work/Hiku/stat-1.webp"
               alt="Illustration for student usage interest in Hiku"
             />
           }
@@ -230,7 +230,7 @@ const HikuCaseStudy = () => {
         <CsSide
           media={
             <CsImg
-              src="/work/Hiku/stat-11.png"
+              src="/work/Hiku/stat-11.webp"
               alt="Illustration for reduced trip-planning time with Hiku"
             />
           }

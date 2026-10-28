@@ -1,0 +1,72 @@
+{
+  "site": "https://lakzh7.art",
+  "name": "Lakshman Thota",
+  "defaultImage": "/work/keep/keep-thumb-frame.jpg",
+  "routes": {
+    "/": {
+      "title": "Lakshman Thota | UX Designer & Researcher",
+      "description": "Lakshman Thota is a UX designer and researcher who designs and builds AI, mobile and web products. Explore case studies on Keep for Meta AI, Reef, Hiku and Summer.",
+      "heading": "Lakshman Thota, UX designer and researcher",
+      "image": "/work/keep/keep-thumb-frame.jpg"
+    },
+    "/work": {
+      "title": "Work | Lakshman Thota, UX Designer & Researcher",
+      "description": "Selected UX design and research case studies by Lakshman Thota: Keep, a memory calendar for Meta AI; Reef, AI notetaking; Hiku, a hiking app; and Summer, a productivity dashboard.",
+      "heading": "Selected work",
+      "image": "/work/keep/keep-thumb-frame.jpg"
+    },
+    "/about": {
+      "title": "About | Lakshman Thota, UX Designer & Researcher",
+      "description": "About Lakshman Thota: a UX designer and researcher studying at Arizona State University, with experience across product design, research and front-end development.",
+      "heading": "About Lakshman Thota",
+      "image": "/work/keep/keep-thumb-frame.jpg"
+    },
+    "/keep": {
+      "title": "Keep: A Memory Calendar That Answers Back | Lakshman Thota",
+      "description": "Case study: Keep, a concept for Meta AI that files photos, voice notes and quotes on one calendar, then answers from your own memories. Shipped and live to try.",
+      "heading": "Keep: A Memory Calendar That Answers Back",
+      "image": "/work/keep/keep-thumb-frame.jpg",
+      "case": true
+    },
+    "/quizai": {
+      "title": "Reef: AI Powered Notetaking Application | Lakshman Thota",
+      "description": "Case study: Reef turns uploaded lecture notes into instant summaries and self-scoring quizzes so studying actually happens. UX research, design and web development.",
+      "heading": "Reef: AI Powered Notetaking Application",
+      "image": "/work/keep/keep-thumb-frame.jpg",
+      "case": true
+    },
+    "/hiku": {
+      "title": "Hiku: A Mobile Application for Hiking Enthusiasts | Lakshman Thota",
+      "description": "Case study: Hiku connects hikers around shared trails and makes buying or renting outdoor gear effortless. UX research and mobile design.",
+      "heading": "Hiku: A Mobile Application for Hiking Enthusiasts",
+      "image": "/work/Hiku/hiku-promo-frame.jpg",
+      "case": true
+    },
+    "/time-management": {
+      "title": "Summer: A Productivity Tracking Web App | Lakshman Thota",
+      "description": "Case study: Summer, a productivity tracking dashboard that makes it easy to see where the workday went. UX research and full stack development.",
+      "heading": "Summer: A Productivity Tracking Web App",
+      "image": "/work/time-management/summer-launch-frame.jpg",
+      "case": true
+    },
+    "/pro-move": {
+      "title": "Pro Move | Lakshman Thota",
+      "description": "Case study: Pro Move by Lakshman Thota, a product design and development project.",
+      "heading": "Pro Move",
+      "image": "/work/keep/keep-thumb-frame.jpg",
+      "case": true
+    },
+    "/scenes": {
+      "title": "Scenes | Lakshman Thota",
+      "description": "Interactive scenes by Lakshman Thota: grass in the wind, a velvet mite, a busy street with a cow, and a Bollywood dance under the Taj Mahal.",
+      "heading": "Interactive scenes",
+      "image": "/work/keep/keep-thumb-frame.jpg"
+    },
+    "/pixel-cat": {
+      "title": "Pixel Cat | Lakshman Thota",
+      "description": "A small pixel cat that follows you around, built by Lakshman Thota.",
+      "heading": "Pixel Cat",
+      "image": "/work/keep/keep-thumb-frame.jpg"
+    }
+  }
+}
