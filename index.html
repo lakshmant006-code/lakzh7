@@ -35,6 +35,14 @@
     .seo-fallback { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
   </style>
   <script>
+    // After a new deploy, a page cached from the old one can ask for script files that no longer exist: reload once to pick up the new page
+    addEventListener('vite:preloadError', function (e) {
+      e.preventDefault();
+      try { if (sessionStorage.getItem('reloaded-for-update')) return; sessionStorage.setItem('reloaded-for-update', '1'); } catch (_) {}
+      location.reload();
+    });
+  </script>
+  <script>
     // Analytics wait until the page is interactive (or the first touch), so they never compete with first paint
     (function () {
       var started = false;

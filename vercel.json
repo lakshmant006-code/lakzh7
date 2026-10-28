@@ -4,13 +4,70 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "cleanUrls": true,
-  "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }],
+  "rewrites": [
+    {
+      "source": "/((?!api/|assets/).*)",
+      "destination": "/index.html"
+    }
+  ],
   "headers": [
-    { "source": "/assets/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
-    { "source": "/(.*)\\.(mp4|webm|webp|avif|jpg|jpeg|png|gif|svg|woff2?|otf|ttf|mp3|wav|ogg|bin|json)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=2592000, stale-while-revalidate=604800" }] },
-    { "source": "/(.*)", "headers": [
-      { "key": "X-Content-Type-Options", "value": "nosniff" },
-      { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
-    ] }
+    {
+      "source": "/(.*)\\.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/(keep|hiku|quizai|time-management|pro-move|work|about|scenes|pixel-cat)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.(mp4|webm|webp|avif|jpg|jpeg|png|gif|svg|woff2?|otf|ttf|mp3|wav|ogg|bin|json)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, stale-while-revalidate=604800"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
   ]
 }
