@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import "./ScenesOverlay.css";
 
 // The scenes open on top of whatever page you're on. The nav's grass icon (or Esc) toggles them,
@@ -6,13 +7,19 @@ import "./ScenesOverlay.css";
 const ScenesOverlay = () => {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const { pathname } = useLocation();
+
+  // going to another page (or pressing the logo, work or about) puts the scenes away
+  useEffect(() => { setOpen(false); }, [pathname]);
 
   useEffect(() => {
     const toggle = () => setOpen((o) => !o);
     const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    const close = () => setOpen(false);
     window.addEventListener("scenes:toggle", toggle);
+    window.addEventListener("scenes:close", close);
     window.addEventListener("keydown", onKey);
-    return () => { window.removeEventListener("scenes:toggle", toggle); window.removeEventListener("keydown", onKey); };
+    return () => { window.removeEventListener("scenes:toggle", toggle); window.removeEventListener("scenes:close", close); window.removeEventListener("keydown", onKey); };
   }, []);
 
   useEffect(() => {

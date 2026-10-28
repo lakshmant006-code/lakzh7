@@ -37,6 +37,8 @@ const Nav = () => {
     window.addEventListener("scenes:state", onState);
     return () => window.removeEventListener("scenes:state", onState);
   }, []);
+  // the scenes sit on top of the page, so any other nav click puts them away first
+  const closeScenes = () => window.dispatchEvent(new CustomEvent("scenes:close"));
   const openScenes = (e) => {
     e.preventDefault();
     window.dispatchEvent(new CustomEvent("scenes:toggle"));
@@ -49,6 +51,7 @@ const Nav = () => {
   ];
 
   const handleLogoClick = (e) => {
+    closeScenes();
     if (isHomePath(location.pathname)) {
       e.preventDefault();
       window.history.pushState(null, "", location.pathname);
@@ -325,6 +328,7 @@ const Nav = () => {
   };
 
   const handleWorkClick = (e) => {
+    closeScenes();
     e.preventDefault();
     if (location.pathname === "/") {
       navigate("/", { replace: true });
@@ -505,7 +509,7 @@ const Nav = () => {
                       className={pillClassName}
                       onMouseEnter={() => handleEnter(i)}
                       onMouseLeave={() => handleLeave(i)}
-                      onClick={item.scenes ? openScenes : item.label === "work" ? handleWorkClick : item.label === "playground" ? handlePlaygroundClick : undefined}
+                      onClick={item.scenes ? openScenes : item.label === "work" ? handleWorkClick : item.label === "playground" ? handlePlaygroundClick : closeScenes}
                     >
                       {pillInner}
                     </Link>
@@ -566,6 +570,8 @@ const Nav = () => {
                         handleWorkClick(e);
                       } else if (item.label === "playground") {
                         handlePlaygroundClick(e);
+                      } else {
+                        closeScenes();
                       }
                       setIsMobileMenuOpen(false);
                       toggleMobileMenu();
