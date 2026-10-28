@@ -47,7 +47,7 @@ const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ---------- renderer: an orthographic view that matches the 1400 x 1000 world ---------- */
 const canvas = document.getElementById("c");
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, stencil: true, powerPreference: "high-performance" });
 renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
 renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 renderer.setClearColor(0x000000, 0);
@@ -58,95 +58,13 @@ const fit = () => { const r = canvas.getBoundingClientRect(); renderer.setSize(r
 new ResizeObserver(fit).observe(canvas); fit();
 
 
-/* ---------- the dupatta: a gathered silk rectangle ---------- */
-const COLS = 24, ROWS = 110;      // fine enough for soft folds, light enough to run at full frame rate on a phone
-const LENGTH = 600, W_TOP = 28, W_FULL = 150;   // a big dupatta, in world pixels
-const ANCHOR = { x: LADY_LEFT + 85 * 0.7 * SCALE, y: LADY_TOP + 275.7 * 0.7 * SCALE }; // her left hand (on the left of the picture), in world pixels (y down)
+/* ---------- the dupatta: a gathered silk rectangle, simulated in ./bollywood/cloth.worker.js ---------- */
+const COLS = 26, ROWS = 120, N = COLS * ROWS;      // must match the worker
+const LENGTH = 600, W_TOP = 28, W_FULL = 150;
+const ANCHOR = { x: LADY_LEFT + 85 * 0.7 * SCALE, y: LADY_TOP + 275.7 * 0.7 * SCALE }; // her left hand, in world pixels (y down)
 const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
-const widthAt = (v) => W_TOP + (W_FULL - W_TOP) * smooth(0, 0.2, v);
-const N = COLS * ROWS, idx = (i, j) => j * COLS + i;
-const px = new Float32Array(N * 3), pv = new Float32Array(N * 3);   // position, previous position
-const pinned = new Uint8Array(N);
-const rest = [];                                                     // [a, b, restLength, stiffness]
-for (let j = 0; j < ROWS; j++) {
-  const v = j / (ROWS - 1), w = widthAt(v);
-  for (let i = 0; i < COLS; i++) {
-    const u = i / (COLS - 1), k = idx(i, j) * 3;
-    px[k] = ANCHOR.x - v * LENGTH;
-    px[k + 1] = ANCHOR.y + (u - 0.5) * w;
-    px[k + 2] = ((Math.random() - 0.5) * 6 + Math.sin(u * 6.28) * 4) * SCALE;
-    pv[k] = px[k]; pv[k + 1] = px[k + 1]; pv[k + 2] = px[k + 2];
-    if (j === 0) pinned[idx(i, j)] = 1;
-  }
-}
-const dist = (a, b) => Math.hypot(px[a * 3] - px[b * 3], px[a * 3 + 1] - px[b * 3 + 1], px[a * 3 + 2] - px[b * 3 + 2]);
-const link = (a, b, s) => rest.push([a, b, dist(a, b), s]);
-for (let j = 0; j < ROWS; j++) for (let i = 0; i < COLS; i++) {
-  const a = idx(i, j);
-  if (i + 1 < COLS) link(a, idx(i + 1, j), 1);                         // across
-  if (j + 1 < ROWS) link(a, idx(i, j + 1), 1);                         // along
-  if (i + 1 < COLS && j + 1 < ROWS) { link(a, idx(i + 1, j + 1), 0.6); link(idx(i + 1, j), idx(i, j + 1), 0.6); } // shear
-  if (i + 2 < COLS) link(a, idx(i + 2, j), 0.25);                      // bend
-  if (j + 2 < ROWS) link(a, idx(i, j + 2), 0.25);
-}
-// keep the gathered edge from collapsing: the pinned row holds its spacing
-const pinRest = [];
-for (let i = 0; i < COLS; i++) pinRest.push({ i, dy: (i / (COLS - 1) - 0.5) * W_TOP });
-
-/* ---------- the photographer's silhouette, and where the dupatta lies when it wraps him ----------
-   BODY holds one row per few pixels of him: [y, centre x, half width], measured from his cut-out.
-   Click the scene and the dupatta flies from her hand, loops over his head and settles over that outline. */
-const BODY = [[607,392.2,10.9],[613,391.8,13.9],[619,392.3,17.1],[625,394.2,21.5],[631,396.5,23.7],[637,397.3,24.8],[643,397.3,27.6],[649,396.5,30.9],[655,394.7,33.7],[661,393.1,37.4],[667,393.2,41.2],[673,394.1,43.2],[679,394.3,44],[685,392.6,41.9],[691,390.4,39.7],[697,387.9,37.9],[703,385.8,36.1],[709,385,34.4],[715,385.8,35],[721,387,35.3],[727,388.2,34.8],[733,389.3,33.8],[739,390.3,32.9],[745,391.2,31.8],[751,391.8,30.8],[757,392.8,30.6],[763,393.5,30.9],[769,393.7,31.7],[775,393.9,32.3],[781,393.9,32.6],[787,393.8,32.3],[793,393.7,31.8],[799,393.9,31.4],[805,394,31.1],[811,394.2,31.7],[817,394.5,31.7],[823,395.1,32.4],[829,395.5,33.1],[835,396,33.8],[841,396.8,34.4],[847,397.6,35.5],[853,399.8,36.9],[859,402.2,38.8],[865,404.2,40.7],[871,403.8,39.6],[877,403,37.9],[883,400.8,35.8]];
-const bodyAt = (y) => {
-  const f = (Math.min(Math.max(y, BODY[0][0]), BODY[BODY.length - 1][0]) - BODY[0][0]) / 6, i = Math.min(BODY.length - 2, Math.floor(f)), t = f - i;
-  return [BODY[i][1] + (BODY[i + 1][1] - BODY[i][1]) * t, BODY[i][2] + (BODY[i + 1][2] - BODY[i][2]) * t];
-};
-const SKIN = 2.5, DEPTH = 0.62;                                            // his rounded body: as deep as 0.62 of his width, plus the silk's own thickness
-const HEAD_Y = BODY[0][0] - 6, FEET_Y = BODY[BODY.length - 1][0] + 4;
-// his outline at height y as an ellipse [centre x, half width, half depth]; over his head it tents out toward the shoulders
-const tentAt = (y) => { const [bx, hw0] = bodyAt(y), e = smooth(HEAD_Y + 20, HEAD_Y + 60, y), hw = Math.max(hw0, 26 * (1 - e) + hw0 * e); return [bx, hw + SKIN, hw * DEPTH + SKIN]; };
-const tgt = new Float32Array(N * 3);
-{
-  /* where it lands, like a top drawn onto a dress form: the free end lies down his back from the shoulder blades, the silk
-     goes up over his crown like a hood, then falls down his front, every thread wrapped round his rounded outline
-     (an elliptical slice of him at each height). What is left over pools in soft folds at his feet. */
-  const BACK = 78, S1 = BACK + 16, bodyLen = Math.min(LENGTH - S1, FEET_Y - HEAD_Y + 20);
-  const slack = Math.max(0, (LENGTH - S1) - bodyLen);
-  const M = 96, SPAN = Math.PI * 0.94;
-  for (let j = 0; j < ROWS; j++) {
-    const s = j / (ROWS - 1) * LENGTH;
-    let y, phi;
-    if (s <= S1) { const f = s / S1; y = HEAD_Y + BACK * Math.pow(1 - f, 1.4); phi = Math.PI * (1 - smooth(0.62, 1, f)); }   // up his back, over the crown
-    else { const d = Math.min(s - S1, bodyLen); y = HEAD_Y + d * ((FEET_Y - HEAD_Y) / bodyLen) + Math.max(0, s - S1 - bodyLen) * 0.12; phi = 0; }
-    const [bx, A, B] = tentAt(y), gather = 0.9 + 0.06 * Math.sin(j * 0.21);
-    const L = [0]; for (let q = 1; q <= M; q++) { const th = q / M * SPAN; L.push(L[q - 1] + Math.hypot(A * Math.cos(th), B * Math.sin(th)) * SPAN / M); }
-    for (let i = 0; i < COLS; i++) {
-      const u = i / (COLS - 1) - 0.5, want = Math.abs(u) * W_FULL * gather, k = idx(i, j) * 3;
-      let q = 0; while (q < M - 1 && L[q + 1] < want) q++;
-      const th = phi + Math.sign(u) * Math.min(SPAN, (q + (want - L[q]) / ((L[q + 1] - L[q]) || 1)) / M * SPAN);
-      tgt[k] = bx + A * Math.sin(th);
-      tgt[k + 1] = y + Math.sin(u * 9 + j * 0.3) * 1.2 - (s <= S1 ? 3 * Math.cos(th) : 0);
-      tgt[k + 2] = B * Math.cos(th) + (s > S1 + bodyLen ? Math.sin(u * 22 + j * 0.45) * (2 + slack * 0.02) : 0);
-    }
-  }
-}
-let wrap = 0, wrapOn = false, flip = false, settle = 0;                                              // wrap: 0 free in the wind, 1 lying over him
-/* The dupatta's life, like the film shot: it streams from her hand, then a gust tears it loose, it tumbles through the air
-   as a floppy white streamer, is carried to him, opens up like a sail and drapes over his head. Click again and the wind
-   peels it off and brings it home to her hand.
-   held -> flying -> wrapped -> returning -> held */
-let mode = "held", flyT = 0;
-const hand = () => ({ x: ANCHOR.x, y: ANCHOR.y });
-const centre = { x: ANCHOR.x, y: ANCHOR.y, vx: 0, vy: 0 };
-function updateCentre() { let sx = 0, sy = 0; for (let p = 0; p < N; p++) { sx += px[p * 3]; sy += px[p * 3 + 1]; } const nx = sx / N, ny = sy / N; centre.vx = (nx - centre.x) / STEP * 0.35 + centre.vx * 0.65; centre.vy = (ny - centre.y) / STEP * 0.35 + centre.vy * 0.65; centre.x = nx; centre.y = ny; }
-function release() {
-  mode = "flying"; flyT = 0;
-  for (let i = 0; i < COLS; i++) pinned[idx(i, 0)] = 0;
-  for (let p = 0; p < N; p++) { const k = p * 3, j = Math.floor(p / COLS) / (ROWS - 1); pv[k] -= (-170 - 120 * j) * STEP; pv[k + 1] -= (-300 + 150 * j) * STEP; }   // the toss: up and away from her hand
-}
 const manEl = document.querySelector(".man");
 
-/* mesh, textured with the dupatta pattern from the reference */
 /* The simulation runs on a light grid; the GPU draws it through a smooth Catmull-Rom surface three times finer each way,
    so folds are round and creases are crisp without the physics getting heavier. Positions go up as a float texture. */
 const SUBD = 3, RC = (COLS - 1) * SUBD + 1, RR = (ROWS - 1) * SUBD + 1;
@@ -227,228 +145,56 @@ const mat = new THREE.ShaderMaterial({
       gl_FragColor = vec4(col, alpha);
     }`,
 });
-const shadows = [[10, -14, 0.10], [20, -26, 0.08], [32, -40, 0.06]].map(([dx, dy, o]) => {
+// each shadow darkens a pixel once, however many layers of silk are folded over it (the stencil remembers)
+const shadows = [[10, -14, 0.10], [20, -26, 0.08], [32, -40, 0.06]].map(([dx, dy, o], n) => {
   const u = gridUniforms(); u.offset.value.set(dx, dy); u.opacity = { value: o };
   const m = new THREE.Mesh(geo, new THREE.ShaderMaterial({ uniforms: u, transparent: true, depthWrite: false, side: THREE.DoubleSide, vertexShader: clothVS,
+    stencilWrite: true, stencilRef: n + 1, stencilFunc: THREE.NotEqualStencilFunc, stencilZPass: THREE.ReplaceStencilOp,
     fragmentShader: "uniform float opacity; void main(){ gl_FragColor = vec4(0.29, 0.227, 0.188, opacity); }" }));
   m.position.z = -2; m.frustumCulled = false; m.renderOrder = -1; scene.add(m); return m;
 });
 const cloth = new THREE.Mesh(geo, mat); cloth.frustumCulled = false; scene.add(cloth);
 
-/* ---------- wind ---------- */
-let windSlider = 0.8;                    // from the page's wind slider (0 to 3), default breeze
-addEventListener("message", (e) => { if (e.data && typeof e.data.wind === "number") windSlider = e.data.wind; });
-let gust = 0, kick = 0, ptr = null, ptrVel = { x: 0, y: 0 };
-const noise = (t, s) => Math.sin(t * 0.9 + s) * 0.5 + Math.sin(t * 1.7 + s * 2.3) * 0.3 + Math.sin(t * 3.1 + s * 0.7) * 0.2;
+/* ---------- the worker: physics off the main thread, so drawing stays smooth whatever the simulation costs ---------- */
+const sim = new Worker(new URL("./bollywood/cloth.worker.js", location.href));
+let stepMs = 0, A = null, B = null, alphaT = 0, mode = "held", wrap = 0, centre = { x: 0, y: 0 }, busy = true, pendingDt = 0, ready = false;
+sim.onmessage = (e) => {
+  const m = e.data;
+  if (m.type === "ready") { ready = true; return; }
+  A = m.a; B = m.b; alphaT = m.alpha; stepMs = m.stepMs; mode = m.mode; wrap = m.wrap; centre = m.centre; busy = false;
+};
+sim.postMessage({ type: "init", SCALE, ANCHOR, reduce });
+addEventListener("message", (e) => { if (e.data && typeof e.data.wind === "number") sim.postMessage({ type: "wind", v: e.data.wind }); });
 function worldPoint(ev) { const r = canvas.getBoundingClientRect(); return { x: (ev.clientX - r.left) / r.width * WORLD_W, y: (ev.clientY - r.top) / r.height * WORLD_H }; }
-canvas.addEventListener("pointermove", (ev) => {
-  const p = worldPoint(ev);
-  if (ptr) { ptrVel.x = p.x - ptr.x; ptrVel.y = p.y - ptr.y; }
-  ptr = p;
-  gust = Math.min(1.6, gust + Math.hypot(ptrVel.x, ptrVel.y) * 0.004);
-});
-canvas.addEventListener("pointerleave", () => { ptr = null; ptrVel = { x: 0, y: 0 }; });
-canvas.addEventListener("pointerdown", () => {
-  if (mode === "held") release();
-  else if (mode === "wrapped") { mode = "returning"; wrapOn = false; kick = 1.8; }       // the wind peels it off him and sends it home
-  else gust = Math.min(1.6, gust + 0.8);                                                  // mid-flight: just a puff to stir it
-});
+canvas.addEventListener("pointermove", (ev) => sim.postMessage({ type: "pointer", p: worldPoint(ev) }));
+canvas.addEventListener("pointerleave", () => sim.postMessage({ type: "pointer", p: null }));
+canvas.addEventListener("pointerdown", () => sim.postMessage({ type: "down" }));
 
-/* ---------- physics (fixed step, sub-stepped, then relaxed for silk smoothness) ---------- */
-const STEP = 1 / 60, SUB = 3, DT = STEP / SUB, ITER = 6;
-const WS = 0.5, GRAVITY = 820 * SCALE, DRAG = 0.994, AIR = 0.012, AIRDRAG = 1.5;
-const nrm = new Float32Array(N * 3);
-function normals() {
-  nrm.fill(0);
-  for (let j = 0; j < ROWS; j++) for (let i = 0; i < COLS; i++) {
-    const a = idx(i, j) * 3, r = idx(Math.min(i + 1, COLS - 1), j) * 3, l = idx(Math.max(i - 1, 0), j) * 3,
-          d = idx(i, Math.min(j + 1, ROWS - 1)) * 3, u = idx(i, Math.max(j - 1, 0)) * 3;
-    const ax = px[r] - px[l], ay = px[r + 1] - px[l + 1], az = px[r + 2] - px[l + 2];
-    const bx = px[d] - px[u], by = px[d + 1] - px[u + 1], bz = px[d + 2] - px[u + 2];
-    let nx = ay * bz - az * by, ny = az * bx - ax * bz, nz = ax * by - ay * bx;
-    const m = Math.hypot(nx, ny, nz) || 1; nrm[a] = nx / m; nrm[a + 1] = ny / m; nrm[a + 2] = nz / m;
-  }
-}
-/* self-collision: points of one layer of silk push away from points of another, so folds stack instead of passing through */
-const CELL = 9, THICK = 6.5, HASH = new Map();
-function selfCollide() {
-  HASH.clear();
-  for (let p = 0; p < N; p++) {
-    const key = (Math.floor(px[p * 3] / CELL) * 73856093) ^ (Math.floor(px[p * 3 + 1] / CELL) * 19349663) ^ (Math.floor(px[p * 3 + 2] / CELL) * 83492791);
-    const a = HASH.get(key); if (a) a.push(p); else HASH.set(key, [p]);
-  }
-  for (let p = 0; p < N; p++) {
-    const x = px[p * 3], y = px[p * 3 + 1], z = px[p * 3 + 2], ci = p % COLS, cj = (p / COLS) | 0;
-    const cx = Math.floor(x / CELL), cy = Math.floor(y / CELL), cz = Math.floor(z / CELL);
-    for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) for (let dz = -1; dz <= 1; dz++) {
-      const lst = HASH.get(((cx + dx) * 73856093) ^ ((cy + dy) * 19349663) ^ ((cz + dz) * 83492791)); if (!lst) continue;
-      for (const q of lst) {
-        if (q <= p) continue;
-        const qi = q % COLS, qj = (q / COLS) | 0;
-        if (Math.abs(qi - ci) <= 3 && Math.abs(qj - cj) <= 3) continue;                          // neighbours on the same sheet are the springs' job
-        const ex = px[q * 3] - x, ey = px[q * 3 + 1] - y, ez = px[q * 3 + 2] - z, d2 = ex * ex + ey * ey + ez * ez;
-        if (d2 >= THICK * THICK || d2 < 1e-6) continue;
-        const d = Math.sqrt(d2), f = (THICK - d) / d * 0.5;
-        if (!pinned[p]) { px[p * 3] -= ex * f; px[p * 3 + 1] -= ey * f; px[p * 3 + 2] -= ez * f; }
-        if (!pinned[q]) { px[q * 3] += ex * f; px[q * 3 + 1] += ey * f; px[q * 3 + 2] += ez * f; }
-      }
-    }
-  }
-}
-/* his body as a soft solid: elliptical slices from his outline. Silk that would pass into him is laid back on his surface and
-   keeps only the part of its motion that slides along him, so it glides round his shoulders instead of snapping through. */
-const SLICE = BODY.map(([y, bx, hw]) => [bx, hw + SKIN, hw * DEPTH + SKIN]);
-function bodyCollide(str) {
-  for (let p = 0; p < N; p++) {
-    if (pinned[p]) continue;
-    const k = p * 3, y = px[k + 1]; if (y < BODY[0][0] || y > FEET_Y) continue;
-    const f = (y - BODY[0][0]) / 6, i = Math.min(BODY.length - 2, f | 0), t = f - i, A = SLICE[i], B = SLICE[i + 1];
-    const bx = A[0] + (B[0] - A[0]) * t, a = A[1] + (B[1] - A[1]) * t, b = A[2] + (B[2] - A[2]) * t;
-    const ex = (px[k] - bx) / a, ez = px[k + 2] / b, r = Math.hypot(ex, ez);
-    if (r >= 1 || r < 1e-4) continue;
-    const m = 1 + (1 / r - 1) * str;
-    px[k] = bx + ex * m * a; px[k + 2] = ez * m * b;
-    // friction: silk on cotton, it slows where it touches
-    pv[k] += (px[k] - pv[k]) * 0.18 * str; pv[k + 1] += (px[k + 1] - pv[k + 1]) * 0.18 * str; pv[k + 2] += (px[k + 2] - pv[k + 2]) * 0.18 * str;
-  }
-}
-// which way round it lands: whichever way it already lies (its left edge to his left or his right), so it is never wrung round him
-function chooseFlip() {
-  let a = 0, b = 0;
-  for (let p = 0; p < N; p += 7) { const k = p * 3, m = idx(COLS - 1 - p % COLS, (p / COLS) | 0) * 3;
-    a += (px[k] - tgt[k]) ** 2 + (px[k + 2] - tgt[k + 2]) ** 2; b += (px[k] - tgt[m]) ** 2 + (px[k + 2] - tgt[m + 2]) ** 2; }
-  return b < a;
-}
-let time = 0, frameNo = 0;
-function simulate(t) {
-  const strength = Math.max(0, windSlider) * (reduce ? 0.5 : 1);
-  // the breath of the wind: slow swell, quick flutter, and a gust that fades away
-  const swell = 0.6 + 0.4 * noise(t * 0.55, 1.3);
-  const flutter = noise(t * 2.2, 4.1);
-  gust *= 0.985; kick *= 0.96;
-  const base = strength * (0.9 + 1.5 * swell) + gust * 1.8 + kick * 2.4;
-  const wx = -470 * WS * base, wy = -400 * WS * base * (0.8 + 0.5 * flutter), wz = 140 * WS * base * noise(t * 0.8, 7.7);
-  if (mode === "flying") {
-    flyT += STEP; updateCentre();
-    const head = { x: BODY[0][1], y: HEAD_Y + 30 };
-    if ((Math.hypot(centre.x - head.x, centre.y - head.y) < 170 && flyT > 0.8) || flyT > 2.2) { mode = "wrapped"; wrapOn = true; flip = chooseFlip(); }
-  } else if (mode === "returning") {
-    flyT += STEP; updateCentre();
-    let near = true; for (let i = 0; i < COLS; i++) { const k = idx(i, 0) * 3; if (Math.hypot(px[k] - hand().x, px[k + 1] - hand().y) > 36) near = false; }
-    if (near || flyT > 6) { mode = "held"; for (let i = 0; i < COLS; i++) pinned[idx(i, 0)] = 1; }
-  }
-  const free = mode === "flying" || mode === "returning";
-  wrap = wrapOn ? Math.min(1, wrap + STEP / 1.9) : Math.max(0, wrap - STEP / 0.7);
-  settle = wrapOn ? Math.min(1, settle + STEP / 2.6) : 0;
-  // her hand: a gentle sway that lifts a little with each gust
-  const ax = ANCHOR.x + Math.sin(t * 0.7) * 4 * SCALE, ay = ANCHOR.y + Math.sin(t * 0.93) * 6 * SCALE - Math.min(14, base * 5) * SCALE;
-  // where free flight is headed: up and across, then down onto his head (or, going home, back toward her hand)
-  let gx = 0, gy = 0;
-  if (mode === "flying") {
-    // a spring-damper toward a waypoint that starts up and to the right of him and settles onto his head: an arc, never an overshoot
-    const arc = Math.max(0, 1 - flyT / 1.25), Tx = BODY[0][1] + 110 * arc, Ty = HEAD_Y + 20 - 150 * arc;
-    gx = (Tx - centre.x) * 3.4 - centre.vx * 3.3; gy = (Ty - centre.y) * 3.4 - centre.vy * 3.3;
-  } else if (mode === "returning") {
-    const Ty = ay - (flyT < 1.2 ? 130 * (1 - flyT / 1.2) : 0);
-    gx = (ax - centre.x) * 3.2 - centre.vx * 3.2; gy = (Ty - centre.y) * 3.2 - centre.vy * 3.2;
-  }
-  for (let s = 0; s < SUB; s++) {
-    normals();
-    for (let p = 0; p < N; p++) {
-      if (pinned[p]) continue;
-      const k = p * 3, loc = smooth(0, 1, (wrap * 1.6 - Math.floor(p / COLS) / (ROWS - 1) * 0.75) * 1.4), fr = (free ? 0.3 : 1) * (1 - 0.92 * loc);
-      let vx = (px[k] - pv[k]) / DT, vy = (px[k + 1] - pv[k + 1]) / DT, vz = (px[k + 2] - pv[k + 2]) / DT;
-      // aerodynamic push: the part of the relative wind that strikes the surface
-      const rx = wx * fr * (1 + 0.35 * noise(t * 1.4, p * 0.013)) - vx, ry = wy * fr - vy, rz = wz * fr - vz;
-      const dn = rx * nrm[k] + ry * nrm[k + 1] + rz * nrm[k + 2];
-      // light silk is carried by the air itself (drag toward the wind) and billows where the wind meets its face
-      let fx = rx * AIRDRAG + nrm[k] * dn * AIR * 60, fy = ry * AIRDRAG + nrm[k + 1] * dn * AIR * 60 + GRAVITY, fz = rz * AIRDRAG * 0.6 + nrm[k + 2] * dn * AIR * 60;
-      // the pointer stirs the air nearby
-      if (loc > 0) {   // lying over him: drawn onto his outline
-        // shrink-wrap: drawn straight in onto his surface from wherever it is, so it hugs him without being dragged round him;
-        // a pull toward its place in the drape, growing as it settles, slowly untwists it. Critically damped, so it settles without bouncing.
-        const tk = flip ? idx(COLS - 1 - p % COLS, (p / COLS) | 0) * 3 : k;
-        const [bx, A, B] = tentAt(px[k + 1]), ex = (px[k] - bx) / A, ez = px[k + 2] / B, th = Math.atan2(ex, ez);
-        const sx = bx + A * Math.sin(th), sz = B * Math.cos(th);
-        const uw = 0.2 + 0.8 * settle * settle * (3 - 2 * settle), Tx = sx + (tgt[tk] - sx) * uw, Tz = sz + (tgt[tk + 2] - sz) * uw;   // hug first, then slide round him into place
-        const ks = 70 * loc * loc, kd = 2 * Math.sqrt(ks) * 1.05;
-        fx += (Tx - px[k]) * ks - vx * kd; fy += (tgt[tk + 1] - px[k + 1]) * ks * 0.8 - vy * kd; fz += (Tz - px[k + 2]) * ks - vz * kd;
-      }
-      if (free) {
-        const j = Math.floor(p / COLS), i = p % COLS, ph = t * 2.6 + j * 0.2 + i * 0.62;
-        fx += gx + Math.sin(ph) * 120 * SCALE * 3 * (0.4 + j / ROWS);
-        fy += gy - GRAVITY * 0.78 + Math.cos(ph * 0.8 + i) * 90 * SCALE * 3 * (0.3 + j / ROWS);
-        fz += Math.sin(ph * 1.3 + i * 0.9) * 340 * SCALE * 3 * (0.3 + j / ROWS);              // the flapping and rolling that makes it tumble
-        { const k0 = Math.min(1, flyT / 0.5) * (mode === "flying" ? 1 : 0.6), dx = centre.x - px[k], dy = centre.y - px[k + 1], dd = Math.hypot(dx, dy), over = Math.max(0, dd - 150);
-          fx += dx / (dd || 1) * over * 4 * k0; fy += dy / (dd || 1) * over * 4 * k0;                    // gather toward the middle: it crumples instead of staying a flat ribbon
-          const spin = Math.sin(t * 1.7 + 0.6) * 1.1 * k0;                                                // and the whole bundle rolls end over end
-          fx += -(px[k + 1] - centre.y) * spin * 6; fy += (px[k] - centre.x) * spin * 6; }
-        if (mode === "returning" && j === 0) { fx += (ax - px[k]) * 40; fy += (ay + (i / (COLS - 1) - 0.5) * W_TOP - px[k + 1]) * 40; }
-      }
-      if (ptr && loc < 0.5) { const dx = px[k] - ptr.x, dy = px[k + 1] - ptr.y, d2 = dx * dx + dy * dy; if (d2 < 14000 * SCALE) { const f = (1 - d2 / (14000 * SCALE)) * 5200 * SCALE; const d = Math.sqrt(d2) || 1; fx += dx / d * f + ptrVel.x * 30 * SCALE; fy += dy / d * f + ptrVel.y * 30 * SCALE; fz += f * 0.35; } }
-      const nx = px[k] + (px[k] - pv[k]) * DRAG + fx * DT * DT;
-      const ny = px[k + 1] + (px[k + 1] - pv[k + 1]) * DRAG + fy * DT * DT;
-      const nz = px[k + 2] + (px[k + 2] - pv[k + 2]) * DRAG + fz * DT * DT;
-      pv[k] = px[k]; pv[k + 1] = px[k + 1]; pv[k + 2] = px[k + 2];
-      px[k] = nx; px[k + 1] = Math.min(ny, 930); px[k + 2] = Math.max(-420 * SCALE, Math.min(420 * SCALE, nz));
-    }
-    if (mode === "held") for (const { i, dy } of pinRest) { const k = idx(i, 0) * 3; px[k] = ax; px[k + 1] = ay + dy; px[k + 2] = Math.sin(i * 0.9) * 3 * SCALE; pv[k] = px[k]; pv[k + 1] = px[k + 1]; pv[k + 2] = px[k + 2]; }
-    if ((mode !== "held" || wrap > 0.02) && s === 0 && (frameNo++ % 3) === 0) selfCollide();
-    for (let it = 0; it < ITER; it++) {
-      for (let c = 0; c < rest.length; c++) {
-        const [a, b, len, sf] = rest[c], ka = a * 3, kb = b * 3;
-        const dx = px[kb] - px[ka], dy = px[kb + 1] - px[ka + 1], dz = px[kb + 2] - px[ka + 2];
-        const d = Math.hypot(dx, dy, dz) || 1e-6, diff = (d - len) / d * 0.5 * sf;
-        const wa = pinned[a] ? 0 : 1, wb = pinned[b] ? 0 : 1, ws = wa + wb || 1;
-        const fa = diff * wa / ws * 2, fb = diff * wb / ws * 2;
-        px[ka] += dx * fa; px[ka + 1] += dy * fa; px[ka + 2] += dz * fa;
-        px[kb] -= dx * fb; px[kb + 1] -= dy * fb; px[kb + 2] -= dz * fb;
-      }
-      if (wrap > 0.01 && (it & 2) === 0) bodyCollide(Math.min(1, wrap * 3));
-    }
-  }
-  // relax: blend each free point a touch toward its neighbours so folds stay long and silky
-  for (let j = 1; j < ROWS - 1; j++) for (let i = 0; i < COLS; i++) {
-    const k = idx(i, j) * 3, u = idx(i, j - 1) * 3, d = idx(i, j + 1) * 3;
-    for (let q = 0; q < 3; q++) px[k + q] += ((px[u + q] + px[d + q]) * 0.5 - px[k + q]) * 0.06;
-  }
-  if (wrap > 0.05) {                       // lying on him: ease out the small kinks across the weave too, so it reads as one smooth skin
-    const sm = 0.05 * wrap;
-    for (let j = 0; j < ROWS; j++) for (let i = 1; i < COLS - 1; i++) {
-      const k = idx(i, j) * 3, l = k - 3, r = k + 3;
-      for (let q = 0; q < 3; q++) px[k + q] += ((px[l + q] + px[r + q]) * 0.5 - px[k + q]) * sm;
-    }
-    bodyCollide(1);                        // smoothing a loop shrinks it: lay it back out on him
-  }
-}
-// drawn between the last two physics steps, so it glides at any refresh rate (60, 90 or 120 Hz) instead of stepping
-const prevPx = new Float32Array(N * 3); let alphaT = 1;
+// drawn between the last two physics steps, so it glides at any refresh rate (60, 90 or 120 Hz)
 function upload() {
+  if (!A) return;
   const a = alphaT, b = 1 - a;
-  for (let p = 0; p < N; p++) { const k = p * 3, q = p * 4; posData[q] = px[k] * a + prevPx[k] * b; posData[q + 1] = WORLD_H - (px[k + 1] * a + prevPx[k + 1] * b); posData[q + 2] = px[k + 2] * a + prevPx[k + 2] * b; }
+  for (let q = 0; q < N; q++) { const k = q * 3, o = q * 4; posData[o] = B[k] * a + A[k] * b; posData[o + 1] = WORLD_H - (B[k + 1] * a + A[k + 1] * b); posData[o + 2] = B[k + 2] * a + A[k + 2] * b; }
   posTex.needsUpdate = true;
 }
 
 /* ---------- loop ---------- */
-let last = performance.now(), acc = 0, running = true;
+let last = performance.now(), running = true, time = 0;
 document.addEventListener("visibilitychange", () => { running = !document.hidden; last = performance.now(); });
 function frame(now) {
   requestAnimationFrame(frame);
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
   if (!running) return;
-  acc += Math.min(0.05, (now - last) / 1000); last = now;
-  let n = 0;
-  while (acc >= STEP && n < 2) { prevPx.set(px); time += STEP; simulate(time); acc -= STEP; n++; }
-  if (acc > STEP) acc = STEP * 0.5;                                  // a slow device skips ahead gently instead of falling behind
-  alphaT = acc / STEP;
+  time += dt; pendingDt += dt;
+  if (!busy) { busy = true; sim.postMessage({ type: "tick", dt: pendingDt }); pendingDt = 0; }   // never queue: if it is behind, it gets one larger step
   manEl.style.opacity = 1 - 0.6 * smooth(0.6, 1, wrap);        // he shows faintly through the silk
   mat.uniforms.alpha.value = 1 - 0.2 * smooth(0.5, 1, wrap); mat.uniforms.wrap.value = smooth(0.3, 1, wrap); mat.uniforms.time.value = time;
-  for (const m of shadows) m.visible = wrap < 0.7;                         // the shadow falls on the scene, not on him once it covers him
+  for (const m of shadows) m.visible = wrap < 0.7;
+  cloth.visible = !!A; for (const m of shadows) m.visible = m.visible && !!A;
   upload(); renderer.render(scene, camera);
 }
-for (let i = 0; i < 240; i++) { time += STEP; simulate(time); }   // let it settle before the first frame
-prevPx.set(px);
 requestAnimationFrame(frame);
-window.__cloth = { px, N, COLS, ROWS, get mode() { return mode; }, get centre() { return centre; }, click: () => canvas.dispatchEvent(new PointerEvent("pointerdown")), get wrap() { return wrap; }, get on() { return wrapOn; } };
+window.__cloth = { N, COLS, ROWS, get ready() { return !!A; }, get stepMs() { return stepMs; }, get mode() { return mode; }, get centre() { return centre; }, click: () => canvas.dispatchEvent(new PointerEvent("pointerdown")), get wrap() { return wrap; } };
 </script>
 </body>
 </html>
