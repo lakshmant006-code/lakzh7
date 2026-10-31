@@ -889,9 +889,10 @@ const META = {
   mites: ["Rainy velvets", "A memory · velvet mites after the rain", "Move over a mite · press and hold to make it curl up", "rainy velvets"],
   street: ["Street", "Midday · a city street from above", "Traffic keeps its lanes and stops at the signal · hover to honk · or be the cow", "street"],
   bollywood: ["Bollywood", "A memory · a dance under the arch, the Taj Mahal behind", "Move to stir the wind · tap to wrap the dupatta around him, tap again to let go · the slider sets the breeze", "bollywood"],
+  focus: ["Focus", "A memory · the long road and the balloon", "Drag the lens over the balloon to bring it into focus · tap the memory to see it again", "focus"],
   grass: ["Grass from above", "Meadow · combed by the wind", "Tap to plant flowers and watch them bloom · someone will come over", "grass"],
 };
-const ORDER = ["pond", "canopy", "mites", "grass", "street", "bollywood"];
+const ORDER = ["pond", "canopy", "mites", "grass", "street", "bollywood", "focus"];
 const nav = document.getElementById("scenes");
 const deck = document.getElementById("deck");
 const built = {};
@@ -901,10 +902,12 @@ const mitesFrame = document.getElementById("mites");
 const grassFrame = document.getElementById("grass");
 const streetFrame = document.getElementById("street");
 const bollyFrame = document.getElementById("bollywood");
+const focusFrame = document.getElementById("focus");
 
 /** swap what is on screen right now (no animation) */
 function showNow(id) {
-  const isMites = id === "mites", isGrass = id === "grass", isStreet = id === "street", isBolly = id === "bollywood";
+  const isMites = id === "mites", isGrass = id === "grass", isStreet = id === "street", isBolly = id === "bollywood", isFocus = id === "focus";
+  document.body.classList.toggle("is-focus", isFocus);
   document.body.classList.toggle("is-bollywood", isBolly);
   document.body.classList.toggle("is-street", isStreet);
   document.body.classList.toggle("is-canopy", id === "canopy");
@@ -915,13 +918,15 @@ function showNow(id) {
   if (isGrass && !grassFrame.src) grassFrame.src = grassFrame.dataset.src;
   if (isStreet && !streetFrame.src) streetFrame.src = streetFrame.dataset.src;
   if (isBolly && !bollyFrame.src) bollyFrame.src = bollyFrame.dataset.src;
+  if (isFocus && !focusFrame.src) focusFrame.src = focusFrame.dataset.src;
   try { streetFrame.contentWindow?.postMessage({ away: !isStreet }, "*"); } catch (_) {}
   if (!isStreet && streetFrame.src) setTimeout(() => { if (currentId !== "street") streetFrame.removeAttribute("src"); }, 2600);   // its sound lasts two more seconds, then it stops
   if (!isBolly && bollyFrame.src) setTimeout(() => { if (currentId !== "bollywood") bollyFrame.removeAttribute("src"); }, 700);
+  if (!isFocus && focusFrame.src) setTimeout(() => { if (currentId !== "focus") focusFrame.removeAttribute("src"); }, 700);
   if (!isMites && mitesFrame.src) setTimeout(() => { if (currentId !== "mites") mitesFrame.removeAttribute("src"); }, 700);
   if (!isGrass && grassFrame.src) setTimeout(() => { if (currentId !== "grass") grassFrame.removeAttribute("src"); }, 700);
   currentId = id;
-  if (isMites || isGrass || isStreet || isBolly) { mitesing = true; }
+  if (isMites || isGrass || isStreet || isBolly || isFocus) { mitesing = true; }
   else {
     mitesing = false;
     if (current?.leave) current.leave();
@@ -941,7 +946,7 @@ function showNow(id) {
 let fade = 0, fadeDir = 0, pending = null, elapsed = 0, autoplay = params.get("auto") !== "0";
 const DURATION = 11;
 function goto(id, manual) {
-  if (!SCENES[id] && id !== "mites" && id !== "grass" && id !== "street" && id !== "bollywood" || ORDER.indexOf(id) < 0) id = "pond";
+  if (!SCENES[id] && id !== "mites" && id !== "grass" && id !== "street" && id !== "bollywood" && id !== "focus" || ORDER.indexOf(id) < 0) id = "pond";
   elapsed = 0;
   if (manual && id === currentId) return;
   if (currentId === null) { showNow(id); return; }
