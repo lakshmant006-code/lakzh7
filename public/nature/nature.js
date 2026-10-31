@@ -569,7 +569,7 @@ SCENES.pond = () => {
       const now = U.uTime.value;
       if (now - lastRip > 0.16 && p.distanceTo(lastP) > 0.35) { ripple(p.x, p.z, 0.45); lastRip = now; lastP.copy(p); }
     },
-    tap(x, y) { const p = pickPlane(x, y, 0); if (p) { target.set(p.x, 1.2, p.z); ripple(p.x, p.z, 1.4); ripple(p.x, p.z, 0.8); } },
+    tap(x, y) { const p = pickPlane(x, y, 0); if (p) { target.set(p.x, 1.2, p.z); ripple(p.x, p.z, 1.4); ripple(p.x, p.z, 0.8); Sound.plink(1); setTimeout(() => Sound.plink(0.5), 150); } },
   };
 };
 
@@ -759,18 +759,100 @@ SCENES.canopy = () => {
         gl_FragColor = vec4(mix(vec3(0.01, 0.045, 0.05), vec3(0.05, 0.16, 0.12), n), 1.0); }`,
   }));
   floor.rotation.x = -Math.PI / 2; group.add(floor);
+  /* leaves that let go: a tap starts a slow, drifting fall; a few also come away on their own */
+  const FALL = 56;
+  const leafShape = new THREE.Shape();
+  leafShape.moveTo(0, -0.55); leafShape.bezierCurveTo(0.42, -0.3, 0.46, 0.25, 0, 0.6); leafShape.bezierCurveTo(-0.46, 0.25, -0.42, -0.3, 0, -0.55);
+  const fallMesh = new THREE.InstancedMesh(new THREE.ShapeGeometry(leafShape, 8), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }), FALL);
+  fallMesh.frustumCulled = false; fallMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  const greens = [0x2c6f3b, 0x3f9147, 0x6aa84f, 0x9cc65a, 0x5f9b45].map((h) => new THREE.Color(h));
+  const dummy = new THREE.Object3D(), fall = [];
+  for (let i = 0; i < FALL; i++) { fall.push({ on: false, x: 0, y: 0, z: 0, t: 0, ph: 0, sp: [0, 0, 0], s: 1, sink: 0 }); fallMesh.setColorAt(i, greens[i % greens.length]); dummy.scale.setScalar(0); dummy.updateMatrix(); fallMesh.setMatrixAt(i, dummy.matrix); }
+  group.add(fallMesh);
+  let shower = 0, spawnAcc = 0, ambientAcc = 0, landed = 0;
+  const release = () => {
+    const l = fall.find((q) => !q.on); if (!l) return;
+    l.on = true; l.x = J(7.5); l.z = r.range(-6, 3.5); l.y = r.range(5.2, 8); l.t = 0; l.ph = r() * 6.28; l.s = r.range(0.55, 1.0);
+    l.sp = [r.range(-1.1, 1.1), r.range(-0.9, 0.9), r.range(-1.4, 1.4)]; l.sink = r.range(0.42, 0.7);
+  };
   let idle = 0;
   return {
     group, bg: new THREE.Color(0x03120f),
     enter() { camera.position.set(0.4, 9.2, 3.6); camera.up.set(0, 1, 0); camera.fov = 50; camera.lookAt(0, 0, -0.9); camera.updateProjectionMatrix(); },
-    update(dt) {
+    update(dt, c) {
       idle += dt;
       uni.uPtrA.value = ease(uni.uPtrA.value, idle < 2.4 ? 0.9 : 0.0, dt, 0.5);
+      // the shower: fades out over a few seconds after the last tap; between taps a leaf lets go now and then
+      shower = Math.max(0, shower - dt);
+      spawnAcc += dt * 9 * Math.min(1, shower / 2.2); while (spawnAcc >= 1) { spawnAcc -= 1; release(); }
+      ambientAcc += dt * 0.22; while (ambientAcc >= 1) { ambientAcc -= 1; release(); }
+      const wx = U.uDir.value.x * (0.25 + c.strength * 0.5), wz = U.uDir.value.y * (0.25 + c.strength * 0.5);
+      for (let i = 0; i < FALL; i++) {
+        const l = fall[i];
+        if (l.on) {
+          l.t += dt; l.y -= l.sink * dt;
+          l.x += (wx + Math.sin(l.t * 1.3 + l.ph) * 0.45) * dt; l.z += (wz * 0.6 + Math.cos(l.t * 1.1 + l.ph) * 0.3) * dt;
+          if (l.y <= 0.12) { l.on = false; dummy.scale.setScalar(0); if (landed++ % 4 === 0) Sound.leaf(); }
+          else { dummy.position.set(l.x, l.y, l.z); dummy.rotation.set(l.t * l.sp[0], l.t * l.sp[1], l.t * l.sp[2]); dummy.scale.setScalar(l.s * Math.min(1, l.t * 1.6)); }
+          dummy.updateMatrix(); fallMesh.setMatrixAt(i, dummy.matrix);
+        }
+      }
+      fallMesh.instanceMatrix.needsUpdate = true;
     },
     move(x, y) { const p = pickPlane(x, y, 1.8); if (p) { uni.uPtr.value.copy(p); idle = 0; } },
-    tap(x, y) { const p = pickPlane(x, y, 1.8); if (p) { uni.uPtr.value.copy(p); idle = 0; uni.uPtrA.value = 1.3; } },
+    tap(x, y) { const p = pickPlane(x, y, 1.8); if (p) { uni.uPtr.value.copy(p); idle = 0; uni.uPtrA.value = 1.3; } shower = 6.5; for (let k = 0; k < 4; k++) release(); Sound.rustle(1); },
   };
 };
+
+
+/* ---------- small synthesised sounds: no audio files, only on a tap, quiet, and silent when the site's sound toggle is off ---------- */
+const Sound = (() => {
+  let ctx = null, master = null, buf = null;
+  const off = () => { try { return localStorage.getItem("ui-sound") === "off"; } catch (_) { return false; } };
+  function unlock() {
+    if (!ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
+      ctx = new AC(); master = ctx.createGain(); master.gain.value = 0.55; master.connect(ctx.destination);
+      buf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate); const d = buf.getChannelData(0); let b = 0;
+      for (let i = 0; i < d.length; i++) { const w = Math.random() * 2 - 1; b = b * 0.97 + w * 0.03; d[i] = (w * 0.5 + b * 6) * 0.6; }   // soft, slightly brown noise
+    }
+    if (ctx.state === "suspended") ctx.resume();
+    return true;
+  }
+  const ok = () => ctx && !off();
+  function noise(t, dur, type, freq, q, peak, attack) {
+    const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+    const f = ctx.createBiquadFilter(); f.type = type; f.frequency.value = freq; f.Q.value = q;
+    const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + attack); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(master); src.start(t, Math.random()); src.stop(t + dur + 0.05); return f;
+  }
+  function tone(t, f0, f1, dur, peak) {
+    const o = ctx.createOscillator(), g = ctx.createGain(); o.type = "sine";
+    o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.05);
+  }
+  return {
+    unlock,
+    /** leaves moving against each other: a soft swell of filtered noise */
+    rustle(amount = 1) {
+      if (!ok()) return; const t = ctx.currentTime;
+      const f = noise(t, 1.6 + amount * 0.6, "bandpass", 3000, 0.7, 0.07 * amount, 0.35);
+      f.frequency.setValueAtTime(2400, t); f.frequency.linearRampToValueAtTime(4200, t + 1.6);
+      noise(t + 0.05, 1.2, "highpass", 6500, 0.5, 0.012 * amount, 0.3);
+    },
+    /** one leaf touching down */
+    leaf() { if (!ok()) return; noise(ctx.currentTime, 0.18, "bandpass", 2600 + Math.random() * 1500, 1.4, 0.018, 0.02); },
+    /** a drop on water: a short falling note and a wet puff */
+    plink(strength = 1) {
+      if (!ok()) return; const t = ctx.currentTime, base = 480 + Math.random() * 260;
+      tone(t, base * 1.9, base * 0.8, 0.28, 0.07 * strength);
+      tone(t + 0.07, base * 1.2, base * 0.6, 0.34, 0.035 * strength);
+      noise(t, 0.22, "lowpass", 900, 0.6, 0.03 * strength, 0.01);
+    },
+  };
+})();
+addEventListener("pointerdown", () => Sound.unlock(), { passive: true });
 
 /* ---------- pixel + ordered-dither pass ---------- */
 const PX = +params.get("px") || (innerWidth < 700 ? 2 : 3);       // CSS pixels per "big pixel"
@@ -802,8 +884,6 @@ postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), postMat));
 
 /* ---------- scene manager ---------- */
 const META = {
-  tulips: ["Tulip field", "Spring · pink tulips over the hill", "Tap a flower to scatter its petals · tap to call the butterfly · drag to fly", "tulips"],
-  meadow: ["Buttercup meadow", "Spring · dandelion clocks and clover", "Tap a dandelion to blow it · tap to call the butterfly · drag to fly", "meadow"],
   pond: ["Lily pond", "Summer · pads, lotus and ripples", "Move over the water · tap for a big ripple · drag to fly", "pond"],
   canopy: ["Jungle canopy", "Understory · broad leaves in dappled light", "Move to open a gap in the canopy · tap to shake the leaves", "canopy"],
   mites: ["Rainy velvets", "A memory · velvet mites after the rain", "Move over a mite · press and hold to make it curl up", "rainy velvets"],
@@ -811,7 +891,7 @@ const META = {
   bollywood: ["Bollywood", "A memory · a dance under the arch, the Taj Mahal behind", "Move to stir the wind · tap to wrap the dupatta around him, tap again to let go · the slider sets the breeze", "bollywood"],
   grass: ["Grass from above", "Meadow · combed by the wind", "Tap to plant flowers and watch them bloom · someone will come over", "grass"],
 };
-const ORDER = ["tulips", "meadow", "pond", "canopy", "mites", "grass", "street", "bollywood"];
+const ORDER = ["pond", "canopy", "mites", "grass", "street", "bollywood"];
 const nav = document.getElementById("scenes");
 const deck = document.getElementById("deck");
 const built = {};
@@ -861,7 +941,7 @@ function showNow(id) {
 let fade = 0, fadeDir = 0, pending = null, elapsed = 0, autoplay = params.get("auto") !== "0";
 const DURATION = 11;
 function goto(id, manual) {
-  if (!SCENES[id] && id !== "mites" && id !== "grass" && id !== "street" && id !== "bollywood") id = "tulips";
+  if (!SCENES[id] && id !== "mites" && id !== "grass" && id !== "street" && id !== "bollywood" || ORDER.indexOf(id) < 0) id = "pond";
   elapsed = 0;
   if (manual && id === currentId) return;
   if (currentId === null) { showNow(id); return; }
@@ -954,6 +1034,6 @@ function frame(now) {
   } else canvas.style.opacity = 1;
   requestAnimationFrame(frame);
 }
-goto(location.hash.slice(1) || "tulips");
+goto(location.hash.slice(1) || "pond");
 requestAnimationFrame(frame);
 window.__nature = { show: goto, setTarget, get state() { return { speed, strength, phase, target, scene: currentId }; } };

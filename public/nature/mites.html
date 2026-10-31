@@ -223,9 +223,55 @@ function drawHand(c,shadow){
 const TIP=[-19+Math.sin(-.15)*66,-26-Math.cos(-.15)*66], HR=-.38;
 
 /* ---------- pointer ---------- */
+/* ---------- sound: rain ticking on the leaves, tiny feet, a tap on the soil. Synthesised, quiet, off with the site's sound toggle ---------- */
+const SND=(()=>{
+  let ctx=null,master=null,buf=null,rainG=null,started=false,creeps=0,creepWin=0;
+  const off=()=>{try{return localStorage.getItem('ui-sound')==='off'}catch(_){return false}};
+  function noise(t,dur,type,f,q,peak,att,pan){
+    const s=ctx.createBufferSource(); s.buffer=buf; s.loop=true;
+    const fl=ctx.createBiquadFilter(); fl.type=type; fl.frequency.value=f; fl.Q.value=q;
+    const g=ctx.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+att); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    s.connect(fl); fl.connect(g);
+    if(pan!=null&&ctx.createStereoPanner){ const p=ctx.createStereoPanner(); p.pan.value=Math.max(-1,Math.min(1,pan)); g.connect(p); p.connect(master); } else g.connect(master);
+    s.start(t,Math.random()*1.5); s.stop(t+dur+.05);
+  }
+  function tone(t,f0,f1,dur,peak,pan){
+    const o=ctx.createOscillator(), g=ctx.createGain(); o.type='sine'; o.frequency.setValueAtTime(f0,t); o.frequency.exponentialRampToValueAtTime(f1,t+dur);
+    g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+.006); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(g); if(pan!=null&&ctx.createStereoPanner){ const p=ctx.createStereoPanner(); p.pan.value=pan; g.connect(p); p.connect(master); } else g.connect(master);
+    o.start(t); o.stop(t+dur+.05);
+  }
+  function start(){
+    if(started) return; started=true;
+    // a light, steady rain bed, and drops that tick now and then
+    const s=ctx.createBufferSource(); s.buffer=buf; s.loop=true;
+    const hp=ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=2200; const lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=8000;
+    rainG=ctx.createGain(); rainG.gain.value=0; s.connect(hp); hp.connect(lp); lp.connect(rainG); rainG.connect(master); s.start();
+    rainG.gain.linearRampToValueAtTime(.022,ctx.currentTime+2.5);
+    (function drip(){ if(!document.hidden&&!off()&&ctx){ const t=ctx.currentTime, pan=Math.random()*2-1; tone(t,1500+Math.random()*1800,900+Math.random()*500,.05,.006+Math.random()*.006,pan); }
+      setTimeout(drip,160+Math.random()*520); })();
+  }
+  return {
+    unlock(){
+      if(!ctx){ const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return; ctx=new AC(); master=ctx.createGain(); master.gain.value=.6; master.connect(ctx.destination);
+        buf=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate); const d=buf.getChannelData(0); let b=0; for(let i=0;i<d.length;i++){ const w=Math.random()*2-1; b=b*.97+w*.03; d[i]=(w*.5+b*6)*.6; } }
+      if(ctx.state==='suspended') ctx.resume(); start();
+    },
+    /** the sound of a fingertip on damp soil */
+    tap(pan){ if(!ctx||off()) return; const t=ctx.currentTime; tone(t,150,80,.12,.1,pan); noise(t,.09,'bandpass',900,.8,.05,.005,pan); [.05,.11].forEach(d=>noise(t+d,.05,'bandpass',3200+Math.random()*1500,2,.012,.004,pan)); },
+    /** one tiny foot on the soil, panned to where the mite is */
+    creep(pan,amp){ if(!ctx||off()) return; const now=performance.now(); if(now-creepWin>1000){ creepWin=now; creeps=0; } if(creeps++>16) return;
+      noise(ctx.currentTime,.03,'bandpass',4600+Math.random()*3200,3,.012*amp,.004,pan); },
+    /** curled up: a small squeak and a rustle of legs */
+    curl(pan){ if(!ctx||off()) return; const t=ctx.currentTime; tone(t,2100,1300,.09,.014,pan); noise(t,.18,'bandpass',5200,1.2,.02,.01,pan); },
+    mute(){ if(rainG) rainG.gain.setTargetAtTime(off()?0:.022,ctx.currentTime,.2); },
+  };
+})();
+setInterval(()=>SND.mute(),700);
+
 function setP(e){const r=cv.getBoundingClientRect();P.x=(e.clientX-r.left)/r.width*WX;P.y=(e.clientY-r.top)/r.height*WY;P.on=true}
 cv.addEventListener('pointermove',setP);
-cv.addEventListener('pointerdown',e=>{setP(e);P.down=true;try{cv.setPointerCapture(e.pointerId)}catch(_){}});
+cv.addEventListener('pointerdown',e=>{setP(e);P.down=true;SND.unlock();SND.tap(P.x/WX*2-1);try{cv.setPointerCapture(e.pointerId)}catch(_){}});
 const up=()=>{P.down=false};
 cv.addEventListener('pointerup',up); cv.addEventListener('pointercancel',up);
 cv.addEventListener('pointerleave',()=>{if(!P.down)P.on=false});
@@ -241,7 +287,7 @@ function step(m,dt,now){
   if(under) m.hold=500; else if(m.hold>0) m.hold-=dt;
   const tgt=(under||m.hold>0)?1:0;
   if(under&&!m.pressed){                                            // the instant a finger lands: a jolt, a shudder, a squash
-    m.pressed=true;
+    m.pressed=true; SND.curl(m.x/WX*2-1);
     const a=Math.atan2(m.y-P.y,m.x-P.x)+rnd(-.5,.5), kick=rnd(115,150);
     m.vx+=Math.cos(a)*kick; m.vy+=Math.sin(a)*kick;               // nudged away from the finger
     m.sV+=rnd(-1,1)<0?-9:9;                                         // rotational shudder
@@ -308,7 +354,7 @@ function frame(now){
   H.x+=(P.x-H.x)*.35; H.y+=(P.y-H.y)*.35;
   H.a+=((P.on?1:0)-H.a)*.12;
   H.press+=((P.down?1:0)-H.press)*.28;
-  mites.forEach(m=>step(m,dt,now));
+  mites.forEach(m=>{ step(m,dt,now); if(m.speed>2&&m.curl<.2&&m.sc>.6){ m.cr=(m.cr||0)+dt; const iv=Math.max(70,230-m.speed*7); if(m.cr>iv){ m.cr=0; SND.creep(m.x/WX*2-1,Math.min(1.4,.6+m.speed/20)); } } });
   for(let i=mites.length-1;i>=0;i--) if(mites[i].dive>=1) mites.splice(i,1);
 
   ctx.setTransform(1,0,0,1,0,0); ctx.drawImage(bg,0,0);

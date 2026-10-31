@@ -48,13 +48,14 @@ const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 /* ---------- renderer: an orthographic view that matches the 1400 x 1000 world ---------- */
 const canvas = document.getElementById("c");
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, stencil: true, powerPreference: "high-performance" });
-renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+let pixelRatio = Math.min(devicePixelRatio || 1, 1.5);                       // 1.5 is plenty for silk; it drops to 1 if the machine struggles
+renderer.setPixelRatio(pixelRatio);
 renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 renderer.setClearColor(0x000000, 0);
 const scene = new THREE.Scene();
 const camera = new THREE.OrthographicCamera(0, WORLD_W, WORLD_H, 0, -3000, 3000);
 camera.position.z = 1000;
-const fit = () => { const r = canvas.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); };
+const fit = () => { const r = canvas.getBoundingClientRect(); renderer.setPixelRatio(pixelRatio); renderer.setSize(r.width, r.height, false); };
 new ResizeObserver(fit).observe(canvas); fit();
 
 
@@ -179,18 +180,21 @@ function upload() {
 }
 
 /* ---------- loop ---------- */
-let last = performance.now(), running = true, time = 0;
+let last = performance.now(), running = true, time = 0, ft = 0.016, slow = 0, quality = 0;
 document.addEventListener("visibilitychange", () => { running = !document.hidden; last = performance.now(); });
 function frame(now) {
   requestAnimationFrame(frame);
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   if (!running) return;
+  // if frames keep taking longer than ~24 ms, make each one cheaper: drop to 1x pixels, then skip the soft shadows
+  ft += (dt - ft) * 0.05; slow = ft > 0.024 ? slow + dt : Math.max(0, slow - dt);
+  if (slow > 1.2 && quality < 2) { quality++; slow = 0; ft = 0.016; if (quality === 1) { pixelRatio = 1; fit(); } }
   time += dt; pendingDt += dt;
   if (!busy) { busy = true; sim.postMessage({ type: "tick", dt: pendingDt }); pendingDt = 0; }   // never queue: if it is behind, it gets one larger step
   manEl.style.opacity = 1 - 0.6 * smooth(0.6, 1, wrap);        // he shows faintly through the silk
   mat.uniforms.alpha.value = 1 - 0.2 * smooth(0.5, 1, wrap); mat.uniforms.wrap.value = smooth(0.3, 1, wrap); mat.uniforms.time.value = time;
-  for (const m of shadows) m.visible = wrap < 0.7;
-  cloth.visible = !!A; for (const m of shadows) m.visible = m.visible && !!A;
+  for (const m of shadows) m.visible = wrap < 0.7 && quality < 2;
+  cloth.visible = !!A; for (const m of shadows) m.visible = m.visible && !!A && quality < 2;
   upload(); renderer.render(scene, camera);
 }
 requestAnimationFrame(frame);

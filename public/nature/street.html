@@ -255,6 +255,7 @@ function pushOut(c) {
 
 /* ---------- sound (ElevenLabs sound effects) ---------- */
 const SFX = { auto: "auto", car: "car", scooter: "scooter", truck: "truck", cow: "cow", ped: "whistle", chaos: "chaos" };
+const VOLUME = 0.55;   // the whole street, a little quieter than the clips are mastered
 const GAIN = { auto: 0.75, car: 0.6, scooter: 0.5, truck: 0.7, cow: 0.8, whistle: 0.45, chaos: 0.55 };
 let ctx = null, master = null, openUntil = 0; const buffers = {};
 // fetch the clips straight away so the first click already has something to play
@@ -297,7 +298,7 @@ function play(name, gain = 1, delay = 0, wide = false) {
   if (!ctx || !buffers[name] || ctx.currentTime + delay > openUntil) return;
   const src = ctx.createBufferSource(), g = ctx.createGain();
   src.buffer = buffers[name]; src.playbackRate.value = wide ? 0.84 + Math.random() * 0.4 : 0.92 + Math.random() * 0.16;
-  g.gain.value = (GAIN[name] ?? 0.6) * gain;
+  g.gain.value = (GAIN[name] ?? 0.6) * gain * VOLUME;
   src.connect(g).connect(master); src.start(ctx.currentTime + delay);
 }
 ["pointerdown", "keydown", "touchstart"].forEach((e) => addEventListener(e, unlock, { passive: true }));

@@ -12,7 +12,9 @@
 let SCALE, ANCHOR, REDUCE;
 const COLS = 26, ROWS = 120, N = COLS * ROWS, idx = (i, j) => j * COLS + i;
 const LENGTH = 600, W_TOP = 28, W_FULL = 150;
-const STEP = 1 / 60, SUB = 8, H = STEP / SUB;
+const STEP = 1 / 60;
+let SUB = 8, H = STEP / SUB;                                                  // sub-steps adapt to the machine: fewer when it is slow, back up when it is not
+let slowFor = 0, fastFor = 0;
 const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 const widthAt = (v) => W_TOP + (W_FULL - W_TOP) * smooth(0, 0.2, v);
 
@@ -300,6 +302,11 @@ function tick(dt) {
   const t0 = performance.now();
   while (accT >= STEP && n < 2) { prev.set(x); step(); accT -= STEP; n++; }
   if (n) stepMs = stepMs * 0.9 + (performance.now() - t0) / n * 0.1;
+  if (n) {                                                                    // keep each step well under a frame
+    if (stepMs > 9) { slowFor++; fastFor = 0; } else if (stepMs < 4.5) { fastFor++; slowFor = 0; } else { slowFor = fastFor = 0; }
+    if (slowFor > 8 && SUB > 4) { SUB--; H = STEP / SUB; slowFor = 0; }
+    else if (fastFor > 240 && SUB < 8) { SUB++; H = STEP / SUB; fastFor = 0; }
+  }
   if (accT > STEP) accT = STEP * 0.5;                                        // a slow device skips ahead gently instead of falling behind
   const a = new Float32Array(prev), b = new Float32Array(x);
   postMessage({ type: "frame", a, b, alpha: accT / STEP, mode, wrap, centre, stepMs }, [a.buffer, b.buffer]);
