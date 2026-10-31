@@ -82,8 +82,8 @@ export const playProjects = [
     tags: ["Digital Art", "Illustration"],
     category: "digital",
     media: {
-      video: "/projects/sketches/SKETCHES.mp4",
-      poster: "/projects/sketches/poster.jpg",
+      video: "/projects/sketches/keypad.mp4",
+      poster: "/projects/sketches/keypad-poster.jpg",
     },
     actions: [
       {
