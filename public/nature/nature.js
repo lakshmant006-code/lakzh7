@@ -892,7 +892,7 @@ const META = {
   focus: ["Focus", "A memory · the long road and the balloon", "Hold the lens by its tab and turn it until the balloon is sharp · tap again to start over", "focus"],
   grass: ["Grass from above", "Meadow · combed by the wind", "Tap to plant flowers and watch them bloom · someone will come over", "grass"],
 };
-const ORDER = ["pond", "canopy", "mites", "grass", "street", "focus"];
+const ORDER = ["mites", "grass", "street", "focus"];
 const nav = document.getElementById("scenes");
 const deck = document.getElementById("deck");
 const built = {};
@@ -946,7 +946,7 @@ function showNow(id) {
 let fade = 0, fadeDir = 0, pending = null, elapsed = 0, autoplay = params.get("auto") !== "0";
 const DURATION = 11;
 function goto(id, manual) {
-  if (!SCENES[id] && id !== "mites" && id !== "grass" && id !== "street" && id !== "bollywood" && id !== "focus" || ORDER.indexOf(id) < 0) id = "pond";
+  if (!SCENES[id] && id !== "mites" && id !== "grass" && id !== "street" && id !== "bollywood" && id !== "focus" || ORDER.indexOf(id) < 0) id = ORDER[0];
   elapsed = 0;
   if (manual && id === currentId) return;
   if (currentId === null) { showNow(id); return; }
@@ -1039,6 +1039,6 @@ function frame(now) {
   } else canvas.style.opacity = 1;
   requestAnimationFrame(frame);
 }
-goto(location.hash.slice(1) || "pond");
+goto(location.hash.slice(1) || ORDER[0]);
 requestAnimationFrame(frame);
 window.__nature = { show: goto, setTarget, get state() { return { speed, strength, phase, target, scene: currentId }; } };
