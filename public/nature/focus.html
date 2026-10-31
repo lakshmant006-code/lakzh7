@@ -6,72 +6,73 @@
 <title>Focus</title>
 <style>
   :root { --paper: #f5f3ef; --ink: #2c2420; --soft: #8a7f76; }
-  html, body { margin: 0; height: 100%; background: var(--paper); overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none;
+  html, body { margin: 0; height: 100%; background: var(--paper); overflow: hidden; touch-action: manipulation; -webkit-user-select: none; user-select: none;
     font: 400 14px/1.4 "DM Sans", -apple-system, system-ui, sans-serif; color: var(--ink); }
-  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; }
-  canvas.dragging { cursor: grabbing; }
-  /* the memory note, revealed once the picture is in focus */
-  .note { position: absolute; left: 50%; transform: translate(-50%, 8px); text-align: center; pointer-events: none;
-    opacity: 0; transition: opacity .9s ease, transform .9s cubic-bezier(.2, .8, .2, 1); white-space: nowrap; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  /* the trial-lens holder, over the photograph; it gives a little each time it is clicked */
+  .holder { position: absolute; pointer-events: none; transform-origin: 47.8% 47.7%; filter: drop-shadow(0 18px 22px rgba(44, 36, 32, .28)) drop-shadow(0 3px 5px rgba(44, 36, 32, .25)); }
+  .stage { position: absolute; inset: 0; cursor: pointer; }
+  .note, .hint { position: absolute; left: 50%; text-align: center; pointer-events: none; white-space: nowrap; transition: opacity .9s ease, transform .9s cubic-bezier(.2, .8, .2, 1); }
+  .note { opacity: 0; transform: translate(-50%, 8px); }
   .note.on { opacity: 1; transform: translate(-50%, 0); }
   .note .date { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--soft); }
   .note .text { margin-top: 4px; font-size: 15px; }
-  .hint { position: absolute; left: 50%; transform: translateX(-50%); font-size: 12px; color: var(--soft); pointer-events: none; opacity: 0; transition: opacity .8s ease; white-space: nowrap; }
+  .hint { transform: translateX(-50%); font-size: 12px; color: var(--soft); opacity: 0; }
   .hint.on { opacity: 1; }
+  .dots { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 7px; pointer-events: none; transition: opacity .6s; }
+  .dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(44, 36, 32, .18); transition: background .3s, transform .3s; }
+  .dots i.on { background: var(--ink); transform: scale(1.15); }
 </style>
 </head>
 <body>
-<canvas id="c" aria-label="An old photograph of a long road and a hot air balloon, seen blurred through a round viewfinder. Drag the lens over the balloon to bring it into focus."></canvas>
-<div class="hint" id="hint">drag the lens to the balloon</div>
+<div class="stage" id="stage" role="button" aria-label="Click to turn the focus of the lens">
+  <canvas id="c"></canvas>
+  <img class="holder" id="holder" src="./focus/frame.webp" alt="A black trial-lens holder with a degree scale from 0 to 180, knurled knobs and a silver lever" draggable="false">
+</div>
+<div class="dots" id="dots"><i></i><i></i><i></i><i></i></div>
+<div class="hint" id="hint">click the lens to bring it into focus</div>
 <div class="note" id="note"><div class="date" id="date"></div><div class="text" id="text"></div></div>
 <script>
-/* The memory, written into the note once it comes into focus. */
+/* The memory, written into the note once it is in focus. */
 const MEMORY = { date: "", text: "The long road, and the balloon rising at the end of it." };
+const STEPS = [1, 0.68, 0.42, 0.18, 0];                 // how far out of focus after each click: the fourth is clean
 
-/* ---------- the photograph: sharp, a little out of focus, and far out of focus ---------- */
+/* ---------- the photograph behind liquid glass ---------- */
 const canvas = document.getElementById("c");
 const gl = canvas.getContext("webgl", { premultipliedAlpha: false, antialias: true });
 const VS = "attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }";
 const FS = `precision highp float;
 uniform sampler2D sharp, blurLo, blurHi;
-uniform vec2 res, centre, lens, lensVel;
-uniform float R, lensR, focus, lensOn, t, dpr;
-vec3 photo(vec2 uv, float defocus){                                  // 0 sharp, 1 far out of focus
+uniform vec2 res, centre;
+uniform float R, defocus, glass, ripple, rippleT, wob, dpr, t;
+vec3 photo(vec2 uv, float d){
   vec3 a = texture2D(sharp, uv).rgb, b = texture2D(blurLo, uv).rgb, c = texture2D(blurHi, uv).rgb;
-  return defocus < 0.5 ? mix(a, b, defocus * 2.0) : mix(b, c, defocus * 2.0 - 1.0);
+  d = clamp(d, 0.0, 1.0);
+  return d < 0.5 ? mix(a, b, d * 2.0) : mix(b, c, d * 2.0 - 1.0);
 }
 void main(){
-  vec2 f = vec2(gl_FragCoord.x, res.y - gl_FragCoord.y);
-  vec2 q = f - centre; float r = length(q);
-  vec2 uv = q / (2.0 * R) + 0.5;
-  float edge = 1.0 - smoothstep(R - 1.5 * dpr, R + 0.5 * dpr, r);
-  vec3 col = photo(uv, 1.0 - focus);
-  col *= 1.0 - 0.18 * smoothstep(R * 0.72, R, r);                     // the viewfinder darkens toward its rim
-
-  // the liquid lens: a drop of glass that stretches as it moves, magnifies and bends what is under it
-  vec2 lq = f - lens; float sp = length(lensVel);
-  vec2 dir = sp > 1.0 ? lensVel / sp : vec2(1.0, 0.0), nd = vec2(-dir.y, dir.x);
-  float st = 1.0 + min(sp / 2600.0, 0.22);
-  vec2 ll = vec2(dot(lq, dir) / st, dot(lq, nd) * st) / lensR;          // lens space, squashed along its motion
-  float d = length(ll);
-  if (lensOn > 0.001 && d < 1.06) {
-    float bulge = 0.78 + 0.22 * d * d;                                  // magnifies in the middle, bends hard at the rim
-    vec2 base = (lens - centre) / (2.0 * R) + 0.5;
-    vec2 luv = base + (uv - base) * bulge;
-    vec2 ca = (uv - base) * 0.012 * d * d * d;                          // a whisper of colour fringing at the rim
-    vec3 inside = vec3(photo(luv + ca, 0.0).r, photo(luv, 0.0).g, photo(luv - ca, 0.0).b);
-    inside *= 1.0 + 0.05 * (1.0 - d);
-    float rim = smoothstep(0.86, 1.0, d) * (1.0 - smoothstep(1.0, 1.05, d));
-    float spec = pow(max(0.0, 1.0 - length(ll - vec2(-0.38, -0.42)) * 2.6), 2.0);   // a soft highlight, upper left
-    float shade = smoothstep(0.55, 1.0, d) * max(0.0, dot(normalize(ll + 1e-5), vec2(0.6, 0.8)));
-    inside = inside * (1.0 - 0.16 * shade) + vec3(1.0) * (0.22 * spec + 0.28 * rim);
-    float m = (1.0 - smoothstep(0.97, 1.0, d)) * lensOn;
-    col = mix(col, inside, m);
-    col += vec3(1.0) * rim * 0.18 * lensOn * (1.0 - m);
-    // its shadow on the picture, below and to the right
-    float sh = smoothstep(1.25, 0.9, length(ll - vec2(0.08, 0.14))) * (1.0 - m) * lensOn;
-    col *= 1.0 - 0.10 * sh;
-  }
+  vec2 f = vec2(gl_FragCoord.x, res.y - gl_FragCoord.y), q = f - centre;
+  float r = length(q), n = r / R;
+  if (n > 1.0) { gl_FragColor = vec4(0.0); return; }
+  vec2 dir = r > 0.0 ? q / r : vec2(0.0);
+  // liquid glass: a thick drop that magnifies in the middle and bends hard toward the rim,
+  // with a ripple that runs out from the centre each time the focus is turned
+  float bulge = mix(1.0, 0.86 + 0.2 * n * n, glass);
+  float wave = sin(n * 26.0 - rippleT * 15.0) * exp(-rippleT * 2.6) * smoothstep(rippleT * 0.75 + 0.05, rippleT * 0.75 - 0.25, n) * ripple;
+  vec2 w = q * bulge + dir * wave * R * 0.018 + vec2(sin(f.y * 0.02 + t * 1.3), cos(f.x * 0.018 + t * 1.1)) * wob * R * 0.004;
+  vec2 uv = w / (2.0 * R) + 0.5;
+  vec2 ca = dir * glass * 0.006 * pow(n, 3.0);                                        // colour fringing at the rim of the glass
+  vec3 col = vec3(photo(uv + ca, defocus).r, photo(uv, defocus).g, photo(uv - ca, defocus).b);
+  // light on the glass: a soft crescent upper left, a faint one lower right, a dark inner edge where the glass thickens
+  float a1 = max(0.0, dot(dir, normalize(vec2(-0.6, -0.8))));
+  float a2 = max(0.0, dot(dir, normalize(vec2(0.7, 0.7))));
+  float rimBand = smoothstep(0.78, 0.95, n) * (1.0 - smoothstep(0.96, 1.0, n));
+  col += vec3(1.0) * glass * (pow(a1, 3.0) * rimBand * 0.35 + pow(a2, 4.0) * rimBand * 0.12);
+  float blob = smoothstep(0.34, 0.0, length(q / R - vec2(-0.34, -0.42)));             // a broad glint
+  col += vec3(1.0) * glass * blob * 0.09;
+  col *= 1.0 - glass * 0.22 * smoothstep(0.85, 1.0, n);
+  col += vec3(1.0) * wave * 0.05;
+  float edge = 1.0 - smoothstep(1.0 - 1.5 * dpr / R, 1.0, n);
   gl_FragColor = vec4(col, edge);
 }`;
 function sh(type, src) { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(s); return s; }
@@ -92,98 +93,90 @@ function texture(unit, src, name) {
   });
 }
 
-/* ---------- layout ---------- */
-let W = 0, Hh = 0, dpr = 1, C = { x: 0, y: 0 }, R0 = 100;
+/* ---------- layout: the holder, and the window in it (measured from the picture: centre 600,598 of 1254, radius ~276) ---------- */
+const holder = document.getElementById("holder");
+const HOLE = { x: 600 / 1254, y: 598 / 1254, r: 283 / 1254 };
+let W = 0, Hh = 0, dpr = 1, S = 100, box = { x: 0, y: 0 }, C = { x: 0, y: 0 }, R = 50;
 function resize() {
   dpr = Math.min(devicePixelRatio || 1, 2);
   W = canvas.clientWidth; Hh = canvas.clientHeight;
   canvas.width = Math.round(W * dpr); canvas.height = Math.round(Hh * dpr); gl.viewport(0, 0, canvas.width, canvas.height);
-  R0 = Math.min(W * 0.38, Hh * 0.33); C = { x: W / 2, y: Hh * 0.47 };   // inside the cloudy edge of the memory
+  S = Math.min(W * 0.74, Hh * 0.72);
+  box = { x: W / 2 - S * HOLE.x, y: Hh * 0.46 - S * HOLE.y };
+  holder.style.left = box.x + "px"; holder.style.top = box.y + "px"; holder.style.width = S + "px";
+  C = { x: box.x + S * HOLE.x, y: box.y + S * HOLE.y }; R = S * HOLE.r;
+  const below = box.y + S * 0.97;
+  for (const id of ["note", "hint", "dots"]) document.getElementById(id).style.top = (id === "dots" ? below - 4 : below + 14) + "px";
 }
 addEventListener("resize", resize); resize();
-const BALLOON = { u: 0.507, v: 0.486 };                                   // where the balloon sits in the photograph
 
-/* ---------- sound and touch: a quiet mechanical lens click ---------- */
+/* ---------- sound: a mechanical detent click, a little different each turn; a fuller one when it lands in focus ---------- */
 let ac = null;
-function click() {
+function clickSound(n, final) {
   try {
-    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
-    const now = ac.currentTime, out = ac.createGain(); out.gain.value = 0.32; out.connect(ac.destination);
-    const tick = (at, freq, len, vol) => {                                 // a short, filtered burst: one part of the shutter
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)(); ac.resume();
+    const now = ac.currentTime, out = ac.createGain(); out.gain.value = final ? 0.42 : 0.32; out.connect(ac.destination);
+    const tick = (at, freq, len, vol) => {
       const b = ac.createBuffer(1, Math.ceil(ac.sampleRate * len), ac.sampleRate), d = b.getChannelData(0);
       for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3);
       const s = ac.createBufferSource(); s.buffer = b;
-      const f = ac.createBiquadFilter(); f.type = "bandpass"; f.frequency.value = freq; f.Q.value = 3;
+      const f = ac.createBiquadFilter(); f.type = "bandpass"; f.frequency.value = freq; f.Q.value = 3.5;
       const g = ac.createGain(); g.gain.value = vol; s.connect(f); f.connect(g); g.connect(out); s.start(now + at);
     };
-    tick(0, 3200, 0.012, 1); tick(0.004, 900, 0.03, 0.55); tick(0.042, 2400, 0.01, 0.6);
-    const o = ac.createOscillator(), og = ac.createGain(); o.frequency.setValueAtTime(140, now); o.frequency.exponentialRampToValueAtTime(60, now + 0.06);
-    og.gain.setValueAtTime(0.4, now); og.gain.exponentialRampToValueAtTime(0.001, now + 0.08); o.connect(og); og.connect(out); o.start(now); o.stop(now + 0.1);
+    const p = 1 + n * 0.06;
+    tick(0, 3400 * p, 0.011, 1); tick(0.003, 1000 * p, 0.028, 0.5);
+    if (final) { tick(0.045, 2500, 0.012, 0.7); tick(0.05, 700, 0.05, 0.45); }
+    const o = ac.createOscillator(), og = ac.createGain();
+    o.frequency.setValueAtTime(final ? 120 : 170 * p, now); o.frequency.exponentialRampToValueAtTime(55, now + 0.07);
+    og.gain.setValueAtTime(final ? 0.5 : 0.28, now); og.gain.exponentialRampToValueAtTime(0.001, now + 0.09); o.connect(og); og.connect(out); o.start(now); o.stop(now + 0.11);
   } catch (_) {}
-  try { navigator.vibrate && navigator.vibrate([10, 40, 8]); } catch (_) {}
+  try { navigator.vibrate && navigator.vibrate(final ? [12, 40, 10] : 8); } catch (_) {}
 }
 
-/* ---------- the moment: enter, find the focus, everything clears, return to that day ---------- */
-let T = 0, focus = 0, focusTo = 0, lensOn = 0, lensTo = 0, hold = 0, phase = "enter", phaseT = 0, grow = 0, dragging = false, touched = false;
-const lens = { x: 0, y: 0, vx: 0, vy: 0, tx: 0, ty: 0 };
-const restLens = () => ({ x: C.x - R0 * 0.42, y: C.y + R0 * 0.44 });
-function reset() {
-  phase = "enter"; phaseT = 0; focus = 0; focusTo = 0; lensOn = 0; lensTo = 0; hold = 0; grow = 0; touched = false;
-  const r = restLens(); lens.x = lens.tx = r.x; lens.y = lens.ty = r.y; lens.vx = lens.vy = 0;
-  document.getElementById("note").classList.remove("on");
+/* ---------- clicks turn the focus ---------- */
+let T = 0, level = 0, defocus = 1, dv = 0, glass = 1, ripple = 0, rippleT = 9, press = 0, pressV = 0, tilt = 0, tiltV = 0, clean = false, cleanT = 0;
+function turn() {
+  if (clean) { if (cleanT > 0.8) reset(); return; }                         // in focus: a click starts it again
+  level = Math.min(STEPS.length - 1, level + 1);
+  const final = level === STEPS.length - 1;
+  clickSound(level, final);
+  ripple = final ? 1.3 : 1; rippleT = 0;
+  pressV -= 1.6; tiltV += (level % 2 ? 1 : -1) * 2.2;                            // the holder gives a little and rocks
+  if (final) { clean = true; cleanT = 0; }
+  [...document.querySelectorAll(".dots i")].forEach((d, i) => d.classList.toggle("on", i < level));
 }
-const P = (e) => { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
-canvas.addEventListener("pointerdown", (e) => {
-  if (phase === "memory") { reset(); return; }                          // tap the memory to see it again
-  if (phase !== "find") return;
-  dragging = true; touched = true; canvas.classList.add("dragging"); canvas.setPointerCapture(e.pointerId);
-  const p = P(e); lens.tx = p.x; lens.ty = p.y;
-  try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); ac.resume(); } catch (_) {}
-});
-canvas.addEventListener("pointermove", (e) => { if (!dragging) return; const p = P(e); lens.tx = p.x; lens.ty = p.y; });
-const up = () => { dragging = false; canvas.classList.remove("dragging"); };
-canvas.addEventListener("pointerup", up); canvas.addEventListener("pointercancel", up);
+function reset() {
+  level = 0; clean = false; cleanT = 0; ripple = 0.8; rippleT = 0;
+  document.getElementById("note").classList.remove("on");
+  [...document.querySelectorAll(".dots i")].forEach((d) => d.classList.remove("on"));
+}
+document.getElementById("stage").addEventListener("pointerdown", turn);
+addEventListener("keydown", (e) => { if (e.key === " " || e.key === "Enter") turn(); });
 
 function step(dt) {
-  T += dt; phaseT += dt;
-  if (phase === "enter" && phaseT > 1.6) { phase = "find"; phaseT = 0; lensTo = 1; }
-  // the lens follows the finger on a soft spring, with a little overshoot, like a drop of liquid glass
-  if (!dragging && phase === "find" && !touched) {                      // until touched it drifts a little, asking to be moved
-    const r = restLens(); lens.tx = r.x + Math.sin(T * 0.9) * 10; lens.ty = r.y + Math.cos(T * 1.3) * 6;
-  }
-  const k = 150, c = 15;
-  lens.vx += ((lens.tx - lens.x) * k - lens.vx * c) * dt; lens.vy += ((lens.ty - lens.y) * k - lens.vy * c) * dt;
-  lens.x += lens.vx * dt; lens.y += lens.vy * dt;
-  // keep it on the picture
-  const R = R0 * (1 + 0.06 * grow), dx = lens.x - C.x, dy = lens.y - C.y, dd = Math.hypot(dx, dy), lim = R * 0.86;
-  if (dd > lim) { lens.x = C.x + dx / dd * lim; lens.y = C.y + dy / dd * lim; }
-  if (phase === "find") {
-    const bx = C.x + (BALLOON.u - 0.5) * 2 * R, by = C.y + (BALLOON.v - 0.5) * 2 * R;
-    const near = Math.hypot(lens.x - bx, lens.y - by) < R * 0.085 && Math.hypot(lens.vx, lens.vy) < 260;
-    hold = near ? hold + dt : Math.max(0, hold - dt * 2);
-    focusTo = Math.min(0.35, hold * 0.6);                                // the picture starts to clear around it as you settle
-    if (hold > 0.45) { phase = "clear"; phaseT = 0; focusTo = 1; lensTo = 0; click(); }
-  } else if (phase === "clear" && phaseT > 1.3) { phase = "memory"; phaseT = 0; }
-  if (phase === "memory") { grow = Math.min(1, grow + dt / 0.9); if (phaseT > 0.3) document.getElementById("note").classList.add("on"); }
-  // focus eases in like a lens ring turning to its stop: quick, then a gentle settle
-  focus += (focusTo - focus) * (1 - Math.exp(-dt / (phase === "clear" ? 0.16 : 0.35)));
-  lensOn += (lensTo - lensOn) * (1 - Math.exp(-dt / 0.22));
-  document.getElementById("hint").classList.toggle("on", phase === "find" && !touched && phaseT > 1.2);
+  T += dt; rippleT += dt; if (clean) cleanT += dt;
+  // focus moves like a lens ring to its detent: a quick turn, a hair past, then back
+  const target = STEPS[level];
+  dv += ((target - defocus) * 90 - dv * 11) * dt; defocus += dv * dt;
+  // the glass clears away once the picture is clean
+  glass += ((clean ? 0 : 1) - glass) * (1 - Math.exp(-dt / (clean ? 0.7 : 0.3)));
+  pressV += (-press * 260 - pressV * 18) * dt; press += pressV * dt;
+  tiltV += (-tilt * 200 - tiltV * 12) * dt; tilt += tiltV * dt;
+  holder.style.transform = `scale(${1 + press * 0.02}) rotate(${tilt * 0.5}deg)`;
+  document.getElementById("note").classList.toggle("on", clean && cleanT > 1.0);
+  document.getElementById("hint").classList.toggle("on", level === 0 && T > 1.4);
+  document.getElementById("dots").style.opacity = level === 0 || (clean && cleanT > 1.0) ? 0 : 1;
 }
-
 function draw() {
-  const e = Math.min(1, T / 1.4), enter = 1 - Math.pow(1 - e, 3);                // the viewfinder opens onto the memory
-  const R = R0 * (0.94 + 0.06 * enter) * (1 + 0.06 * (1 - Math.pow(1 - grow, 3)));
+  const e = Math.min(1, T / 1.2), enter = 1 - Math.pow(1 - e, 3);
   gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
   gl.uniform2f(U("res"), canvas.width, canvas.height);
-  gl.uniform2f(U("centre"), C.x * dpr, C.y * dpr); gl.uniform1f(U("R"), R * dpr);
-  gl.uniform2f(U("lens"), lens.x * dpr, lens.y * dpr); gl.uniform2f(U("lensVel"), lens.vx * dpr, lens.vy * dpr);
-  gl.uniform1f(U("lensR"), R * 0.2 * dpr); gl.uniform1f(U("focus"), focus); gl.uniform1f(U("lensOn"), lensOn * enter);
-  gl.uniform1f(U("t"), T); gl.uniform1f(U("dpr"), dpr);
-  canvas.style.opacity = enter;
+  gl.uniform2f(U("centre"), C.x * dpr, C.y * dpr); gl.uniform1f(U("R"), R * dpr * (1 + press * 0.02));
+  gl.uniform1f(U("defocus"), Math.max(0, defocus)); gl.uniform1f(U("glass"), glass);
+  gl.uniform1f(U("ripple"), ripple); gl.uniform1f(U("rippleT"), rippleT); gl.uniform1f(U("wob"), glass);
+  gl.uniform1f(U("dpr"), dpr); gl.uniform1f(U("t"), T);
+  canvas.style.opacity = enter; holder.style.opacity = enter;
   gl.drawArrays(gl.TRIANGLES, 0, 3);
-  const note = document.getElementById("note"), hint = document.getElementById("hint");
-  note.style.top = (C.y + R + 18) + "px"; hint.style.top = (C.y + R + 18) + "px";
 }
 
 document.getElementById("date").textContent = MEMORY.date;
@@ -196,8 +189,9 @@ function frame(now) {
   if (!running) return;
   step(dt); draw();
 }
-Promise.all([texture(0, "./focus/photo.jpg", "sharp"), texture(1, "./focus/blur-lo.jpg", "blurLo"), texture(2, "./focus/blur-hi.jpg", "blurHi")]).then(() => { reset(); requestAnimationFrame(frame); });
-window.__focus = { get phase() { return phase; }, get focus() { return focus; }, lens, balloon: () => { const R = R0; return { x: C.x + (BALLOON.u - 0.5) * 2 * R, y: C.y + (BALLOON.v - 0.5) * 2 * R }; } };
+holder.style.opacity = 0;
+Promise.all([texture(0, "./focus/photo.jpg", "sharp"), texture(1, "./focus/blur-lo.jpg", "blurLo"), texture(2, "./focus/blur-hi.jpg", "blurHi")]).then(() => requestAnimationFrame(frame));
+window.__focus = { get level() { return level; }, get clean() { return clean; }, get defocus() { return defocus; }, click: turn };
 </script>
 </body>
 </html>
