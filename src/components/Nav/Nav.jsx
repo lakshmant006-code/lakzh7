@@ -47,6 +47,7 @@ const Nav = () => {
   const navItems = [
     { label: "work", href: "/", isLink: true },
     { label: "about", href: "/about", isLink: true },
+    { label: "craft", href: "/craft", isLink: true },
     { label: "grass", href: "/", isLink: true, scenes: true },
   ];
 
@@ -71,6 +72,7 @@ const Nav = () => {
       if (item.label === "about") return false;
     }
     if (item.label === "about") return path === "/about";
+    if (item.label === "craft") return path === "/craft";
     if (item.label === "grass") return scenesOpen || path === "/scenes";
     return false;
   };
@@ -459,6 +461,7 @@ const Nav = () => {
   return (
     <nav
       ref={navRef}
+      aria-label="Main"
       className="site-nav top-0 z-[100] relative"
       style={{
         opacity: 0,
@@ -466,8 +469,8 @@ const Nav = () => {
       }}
     >
       <div className="page-content-shell">
-        <div className="flex items-center justify-between py-5 z-[1000] gap-6 lg:h-16 relative min-h-[32px]">
-          <Link to="/" onClick={handleLogoClick} className="logo-link">
+        <div className="nav-row flex items-center justify-between py-5 z-[1000] gap-6 lg:h-16 relative min-h-[32px]">
+          <Link to="/" onClick={handleLogoClick} className="logo-link" aria-label="Home">
             <img
               src={isMobileMenuOpen ? lightLogo : darkLogo}
               alt="Lakshman Thota"
@@ -509,7 +512,7 @@ const Nav = () => {
                       className={pillClassName}
                       onMouseEnter={() => handleEnter(i)}
                       onMouseLeave={() => handleLeave(i)}
-                      onClick={item.scenes ? openScenes : item.label === "work" ? handleWorkClick : item.label === "playground" ? handlePlaygroundClick : closeScenes}
+                      onClick={item.scenes ? openScenes : item.label === "work" ? handleWorkClick : closeScenes}
                     >
                       {pillInner}
                     </Link>

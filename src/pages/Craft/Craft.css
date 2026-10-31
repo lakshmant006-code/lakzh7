@@ -1,0 +1,17 @@
+.craft-page {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 7.5rem clamp(1rem, 4vw, 3rem) 4rem;
+  box-sizing: border-box;
+}
+.craft-head { margin-bottom: 2.25rem; }
+.craft-title {
+  margin: 0;
+  font-family: "Crimson Pro", Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  letter-spacing: -0.02em;
+  color: #0f0f0f;
+}
+.craft-sub { margin: 0.5rem 0 0; font-size: 1.05rem; color: rgba(15, 15, 15, 0.6); }

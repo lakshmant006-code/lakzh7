@@ -67,6 +67,12 @@
       "description": "A small pixel cat that follows you around, built by Lakshman Thota.",
       "heading": "Pixel Cat",
       "image": "/work/keep/keep-thumb-frame.jpg"
+    },
+    "/craft": {
+      "title": "Craft | Lakshman Thota, UX Designer & Researcher",
+      "description": "Craft: small experiments, interactive toys and creative-coding projects by Lakshman Thota.",
+      "heading": "Craft",
+      "image": "/work/keep/keep-thumb-frame.jpg"
     }
   }
 }
