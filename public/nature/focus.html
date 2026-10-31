@@ -21,6 +21,14 @@
   .hint.on { opacity: 1; }
   .dots { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 7px; pointer-events: none; transition: opacity .6s; }
   .dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(44, 36, 32, .18); transition: background .3s, transform .3s; }
+  /* the tray of trial lenses: tap one to put it in the holder */
+  .tray { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: 14px; z-index: 3; }
+  .tray button { all: unset; cursor: pointer; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; position: relative;
+    font: 500 11px/1 "DM Sans", system-ui, sans-serif; color: var(--ink); letter-spacing: .02em;
+    background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.95), rgba(230,236,238,.55) 55%, rgba(205,214,218,.6));
+    box-shadow: inset 0 0 0 3px #2a2826, inset 0 0 0 4px rgba(255,255,255,.35), 0 4px 10px rgba(44,36,32,.18); transition: transform .25s, opacity .25s; }
+  .tray button:hover { transform: translateY(-2px); }
+  .tray button[aria-pressed="true"] { opacity: .35; transform: none; cursor: default; }
   .dots i.on { background: var(--ink); transform: scale(1.15); }
 </style>
 </head>
@@ -31,18 +39,18 @@
   <img class="holder" id="holder" src="./focus/frame.webp" alt="A black trial-lens holder with a degree scale from 0 to 180, knurled knobs and a silver lever" draggable="false">
 </div>
 <div class="dots" id="dots" hidden></div>
-<div class="hint" id="hint">hold the tab and turn the lens</div>
+<div class="tray" id="tray" role="group" aria-label="Trial lenses"></div>
+<div class="hint" id="hint">turn the lens by its tab · or try another lens</div>
 <div class="note" id="note"><div class="date" id="date"></div><div class="text" id="text"></div></div>
 <script>
 /* The memory, written into the note once it is in focus. */
 const MEMORY = { date: "", text: "The long road, and the balloon rising at the end of it." };
 /* The trial lenses, in the order they are tried: each a little closer, the last one right. */
-const LENSES = [
-  { power: "+1.25", defocus: 1 },
-  { power: "+1.50", defocus: 0.68 },
-  { power: "+1.00", defocus: 0.42 },
-  { power: "+0.75", defocus: 0.18 },
-  { power: "+0.50", defocus: 0 },
+const LENSES = [                                          // err: how far each lens is from the right one (0 = right)
+  { power: "+2.00", err: 1 },
+  { power: "+1.25", err: 0.55 },
+  { power: "+0.50", err: 0 },
+  { power: "−0.25", err: 0.45 },
 ];
 const BARE = 1.15;                                       // with the slot empty, for a moment, it is blurrier still
 
@@ -117,12 +125,13 @@ function resize() {
   W = canvas.clientWidth; Hh = canvas.clientHeight;
   for (const c of [canvas, lc]) { c.width = Math.round(W * dpr); c.height = Math.round(Hh * dpr); }
   gl.viewport(0, 0, canvas.width, canvas.height);
-  S = Math.min(W * 0.66, Hh * 0.66);
-  box = { x: W / 2 - S * HOLE.x + S * 0.04, y: Hh * 0.5 - S * HOLE.y };
+  S = Math.min(W * 0.62, Hh * 0.58);
+  box = { x: W / 2 - S * HOLE.x + S * 0.04, y: Hh * 0.43 - S * HOLE.y };
   holder.style.left = box.x + "px"; holder.style.top = box.y + "px"; holder.style.width = S + "px";
   C = { x: box.x + S * HOLE.x, y: box.y + S * HOLE.y }; R = S * HOLE.r; RL = R * 1.12;
   const below = box.y + S * 0.97;
-  for (const id of ["note", "hint", "dots"]) document.getElementById(id).style.top = (id === "dots" ? below - 4 : below + 14) + "px";
+  document.getElementById("tray").style.top = (below - 10) + "px";
+  for (const id of ["note", "hint"]) document.getElementById(id).style.top = (below + 50) + "px";
 }
 addEventListener("resize", resize); resize();
 
@@ -164,12 +173,25 @@ function place(k) {
 /* hold the tab (or anywhere on the lens) and turn it: it follows the finger around the centre of the holder */
 const pAng = (e) => { const r = canvas.getBoundingClientRect(); return Math.atan2(e.clientY - r.top - C.y, e.clientX - r.left - C.x) * 180 / Math.PI; };
 const wrapDeg = (d) => ((d + 540) % 360) - 180;
-const defocusAt = () => clean ? 0 : Math.min(1, Math.pow(Math.abs(scaleDeg - TARGET) / 62, 0.85));
+const defocusAt = () => {                                // the wrong lens blurs it, a wrong axis blurs it; both right and it is clear
+  if (clean) return 0;
+  const pe = cur >= 0 ? LENSES[cur].err : 1, ae = Math.min(1, Math.abs(scaleDeg - TARGET) / 62);
+  return Math.min(1, Math.pow(Math.hypot(pe, ae), 0.85));
+};
+const rightLens = () => cur >= 0 && LENSES[cur].err === 0;
 function settle() {                                         // found it: the lens clicks into its axis and everything is clear
   dragging = null; scaleTo = TARGET; clean = true; cleanT = 0;
   seatSound(4, true); ripple = 1.3; rippleT = 0; pressV -= 1.6; tiltV += 2.2;
 }
-function reset() { clean = false; cleanT = 0; scaleTo = START; ripple = 0.8; rippleT = 0; }
+function reset() { clean = false; cleanT = 0; scaleTo = START; ripple = 0.8; rippleT = 0; if (cur !== 0) place(0); }
+/* the tray */
+const tray = document.getElementById("tray");
+LENSES.forEach((l, k) => {
+  const b = document.createElement("button"); b.type = "button"; b.textContent = l.power; b.setAttribute("aria-label", `Lens ${l.power}`);
+  b.addEventListener("click", () => { audio(); if (swap || k === cur) return; if (clean) { clean = false; cleanT = 0; } place(k); });
+  tray.appendChild(b);
+});
+function syncTray() { [...tray.children].forEach((b, k) => b.setAttribute("aria-pressed", String(k === cur))); }
 const stage = document.getElementById("stage");
 stage.addEventListener("pointerdown", (e) => {
   audio();
@@ -181,7 +203,7 @@ stage.addEventListener("pointermove", (e) => {
   if (!dragging) return;
   scaleTo = Math.max(0, Math.min(180, dragging.s0 + wrapDeg(pAng(e) - dragging.pa)));
 });
-const letGo = () => { if (!dragging) return; dragging = null; stage.style.cursor = ""; if (Math.abs(scaleTo - TARGET) < 6) settle(); };
+const letGo = () => { if (!dragging) return; dragging = null; stage.style.cursor = ""; if (rightLens() && Math.abs(scaleTo - TARGET) < 6) settle(); };
 stage.addEventListener("pointerup", letGo); stage.addEventListener("pointercancel", letGo);
 addEventListener("keydown", (e) => {
   if (swap || cur < 0) return;
@@ -189,7 +211,7 @@ addEventListener("keydown", (e) => {
   if (clean) return;
   if (e.key === "ArrowRight" || e.key === "ArrowUp") scaleTo = Math.min(180, scaleTo + 4);
   if (e.key === "ArrowLeft" || e.key === "ArrowDown") scaleTo = Math.max(0, scaleTo - 4);
-  if (Math.abs(scaleTo - TARGET) < 3) settle();
+  if (rightLens() && Math.abs(scaleTo - TARGET) < 3) settle();
 });
 function tickSound() { noise(0, 0.006, 4200, 4000, 4, 0.07); }   // the faint detent at every five degrees
 
@@ -204,17 +226,17 @@ function step(dt) {
     B.s = OUT() * (1 - easeOutBack(u));
     if (!swap.seated && u > 0.8) {                         // it reaches the stop: click, the holder gives, the focus changes
       swap.seated = true; cur = swap.to;
-      const final = cur === LENSES.length - 1;
+      const final = false;
       seatSound(cur, final); ripple = final ? 1.3 : 1; rippleT = 0; pressV -= 1.6; tiltV += (cur % 2 ? 1 : -1) * 2.2;
       if (final) { clean = true; cleanT = 0; }
-      [...document.querySelectorAll(".dots i")].forEach((d, i) => d.classList.toggle("on", i < cur));
+      syncTray(); if (rightLens() && Math.abs(scaleDeg - TARGET) < 4) settle();
     }
     if (u >= 1) { B.s = 0; swap = null; }
   }
   // the lens turns with a little weight, ticking past the marks on the scale
   scaleV += ((scaleTo - scaleDeg) * 260 - scaleV * 28) * dt; scaleDeg += scaleV * dt;
   const tk = Math.floor(scaleDeg / 5); if (tk !== lastTick && cur >= 0 && !swap) { lastTick = tk; tickSound(); }
-  if (dragging && Math.abs(scaleDeg - TARGET) < 2.5) settle();
+  if (dragging && rightLens() && Math.abs(scaleDeg - TARGET) < 2.5) settle();
   glass += ((clean ? 0.25 : 1) - glass) * (1 - Math.exp(-dt / (clean ? 0.7 : 0.3)));   // the right lens: barely there
   pressV += (-press * 260 - pressV * 18) * dt; press += pressV * dt;
   tiltV += (-tilt * 200 - tiltV * 12) * dt; tilt += tiltV * dt;
@@ -254,7 +276,7 @@ function draw() {
   gl.uniform2f(U("posA"), posA[0] * dpr, posA[1] * dpr); gl.uniform2f(U("posB"), posB[0] * dpr, posB[1] * dpr);
   gl.uniform1f(U("onA"), A ? 1 : 0); gl.uniform1f(U("onB"), B ? 1 : 0);
   // a lens on its way in shows the old view until it seats; then the new one
-  gl.uniform1f(U("defA"), A ? LENSES[A.k].defocus : 1); gl.uniform1f(U("defB"), B ? (swap && !swap.seated ? BARE * 0.9 : defocusAt()) : 1);
+  gl.uniform1f(U("defA"), A ? Math.min(1, Math.pow(Math.hypot(LENSES[A.k].err, Math.min(1, Math.abs(scaleDeg - TARGET) / 62)), 0.85)) : 1); gl.uniform1f(U("defB"), B ? (swap && !swap.seated ? BARE * 0.9 : defocusAt()) : 1);
   gl.uniform1f(U("bare"), BARE); gl.uniform1f(U("glass"), glass);
   gl.uniform1f(U("ripple"), ripple); gl.uniform1f(U("rippleT"), rippleT); gl.uniform1f(U("dpr"), dpr); gl.uniform1f(U("t"), T);
   canvas.style.opacity = enter; holder.style.opacity = enter; lc.style.opacity = enter;

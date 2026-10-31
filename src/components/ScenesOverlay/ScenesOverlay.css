@@ -1,6 +1,8 @@
 .scenes-overlay {
   position: fixed;
   inset: 0;
+  overscroll-behavior: contain;
+  touch-action: none;
   z-index: 90;                       /* under the nav (100), over the page */
   /* the portfolio stays where it is, softly out of focus behind the memory, so it never feels like another page */
   background: rgba(245, 243, 239, 0.62);
