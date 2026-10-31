@@ -892,7 +892,7 @@ const META = {
   focus: ["Focus", "A memory · the long road and the balloon", "Drag the lens over the balloon to bring it into focus · tap the memory to see it again", "focus"],
   grass: ["Grass from above", "Meadow · combed by the wind", "Tap to plant flowers and watch them bloom · someone will come over", "grass"],
 };
-const ORDER = ["pond", "canopy", "mites", "grass", "street", "bollywood", "focus"];
+const ORDER = ["pond", "canopy", "mites", "grass", "street", "focus"];
 const nav = document.getElementById("scenes");
 const deck = document.getElementById("deck");
 const built = {};
