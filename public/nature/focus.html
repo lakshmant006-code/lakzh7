@@ -123,7 +123,8 @@ addEventListener("resize", resize); resize();
 
 /* ---------- sound: the lens sliding in its slot, then the detent click as it seats ---------- */
 let ac = null;
-const audio = () => { try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); ac.resume(); } catch (_) {} return ac; };
+const muted = () => { try { return localStorage.getItem("ui-sound") === "off"; } catch (_) { return false; } };   // the portfolio's sound switch
+const audio = () => { if (muted()) return null; try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); ac.resume(); } catch (_) {} return ac; };
 function noise(at, len, f0, f1, q, vol, shape = 3) {
   const a = audio(); if (!a) return;
   const now = a.currentTime + at, b = a.createBuffer(1, Math.ceil(a.sampleRate * len), a.sampleRate), d = b.getChannelData(0);
