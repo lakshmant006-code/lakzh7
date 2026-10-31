@@ -381,8 +381,11 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
       c = mix(c, cen, disc2 * 0.0);
       col = vec4(c, max(petal, calyx) * A);
     } else if (type > 2.5) {                            // a walker from the drawn walk cycle, frame picked on the CPU
-      vec2 uv = vec2(vC.x + (p.x * 0.5 + 0.5) * vC.z, vC.y + (0.5 - p.y * 0.5) * vC.w);
-      vec4 tx = texture(uAtlas, uv);
+      // two neighbouring poses of the cycle, blended, so the legs swing through instead of snapping between drawings
+      float f0 = floor(ph), fr = ph - f0, f1 = mod(f0 + 1.0, 8.0); fr = fr * fr * (3.0 - 2.0 * fr);
+      vec2 cell = vec2((p.x * 0.5 + 0.5) * vC.z, vC.y + (0.5 - p.y * 0.5) * vC.w);
+      vec4 ta = texture(uAtlas, vec2(f0 * vC.z, 0.0) + cell), tb = texture(uAtlas, vec2(f1 * vC.z, 0.0) + cell);
+      vec4 tx = mix(ta, tb, fr);                          // premultiplied, so a plain mix is right
       col = vec4(tx.rgb / max(tx.a, 1e-4), tx.a * A);
     } else {                                            // a small person seen from high above, upright on screen
       vec2 f = vec2(p.x * 0.55, p.y);                   // figure space: the sprite is 0.55 as wide as tall
@@ -434,9 +437,9 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      fetch("./walkers.json").then((r) => r.json()).then((j) => (walkInfo = j));
+      fetch("./walkers-cycle.json").then((r) => r.json()).then((j) => (walkInfo = j));
     };
-    img.src = "./walkers.png"; }
+    img.src = "./walkers-cycle.png"; }
   const SF = 12, SMAX = 600;
   const sprData = new Float32Array(SMAX * SF);
   const sprVao = gl.createVertexArray(); gl.bindVertexArray(sprVao);
@@ -482,7 +485,7 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     if (people.length < 8) {
       const R = viewRect(); const dl = gx - R.x0, dr = R.x1 - gx, dtp = gz - R.z0, db = R.z1 - gz, m = Math.min(dl, dr, dtp, db);
       const sx = m === dl ? R.x0 - 0.6 : m === dr ? R.x1 + 0.6 : gx + rr(-1.5, 1.5), sz = m === dtp ? R.z0 - 0.6 : m === db ? R.z1 + 0.6 : gz + rr(-1.5, 1.5);
-      people.push({ x: sx, z: sz, tx: gx + rr(-0.45, 0.45) - SCR_UP[0] * 0.5, tz: gz + rr(-0.2, 0.2) - SCR_UP[1] * 0.5, state: "in", t0: t, stand: rr(5, 8), ph: Math.random() * 6, shirt: SHIRTS[(Math.random() * SHIRTS.length) | 0], v: Math.random(), rot: 0, say: LINES[(Math.random() * LINES.length) | 0], bubble: null, R, char: (Math.random() * 6) | 0 });
+      people.push({ spd: 0, x: sx, z: sz, tx: gx + rr(-0.45, 0.45) - SCR_UP[0] * 0.5, tz: gz + rr(-0.2, 0.2) - SCR_UP[1] * 0.5, state: "in", t0: t, stand: rr(5, 8), ph: Math.random() * 6, shirt: SHIRTS[(Math.random() * SHIRTS.length) | 0], v: Math.random(), rot: 0, say: LINES[(Math.random() * LINES.length) | 0], bubble: null, R, char: (Math.random() * 6) | 0 });
     }
   }
   const bubbleHost = document.getElementById("bubbles");
@@ -492,6 +495,7 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     return [cr.left + (cx / cw * 0.5 + 0.5) * cr.width, cr.top + (-cy / cw * 0.5 + 0.5) * cr.height];
   }
   const ease3 = (t) => 1 - Math.pow(1 - t, 3), backOut = (t) => { const c = 1.7; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+  const STRIDE = 0.42;                                  // ground covered by a full walk cycle, about a body length: feet never skate
   function updatePeople(dt, t) {
     for (let i = people.length - 1; i >= 0; i--) {
       const q = people[i];
@@ -499,10 +503,13 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
       if (q.state === "out") { gx = q.ox; gz = q.oz; }
       const dx = gx - q.x, dz = gz - q.z, d = Math.hypot(dx, dz);
       if (q.state === "stand") { q.stand -= dt; if (q.stand <= 0) { q.state = "out"; const R = q.R; const ex = q.x < (R.x0 + R.x1) / 2 ? R.x0 - 1 : R.x1 + 1; q.ox = ex; q.oz = q.z + rr(-1.5, 1.5); } continue; }
-      if (d < 0.08 && q.state === "in") { q.state = "stand"; q.t0 = t; continue; }
+      if (d < 0.08 && q.state === "in") { q.state = "stand"; q.t0 = t; q.spd = 0; continue; }
       if (q.state === "out" && d < 0.3) { people.splice(i, 1); if (q.bubble) q.bubble.remove(); continue; }
-      const sp = 0.34, step = Math.min(d, sp * dt);
-      q.x += dx / d * step; q.z += dz / d * step; q.ph += step * 34.0;
+      // ease into a stroll, a little quicker mid-stride, and slow down to stop at the flowers
+      const want = 0.34 * (q.state === "in" ? Math.min(1, d / 0.35) * 0.85 + 0.15 : 1);
+      q.spd = (q.spd || 0) + (want - (q.spd || 0)) * (1 - Math.exp(-dt / 0.4));
+      const sp = q.spd * (1 + 0.1 * Math.cos(q.ph * 2)), step = Math.min(d, sp * dt);
+      q.x += dx / d * step; q.z += dz / d * step; q.ph += step / STRIDE * 6.2832;     // one cycle (two steps) per STRIDE of ground
       q.rot += Math.atan2(Math.sin(Math.atan2(dz, dx) - q.rot), Math.cos(Math.atan2(dz, dx) - q.rot)) * Math.min(1, dt * 8);
     }
   }
@@ -533,9 +540,13 @@ window.addEventListener("message", (e) => { if (e.data && typeof e.data.wind ===
     for (const q of people) {
       const moving = q.state !== "stand";
       if (walkInfo) {
-        const c = ((q.ph / 6.2832) % 1 + 1) % 1, frame = moving ? Math.floor(c * 8) % 8 : 0;
-        const { w, h, cw, ch } = walkInfo, hh = 0.26, hw = hh * cw / ch;
-        put(q.x, q.z, hw, hh, q.rot + (walkInfo.faces === "down" ? Math.PI / 2 : -Math.PI / 2), 3, 1, 0, (frame * cw) / w, (q.char * ch) / h, cw / w, ch / h);
+        // standing, they settle onto the nearest still pose; walking, the cycle runs with the ground they cover
+        const c = ((q.ph / 6.2832) % 1 + 1) % 1, fpos = moving ? c * 8 : (q.fstill = q.fstill === undefined ? Math.round(c * 8) % 8 : q.fstill);
+        if (moving) q.fstill = undefined;
+        const { w, h, cw, ch } = walkInfo, pace = moving ? Math.min(1, (q.spd || 0) / 0.2) : 0;
+        const bob = 1 + 0.03 * pace * Math.abs(Math.cos(q.ph)), sway = 0.012 * pace * Math.sin(q.ph);   // each step lifts the body a touch and shifts it over the planted foot
+        const hh = 0.26 * bob, hw = hh * cw / ch, sxw = -Math.sin(q.rot) * sway, szw = Math.cos(q.rot) * sway;
+        put(q.x + sxw, q.z + szw, hw, hh, q.rot + (walkInfo.faces === "down" ? Math.PI / 2 : -Math.PI / 2), 3, 1, fpos, 0, (q.char * ch) / h, cw / w, ch / h);
       } else put(q.x, q.z, 0.1, 0.18, q.rot, 2, 1, moving ? q.ph : Math.sin(t * 1.5 + q.ph) * 0.2, q.shirt[0], q.shirt[1], q.shirt[2], q.v);
     }
     gl.useProgram(spr.p);
