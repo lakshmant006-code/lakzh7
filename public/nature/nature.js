@@ -889,7 +889,7 @@ const META = {
   mites: ["Rainy velvets", "A memory · velvet mites after the rain", "Move over a mite · press and hold to make it curl up", "rainy velvets"],
   street: ["Street", "Midday · a city street from above", "Traffic keeps its lanes and stops at the signal · hover to honk · or be the cow", "street"],
   bollywood: ["Bollywood", "A memory · a dance under the arch, the Taj Mahal behind", "Move to stir the wind · tap to wrap the dupatta around him, tap again to let go · the slider sets the breeze", "bollywood"],
-  focus: ["Focus", "A memory · the long road and the balloon", "Click the lens to turn the focus, four clicks to clear it · click again to start over", "focus"],
+  focus: ["Focus", "A memory · the long road and the balloon", "Click to place the next trial lens · four lenses to bring it into focus · click again to start over", "focus"],
   grass: ["Grass from above", "Meadow · combed by the wind", "Tap to plant flowers and watch them bloom · someone will come over", "grass"],
 };
 const ORDER = ["pond", "canopy", "mites", "grass", "street", "focus"];
