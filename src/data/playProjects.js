@@ -79,18 +79,12 @@ export const playProjects = [
     id: "sketches",
     size: "short",
     theme: "white",
-    tags: ["Digital Art", "Illustration"],
+    tags: ["3D Design", "Product Render"],
     category: "digital",
     media: {
       video: "/projects/sketches/keypad.mp4",
       poster: "/projects/sketches/keypad-poster.jpg",
     },
-    actions: [
-      {
-        type: "notion",
-        tooltip: "View Documentation",
-        url: "https://app.notion.com/p/Art-Page-28f21a632bd480e4a525d282d22e3ec3?source=copy_link",
-      },
-    ],
+    actions: [],
   },
 ];
