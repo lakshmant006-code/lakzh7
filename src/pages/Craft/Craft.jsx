@@ -10,8 +10,6 @@ const EXTRAS = [
   { id: "keep-relive", title: "Keep · Re-live", tags: ["Meta AI concept", "Prototype"], media: { video: "/work/keep/sol-relive.mp4" }, to: "/keep" },
   { id: "hiku-gear", title: "Hiku · Gear", tags: ["Onboarding", "Prototype"], media: { video: "/work/Hiku/onboarding-gear.mp4" }, to: "/hiku" },
   { id: "keep-ask", title: "Keep · Ask", tags: ["Meta AI concept", "Prototype"], media: { video: "/work/keep/sol-ask.mp4" }, to: "/keep" },
-  { id: "hiku-jitter", title: "Hiku · Jitter", tags: ["Motion", "Interaction"], media: { video: "/work/Hiku/jitter.mp4" }, to: "/hiku" },
-  { id: "hiku-sol", title: "Hiku · Trails", tags: ["Prototype"], media: { video: "/work/Hiku/sol2.mp4" }, to: "/hiku" },
 ];
 const ITEMS = [
   ...playProjects.map((p) => ({ id: p.id, title: p.title, tags: p.tags || [], media: p.media || {}, href: p.actions?.[0]?.url })),
