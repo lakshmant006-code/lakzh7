@@ -78,3 +78,13 @@ html.craft-dark, html.craft-dark body { background: #fff; }
 @media (prefers-reduced-motion: reduce) {
   .craft-tile, .craft-wall { transition: none; filter: none; transform: none; }
 }
+
+/* the playful ones: a small "play" mark on the tile, and the real thing loads into the open piece */
+.craft-tile { position: relative; }
+.craft-tile-live { position: absolute; left: 10px; top: 10px; z-index: 1; padding: 4px 9px 4px 20px; border-radius: 999px; font: 500 11px/1 "DM Sans", system-ui, sans-serif; color: #0f0f0f;
+  background: rgba(255, 255, 255, .82); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 2px 8px rgba(15, 15, 15, .12); }
+.craft-tile-live::before { content: ""; position: absolute; left: 9px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: #3fae4a; animation: craftPulse 1.6s ease-in-out infinite; }
+@keyframes craftPulse { 50% { opacity: .35; } }
+.craft-live { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; opacity: 0; transition: opacity .5s ease; background: transparent; }
+.craft-live.on { opacity: 1; }
+.craft-live-tag { font-size: .78rem; color: rgba(15, 15, 15, .4); }
