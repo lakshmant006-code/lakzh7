@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { useLenis } from "@studio-freight/react-lenis";
 import NaturalPlayBentoItem from "./PlayBentoItem";
+import CraftLightbox from "./CraftLightbox";
 import { playProjects } from "../../data/playProjects";
 import {
   preserveScrollAtBottom,
@@ -29,6 +30,36 @@ const PlayBentoGridNatural = ({ onProjectClick, sectionIntro = null }) => {
     typeof window !== "undefined"
       ? window.matchMedia(POSTER_ONLY_MEDIA).matches
       : false,
+  );
+  const [lightbox, setLightbox] = useState(null);
+  const handleProjectClick = useCallback(
+    (project, el) => {
+      onProjectClick?.(project, el);
+      const m = project.media || {};
+      if (!el || !(m.video || m.image || m.thumbnail || m.poster)) return;
+      const rect = el.getBoundingClientRect();
+      const video = el.querySelector("video");
+      const img = el.querySelector("img");
+      let aspect = rect.width / rect.height;
+      let naturalWidth = 0;
+      if (video && video.videoWidth) {
+        aspect = video.videoWidth / video.videoHeight;
+        naturalWidth = video.videoWidth;
+      } else if (img && img.naturalWidth) {
+        aspect = img.naturalWidth / img.naturalHeight;
+        naturalWidth = img.naturalWidth;
+      }
+      setLightbox({
+        project,
+        origin: {
+          rect: { top: rect.top, left: rect.left, width: rect.width, height: rect.height },
+          radius: parseFloat(getComputedStyle(el).borderTopLeftRadius) || 14,
+          aspect,
+          naturalWidth,
+        },
+      });
+    },
+    [onProjectClick],
   );
   const lenis = useLenis();
   const wideSpanRef = useRef(null);
@@ -144,7 +175,7 @@ const PlayBentoGridNatural = ({ onProjectClick, sectionIntro = null }) => {
         key={project.id}
         ref={itemRef}
         project={project}
-        onClick={onProjectClick}
+        onClick={handleProjectClick}
         wide={wide}
         posterOnly={posterOnly}
         onMouseEnter={() => {
@@ -218,6 +249,14 @@ const PlayBentoGridNatural = ({ onProjectClick, sectionIntro = null }) => {
           ))}
         </div>
       </div>
+      {lightbox ? (
+        <CraftLightbox
+          key={lightbox.project.id}
+          project={lightbox.project}
+          origin={lightbox.origin}
+          onClose={() => setLightbox(null)}
+        />
+      ) : null}
     </>
   );
 };
