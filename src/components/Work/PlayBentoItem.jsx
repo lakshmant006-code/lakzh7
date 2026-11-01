@@ -142,7 +142,7 @@ const NaturalPlayBentoItem = React.forwardRef(function NaturalPlayBentoItem(
   const handleCardClick = useCallback(
     (e) => {
       if (caseStudyRoute || hasIframe) return;
-      onClick?.(project);
+      onClick?.(project, e.currentTarget);
     },
     [caseStudyRoute, hasIframe, onClick, project],
   );
@@ -244,6 +244,7 @@ const NaturalPlayBentoItem = React.forwardRef(function NaturalPlayBentoItem(
     isBlack ? "natural-play-bento-item--black" : "",
     hasIframe || disableHover ? "natural-play-bento-item--no-hover" : "",
     hasIframe ? "natural-play-bento-item--iframe" : "",
+    !hasIframe && !caseStudyRoute ? "natural-play-bento-item--zoomable" : "",
     wide ? "natural-play-bento-item--wide" : "",
     caseStudyRoute ? "block no-underline text-inherit cursor-pointer" : "",
   ]
@@ -262,6 +263,19 @@ const NaturalPlayBentoItem = React.forwardRef(function NaturalPlayBentoItem(
     : {
         className: itemClassName,
         onClick: handleCardClick,
+        ...(hasIframe
+          ? {}
+          : {
+              role: "button",
+              tabIndex: 0,
+              "aria-label": `Open ${project.title || id}`,
+              onKeyDown: (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleCardClick(e);
+                }
+              },
+            }),
         onMouseEnter,
         onMouseLeave,
         "data-play-project-id": id,

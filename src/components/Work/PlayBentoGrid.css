@@ -131,3 +131,12 @@
   min-height: clamp(380px, 65vh, 760px);
   height: clamp(380px, 65vh, 760px);
 }
+
+/* Tiles open the zoom view on click */
+.natural-play-bento-item--zoomable {
+  cursor: zoom-in;
+}
+.natural-play-bento-item--zoomable:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}

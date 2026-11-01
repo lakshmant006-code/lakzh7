@@ -1,0 +1,152 @@
+/* Craft zoom view: the tile grows into a large panel on the same page. */
+.craft-lb {
+  position: fixed;
+  inset: 0;
+  z-index: 1200; /* above the nav (1000) */
+}
+
+.craft-lb-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 12, 14, 0.78);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  cursor: zoom-out;
+}
+
+.craft-lb-media {
+  position: fixed;
+  overflow: hidden;
+  background: #0b0b0c;
+  box-shadow: 0 40px 120px -24px rgba(0, 0, 0, 0.65);
+}
+
+.craft-lb-video,
+.craft-lb-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #0b0b0c;
+}
+
+.craft-lb-bar {
+  position: fixed;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.craft-lb-bar > * {
+  pointer-events: auto;
+}
+
+.craft-lb-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 14px;
+  background: #fff;
+  color: #141414;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 8px 28px -10px rgba(0, 0, 0, 0.35);
+}
+
+.craft-lb-tab-dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: #141414;
+}
+
+.craft-lb-tab-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.craft-lb-tab-tag {
+  flex: none;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #f1f1ef;
+  color: #55554f;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.craft-lb-bar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+.craft-lb-action,
+.craft-lb-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 44px;
+  border: 0;
+  border-radius: 14px;
+  background: #fff;
+  color: #141414;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 8px 28px -10px rgba(0, 0, 0, 0.35);
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.craft-lb-action {
+  padding: 0 16px;
+}
+
+.craft-lb-close {
+  width: 44px;
+}
+
+.craft-lb-action:hover,
+.craft-lb-close:hover {
+  background: #f1f1ef;
+  transform: translateY(-1px);
+}
+
+.craft-lb-action:focus-visible,
+.craft-lb-close:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+@media (max-width: 700px) {
+  .craft-lb-tab-tag {
+    display: none;
+  }
+  .craft-lb-tab {
+    padding: 0 14px;
+  }
+  .craft-lb-action {
+    padding: 0 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .craft-lb-action,
+  .craft-lb-close {
+    transition: none;
+  }
+}

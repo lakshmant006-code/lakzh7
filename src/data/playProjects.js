@@ -5,6 +5,7 @@
 export const playProjects = [
   {
     id: "f1",
+    title: "Celestera",
     size: "short",
     theme: "black",
     tags: ["Creative Coding"],
@@ -22,6 +23,7 @@ export const playProjects = [
   },
   {
     id: "concentrix",
+    title: "Concentrix",
     size: "tall",
     theme: "white",
     tags: ["Web Design", "Motion Graphics"],
@@ -41,6 +43,7 @@ export const playProjects = [
   },
   {
     id: "morph-idea",
+    title: "Morph Idea",
     size: "short",
     theme: "white",
     tags: ["Interaction Design", "Neumorphism"],
@@ -59,6 +62,7 @@ export const playProjects = [
   },
   {
     id: "ascii-studio",
+    title: "ASCII Studio",
     size: "short",
     theme: "white",
     tags: ["ASCII Art", "Creative Coding"],
@@ -77,6 +81,7 @@ export const playProjects = [
   },
   {
     id: "sketches",
+    title: "Claude Code Keypad",
     size: "short",
     theme: "white",
     tags: ["3D Design", "Product Render"],
