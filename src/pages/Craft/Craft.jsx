@@ -13,12 +13,7 @@ const EXTRAS = [
 ];
 /* the playful ones: tap and the real thing loads right there, to play with */
 const LIVE = [
-  { id: "live-street", title: "Street · be the cow", tags: ["Three.js", "Traffic physics", "Indian honks"], media: { image: "/projects/craft-live/street.jpg" }, live: "/nature/street.html" },
   { id: "live-bollywood", title: "Bollywood · the dupatta", tags: ["XPBD cloth", "Web Worker"], media: { image: "/projects/craft-live/bollywood.jpg" }, live: "/nature/bollywood.html" },
-  { id: "live-grass", title: "Grass · plant a flower", tags: ["WebGL2", "Walk cycles"], media: { image: "/projects/craft-live/grass.jpg" }, live: "/grass/index.html?inner=1" },
-  { id: "live-focus", title: "Focus · the trial lens", tags: ["Liquid glass", "WebGL"], media: { image: "/projects/craft-live/focus.jpg" }, live: "/nature/focus.html" },
-  { id: "live-mites", title: "Rainy velvets", tags: ["Insect gait", "Canvas"], media: { image: "/projects/craft-live/mites.jpg" }, live: "/nature/mites.html" },
-  { id: "pixel-cat", title: "Boba, the pixel cat", tags: ["Pixel art", "Pet"], media: { image: "/projects/craft-live/pixel-cat.jpg" }, to: "/pixel-cat", toLabel: "Play with Boba →" },
 ];
 const REST = [
   ...playProjects.map((p) => ({ id: p.id, title: p.title, tags: p.tags || [], media: p.media || {}, href: p.actions?.[0]?.url })),
