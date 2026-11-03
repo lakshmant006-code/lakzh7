@@ -102,3 +102,8 @@ html.craft-dark, html.craft-dark body { background: #fff; }
 @media (hover: hover) { .craft-print.settled:not(.up):hover { transform: rotate(0deg) scale(1.03) !important; } }
 .craft-print.dim { opacity: .15; }
 .craft-print.up { z-index: 2; cursor: zoom-out; box-shadow: 0 30px 90px rgba(15, 15, 15, .28); }
+
+/* a few words under a concept */
+.craft-detail-meta.has-about { flex-wrap: wrap; row-gap: .7rem; padding: 0 1.25rem; }
+.craft-detail-about { flex: 0 0 100%; max-width: 100%; margin: 0; font-size: .92rem; line-height: 1.55; color: rgba(15, 15, 15, .72); text-align: center; }
+.craft-detail-meta.has-about { max-width: 36rem; margin: 0 auto; }

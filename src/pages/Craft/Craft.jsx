@@ -23,6 +23,13 @@ const ILLUSTRATIONS = [
   { src: "/projects/illustrations/wilshire.webp", w: 1200, h: 1600, title: "Something on Wilshire" },
   { src: "/projects/illustrations/believe.webp", w: 1600, h: 1112, title: "Believe, humble, peace" },
 ];
+/* a concept: Procreate animating a drawing from the camera */
+const PROCREATE_MOTION = {
+  id: "procreate-motion", title: "Motion tracking in Procreate", tags: ["Concept", "Pose tracking", "On-device"],
+  media: { video: "/projects/procreate-motion/procreate-motion.mp4", poster: "/projects/procreate-motion/poster.jpg" },
+  about: "A concept for bringing motion tracking into Procreate. You open a Reference window, the front camera follows your shoulders, elbows and head, and the character you drew copies you live on the canvas. Hit Add Frame to keep a pose, and a gesture becomes a frame-by-frame animation without drawing every in-between. The tracking stays on the iPad, and the artwork stays yours.",
+  to: "/pro-move",
+};
 const GALLERY = { id: "illustrations", title: "Illustrations", tags: ["Procreate", "Ink & watercolour"], media: {}, gallery: ILLUSTRATIONS };
 const REST = [
   ...playProjects.map((p) => ({ id: p.id, title: p.title, tags: p.tags || [], media: p.media || {}, href: p.actions?.[0]?.url })),
@@ -32,6 +39,7 @@ const REST = [
 const ITEMS = [];
 for (let i = 0; i < Math.max(LIVE.length, REST.length); i++) { if (LIVE[i]) ITEMS.push(LIVE[i]); if (REST[i]) ITEMS.push(REST[i]); }
 ITEMS.splice(1, 0, GALLERY);
+ITEMS.unshift(PROCREATE_MOTION);
 const srcOf = (m) => m.video || m.image || m.thumbnail || m.poster;
 
 /* one tile: plays only while on screen, and comes into focus as it scrolls in */
@@ -94,10 +102,10 @@ function Detail({ open, onClose }) {
   const target = () => {
     const vw = window.innerWidth, vh = window.innerHeight;
     const aspect = rect.width / rect.height;
-    const maxW = Math.min(vw * 0.92, item.live ? 940 : 620), maxH = vh * (item.live ? 0.7 : 0.64) - 40;
+    const maxW = Math.min(vw * 0.92, item.live ? 940 : item.about ? 760 : 620), maxH = vh * (item.live ? 0.7 : item.about ? 0.46 : 0.64) - 40;
     let w = maxW, h = w / aspect;
     if (h > maxH) { h = maxH; w = h * aspect; }
-    return { left: (vw - w) / 2, top: (vh - h) / 2, width: w, height: h };
+    return { left: (vw - w) / 2, top: (vh - h) / 2 - (item.about ? Math.min(90, vh * 0.1) : 0), width: w, height: h };   // room for the words underneath
   };
   const fromTile = (t) => {
     const r = el?.getBoundingClientRect() || rect;
@@ -149,7 +157,8 @@ function Detail({ open, onClose }) {
         {m.video ? <video ref={vid} src={m.video} poster={m.poster} muted loop playsInline autoPlay /> : <img src={srcOf(m)} alt={item.title} />}
         {item.live && liveOn && <iframe className="craft-live" src={item.live} title={item.title} allow="autoplay" onLoad={(e) => e.currentTarget.classList.add("on")} />}
       </div>
-      <div className="craft-detail-meta" ref={metaRef} onClick={(e) => e.stopPropagation()}>
+      <div className={`craft-detail-meta${item.about ? " has-about" : ""}`} ref={metaRef} onClick={(e) => e.stopPropagation()}>
+        {item.about && <p className="craft-detail-about">{item.about}</p>}
         <span>{item.tags.join(" · ")}</span>
         {item.href && <a href={item.href} target="_blank" rel="noreferrer">Open ↗</a>}
         {item.to && <Link to={item.to}>{item.toLabel || "Case study →"}</Link>}
