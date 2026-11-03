@@ -6,7 +6,6 @@ import "./Craft.css";
 
 /* Everything on the craft wall: the experiments, then prototype clips from the case studies. */
 const EXTRAS = [
-  { id: "promove", title: "pro-move", tags: ["Motion capture", "Prototype"], media: { video: "/projects/promove/promove.mp4", poster: "/projects/promove/poster.jpg" }, to: "/pro-move" },
   { id: "keep-relive", title: "Keep · Re-live", tags: ["Meta AI concept", "Prototype"], media: { video: "/work/keep/sol-relive.mp4" }, to: "/keep" },
   { id: "hiku-gear", title: "Hiku · Gear", tags: ["Onboarding", "Prototype"], media: { video: "/work/Hiku/onboarding-gear.mp4" }, to: "/hiku" },
   { id: "keep-ask", title: "Keep · Ask", tags: ["Meta AI concept", "Prototype"], media: { video: "/work/keep/sol-ask.mp4" }, to: "/keep" },
