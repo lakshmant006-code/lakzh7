@@ -7,7 +7,6 @@ import "./Craft.css";
 /* Everything on the craft wall: the experiments, then prototype clips from the case studies. */
 const EXTRAS = [
   { id: "keep-relive", title: "Keep · Re-live", tags: ["Meta AI concept", "Prototype"], media: { video: "/work/keep/sol-relive.mp4" }, to: "/keep" },
-  { id: "hiku-gear", title: "Hiku · Gear", tags: ["Onboarding", "Prototype"], media: { video: "/work/Hiku/onboarding-gear.mp4" }, to: "/hiku" },
   { id: "keep-ask", title: "Keep · Ask", tags: ["Meta AI concept", "Prototype"], media: { video: "/work/keep/sol-ask.mp4" }, to: "/keep" },
 ];
 /* the playful ones: tap and the real thing loads right there, to play with */
