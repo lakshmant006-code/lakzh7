@@ -15,6 +15,15 @@ const EXTRAS = [
 const LIVE = [
   { id: "live-bollywood", title: "Bollywood · the dupatta", tags: ["XPBD cloth", "Web Worker"], media: { image: "/projects/craft-live/bollywood.jpg" }, live: "/nature/bollywood.html" },
 ];
+/* drawings: a little screen on the wall that drifts from one to the next; tap it and they all spill out */
+const ILLUSTRATIONS = [
+  { src: "/projects/illustrations/scrap-metal.webp", w: 1600, h: 1600, title: "Pine Metalworks" },
+  { src: "/projects/illustrations/lucky-13.webp", w: 1600, h: 1600, title: "Lucky 13 Cycles" },
+  { src: "/projects/illustrations/road-trip.webp", w: 1600, h: 1600, title: "Everything we own" },
+  { src: "/projects/illustrations/wilshire.webp", w: 1200, h: 1600, title: "Something on Wilshire" },
+  { src: "/projects/illustrations/believe.webp", w: 1600, h: 1112, title: "Believe, humble, peace" },
+];
+const GALLERY = { id: "illustrations", title: "Illustrations", tags: ["Procreate", "Ink & watercolour"], media: {}, gallery: ILLUSTRATIONS };
 const REST = [
   ...playProjects.map((p) => ({ id: p.id, title: p.title, tags: p.tags || [], media: p.media || {}, href: p.actions?.[0]?.url })),
   ...EXTRAS,
@@ -22,6 +31,7 @@ const REST = [
 // woven together: a playful one, then a piece of work, so the wall reads as one body of craft
 const ITEMS = [];
 for (let i = 0; i < Math.max(LIVE.length, REST.length); i++) { if (LIVE[i]) ITEMS.push(LIVE[i]); if (REST[i]) ITEMS.push(REST[i]); }
+ITEMS.splice(1, 0, GALLERY);
 const srcOf = (m) => m.video || m.image || m.thumbnail || m.poster;
 
 /* one tile: plays only while on screen, and comes into focus as it scrolls in */
@@ -29,6 +39,12 @@ function Tile({ item, onOpen, hidden }) {
   const ref = useRef(null);
   const vid = useRef(null);
   const [inView, setInView] = useState(false);
+  const [frame, setFrame] = useState(0);
+  useEffect(() => {                                           // the little screen drifts to the next drawing every few seconds
+    if (!item.gallery || !inView) return undefined;
+    const id = setInterval(() => setFrame((f) => (f + 1) % item.gallery.length), 2600);
+    return () => clearInterval(id);
+  }, [inView, item.gallery]);
   useEffect(() => {
     const el = ref.current;
     const io = new IntersectionObserver(([e]) => {
@@ -49,7 +65,12 @@ function Tile({ item, onOpen, hidden }) {
       aria-label={`Open ${item.title}`}
     >
       {item.live && <span className="craft-tile-live" aria-hidden="true">play</span>}
-      {m.video ? (
+      {item.gallery ? (
+        <span className="craft-tile-gallery">
+          {item.gallery.map((g, i) => <img key={g.src} src={g.src} alt="" loading="lazy" decoding="async" className={i === frame ? "on" : ""} />)}
+          <span className="craft-tile-count">{item.gallery.length} drawings</span>
+        </span>
+      ) : m.video ? (
         <video ref={vid} src={m.video} poster={m.poster} muted loop playsInline preload="metadata" />
       ) : (
         <img src={srcOf(m)} alt="" loading="lazy" decoding="async" />
@@ -138,6 +159,95 @@ function Detail({ open, onClose }) {
   );
 }
 
+/* the drawings pop out of their card one after another and land scattered like prints; tap one to bring it up */
+const TILTS = [-3, 2.5, -1.5, 3, -2, 1.5];
+function Gallery({ open, onClose }) {
+  const { item, el } = open;
+  const imgs = item.gallery;
+  const refs = useRef([]);
+  const [shown, setShown] = useState(false);
+  const [focus, setFocus] = useState(null);
+  const closing = useRef(false);
+
+  const layout = () => {
+    const vw = window.innerWidth, vh = window.innerHeight, n = imgs.length;
+    const cols = vw < 640 ? 2 : 3, rows = Math.ceil(n / cols), gap = vw < 640 ? 12 : 22, pad = vw < 640 ? 16 : 48;
+    const top = 92, bottom = 70, cw = (vw - pad * 2 - gap * (cols - 1)) / cols, ch = (vh - top - bottom - gap * (rows - 1)) / rows;
+    return imgs.map((g, i) => {
+      const r = Math.floor(i / cols), inRow = Math.min(cols, n - r * cols), c = i % cols;
+      const a = g.w / g.h; let w = cw * 0.94, h = w / a; if (h > ch * 0.94) { h = ch * 0.94; w = h * a; }
+      const rowW = inRow * cw + (inRow - 1) * gap, x0 = (vw - rowW) / 2;
+      const cx = x0 + c * (cw + gap) + cw / 2, cy = top + r * (ch + gap) + ch / 2;
+      return { left: cx - w / 2, top: cy - h / 2, width: w, height: h, rot: TILTS[i % TILTS.length] };
+    });
+  };
+  const big = (i) => {
+    const vw = window.innerWidth, vh = window.innerHeight, a = imgs[i].w / imgs[i].h;
+    let w = Math.min(vw * 0.9, 1100), h = w / a; if (h > vh * 0.76) { h = vh * 0.76; w = h * a; }
+    return { left: (vw - w) / 2, top: (vh - h) / 2, width: w, height: h, rot: 0 };
+  };
+  const place = (node, t) => Object.assign(node.style, { left: `${t.left}px`, top: `${t.top}px`, width: `${t.width}px`, height: `${t.height}px`, transform: `rotate(${t.rot}deg)` });
+  const fromTile = (t) => {
+    const r = el.getBoundingClientRect(), s = Math.max(r.width / t.width, r.height / t.height);
+    return `translate(${r.left + r.width / 2 - (t.left + t.width / 2)}px, ${r.top + r.height / 2 - (t.top + t.height / 2)}px) scale(${s})`;
+  };
+
+  useLayoutEffect(() => {
+    const L = layout();
+    refs.current.forEach((node, i) => {
+      place(node, L[i]);
+      const a = node.animate([{ transform: fromTile(L[i]), opacity: 0.4 }, { transform: `rotate(${L[i].rot}deg)`, opacity: 1 }],
+        { duration: 760, delay: i * 85, easing: "cubic-bezier(.34,1.45,.55,1)", fill: "backwards" });
+      a.onfinish = () => node.classList.add("settled");
+    });
+    requestAnimationFrame(() => setShown(true));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {                                            // bring one up, or put it back among the others
+    const L = layout();
+    refs.current.forEach((node, i) => { place(node, focus === i ? big(i) : L[i]); node.classList.toggle("dim", focus !== null && focus !== i); node.classList.toggle("up", focus === i); });
+  }, [focus]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const close = useCallback(() => {
+    if (closing.current) return;
+    closing.current = true; setShown(false);
+    const L = layout(), n = refs.current.length;
+    let done = 0;
+    refs.current.forEach((node, i) => {
+      node.classList.remove("settled");
+      const a = node.animate([{ transform: node.style.transform, opacity: 1 }, { transform: fromTile(L[i]), opacity: 0 }],
+        { duration: 480, delay: (n - 1 - i) * 50, easing: "cubic-bezier(.5,0,.75,0)", fill: "forwards" });
+      a.onfinish = () => { if (++done === n) onClose(); };
+      place(node, L[i]);
+    });
+  }, [onClose]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const k = (e) => {
+      if (e.key === "Escape") { if (focus !== null) setFocus(null); else close(); }
+      if (focus !== null && e.key === "ArrowRight") setFocus((focus + 1) % imgs.length);
+      if (focus !== null && e.key === "ArrowLeft") setFocus((focus - 1 + imgs.length) % imgs.length);
+    };
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [close, focus, imgs.length]);
+
+  return (
+    <div className={`craft-detail craft-gallery${shown ? " on" : ""}`} role="dialog" aria-label={item.title} onClick={() => (focus !== null ? setFocus(null) : close())}>
+      <h2 className="craft-detail-title" style={{ top: "4.4rem" }}>{focus === null ? item.title : imgs[focus].title}</h2>
+      {imgs.map((g, i) => (
+        <button key={g.src} type="button" ref={(n) => (refs.current[i] = n)} className="craft-print" aria-label={g.title}
+          onClick={(e) => { e.stopPropagation(); setFocus(focus === i ? null : i); }}>
+          <img src={g.src} alt={g.title} />
+        </button>
+      ))}
+      <div className="craft-detail-meta" style={{ bottom: "1.6rem" }}>
+        <span>{focus === null ? "tap a drawing to bring it up" : `${focus + 1} / ${imgs.length} · tap again to put it back`}</span>
+      </div>
+    </div>
+  );
+}
+
 const Craft = () => {
   const [open, setOpen] = useState(null);
   const wall = useRef(null);
@@ -166,7 +276,7 @@ const Craft = () => {
           <Tile key={it.id} item={it} hidden={open?.item.id === it.id} onOpen={(item, el) => setOpen({ item, el, rect: el.getBoundingClientRect() })} />
         ))}
       </div>
-      {open && <Detail open={open} onClose={() => setOpen(null)} />}
+      {open && (open.item.gallery ? <Gallery open={open} onClose={() => setOpen(null)} /> : <Detail open={open} onClose={() => setOpen(null)} />)}
     </main>
   );
 };
