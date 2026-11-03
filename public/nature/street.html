@@ -361,9 +361,9 @@ function hit(cx, cy) {
 }
 function honk(v, gain = 1, delay = 0, quick = false) {
   const now = performance.now() / 1000;
-  if (now - v.lastHonk < (quick ? 0.12 : 1.1)) return;
+  if (now - v.lastHonk < (quick ? 0.12 : 2.5)) return;
   v.lastHonk = now; v.pop = 1; if (!quick) v.boost = Math.max(v.boost, 0.5);
-  play(SFX[v.type], gain, delay, quick);
+  play(SFX[v.type], gain * 0.75, delay, quick);
 }
 function moo(c, gain = 1) { const now = performance.now() / 1000; if (now - c.lastMoo < 1.6) return; c.lastMoo = now; play("cow", gain); }
 let hovered = null, pointer = null;
@@ -374,7 +374,7 @@ addEventListener("pointermove", (e) => {
   document.body.classList.toggle("over", !!v);
   if (v && v !== hovered && !(hovered && v.cow && hovered.cow === v.cow)) {
     const now = performance.now();
-    if (now - lastAny > 120) { v.cow ? moo(v.cow) : honk(v); lastAny = now; }
+    if (now - lastAny > 700) { v.cow ? moo(v.cow) : honk(v); lastAny = now; }   // a honk now and then as you move over the traffic, not one per car
   }
   hovered = v;
 });
@@ -386,10 +386,10 @@ addEventListener("pointerdown", (e) => {
   const v = hit(e.clientX, e.clientY); if (!v) return;
   if (v.cow) { v.cow.lastMoo = -9; moo(v.cow, 1.2); return; }
   v.lastHonk = -9; honk(v, 1.2); v.boost = 0.5;
-  play("chaos", 1, 0.05);
+  // one neighbour answers back; the street no longer erupts on every click
   const near = vehicles.filter((o) => o !== v && o.type !== "ped" && Math.hypot(o.x - v.x, o.y - v.y) < 170)
-    .sort(() => Math.random() - 0.5).slice(0, 4);
-  near.forEach((o, i) => { o.lastHonk = -9; honk(o, 0.7, 0.25 + i * 0.22); });
+    .sort(() => Math.random() - 0.5).slice(0, 1);
+  near.forEach((o, i) => { o.lastHonk = -9; honk(o, 0.55, 0.4 + i * 0.22); });
 });
 addEventListener("pointerleave", () => (pointer = null));
 
@@ -639,19 +639,21 @@ function step(dt) {
   // an angry Indian street: with the cow in the road, nearby drivers lean on the horn in rhythmic, overlapping bursts
   if (me && me.x > ROAD[0] - 6 && me.x < ROAD[1] + 6) {
     let honkers = 0;
-    for (const v of cars) {
-      const dx = Math.abs(v.x - me.x), ahead = (me.y - v.y) * v.dir, dist = Math.hypot(v.x - me.x, v.y - me.y);
-      if (dist > 150 || dx > 80 || ahead < -60) continue;
+    // only the two drivers closest to the cow lean on the horn, and less often
+    const close = cars.filter((v) => Math.hypot(v.x - me.x, v.y - me.y) < 150 && Math.abs(v.x - me.x) < 80 && (me.y - v.y) * v.dir >= -60)
+      .sort((a, b) => Math.hypot(a.x - me.x, a.y - me.y) - Math.hypot(b.x - me.x, b.y - me.y)).slice(0, 2);
+    for (const v of close) {
+      const dist = Math.hypot(v.x - me.x, v.y - me.y);
       honkers++;
       v.hornT = (v.hornT ?? Math.random() * 0.8) - dt;
       if (v.hornT > 0) continue;
       if ((v.burst = (v.burst ?? 0) - 1) > 0) v.hornT = 0.1 + Math.random() * 0.12;        // beep-beep-beep
-      else { v.burst = 1 + Math.floor(Math.random() * 3.2); v.hornT = 0.7 + Math.random() * 1.8 + (dist / 150) * 1.2; }
+      else { v.burst = 1 + Math.floor(Math.random() * 1.6); v.hornT = 1.8 + Math.random() * 2.4 + (dist / 150) * 1.5; }
       keepSoundOpen();
-      honk(v, 0.35 + 0.65 * (1 - dist / 150), Math.random() * 0.05, true);
+      honk(v, 0.3 + 0.45 * (1 - dist / 150), Math.random() * 0.05, true);
     }
     me.chaosT = (me.chaosT ?? 1.5) - dt;
-    if (honkers >= 3 && me.chaosT <= 0) { me.chaosT = 3.6 + Math.random() * 2; keepSoundOpen(); play("chaos", 0.5); }
+    if (honkers >= 2 && me.chaosT <= 0) { me.chaosT = 9 + Math.random() * 5; keepSoundOpen(); play("chaos", 0.3); }
   }
 
   // never let one vehicle slide into another: the one behind settles just short of the one ahead
