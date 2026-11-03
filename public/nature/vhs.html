@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Lion King</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap">
+<style>
+  :root { --paper: #f5f3ef; }
+  html, body { margin: 0; height: 100%; overflow: hidden; touch-action: manipulation; -webkit-user-select: none; user-select: none; }
+  /* a warm living room wall, lamp light from the left */
+  body { background:
+      radial-gradient(60% 55% at 22% 30%, rgba(255, 214, 160, .55), transparent 70%),
+      repeating-linear-gradient(90deg, rgba(120, 90, 60, .045) 0 2px, transparent 2px 46px),
+      linear-gradient(#d8c3a2, #c9ae88 70%, #b89a74); }
+  .stage { position: absolute; left: 50%; top: 50%; width: 1600px; height: 1000px; transform-origin: 50% 50%; }
+  .cam { position: absolute; inset: 0; transform-origin: 50% 50%; transition: transform 1.8s cubic-bezier(.45, 0, .2, 1); }
+  .cam > * { position: absolute; }
+
+  /* the wooden console the TV sits on: a lit top edge, then the front face */
+  .console-top { left: -2400px; width: 6400px; top: 758px; height: 34px; background:
+      repeating-linear-gradient(90deg, rgba(60, 30, 10, .08) 0 1px, transparent 1px 13px, rgba(60, 30, 10, .05) 13px 15px, transparent 15px 31px),
+      linear-gradient(#a8693d, #8f552e); box-shadow: inset 0 2px 0 rgba(255, 220, 180, .35); }
+  .console-front { left: -2400px; width: 6400px; top: 792px; height: 2000px; background:
+      linear-gradient(rgba(0, 0, 0, .35), transparent 30px),
+      repeating-linear-gradient(90deg, rgba(40, 18, 6, .1) 0 2px, transparent 2px 23px, rgba(40, 18, 6, .06) 23px 26px, transparent 26px 57px),
+      linear-gradient(#6e3d1d, #55301a); }
+  .glow { left: 420px; top: 160px; width: 760px; height: 640px; border-radius: 50%; filter: blur(60px); opacity: 0; transition: opacity 1.2s ease, background 1.2s ease;
+    background: radial-gradient(circle, rgba(255, 170, 90, .9), transparent 65%); }
+  .tv-shadow { left: 470px; top: 742px; width: 660px; height: 60px; border-radius: 50%; background: rgba(30, 14, 4, .55); filter: blur(14px); }
+  .tv { left: 460px; top: 205px; width: 680px; transform-origin: 50% 100%; }
+  .tv img { display: block; width: 100%; pointer-events: none; }
+  /* the picture tube: drawn over the glass in the photo, with the curve and shine of real glass */
+  .screen { left: 570px; top: 307px; width: 400px; height: 288px; border-radius: 11% / 14%; overflow: hidden; background: #0c0d0c; opacity: 0; transition: opacity .25s; cursor: pointer; }
+  .screen canvas { width: 100%; height: 100%; display: block; }
+  .glass { left: 570px; top: 307px; width: 400px; height: 288px; border-radius: 11% / 14%; pointer-events: none;
+    background: radial-gradient(120% 90% at 22% 12%, rgba(255, 255, 255, .16), transparent 40%), radial-gradient(90% 70% at 80% 95%, rgba(255, 255, 255, .05), transparent 50%);
+    box-shadow: inset 0 0 26px 8px rgba(0, 0, 0, .55), inset 0 0 3px 1px rgba(0, 0, 0, .7); opacity: 0; transition: opacity .25s; }
+  .on .screen, .on .glass { opacity: 1; }
+  .flap { left: 611px; top: 647px; width: 259px; height: 36px; background: linear-gradient(#020202, #1a1a1a); border-radius: 2px; opacity: 0; transition: opacity .15s; }
+  .flap.open { opacity: 1; }
+  .led { left: 1025px; top: 691px; width: 8px; height: 8px; border-radius: 50%; background: #2fe06a; box-shadow: 0 0 8px 2px rgba(60, 255, 120, .7); opacity: 0; transition: opacity .3s; }
+  .on .led { opacity: 1; }
+  .hot { cursor: pointer; border-radius: 6px; }
+
+  /* tapes: each one a flat object that can lie on the console or stand up in the air */
+  .clip { inset: 0; perspective: 1500px; perspective-origin: 740px 520px; }
+  .tape { position: absolute; left: 0; top: 0; width: 255px; height: 112px; margin: -56px 0 0 -127.5px; transform-origin: 50% 50%; cursor: pointer; }
+  .tape img { width: 100%; height: 100%; display: block; filter: drop-shadow(0 3px 3px rgba(0, 0, 0, .35)); }
+  .tape .label { position: absolute; left: 28.7%; top: 27.8%; width: 41.8%; height: 51.4%; font-family: Caveat, cursive; color: #26215c; pointer-events: none; }
+  .tape .label b { position: absolute; left: 34%; top: 12%; font-weight: 700; font-size: 25px; line-height: 1; transform: rotate(-3deg); white-space: nowrap; }
+  .tape .label i { position: absolute; left: 6%; top: 52%; font-style: normal; font-weight: 600; font-size: 15px; line-height: 1; transform: rotate(-2deg); color: #6b2b22; white-space: nowrap; }
+  .tape-shadow { width: 270px; height: 44px; margin: -22px 0 0 -135px; border-radius: 40%; background: rgba(30, 14, 4, .55); filter: blur(8px); left: 0; top: 0; }
+  .still { position: absolute; width: 230px; margin: -45px 0 0 -115px; }
+  .still img { width: 100%; display: block; filter: drop-shadow(0 4px 4px rgba(0, 0, 0, .35)); }
+
+  .hint { position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%); font: 500 13px/1 "DM Sans", system-ui, sans-serif; color: rgba(60, 35, 20, .75);
+    background: rgba(255, 248, 238, .7); padding: 7px 12px; border-radius: 999px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: opacity .6s; white-space: nowrap; pointer-events: none; }
+  .hint.off { opacity: 0; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="cam" id="cam">
+    <div class="glow" id="glow"></div>
+    <div class="console-top"></div>
+    <div class="console-front"></div>
+    <div class="tv-shadow"></div>
+    <div class="still" style="left:1290px;top:842px;transform:rotate(5deg) perspective(900px) rotateX(64deg)"><img src="./vhs/tape-beige.webp" alt=""></div>
+    <div class="still" style="left:1300px;top:822px;transform:rotate(-4deg) perspective(900px) rotateX(64deg)"><img src="./vhs/tape-clear.webp" alt=""></div>
+    <div class="tv" id="tv"><img src="./vhs/tv.webp" alt="An old TV with a built-in VHS player"></div>
+    <div class="screen" id="screen" role="button" aria-label="Pause or play the tape"><canvas id="c"></canvas></div>
+    <div class="glass"></div>
+    <div class="flap" id="flap"></div>
+    <div class="led"></div>
+    <div class="hot" id="eject" style="left:884px;top:646px;width:46px;height:40px" role="button" aria-label="Eject"></div>
+    <div class="hot" id="playbtn" style="left:928px;top:646px;width:40px;height:40px" role="button" aria-label="Play"></div>
+    <div class="hot" id="stopbtn" style="left:1006px;top:646px;width:30px;height:40px" role="button" aria-label="Stop"></div>
+    <div class="hot" id="power" style="left:530px;top:655px;width:34px;height:28px" role="button" aria-label="Power"></div>
+    <div class="tape-shadow" id="tshadow"></div>
+    <div class="clip" id="clip">
+      <div class="tape" id="tape" role="button" aria-label="The Lion King tape. Tap to put it in">
+        <img src="./vhs/tape-black.webp" alt="">
+        <span class="label"><b>Lion King</b><i>don't tape over!!</i></span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="hint" id="hint">tap the tape to put it in</div>
+
+<script>
+/* ---------- fit the room to the frame ---------- */
+const stage = document.getElementById("stage"), cam = document.getElementById("cam");
+function fit() { const f = Math.min(innerWidth / 1250, innerHeight / 860); stage.style.transform = `translate(-50%, -50%) scale(${f})`; }
+addEventListener("resize", fit); fit();
+const CAM_ROOM = "scale(1) translate(0px, -20px)", CAM_TV = "scale(1.42) translate(30px, 40px)";
+cam.style.transform = CAM_ROOM;
+
+/* ---------- sound: everything synthesised, quiet, and off when the portfolio's sound switch is off ---------- */
+const muted = () => { try { return localStorage.getItem("ui-sound") === "off"; } catch (_) { return false; } };
+let ac = null, out = null, bed = null;
+function audio() {
+  if (muted()) return null;
+  try { if (!ac) { ac = new (window.AudioContext || window.webkitAudioContext)(); out = ac.createGain(); out.gain.value = 0.5; out.connect(ac.destination); } ac.resume(); } catch (_) { return null; }
+  return ac;
+}
+const noiseBuf = () => { const b = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate), d = b.getChannelData(0); let p = 0; for (let i = 0; i < d.length; i++) { const w = Math.random() * 2 - 1; p = p * 0.96 + w * 0.04; d[i] = w * 0.4 + p * 3; } return b; };
+let NB = null;
+function burst(at, len, type, f0, f1, q, vol) {
+  if (!audio()) return; NB = NB || noiseBuf();
+  const n = ac.currentTime + at, s = ac.createBufferSource(); s.buffer = NB;
+  const f = ac.createBiquadFilter(); f.type = type; f.Q.value = q; f.frequency.setValueAtTime(f0, n); f.frequency.exponentialRampToValueAtTime(f1, n + len);
+  const g = ac.createGain(); g.gain.setValueAtTime(0.0001, n); g.gain.exponentialRampToValueAtTime(vol, n + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, n + len);
+  s.connect(f); f.connect(g); g.connect(out); s.start(n); s.stop(n + len + 0.05);
+}
+function tone(at, len, type, f0, f1, vol) {
+  if (!audio()) return;
+  const n = ac.currentTime + at, o = ac.createOscillator(), g = ac.createGain(); o.type = type;
+  o.frequency.setValueAtTime(f0, n); o.frequency.exponentialRampToValueAtTime(f1, n + len);
+  g.gain.setValueAtTime(0.0001, n); g.gain.exponentialRampToValueAtTime(vol, n + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, n + len);
+  o.connect(g); g.connect(out); o.start(n); o.stop(n + len + 0.05);
+}
+const S = {
+  pick: () => { burst(0, 0.05, "bandpass", 2600, 2200, 3, 0.25); },
+  slide: () => { burst(0, 0.38, "bandpass", 900, 2200, 1.4, 0.12); },
+  clunk: () => { tone(0, 0.18, "sine", 110, 48, 0.5); burst(0, 0.06, "bandpass", 1800, 1500, 2, 0.35); burst(0.09, 0.05, "bandpass", 2600, 2400, 3, 0.25); },
+  motor: (len = 1.1) => { tone(0.05, len, "sawtooth", 70, 92, 0.05); burst(0.05, len, "lowpass", 400, 600, 1, 0.05); },
+  crt: () => { tone(0, 0.25, "sine", 70, 40, 0.35); tone(0.05, 1.6, "sine", 7800, 7600, 0.012); burst(0.02, 0.5, "highpass", 3000, 6000, 0.7, 0.06); },
+  statik: (len = 0.7) => { burst(0, len, "highpass", 1200, 2400, 0.5, 0.12); },
+  eject: () => { burst(0, 0.06, "bandpass", 1600, 1300, 2, 0.3); tone(0, 0.12, "sine", 140, 70, 0.25); },
+  drop: () => { burst(0, 0.05, "bandpass", 2400, 2000, 3, 0.3); burst(0.08, 0.04, "bandpass", 2800, 2600, 3, 0.15); tone(0, 0.08, "sine", 160, 90, 0.15); },
+  beep: () => { tone(0, 0.06, "square", 1800, 1800, 0.04); },
+};
+// while the tape plays: soft tape hiss, a breath of wind and now and then a bird
+function startBed() {
+  if (!audio() || bed) return; NB = NB || noiseBuf();
+  const hiss = ac.createBufferSource(); hiss.buffer = NB; hiss.loop = true;
+  const hf = ac.createBiquadFilter(); hf.type = "highpass"; hf.frequency.value = 4000;
+  const hg = ac.createGain(); hg.gain.value = 0.018; hiss.connect(hf); hf.connect(hg); hg.connect(out); hiss.start();
+  const wind = ac.createBufferSource(); wind.buffer = NB; wind.loop = true; wind.playbackRate.value = 0.5;
+  const wf = ac.createBiquadFilter(); wf.type = "lowpass"; wf.frequency.value = 500;
+  const wg = ac.createGain(); wg.gain.value = 0.05; wind.connect(wf); wf.connect(wg); wg.connect(out); wind.start();
+  const lfo = ac.createOscillator(), lg = ac.createGain(); lfo.frequency.value = 0.13; lg.gain.value = 0.035; lfo.connect(lg); lg.connect(wg.gain); lfo.start();
+  bed = { stop() { [hiss, wind, lfo].forEach((n) => { try { n.stop(); } catch (_) {} }); clearInterval(bird); } };
+  const bird = setInterval(() => { if (state === "play" && !paused && Math.random() < 0.5) { const f = 2600 + Math.random() * 1400; tone(0, 0.09, "sine", f, f * 1.3, 0.02); tone(0.12, 0.08, "sine", f * 1.1, f * 1.4, 0.016); } }, 1700);
+}
+function stopBed() { if (bed) { bed.stop(); bed = null; } }
+
+/* ---------- the tape on its way: a little 3D object eased between poses ---------- */
+const tape = document.getElementById("tape"), clip = document.getElementById("clip"), tshadow = document.getElementById("tshadow"), flap = document.getElementById("flap");
+const SLOT_TOP = 647, SLOT_CX = 741;
+const REST = { x: 300, y: 812, rx: 64, rz: -9, d: 0, s: 1 };
+const T = { ...REST };
+function applyTape() {
+  tape.style.transform = `translate3d(${T.x}px, ${T.y}px, 0) rotateZ(${T.rz}deg) rotateX(${T.rx}deg) translateY(${-T.d}px) scale(${T.s})`;
+  const lift = Math.max(0, Math.min(1, (REST.y - T.y) / 240));
+  tshadow.style.transform = `translate(${REST.x + (T.x - REST.x) * 0.25}px, ${REST.y + 10}px) scale(${1 - lift * 0.35})`;
+  tshadow.style.opacity = String(0.85 * (1 - lift) * (T.d > 0 ? 0 : 1));
+}
+const ease = { out: (t) => 1 - Math.pow(1 - t, 3), inOut: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2), in: (t) => t * t * t,
+  back: (t) => { const c = 1.6; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); },
+  bounce: (t) => { const n = 7.5625, d = 2.75; if (t < 1 / d) return n * t * t; if (t < 2 / d) return n * (t -= 1.5 / d) * t + 0.75; if (t < 2.5 / d) return n * (t -= 2.25 / d) * t + 0.9375; return n * (t -= 2.625 / d) * t + 0.984375; } };
+function tween(to, ms, e = ease.inOut) {
+  const from = { ...T }, t0 = performance.now();
+  return new Promise((res) => {
+    const f = (now) => { const k = Math.min(1, (now - t0) / ms), q = e(k); for (const key in to) T[key] = from[key] + (to[key] - from[key]) * q; applyTape(); k < 1 ? requestAnimationFrame(f) : res(); };
+    requestAnimationFrame(f);
+  });
+}
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+applyTape();
+
+/* ---------- the screen: the tape plays through a VHS + picture-tube shader ---------- */
+const screenEl = document.getElementById("screen"), canvas = document.getElementById("c");
+const film = document.createElement("canvas"); film.width = 320; film.height = 232; const fx = film.getContext("2d");
+const gl = canvas.getContext("webgl", { antialias: false, premultipliedAlpha: false });
+const VS = "attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }";
+const FS = `precision highp float;
+uniform sampler2D T; uniform float t, mode, pw, track; uniform vec2 res;
+float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+void main(){
+  vec2 uv = gl_FragCoord.xy / res; uv.y = 1.0 - uv.y;
+  vec2 c = uv - 0.5; uv = 0.5 + c * (1.0 + 0.08 * dot(c, c));                      // the bulge of the tube
+  vec3 col = vec3(0.0);
+  if (mode < 0.5) col = vec3(0.015);
+  else if (mode < 1.5) {                                                               // switching on (or off): a line that opens into the picture
+    float hh = mix(0.003, 0.5, pow(pw, 2.4)), ww = mix(0.0, 0.52, min(1.0, pw * 4.0));
+    float l = smoothstep(hh + 0.006, hh, abs(uv.y - 0.5)) * smoothstep(ww + 0.02, ww, abs(uv.x - 0.5));
+    col = vec3(0.85, 0.92, 1.0) * l * (1.6 - pw) + h(uv * res + t) * l * 0.25;
+  } else if (mode < 2.5) {                                                             // snow
+    float n = h(floor(uv * res * 0.45) + floor(t * 50.0));
+    col = vec3(n * 0.9) * (0.75 + 0.25 * sin(uv.y * 500.0 + t * 90.0));
+  } else {                                                                             // the tape
+    float row = floor(uv.y * 232.0);
+    float jit = (h(vec2(row, floor(t * 30.0))) - 0.5) * 0.0028 * (1.0 + track * 5.0);
+    float bandY = fract(t * 0.06 + 0.35), band = exp(-pow((uv.y - bandY) * (16.0 - track * 9.0), 2.0)) * (0.2 + track);
+    float hs = smoothstep(0.95, 0.985, uv.y);                                         // head-switching tear at the bottom
+    float off = jit + band * (h(vec2(row, t)) - 0.5) * 0.05 + hs * (0.015 + 0.02 * sin(uv.y * 420.0 + t * 40.0));
+    vec2 u = vec2(uv.x + off, uv.y);
+    float r = texture2D(T, u + vec2(0.0045, 0.0)).r, g = texture2D(T, u).g, b = texture2D(T, u - vec2(0.004, 0.0)).b;
+    vec3 bl = (texture2D(T, u + vec2(0.007, 0.0)).rgb + texture2D(T, u - vec2(0.007, 0.0)).rgb) * 0.5;
+    col = mix(vec3(r, g, b), bl, 0.35);
+    col = mix(col, vec3(dot(col, vec3(0.3, 0.59, 0.11))), 0.1) * 0.93 + vec3(0.045, 0.03, 0.025);
+    col += (h(uv * res + t) - 0.5) * 0.07 + band * h(vec2(uv.x * 300.0, row + t)) * 0.35 + hs * h(uv * vec2(80.0, 300.0) + t) * 0.3;
+  }
+  col *= 0.86 + 0.14 * sin(uv.y * res.y * 1.5708);                                   // scanlines
+  vec2 v = uv * (1.0 - uv); col *= pow(clamp(v.x * v.y * 16.0, 0.0, 1.0), 0.28);     // darker into the corners
+  if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) col = vec3(0.0);
+  gl_FragColor = vec4(col, 1.0);
+}`;
+function sh(type, src) { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(s); return s; }
+const prog = gl.createProgram(); gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog); gl.useProgram(prog);
+gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+const loc = gl.getAttribLocation(prog, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+const U = (n) => gl.getUniformLocation(prog, n);
+const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+function sizeCanvas() { const r = screenEl.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2); canvas.width = Math.max(64, Math.round(r.width * d)); canvas.height = Math.max(48, Math.round(r.height * d)); gl.viewport(0, 0, canvas.width, canvas.height); }
+
+/* ---------- what's on the tape: an early morning on the savanna, painted as it plays ---------- */
+const W = 320, H = 232;
+const rnd = (s) => { const x = Math.sin(s * 127.1) * 43758.5453; return x - Math.floor(x); };
+const mix = (a, b, k) => a.map((v, i) => Math.round(v + (b[i] - v) * k));
+const rgb = (c, a = 1) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+function hills(y0, amp, freq, seed, col, drift) {
+  fx.fillStyle = col; fx.beginPath(); fx.moveTo(0, H);
+  for (let x = 0; x <= W; x += 4) { const X = x + drift; fx.lineTo(x, y0 - amp * (0.5 + 0.5 * Math.sin(X * freq + seed) * Math.sin(X * freq * 0.37 + seed * 2.1))); }
+  fx.lineTo(W, H); fx.closePath(); fx.fill();
+}
+function acacia(x, y, s, col) {
+  fx.fillStyle = col; fx.strokeStyle = col; fx.lineWidth = 2.2 * s; fx.lineCap = "round";
+  fx.beginPath(); fx.moveTo(x, y); fx.lineTo(x + 2 * s, y - 16 * s); fx.lineTo(x - 7 * s, y - 25 * s); fx.moveTo(x + 2 * s, y - 16 * s); fx.lineTo(x + 9 * s, y - 26 * s); fx.stroke();
+  for (const [dx, dy, rx, ry] of [[-9, -27, 14, 3.4], [6, -28, 16, 3.8], [-1, -30.5, 11, 3]]) { fx.beginPath(); fx.ellipse(x + dx * s, y + dy * s, rx * s, ry * s, 0, 0, Math.PI * 2); fx.fill(); }
+}
+// a giraffe and an elephant, simple silhouettes with walking legs
+function giraffe(x, y, s, ph, col) {
+  fx.fillStyle = col; fx.strokeStyle = col; fx.lineCap = "round";
+  fx.beginPath(); fx.ellipse(x, y - 13 * s, 7 * s, 4 * s, -0.12, 0, Math.PI * 2); fx.fill();
+  fx.lineWidth = 2.4 * s; fx.beginPath(); fx.moveTo(x + 5 * s, y - 15 * s); fx.lineTo(x + 10 * s + Math.sin(ph * 0.5) * 0.6 * s, y - 31 * s); fx.stroke();
+  fx.beginPath(); fx.ellipse(x + 12 * s, y - 31.5 * s, 3 * s, 1.5 * s, 0.3, 0, Math.PI * 2); fx.fill();
+  fx.lineWidth = 1.3 * s;
+  for (const [ox, o] of [[-5, 0], [-3.5, Math.PI], [4, Math.PI], [5.5, 0]]) { const sw = Math.sin(ph + o) * 2.2 * s; fx.beginPath(); fx.moveTo(x + ox * s, y - 11 * s); fx.lineTo(x + ox * s + sw, y); fx.stroke(); }
+}
+function elephant(x, y, s, ph, col) {
+  fx.fillStyle = col; fx.strokeStyle = col; fx.lineCap = "round";
+  fx.beginPath(); fx.ellipse(x, y - 9 * s, 10 * s, 6.5 * s, 0, 0, Math.PI * 2); fx.fill();
+  fx.beginPath(); fx.ellipse(x + 10 * s, y - 10 * s, 4.5 * s, 4.2 * s, 0, 0, Math.PI * 2); fx.fill();
+  fx.lineWidth = 2 * s; fx.beginPath(); fx.moveTo(x + 13 * s, y - 9 * s); fx.quadraticCurveTo(x + 15.5 * s, y - 4 * s, x + 14 * s + Math.sin(ph * 0.7) * s, y - 1 * s); fx.stroke();
+  fx.lineWidth = 3 * s;
+  for (const [ox, o] of [[-6, 0], [-3, Math.PI], [4, Math.PI], [7, 0]]) { const sw = Math.sin(ph + o) * 1.4 * s; fx.beginPath(); fx.moveTo(x + ox * s, y - 5 * s); fx.lineTo(x + ox * s + sw, y); fx.stroke(); }
+}
+function drawFilm(t) {
+  const loop = 52, k = (t % loop) / loop, shot = Math.floor((t % loop) / 13);   // four shots, thirteen seconds each, then round again
+  const day = Math.min(1, k * 1.25);
+  fx.save();
+  // the camera for each shot: wide, the herd up close, the sun, the trees
+  const shots = [[1, 0, 0], [2.1, -150, -95], [1.6, -60, -40], [1.25, -30, -20]];
+  const [z, ox, oy] = shots[shot], sp = ((t % 13) / 13);
+  fx.setTransform(z, 0, 0, z, ox + sp * (shot === 1 ? -26 : -10), oy);
+  const top = mix([38, 30, 78], [96, 150, 205], day), midc = mix([226, 98, 52], [246, 176, 96], day), hor = mix([255, 190, 110], [255, 226, 160], day);
+  const g = fx.createLinearGradient(0, 0, 0, 160); g.addColorStop(0, rgb(top)); g.addColorStop(0.6, rgb(midc)); g.addColorStop(1, rgb(hor));
+  fx.fillStyle = g; fx.fillRect(-40, -40, W + 300, 240);
+  // the sun climbing out of the haze
+  const sy = 152 - day * 82, sx = 196;
+  const sg = fx.createRadialGradient(sx, sy, 4, sx, sy, 90); sg.addColorStop(0, "rgba(255,240,200,.95)"); sg.addColorStop(0.25, "rgba(255,190,110,.45)"); sg.addColorStop(1, "rgba(255,160,80,0)");
+  fx.fillStyle = sg; fx.fillRect(sx - 120, sy - 120, 240, 240);
+  fx.fillStyle = rgb(mix([255, 150, 70], [255, 236, 190], day)); fx.beginPath(); fx.arc(sx, sy, 26, 0, Math.PI * 2); fx.fill();
+  // long thin clouds, lit from below
+  for (let i = 0; i < 5; i++) {
+    const cx = ((rnd(i) * 420 + t * (2 + i)) % 460) - 70, cy = 30 + rnd(i + 9) * 70;
+    fx.fillStyle = rgb(mix([255, 150, 110], [255, 235, 215], day), 0.55); fx.beginPath(); fx.ellipse(cx, cy, 40 + rnd(i + 3) * 40, 3 + rnd(i + 5) * 2, 0, 0, Math.PI * 2); fx.fill();
+  }
+  // birds crossing
+  fx.strokeStyle = "rgba(40,20,20,.75)"; fx.lineWidth = 1;
+  for (let i = 0; i < 6; i++) {
+    const bx = ((t * 14 + i * 13) % 420) - 60 + (i % 2) * 6, by = 60 + i * 3 - (i % 3) * 4 + Math.sin(t + i) * 2, f = Math.sin(t * 9 + i) * 2;
+    fx.beginPath(); fx.moveTo(bx - 3, by - f); fx.lineTo(bx, by); fx.lineTo(bx + 3, by - f); fx.stroke();
+  }
+  // hills in the haze, far to near
+  hills(158, 16, 0.02, 1.3, rgb(mix([190, 96, 92], [170, 140, 120], day)), t * 0.6);
+  hills(166, 10, 0.034, 4.1, rgb(mix([120, 55, 60], [120, 96, 70], day)), t * 1.2);
+  const far = rgb(mix([72, 32, 36], [80, 58, 40], day));
+  acacia(52, 168, 1.15, far); acacia(258, 166, 0.9, far); acacia(300, 170, 1.3, far);
+  // the herd walking along the ridge
+  const herd = rgb(mix([46, 20, 22], [52, 36, 26], day));
+  for (let i = 0; i < 5; i++) {
+    const hx = ((t * 6 + i * 52) % 520) - 100, ph = t * 5 + i * 1.7;
+    i % 2 ? elephant(hx, 172 + (i % 3), 0.85 + (i % 3) * 0.1, ph, herd) : giraffe(hx, 171, 0.95 + (i % 2) * 0.1, ph, herd);
+  }
+  // the ground, and grass in front swaying
+  fx.fillStyle = rgb(mix([40, 18, 16], [64, 44, 26], day)); fx.fillRect(-40, 176, W + 300, 120);
+  fx.strokeStyle = rgb(mix([30, 12, 10], [44, 30, 18], day)); fx.lineWidth = 1.2;
+  for (let i = 0; i < 90; i++) { const gx = i * 4 + rnd(i) * 3 - 20, gh = 10 + rnd(i + 2) * 14, bend = Math.sin(t * 1.4 + i * 0.3) * 3; fx.beginPath(); fx.moveTo(gx, 236); fx.quadraticCurveTo(gx + bend * 0.5, 236 - gh * 0.6, gx + bend, 236 - gh); fx.stroke(); }
+  fx.restore();
+}
+// the on-screen display of an old VCR
+function osd(text, sub) {
+  fx.font = "bold 15px 'Courier New', monospace"; fx.textBaseline = "top";
+  fx.fillStyle = "rgba(0,0,0,.55)"; fx.fillText(text, 19, 15); fx.fillStyle = "#e9ffe9"; fx.fillText(text, 18, 14);
+  if (sub) { fx.font = "bold 13px 'Courier New', monospace"; fx.fillStyle = "rgba(0,0,0,.55)"; fx.fillText(sub, W - 101, H - 25); fx.fillStyle = "#e9ffe9"; fx.fillText(sub, W - 102, H - 26); }
+}
+const clock = (s) => { s = Math.floor(s); return `SP ${Math.floor(s / 3600)}:${String(Math.floor(s / 60) % 60).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; };
+
+/* ---------- the story: tap the tape, it goes in, the set wakes up, and the tape plays ---------- */
+let state = "idle", paused = false, mode = 0, pw = 0, track = 0, tapeT = 0, playStart = 0, osdUntil = 0, osdText = "";
+const root = document.body, hint = document.getElementById("hint"), tvEl = document.getElementById("tv"), glow = document.getElementById("glow");
+function jolt(px = 6) { tvEl.animate([{ transform: "translateY(0)" }, { transform: `translateY(${px}px) scale(1.004)` }, { transform: "translateY(-1px)" }, { transform: "none" }], { duration: 320, easing: "ease-out" }); }
+
+async function insert() {
+  if (state !== "idle") return;
+  state = "busy"; hint.classList.add("off"); S.pick();
+  cam.style.transform = CAM_TV;
+  await tween({ x: 520, y: 560, rx: 16, rz: -3, s: 1.16 }, 620, ease.out);          // picked up, turned to face the set
+  S.slide();
+  await tween({ x: SLOT_CX, y: SLOT_TOP + 12, rx: 80, rz: 0, s: 1 }, 520, ease.inOut);  // lined up, laid flat at the mouth of the slot
+  clip.style.clipPath = `inset(${SLOT_TOP}px 0 0 0)`; flap.classList.add("open");
+  await tween({ d: 70 }, 220, ease.inOut);                                          // pushed in by hand...
+  S.motor(0.9);
+  await tween({ d: 230 }, 520, ease.in);                                            // ...then the machine takes it
+  tape.style.visibility = "hidden"; flap.classList.remove("open"); S.clunk(); jolt();
+  await wait(450);
+  await powerOn();
+  state = "play"; playStart = performance.now() / 1000; tapeT = 0; osdText = "PLAY ▶"; osdUntil = 3.2; startBed();
+  setTimeout(() => { if (state === "play") { hint.textContent = "tap the screen to pause · EJECT to take it out"; hint.classList.remove("off"); setTimeout(() => hint.classList.add("off"), 4200); } }, 2600);
+}
+async function powerOn() {
+  root.classList.add("on"); sizeCanvas(); S.crt(); glow.style.opacity = 0.75;
+  mode = 1; for (let i = 0; i <= 20; i++) { pw = i / 20; await wait(22); }
+  mode = 2; S.statik(0.6); await wait(600);
+  mode = 3; track = 1.2; S.beep();
+}
+async function powerOff() {
+  mode = 1; for (let i = 20; i >= 0; i--) { pw = i / 20; await wait(14); }
+  mode = 0; await wait(120); root.classList.remove("on"); glow.style.opacity = 0;
+}
+async function eject() {
+  if (state !== "play") return;
+  state = "busy"; stopBed(); S.eject(); paused = false; osdText = "EJECT ▲"; osdUntil = tapeT + 1;
+  await wait(500); await powerOff(); S.motor(0.8);
+  tape.style.visibility = "visible"; flap.classList.add("open");
+  await tween({ d: 60 }, 700, ease.out);                                            // the machine pushes it back out
+  await tween({ d: 0 }, 260, ease.out);
+  clip.style.clipPath = "none"; flap.classList.remove("open"); S.pick();
+  cam.style.transform = CAM_ROOM;
+  await tween({ x: 520, y: 560, rx: 16, rz: -3, s: 1.16 }, 520, ease.inOut);
+  await tween({ x: REST.x, y: REST.y, rx: REST.rx, rz: REST.rz, s: 1 }, 620, ease.bounce); S.drop();
+  state = "idle"; hint.textContent = "tap the tape to put it in again"; hint.classList.remove("off");
+}
+function togglePause() {
+  if (state !== "play") return;
+  paused = !paused; S.beep(); track = Math.max(track, 0.6);
+  osdText = paused ? "PAUSE ❚❚" : "PLAY ▶"; osdUntil = paused ? Infinity : tapeT + 2;
+}
+tape.addEventListener("click", (e) => { e.stopPropagation(); audio(); insert(); });
+screenEl.addEventListener("click", (e) => { e.stopPropagation(); togglePause(); });
+document.getElementById("eject").addEventListener("click", (e) => { e.stopPropagation(); eject(); });
+document.getElementById("playbtn").addEventListener("click", (e) => { e.stopPropagation(); if (paused) togglePause(); });
+document.getElementById("stopbtn").addEventListener("click", (e) => { e.stopPropagation(); if (!paused) togglePause(); });
+document.getElementById("power").addEventListener("click", (e) => { e.stopPropagation(); if (state === "play") eject(); });
+addEventListener("click", () => { audio(); if (state === "idle") insert(); });                // tapping anywhere also works
+addEventListener("keydown", (e) => { if (e.key === " " || e.key === "Enter") { if (state === "idle") insert(); else togglePause(); } if (e.key === "e" || e.key === "Escape") eject(); });
+addEventListener("resize", () => { if (root.classList.contains("on")) sizeCanvas(); });
+
+/* ---------- loop ---------- */
+let last = performance.now(), glowT = 0;
+const tiny = document.createElement("canvas"); tiny.width = tiny.height = 1; const tx = tiny.getContext("2d", { willReadFrequently: true });
+function frame(now) {
+  requestAnimationFrame(frame);
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (!root.classList.contains("on")) return;
+  if (mode === 3 && !paused) tapeT += dt;
+  track = Math.max(0, track - dt * 0.9);
+  if (mode === 3) {
+    const tt = paused ? tapeT + Math.sin(now / 90) * 0.01 : tapeT;                    // a paused tape still shivers
+    if (Math.floor(tt / 13) !== Math.floor((tt - dt) / 13)) track = Math.max(track, 0.8);   // every cut rolls a little tracking
+    drawFilm(tt);
+    if (paused) { fx.fillStyle = "rgba(255,255,255,.08)"; fx.fillRect(0, (now / 7) % H, W, 6); }
+    if (tapeT < osdUntil || paused) osd(osdText, clock(tapeT));
+    glowT += dt; if (glowT > 0.4) { glowT = 0; tx.drawImage(film, 0, 0, 1, 1); const d = tx.getImageData(0, 0, 1, 1).data; glow.style.background = `radial-gradient(circle, rgba(${d[0]},${d[1]},${d[2]},.9), transparent 65%)`; }
+  } else if (mode === 2) { fx.fillStyle = "#000"; fx.fillRect(0, 0, W, H); }
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, film);
+  gl.uniform1i(U("T"), 0); gl.uniform1f(U("t"), now / 1000); gl.uniform1f(U("mode"), mode); gl.uniform1f(U("pw"), pw); gl.uniform1f(U("track"), track);
+  gl.uniform2f(U("res"), canvas.width, canvas.height);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+requestAnimationFrame(frame);
+window.__vhs = { get state() { return state; }, get mode() { return mode; }, insert, eject, togglePause };
+</script>
+</body>
+</html>
