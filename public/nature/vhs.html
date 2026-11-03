@@ -9,25 +9,14 @@
   :root { --paper: #f5f3ef; }
   html, body { margin: 0; height: 100%; overflow: hidden; touch-action: manipulation; -webkit-user-select: none; user-select: none; }
   /* a warm living room wall, lamp light from the left */
-  body { background:
-      radial-gradient(60% 55% at 22% 30%, rgba(255, 214, 160, .55), transparent 70%),
-      repeating-linear-gradient(90deg, rgba(120, 90, 60, .045) 0 2px, transparent 2px 46px),
-      linear-gradient(#d8c3a2, #c9ae88 70%, #b89a74); }
+  body { background: #fff; }                                   /* just the set and the tapes, on white */
   .stage { position: absolute; left: 50%; top: 50%; width: 1600px; height: 1000px; transform-origin: 50% 50%; }
   .cam { position: absolute; inset: 0; transform-origin: 50% 50%; transition: transform 1.8s cubic-bezier(.45, 0, .2, 1); }
   .cam > * { position: absolute; }
 
-  /* the wooden console the TV sits on: a lit top edge, then the front face */
-  .console-top { left: -2400px; width: 6400px; top: 758px; height: 34px; background:
-      repeating-linear-gradient(90deg, rgba(60, 30, 10, .08) 0 1px, transparent 1px 13px, rgba(60, 30, 10, .05) 13px 15px, transparent 15px 31px),
-      linear-gradient(#a8693d, #8f552e); box-shadow: inset 0 2px 0 rgba(255, 220, 180, .35); }
-  .console-front { left: -2400px; width: 6400px; top: 792px; height: 2000px; background:
-      linear-gradient(rgba(0, 0, 0, .35), transparent 30px),
-      repeating-linear-gradient(90deg, rgba(40, 18, 6, .1) 0 2px, transparent 2px 23px, rgba(40, 18, 6, .06) 23px 26px, transparent 26px 57px),
-      linear-gradient(#6e3d1d, #55301a); }
   .glow { left: 420px; top: 160px; width: 760px; height: 640px; border-radius: 50%; filter: blur(60px); opacity: 0; transition: opacity 1.2s ease, background 1.2s ease;
     background: radial-gradient(circle, rgba(255, 170, 90, .9), transparent 65%); }
-  .tv-shadow { left: 470px; top: 742px; width: 660px; height: 60px; border-radius: 50%; background: rgba(30, 14, 4, .55); filter: blur(14px); }
+  .tv-shadow { left: 480px; top: 748px; width: 640px; height: 46px; border-radius: 50%; background: rgba(20, 16, 12, .28); filter: blur(16px); }
   .tv { left: 460px; top: 205px; width: 680px; transform-origin: 50% 100%; }
   .tv img { display: block; width: 100%; pointer-events: none; }
   /* the picture tube: drawn over the glass in the photo, with the curve and shine of real glass */
@@ -67,7 +56,7 @@
   .tape .label { position: absolute; left: 28.7%; top: 27.8%; width: 41.8%; height: 51.4%; font-family: Caveat, cursive; color: #26215c; pointer-events: none; }
   .tape .label b { position: absolute; left: 34%; top: 12%; font-weight: 700; font-size: 25px; line-height: 1; transform: rotate(-3deg); white-space: nowrap; }
   .tape .label i { position: absolute; left: 6%; top: 52%; font-style: normal; font-weight: 600; font-size: 15px; line-height: 1; transform: rotate(-2deg); color: #6b2b22; white-space: nowrap; }
-  .tape-shadow { width: 270px; height: 44px; margin: -22px 0 0 -135px; border-radius: 40%; background: rgba(30, 14, 4, .55); filter: blur(8px); left: 0; top: 0; }
+  .tape-shadow { width: 270px; height: 44px; margin: -22px 0 0 -135px; border-radius: 40%; background: rgba(20, 16, 12, .3); filter: blur(9px); left: 0; top: 0; }
   .still { position: absolute; width: 230px; margin: -45px 0 0 -115px; }
   .still img { width: 100%; display: block; filter: drop-shadow(0 4px 4px rgba(0, 0, 0, .35)); }
 
@@ -80,8 +69,6 @@
 <div class="stage" id="stage">
   <div class="cam" id="cam">
     <div class="glow" id="glow"></div>
-    <div class="console-top"></div>
-    <div class="console-front"></div>
     <div class="tv-shadow"></div>
     <div class="still" style="left:1290px;top:842px;transform:rotate(5deg) perspective(900px) rotateX(64deg)"><img src="./vhs/tape-beige.webp" alt=""></div>
     <div class="still" style="left:1300px;top:822px;transform:rotate(-4deg) perspective(900px) rotateX(64deg)"><img src="./vhs/tape-clear.webp" alt=""></div>
