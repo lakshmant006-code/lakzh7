@@ -35,7 +35,6 @@
 </head>
 <body>
 <canvas id="c"></canvas>
-<button class="be-cow" type="button" aria-pressed="false">be the cow</button>
 <div class="memory"></div>
 <div class="grain"></div>
 <div class="grain fine"></div>
@@ -190,12 +189,40 @@ function makeCow(i, player = false) {
   const mesh = spriteMesh(cowSheet, cowAtlas.w, cowAtlas.h, f.ax, f.ay, f.aw, f.ah);
   const k = COW_LEN / f.ah;
   mesh.scale.setScalar(k);
+  mesh.material = cowMaterial(mesh.material.map);
   const c = { mesh, f, k, len: f.ah * k * 0.8, wid: f.aw * k * 0.55, vx: 0, vy: 0, stride: Math.random() * 13, w: f.aw * k * 0.7, h: f.ah * k * 0.8, x: Math.random() < 0.5 ? 135 + Math.random() * 25 : 370 + Math.random() * 25, y: 120 + Math.random() * 600,
     tx: 0, ty: 0, heading: Math.random() * 6.28, bump: 0, speed: 0, pause: 0, phase: Math.random() * 6, player, lastMoo: -9 };
   c.shadow = cowShadow(mesh);
   pickTarget(c); cows.push(c); return c;
 }
 /* a cow's own silhouette, softened, laid on the road down and to the left like every other shadow on the street */
+/* seen from above, a cow is a rounded body: its outline is turned into a soft height map, lit from the upper right
+   (where the street's sun is), so the spine catches light and the flanks fall away into shade */
+function cowMaterial(t) {
+  const m = new THREE.ShaderMaterial({ transparent: true, depthWrite: false,
+    uniforms: { map: { value: t }, off: { value: t.offset }, rep: { value: t.repeat }, ang: { value: 0 } },
+    vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+    fragmentShader: `uniform sampler2D map; uniform vec2 off, rep; uniform float ang; varying vec2 vUv;
+      float A(vec2 u){ return texture2D(map, off + clamp(u, 0.0, 1.0) * rep).a; }
+      float Hh(vec2 u){ float s = 0.0; for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) s += A(u + vec2(float(i) * 0.09, float(j) * 0.045)); return s / 9.0; }
+      void main(){
+        vec4 c = texture2D(map, off + vUv * rep);
+        if (c.a < 0.01) discard;
+        float e = 0.04;
+        float hx = Hh(vUv + vec2(e, 0.0)) - Hh(vUv - vec2(e, 0.0)), hy = Hh(vUv + vec2(0.0, e * 0.5)) - Hh(vUv - vec2(0.0, e * 0.5));
+        vec3 n = normalize(vec3(-hx * 1.6, -hy * 1.6, 0.55));
+        float ca = cos(-ang), sa = sin(-ang);
+        vec3 L = normalize(vec3(0.55 * ca - 0.45 * sa, 0.55 * sa + 0.45 * ca, 0.75));      // the sun, turned into the cow's own frame
+        float h = Hh(vUv);
+        float shade = 0.66 + 0.52 * max(dot(n, L), 0.0);
+        shade *= mix(0.7, 1.06, smoothstep(0.2, 0.92, h));                                   // the edges round away
+        float spec = pow(max(dot(reflect(-L, n), vec3(0.0, 0.0, 1.0)), 0.0), 18.0) * 0.12 * smoothstep(0.5, 0.95, h);
+        gl_FragColor = vec4(c.rgb * shade + spec, c.a);
+        #include <colorspace_fragment>
+      }` });
+  m.map = t;                                               // kept for the echo meshes that copy its offset
+  return m;
+}
 function cowShadow(mesh) {
   const t = mesh.material.map;
   const m = new THREE.Mesh(mesh.geometry, new THREE.ShaderMaterial({ transparent: true, depthWrite: false,
@@ -204,14 +231,14 @@ function cowShadow(mesh) {
     fragmentShader: `uniform sampler2D map; uniform vec2 off, rep; varying vec2 vUv;
       void main(){
         vec2 d = rep * 0.035; float a = 0.0;
-        for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) a += texture2D(map, off + clamp(vUv + vec2(float(i), float(j)) * 0.035, 0.0, 1.0) * rep).a;
-        gl_FragColor = vec4(0.11, 0.13, 0.22, a / 9.0 * 0.55);
+        for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) a += texture2D(map, off + clamp(vUv + vec2(float(i), float(j)) * 0.06, 0.0, 1.0) * rep).a;
+        gl_FragColor = vec4(0.11, 0.13, 0.22, a / 9.0 * 0.32);
       }` }));
   world.add(m); return m;
 }
 function syncCowShadow(c) {
   if (!c.shadow) return;
-  const [ax, ay] = toWorld(c.x, c.y), [bx, by] = toWorld(c.x - 8, c.y + 6);
+  const [ax, ay] = toWorld(c.x, c.y), [bx, by] = toWorld(c.x - 5, c.y + 4);
   c.shadow.position.set(c.mesh.position.x + bx - ax, c.mesh.position.y + by - ay, 3.7);
   c.shadow.rotation.z = c.mesh.rotation.z; c.shadow.scale.copy(c.mesh.scale); c.shadow.visible = c.mesh.visible;
 }
@@ -369,39 +396,14 @@ function moo(c, gain = 1) { const now = performance.now() / 1000; if (now - c.la
 let hovered = null, pointer = null;
 addEventListener("pointermove", (e) => {
   pointer = streetAt(e.clientX, e.clientY);
-  if (me) { document.body.classList.remove("over"); return; }
-  const v = hit(e.clientX, e.clientY);
-  document.body.classList.toggle("over", !!v);
-  if (v && v !== hovered && !(hovered && v.cow && hovered.cow === v.cow)) {
-    const now = performance.now();
-    if (now - lastAny > 700) { v.cow ? moo(v.cow) : honk(v); lastAny = now; }   // a honk now and then as you move over the traffic, not one per car
-  }
-  hovered = v;
 });
-addEventListener("pointerdown", (e) => {
-  unlock(); openSound();
-  if (e.target.closest(".be-cow")) return;
-  pointer = streetAt(e.clientX, e.clientY);
-  if (me) return;
-  const v = hit(e.clientX, e.clientY); if (!v) return;
-  if (v.cow) { v.cow.lastMoo = -9; moo(v.cow, 1.2); return; }
-  v.lastHonk = -9; honk(v, 1.2); v.boost = 0.5;
-  // one neighbour answers back; the street no longer erupts on every click
-  const near = vehicles.filter((o) => o !== v && o.type !== "ped" && Math.hypot(o.x - v.x, o.y - v.y) < 170)
-    .sort(() => Math.random() - 0.5).slice(0, 1);
-  near.forEach((o, i) => { o.lastHonk = -9; honk(o, 0.55, 0.4 + i * 0.22); });
-});
+addEventListener("pointerdown", (e) => { unlock(); pointer = streetAt(e.clientX, e.clientY); });   // a touch unlocks sound; the honking itself waits for the cow to step into the road
 addEventListener("pointerleave", () => (pointer = null));
 
-/* ---------- "be the cow": you walk, the traffic waits ---------- */
-const beCow = document.querySelector(".be-cow");
-beCow.addEventListener("click", () => {
-  unlock();
-  if (me) { me.mesh.removeFromParent(); me.shadow?.removeFromParent(); cows.splice(cows.indexOf(me), 1); me = null; }
-  else { me = makeCow(cows.length, true); me.heading = 0; me.crossing = false; if (pointer) { me.x = pointer[0]; me.y = pointer[1]; } else { me.x = 263; me.y = 560; } me.vx = me.vy = 0; moo(me); }
-  beCow.setAttribute("aria-pressed", String(!!me)); beCow.textContent = me ? "stop being the cow" : "be the cow";
-  document.body.classList.toggle("cow-mode", !!me);
-});
+/* ---------- you are the cow: it waits on the pavement until you move it; the traffic has to deal with you ---------- */
+me = makeCow(cows.length, true); me.heading = Math.PI / 2; me.crossing = false; me.x = 140; me.y = 560; me.vx = me.vy = 0; me.hv = 0;
+document.body.classList.add("cow-mode");
+const beCow = null;
 
 /* ---------- traffic: lane-keeping, smooth car-following, and a signalled zebra crossing ---------- */
 // Down the street keeps to the right half, up the street to the left half (as in India, drive on the left).
@@ -518,19 +520,19 @@ function step(dt) {
   // cows: velocity-based. They accelerate, turn through a limited angle, slow for sharp turns and swing their legs as they walk.
   for (const c of cows) {
     if (c.player) {
-      // the cursor *is* the cow: it sits exactly where the pointer is, and its velocity is whatever your hand does
+      // the cow follows your pointer on a critically damped spring: firm (no wobble, no lag you can feel), never jerky,
+      // and its body turns as one rigid piece with a little weight to it
       const px = pointer ? Math.max(14, Math.min(SW - 14, pointer[0])) : c.x, py = pointer ? Math.max(8, Math.min(SH - 8, pointer[1])) : c.y;
-      const k = 1 - Math.exp(-dt / 0.022);                  // a hair of smoothing, ~1 frame, only to iron out pointer jitter
-      const nx = c.x + (px - c.x) * k, ny = c.y + (py - c.y) * k;
-      const mvx = (nx - c.x) / dt, mvy = (ny - c.y) / dt;
-      c.x = nx; c.y = ny;
-      c.vx += (mvx - c.vx) * (1 - Math.exp(-dt / 0.06)); c.vy += (mvy - c.vy) * (1 - Math.exp(-dt / 0.06));
-      const cap = Math.hypot(c.vx, c.vy); if (cap > 70) { c.vx *= 70 / cap; c.vy *= 70 / cap; }
+      const K = 120, C = 2 * Math.sqrt(K);
+      c.vx += ((px - c.x) * K - c.vx * C) * dt; c.vy += ((py - c.y) * K - c.vy * C) * dt;
+      const cap = Math.hypot(c.vx, c.vy); if (cap > 85) { c.vx *= 85 / cap; c.vy *= 85 / cap; }
+      c.x += c.vx * dt; c.y += c.vy * dt;
       c.speed = Math.hypot(c.vx, c.vy);
-      if (c.speed > 4) {                                    // turn to face the way you're moving, at a natural rate
+      if (c.speed > 5) {                                    // turn to face the way it walks: an angular spring, so the turn eases in and settles
         const h = Math.atan2(c.vx, -c.vy), err = Math.atan2(Math.sin(h - c.heading), Math.cos(h - c.heading));
-        c.heading += Math.max(-9 * dt, Math.min(9 * dt, err));
-      }
+        c.hv = (c.hv || 0) + (err * 55 - (c.hv || 0) * 13) * dt;
+      } else c.hv = (c.hv || 0) * Math.exp(-dt * 10);
+      c.hv = Math.max(-5, Math.min(5, c.hv)); c.heading += c.hv * dt;
       c.stride += c.speed * dt;
       const ca = Math.abs(Math.cos(c.heading)), sa = Math.abs(Math.sin(c.heading));
       c.h = c.len * ca + c.wid * sa; c.w = c.len * sa + c.wid * ca;
@@ -588,11 +590,12 @@ function step(dt) {
     const [wx, wy] = toWorld(c.x, c.y);
     const sp = Math.min(1, c.speed / 14), st = c.stride / 13;
     // a walking cow rocks: shoulders roll side to side, the body lengthens and shortens with each stride
-    const roll = Math.sin(st * Math.PI) * 0.07 * sp + (c.bump ? Math.sin(c.bump * 18) * 0.08 * c.bump : 0);
-    const stretch = 1 + Math.cos(st * 2 * Math.PI) * 0.035 * sp;
+    const roll = Math.sin(st * Math.PI) * 0.03 * sp + (c.bump ? Math.sin(c.bump * 18) * 0.05 * c.bump : 0);
+    const stretch = 1 + Math.cos(st * 2 * Math.PI) * 0.012 * sp;
     c.bump = Math.max(0, (c.bump || 0) - dt * 2.5);
     c.mesh.position.set(wx, wy, 4); c.mesh.rotation.z = -c.heading + roll;
     c.mesh.scale.set(c.k * (1 - (stretch - 1) * 0.5), c.k * stretch, 1);
+    c.mesh.material.uniforms.ang.value = c.mesh.rotation.z;
   }
   if (me) {
     echoDist += me.speed * dt;

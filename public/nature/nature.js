@@ -948,7 +948,7 @@ function showNow(id) {
 }
 
 /* dissolve out (halftone dots to white), swap, dissolve back in */
-let fade = 0, fadeDir = 0, pending = null, elapsed = 0, autoplay = params.get("auto") !== "0";
+let fade = 0, fadeDir = 0, pending = null, elapsed = 0, autoplay = false;   // memories stay where you put them: no slideshow, no play button
 const DURATION = 11;
 function goto(id, manual) {
   if (!SCENES[id] && id !== "mites" && id !== "grass" && id !== "street" && id !== "bollywood" && id !== "focus" && id !== "vhs" || ORDER.indexOf(id) < 0) id = ORDER[0];
@@ -971,7 +971,7 @@ ORDER.forEach((id) => {
 const playBtn = document.createElement("button"); playBtn.id = "play"; playBtn.type = "button";
 const syncPlay = () => { playBtn.textContent = autoplay ? "pause" : "play"; playBtn.setAttribute("aria-label", autoplay ? "Pause" : "Play"); };
 playBtn.onclick = () => { autoplay = !autoplay; syncPlay(); };
-nav.appendChild(playBtn); syncPlay();
+syncPlay();
 
 /* ---------- pixel toggle ---------- */
 const pxBtn = document.getElementById("px");
