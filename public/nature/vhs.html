@@ -45,8 +45,25 @@
 
   /* tapes: each one a flat object that can lie on the console or stand up in the air */
   .clip { inset: 0; perspective: 1500px; perspective-origin: 740px 520px; }
-  .tape { position: absolute; left: 0; top: 0; width: 255px; height: 112px; margin: -56px 0 0 -127.5px; transform-origin: 50% 50%; cursor: pointer; }
-  .tape img { width: 100%; height: 100%; display: block; filter: drop-shadow(0 3px 3px rgba(0, 0, 0, .35)); }
+  /* the tape is a real box: top and bottom faces, four plastic edges, about a finger thick */
+  .tape { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d; cursor: pointer; }
+  .face { position: absolute; left: 0; top: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .face.top { width: 255px; height: 112px; margin: -56px 0 0 -127.5px; transform: translateZ(14px); }
+  .face.top img { width: 100%; height: 100%; display: block; }
+  .face.top::after { content: ""; position: absolute; inset: 0; border-radius: 4px; pointer-events: none; opacity: var(--sheen, .2);
+    background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, .35) 45%, transparent 60%); mix-blend-mode: screen; }
+  .face.bottom { width: 255px; height: 112px; margin: -56px 0 0 -127.5px; transform: rotateX(180deg) translateZ(14px); border-radius: 5px;
+    background: repeating-linear-gradient(90deg, #151515 0 3px, #101010 3px 6px), #121212; }
+  .face.near, .face.far { width: 251px; height: 28px; margin: -14px 0 0 -125.5px; border-radius: 3px;
+    background: linear-gradient(#2a2a2a, #121212 40%, #0c0c0c), #111; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12); }
+  .face.near { transform: rotateX(-90deg) translateZ(55px); }
+  .face.far { transform: rotateX(90deg) translateZ(55px); }
+  .face.near .spine { position: absolute; left: 22%; right: 22%; top: 4px; bottom: 4px; background: #efe6d2; border-radius: 1px;
+    font: 700 15px/20px Caveat, cursive; color: #26215c; text-align: center; letter-spacing: .02em; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); }
+  .face.left, .face.right { width: 28px; height: 108px; margin: -54px 0 0 -14px; border-radius: 3px;
+    background: linear-gradient(90deg, #262626, #0e0e0e), #111; box-shadow: inset 1px 0 0 rgba(255, 255, 255, .1); }
+  .face.left { transform: rotateY(-90deg) translateZ(125.5px); }
+  .face.right { transform: rotateY(90deg) translateZ(125.5px); }
   .tape .label { position: absolute; left: 28.7%; top: 27.8%; width: 41.8%; height: 51.4%; font-family: Caveat, cursive; color: #26215c; pointer-events: none; }
   .tape .label b { position: absolute; left: 34%; top: 12%; font-weight: 700; font-size: 25px; line-height: 1; transform: rotate(-3deg); white-space: nowrap; }
   .tape .label i { position: absolute; left: 6%; top: 52%; font-style: normal; font-weight: 600; font-size: 15px; line-height: 1; transform: rotate(-2deg); color: #6b2b22; white-space: nowrap; }
@@ -80,8 +97,12 @@
     <div class="tape-shadow" id="tshadow"></div>
     <div class="clip" id="clip">
       <div class="tape" id="tape" role="button" aria-label="The Lion King tape. Tap to put it in">
-        <img src="./vhs/tape-black.webp" alt="">
-        <span class="label"><b>Lion King</b><i>don't tape over!!</i></span>
+        <div class="face bottom"></div>
+        <div class="face far"></div>
+        <div class="face left"></div>
+        <div class="face right"></div>
+        <div class="face near"><span class="spine">Lion King</span></div>
+        <div class="face top"><img src="./vhs/tape-black.webp" alt="" draggable="false"><span class="label"><b>Lion King</b><i>don't tape over!!</i></span></div>
       </div>
     </div>
   </div>
@@ -149,10 +170,11 @@ function stopBed() { if (bed) { bed.stop(); bed = null; } }
 /* ---------- the tape on its way: a little 3D object eased between poses ---------- */
 const tape = document.getElementById("tape"), clip = document.getElementById("clip"), tshadow = document.getElementById("tshadow"), flap = document.getElementById("flap");
 const SLOT_TOP = 647, SLOT_CX = 741;
-const REST = { x: 300, y: 812, rx: 64, rz: -9, d: 0, s: 1 };
+const REST = { x: 300, y: 806, z: 0, rx: 66, ry: 0, rz: -9, d: 0, s: 1 };
 const T = { ...REST };
 function applyTape() {
-  tape.style.transform = `translate3d(${T.x}px, ${T.y}px, 0) rotateZ(${T.rz}deg) rotateX(${T.rx}deg) translateY(${-T.d}px) scale(${T.s})`;
+  tape.style.transform = `translate3d(${T.x}px, ${T.y}px, ${T.z}px) rotateZ(${T.rz}deg) rotateY(${T.ry}deg) rotateX(${T.rx}deg) translateY(${-T.d}px) scale(${T.s})`;
+  tape.style.setProperty("--sheen", (0.15 + 0.35 * Math.abs(Math.sin((T.ry + T.rx) * Math.PI / 180))).toFixed(2));   // the light slides over the plastic as it turns
   const lift = Math.max(0, Math.min(1, (REST.y - T.y) / 240));
   tshadow.style.transform = `translate(${REST.x + (T.x - REST.x) * 0.25}px, ${REST.y + 10}px) scale(${1 - lift * 0.35})`;
   tshadow.style.opacity = String(0.85 * (1 - lift) * (T.d > 0 ? 0 : 1));
@@ -311,13 +333,15 @@ async function insert() {
   if (state !== "idle") return;
   state = "busy"; hint.classList.add("off"); S.pick();
   cam.style.transform = CAM_TV;
-  await tween({ x: 520, y: 560, rx: 16, rz: -3, s: 1.16 }, 620, ease.out);          // picked up, turned to face the set
+  await tween({ x: 470, y: 600, z: 170, rx: 8, ry: -32, rz: -6 }, 700, ease.out);   // picked up and brought toward you, turning so you see how thick it is
+  await tween({ x: 560, y: 560, z: 140, rx: 24, ry: 18, rz: 2 }, 480, ease.inOut);  // a turn in the hand to find the right way round
   S.slide();
-  await tween({ x: SLOT_CX, y: SLOT_TOP + 12, rx: 80, rz: 0, s: 1 }, 520, ease.inOut);  // lined up, laid flat at the mouth of the slot
+  await tween({ x: SLOT_CX, y: SLOT_TOP + 8, z: 40, rx: 82, ry: 0, rz: 0 }, 620, ease.inOut);  // laid flat, label up, spine to you, at the mouth of the slot
   clip.style.clipPath = `inset(${SLOT_TOP}px 0 0 0)`; flap.classList.add("open");
-  await tween({ d: 70 }, 220, ease.inOut);                                          // pushed in by hand...
+  await tween({ z: 0, d: 60 }, 300, ease.inOut);                                    // pushed in by hand...
+  clip.style.clipPath = `inset(${SLOT_TOP}px 727px 314px 609px)`;                   // from here on only the slot's mouth shows it
   S.motor(0.9);
-  await tween({ d: 230 }, 520, ease.in);                                            // ...then the machine takes it
+  await tween({ d: 250 }, 560, ease.in);                                            // ...then the machine draws it in
   tape.style.visibility = "hidden"; flap.classList.remove("open"); S.clunk(); jolt();
   await wait(450);
   await powerOn();
@@ -340,11 +364,12 @@ async function eject() {
   await wait(500); await powerOff(); S.motor(0.8);
   tape.style.visibility = "visible"; flap.classList.add("open");
   await tween({ d: 60 }, 700, ease.out);                                            // the machine pushes it back out
-  await tween({ d: 0 }, 260, ease.out);
+  clip.style.clipPath = `inset(${SLOT_TOP}px 0 0 0)`;
+  await tween({ d: 0, z: 40 }, 300, ease.out);
   clip.style.clipPath = "none"; flap.classList.remove("open"); S.pick();
   cam.style.transform = CAM_ROOM;
-  await tween({ x: 520, y: 560, rx: 16, rz: -3, s: 1.16 }, 520, ease.inOut);
-  await tween({ x: REST.x, y: REST.y, rx: REST.rx, rz: REST.rz, s: 1 }, 620, ease.bounce); S.drop();
+  await tween({ x: 520, y: 580, z: 160, rx: 14, ry: 26, rz: -4 }, 620, ease.inOut);
+  await tween({ x: REST.x, y: REST.y, z: 0, rx: REST.rx, ry: 0, rz: REST.rz }, 680, ease.bounce); S.drop();
   state = "idle"; hint.textContent = "tap the tape to put it in again"; hint.classList.remove("off");
 }
 function togglePause() {
@@ -385,7 +410,7 @@ function frame(now) {
   gl.drawArrays(gl.TRIANGLES, 0, 3);
 }
 requestAnimationFrame(frame);
-window.__vhs = { get state() { return state; }, get mode() { return mode; }, insert, eject, togglePause };
+window.__vhs = { get state() { return state; }, get mode() { return mode; }, insert, eject, togglePause, pose(o) { Object.assign(T, o); applyTape(); } };
 </script>
 </body>
 </html>
