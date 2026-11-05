@@ -28,6 +28,13 @@ const PROCREATE_MOTION = {
   about: "A concept for bringing motion tracking into Procreate. You open a Reference window, the front camera follows your shoulders, elbows and head, and the character you drew copies you live on the canvas. Hit Add Frame to keep a pose, and a gesture becomes a frame-by-frame animation without drawing every in-between. The tracking stays on the iPad, and the artwork stays yours.",
   to: "/pro-move",
 };
+/* the first time people got their hands on pro-move: testing sessions around the studio */
+const PROMOVE_TESTING = {
+  id: "promove-testing", title: "pro-move · user testing", tags: ["Prototype testing", "SVSD hackathon"],
+  media: { video: "/projects/promove-testing/promove-testing.mp4", poster: "/projects/promove-testing/poster.jpg" },
+  about: "First hands on pro-move. We handed the iPad prototype to people around the studio and watched them perform, draw and laugh as their characters copied them. What they tried first, where they hesitated and what made them smile shaped the next round of the design.",
+  to: "/pro-move",
+};
 const GALLERY = { id: "illustrations", title: "Illustrations", tags: ["Procreate", "Ink & watercolour"], media: {}, gallery: ILLUSTRATIONS };
 const REST = [
   ...playProjects.map((p) => ({ id: p.id, title: p.title, tags: p.tags || [], media: p.media || {}, href: p.actions?.[0]?.url })),
@@ -38,6 +45,7 @@ const ITEMS = [];
 for (let i = 0; i < Math.max(LIVE.length, REST.length); i++) { if (LIVE[i]) ITEMS.push(LIVE[i]); if (REST[i]) ITEMS.push(REST[i]); }
 ITEMS.splice(1, 0, GALLERY);
 ITEMS.unshift(PROCREATE_MOTION);
+ITEMS.splice(1, 0, PROMOVE_TESTING);
 const srcOf = (m) => m.video || m.image || m.thumbnail || m.poster;
 
 /* one tile: plays only while on screen, and comes into focus as it scrolls in */
