@@ -917,7 +917,7 @@ function showNow(id) {
   document.body.classList.toggle("is-mites", isMites);
   document.body.classList.toggle("is-grass", isGrass);
   // frames only run while visible
-  if (isMites && !mitesFrame.src) mitesFrame.src = mitesFrame.dataset.src + (pixelOn ? "?px=1" : "");
+  if (isMites && !mitesFrame.src) mitesFrame.src = mitesFrame.dataset.src;   // rainy velvets is always drawn at full resolution
   if (isGrass && !grassFrame.src) grassFrame.src = grassFrame.dataset.src;
   if (isStreet && !streetFrame.src) streetFrame.src = streetFrame.dataset.src;
   if (isBolly && !bollyFrame.src) bollyFrame.src = bollyFrame.dataset.src;
@@ -977,7 +977,7 @@ syncPlay();
 const pxBtn = document.getElementById("px");
 const syncPx = () => {
   pxBtn.setAttribute("aria-pressed", String(pixelOn)); pxBtn.textContent = pixelOn ? "pixel: on" : "pixel: off";
-  if (mitesFrame.src) mitesFrame.src = mitesFrame.dataset.src + (pixelOn ? "?px=1" : "");
+  if (mitesFrame.src) mitesFrame.src = mitesFrame.dataset.src;   // rainy velvets is always drawn at full resolution
 };
 pxBtn.addEventListener("click", () => { pixelOn = !pixelOn; syncPx(); resize(); });
 
