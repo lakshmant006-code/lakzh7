@@ -5,6 +5,10 @@ services:
     buildCommand: npm ci && npm run build
     staticPublishPath: ./dist
     routes:
+      # the drawings gallery and uploads live in the small API service below; this must come before the catch-all
+      - type: rewrite
+        source: /api/*
+        destination: https://lakzh7-api.onrender.com/api/*
       - type: rewrite
         source: /*
         destination: /index.html
@@ -15,3 +19,16 @@ services:
       - path: /*.html
         name: Cache-Control
         value: public, max-age=0, must-revalidate
+
+  - type: web
+    name: lakzh7-api
+    runtime: node
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: node server/render-api.js
+    healthCheckPath: /healthz
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false

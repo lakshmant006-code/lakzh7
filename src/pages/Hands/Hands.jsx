@@ -10,7 +10,7 @@ export default function Hands() {
   const load = useCallback(async () => {
     try {
       const r = await fetch("/api/hand-drawings");
-      if (!r.ok) throw new Error("bad");
+      if (!r.ok || !(r.headers.get("content-type") || "").includes("json")) throw new Error("bad");
       const j = await r.json();
       setItems(j.drawings || []); setFailed(false);
     } catch { setFailed(true); setItems((v) => v || []); }

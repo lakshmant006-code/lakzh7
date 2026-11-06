@@ -92,7 +92,7 @@ export default function HandStudio() {
       const g = out.getContext("2d"); g.imageSmoothingQuality = "high"; g.drawImage(cv.current, 0, 0, out.width, out.height);
       const r = await fetch("/api/hand-drawings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ imageDataUri: out.toDataURL("image/png") }) });
       const j = await r.json().catch(() => ({}));
-      if (!r.ok) throw new Error(j.error || "could not save");
+      if (!r.ok || !j.id) throw new Error(j.error || "the drawing store did not answer, so nothing was saved");
       setSent("saved"); window.dispatchEvent(new CustomEvent("hand:saved"));
     } catch (e) { setSent("error"); setMsg(e.message || "could not save"); }
   };
