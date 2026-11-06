@@ -279,26 +279,54 @@ function updateEchoes(dt) {
 }
 let echoDist = 0;
 // the cow you steer is solid: it can never sit on top of a vehicle, it is stopped at the edge and slides along it
+/* Cows are solid. Each one is three overlapping circles along its spine (a capsule that turns with it), and each
+   vehicle is a rounded box a little inside its sprite. Any overlap is pushed out along the contact normal and the part
+   of the cow's velocity that points into the vehicle is removed, so a cow that walks into a car stops at its side and
+   slides smoothly along it instead of passing through or jittering. */
+const carBox = (v) => ({ x: v.x, y: v.y, hx: v.w * 0.44, hy: v.h * 0.46 });
+function cowCircles(c) {
+  const r = c.wid * 0.5, half = Math.max(0, c.len * 0.5 - r), dx = Math.sin(c.heading), dy = -Math.cos(c.heading);
+  return [[c.x + dx * half, c.y + dy * half, r], [c.x, c.y, r * 1.06], [c.x - dx * half, c.y - dy * half, r]];
+}
+function cowHits(c, v) {
+  const b = carBox(v);
+  for (const [px, py, r] of cowCircles(c)) {
+    const qx = Math.max(b.x - b.hx, Math.min(b.x + b.hx, px)), qy = Math.max(b.y - b.hy, Math.min(b.y + b.hy, py));
+    if ((px - qx) ** 2 + (py - qy) ** 2 < r * r) return true;
+  }
+  return false;
+}
 function pushOut(c) {
-  const hit = () => cars.some((v) => Math.abs(c.x - v.x) < (c.w + v.w) / 2 && Math.abs(c.y - v.y) < (c.h + v.h) / 2);
-  for (let it = 0; it < 12; it++) {
+  let touched = null;
+  for (let it = 0; it < 4; it++) {
     let moved = false;
     for (const v of cars) {
-      const ox = (c.w + v.w) / 2 + 1 - Math.abs(c.x - v.x), oy = (c.h + v.h) / 2 + 1 - Math.abs(c.y - v.y);
-      if (ox <= 0 || oy <= 0) continue;
-      if (ox < oy) c.x += (c.x >= v.x ? 1 : -1) * ox; else c.y += (c.y >= v.y ? 1 : -1) * oy;
-      moved = true;
+      const b = carBox(v);
+      if (Math.abs(c.x - b.x) > b.hx + c.len && Math.abs(c.y - b.y) > b.hy + c.len) continue;
+      for (const [px, py, r] of cowCircles(c)) {
+        const qx = Math.max(b.x - b.hx, Math.min(b.x + b.hx, px)), qy = Math.max(b.y - b.hy, Math.min(b.y + b.hy, py));
+        let nx = px - qx, ny = py - qy, d = Math.hypot(nx, ny), pen;
+        if (d >= r) continue;
+        if (d < 1e-4) {                                   // the circle's centre is inside the box: leave by the nearest side
+          const ex = b.hx - Math.abs(px - b.x), ey = b.hy - Math.abs(py - b.y);
+          if (ex < ey) { nx = Math.sign(px - b.x || 1); ny = 0; pen = ex + r; } else { nx = 0; ny = Math.sign(py - b.y || 1); pen = ey + r; }
+        } else { nx /= d; ny /= d; pen = r - d; }
+        c.x += nx * pen; c.y += ny * pen;
+        const vn = c.vx * nx + c.vy * ny;
+        if (vn < 0) { c.vx -= vn * nx; c.vy -= vn * ny; c.vx *= 0.92; c.vy *= 0.92; }   // stop into it, keep the slide (with a touch of friction)
+        moved = true; touched = v;
+      }
     }
     if (!moved) break;
   }
   c.x = Math.max(14, Math.min(SW - 14, c.x)); c.y = Math.max(8, Math.min(SH - 8, c.y));
-  // squeezed between vehicles with no room: stay where it last stood freely, and make the nearby drivers stop
-  if (hit() && c.okx !== undefined) {
-    c.x = c.okx; c.y = c.oky; c.heading = c.okh;                // also undo any turn that made it too wide for the gap
-    const ca = Math.abs(Math.cos(c.heading)), sa = Math.abs(Math.sin(c.heading)); c.h = c.len * ca + c.wid * sa; c.w = c.len * sa + c.wid * ca;
-    for (const v of cars) if (Math.hypot(v.x - c.x, v.y - c.y) < 60) v.speed *= 0.5;
-  }
-  if (!hit()) { c.okx = c.x; c.oky = c.y; c.okh = c.heading; }
+  // squeezed between two vehicles with nowhere to go: it stays where it last stood clear, facing the way it did
+  if (cars.some((v) => cowHits(c, v))) {
+    if (c.okx !== undefined) { c.x = c.okx; c.y = c.oky; c.heading = c.okh; }
+    c.vx *= 0.3; c.vy *= 0.3; c.hv = 0;
+  } else { c.okx = c.x; c.oky = c.y; c.okh = c.heading; }
+  c.speed = Math.hypot(c.vx, c.vy);
+  return touched;
 }
 
 /* ---------- sound (ElevenLabs sound effects) ---------- */
@@ -536,8 +564,7 @@ function step(dt) {
       c.stride += c.speed * dt;
       const ca = Math.abs(Math.cos(c.heading)), sa = Math.abs(Math.sin(c.heading));
       c.h = c.len * ca + c.wid * sa; c.w = c.len * sa + c.wid * ca;
-      pushOut(c);
-      continue;
+      continue;                                         // solid against the traffic below, with the other cows
     }
     let tx = c.tx, ty = c.ty, vmax = c.crossing ? 16 : 10, acc = 14, turn = 1.8;
     const dx = tx - c.x, dy = ty - c.y, d = Math.hypot(dx, dy);
@@ -570,15 +597,10 @@ function step(dt) {
   }
   // cows don't walk through cars or each other: they're nudged out, slowed, and the driver leans on the horn
   for (const c of cows) {
-    for (const v of cars) {
-      const ox = (c.w + v.w) / 2 - Math.abs(c.x - v.x), oy = (c.h + v.h) / 2 - Math.abs(c.y - v.y);
-      if (ox <= 0 || oy <= 0) continue;
-      if (c.player) { v.speed *= Math.exp(-dt * 9); if (!v.honkedAtCow || now_s() - v.honkedAtCow > 1.5) { v.honkedAtCow = now_s(); honk(v, 0.8); c.bump = 1; } continue; }
-      if (v.speed < 4) continue;
-      if (ox < oy) c.x += Math.sign(c.x - v.x || 1) * ox; else c.y += Math.sign(c.y - v.y || 1) * oy;
-      c.vx *= 0.5; c.vy *= 0.5;
-      v.speed = Math.min(v.speed, 3);
-      if (!v.honkedAtCow || now_s() - v.honkedAtCow > 2) { v.honkedAtCow = now_s(); honk(v, 0.7); if (c.player) c.bump = 1; }
+    const v = pushOut(c);
+    if (v) {                                              // a driver this close brakes hard and leans on the horn
+      v.speed = Math.min(v.speed, 2); v.speed *= Math.exp(-dt * 9);
+      if (!v.honkedAtCow || now_s() - v.honkedAtCow > (c.player ? 1.5 : 2)) { v.honkedAtCow = now_s(); honk(v, c.player ? 0.8 : 0.7); c.bump = 0.6; }
     }
     for (const o of cows) {
       if (o === c) continue;
@@ -689,11 +711,10 @@ function step(dt) {
   }
 
   // last word of every step: the cow you steer is never left on top of a vehicle
-  if (me) {
-    for (const v of cars) {                                    // a vehicle that moved onto the cow is put back and stops dead
-      if (Math.abs(me.x - v.x) < (me.w + v.w) / 2 && Math.abs(me.y - v.y) < (me.h + v.h) / 2 && v.px !== undefined) { v.x = v.px; v.y = v.py; v.speed = 0; v.vx = 0; }
-    }
-    pushOut(me); const [mx, my] = toWorld(me.x, me.y); me.mesh.position.set(mx, my, 4);
+  for (const c of cows) {
+    for (const v of cars) if (v.px !== undefined && cowHits(c, v)) { v.x = v.px; v.y = v.py; v.speed = 0; v.vx = 0; }   // a vehicle that moved onto a cow is put back and stops
+    pushOut(c);
+    const [mx, my] = toWorld(c.x, c.y); c.mesh.position.set(mx, my, 4);
   }
 }
 function draw(dt) {
@@ -728,7 +749,7 @@ function draw(dt) {
   renderer.render(scene, camera);
 }
 requestAnimationFrame(frame);
-window.__street = { vehicles, cows, streetAt, beCow, pushOut, pointer: () => pointer, get light() { return light; } };
+window.__street = { vehicles, cows, streetAt, beCow, pushOut, cowHits, cars, pointer: () => pointer, get light() { return light; } };
 
 </script>
 </body>
