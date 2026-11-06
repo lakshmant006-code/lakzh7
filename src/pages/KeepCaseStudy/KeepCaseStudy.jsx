@@ -15,6 +15,7 @@ import {
   CsHmw,
   CsImg,
   CsVideo,
+  CsStats,
   CsSeeNext,
 } from "../../components/CsKit/CsKit";
 
@@ -267,6 +268,22 @@ const KeepCaseStudy = () => {
           pull to refresh, an update banner when a new version is ready, and a
           swipe down gesture to close a photo.
         </CsText>
+      </CsSection>
+
+      <CsSection id="keep-traction" label="Traction" title="The first week live">
+        <CsText>
+          In its first week online, people found Keep and stayed to look around: 20 active users, 18 of
+          them new, between 30 October and 5 November.
+        </CsText>
+        <CsStats
+          items={[
+            { value: "20", label: "Active users in the first week" },
+            { value: "18", label: "New users" },
+            { value: "86", label: "Page views" },
+            { value: "443", label: "Interactions recorded" },
+          ]}
+        />
+        <CsText>Measured with Google Analytics, 30 Oct to 5 Nov 2026.</CsText>
       </CsSection>
 
       <CsSection id="keep-limits" label="Honest limits" title="What it does not do yet">
