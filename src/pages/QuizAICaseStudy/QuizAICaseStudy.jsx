@@ -21,36 +21,36 @@ import "./QuizAICaseStudy.css";
 
 const QUIZAI_SOLUTIONS = [
   {
-    video: "/work/quizai/sol-upload.mp4",
-    title: "Solution #1: Uploading a PDF",
-    headlineLead: "It starts with one drop, ",
-    headlineHighlight: "upload a PDF and you're already studying.",
+    video: "/work/quizai/reef-generate.mp4",
+    title: "Solution #1: Generating on the canvas",
+    headlineLead: "Wire a PDF into a template, tap Generate, and ",
+    headlineHighlight: "the notes appear beside it.",
     caption:
-      "The whole point was to kill the setup work. Drop in a lecture PDF and Quizzy takes it from there, no formatting, no copy pasting, no deciding where to start. The upload flow is designed to feel like the easiest first step, so nothing stands between a student and their notes.",
+      "The setup work is the thing students skip, so on Reef there is almost none. A lecture PDF sits on a canvas, you connect it to a template that says how you like to study, and Reef writes the notes into a card next to it. You can see where everything came from, and change one line to get something different.",
   },
   {
-    video: "/work/quizai/sol-quiz.mp4",
-    title: "Solution #2: Generating a Quiz",
-    headlineLead: "One tap turns that PDF into a ",
-    headlineHighlight: "self scoring quiz.",
+    video: "/work/quizai/reef-organize.mp4",
+    title: "Solution #2: Organizing the board",
+    headlineLead: "Zoom out and the whole course sits in one place, ",
+    headlineHighlight: "easy to arrange and easy to find.",
     caption:
-      "Most students skip self testing because building quizzes by hand takes too long. Here it's automatic, Quizzy reads the upload and generates questions with instant, encouraging feedback, making active recall feel quick and almost game like instead of a chore.",
+      "As cards pile up, a board gets messy fast. Reef lets you zoom all the way out, drag groups of cards into rows and tidy a subject at a time, so everything for an exam lives in one spot, and coming back to it feels easy instead of like a chore.",
   },
   {
-    video: "/work/quizai/sol-summaries.mp4",
-    title: "Solution #3: Summaries",
-    headlineLead: "The same upload becomes a summary that keeps ",
-    headlineHighlight: "only what matters.",
+    video: "/work/quizai/reef-lectures.mp4",
+    title: "Solution #3: Lectures and the roadmap",
+    headlineLead: "Say what you want to learn and Reef lays out ",
+    headlineHighlight: "a roadmap with free lectures.",
     caption:
-      "Students capture about a third of a lecture, then drown in notes they never reopen. The summary pulls the essentials forward from any upload and lays them out in clean, easy to scan cards, so review starts from the important bits, not the full page count.",
+      "Not every topic comes with notes. Open the library, type what you are after and Reef draws what to learn first, step by step, linking each step to a free lecture. Drop a lecture card next to your own notes and you can study from both in the same place.",
   },
   {
-    video: "/work/quizai/sol-folders.mp4",
-    title: "Solution #4: Making Folders",
-    headlineLead: "And it all stays organized, ",
-    headlineHighlight: "folders keep every subject in its place.",
+    video: "/work/quizai/reef-buddy.mp4",
+    title: "Solution #4: A study buddy",
+    headlineLead: "A little companion keeps you going, ",
+    headlineHighlight: "and shows up when you need a break.",
     caption:
-      "As uploads pile up, things get messy fast. Folders let students group notes, quizzes, and summaries by class or topic, so everything for an exam lives in one spot, designed to make coming back the easy, obvious thing to do.",
+      "Studying is long and quiet, so a small golden retriever lives on the canvas. Tap it and it cheers you on, fetch a ball when you step away, and make a long session feel a little less lonely.",
   },
 ];
 
@@ -91,7 +91,7 @@ const QuizAICaseStudy = () => {
           />
           <img
             src="/work/quizai/hero-before-1024.jpg"
-            alt="Quizzy landing page mockup on a laptop screen"
+            alt="Reef landing page mockup on a laptop screen"
             loading="eager"
             decoding="async"
           />
@@ -123,10 +123,10 @@ const QuizAICaseStudy = () => {
         ]}
       />
 
-      <CsSection id="quizai-context" label="Overview" title="What is Quizzy?">
+      <CsSection id="quizai-context" label="Overview" title="What is Reef?">
         <CsText>
           Most students want to study smarter, they just don&apos;t want to
-          spend an hour turning messy notes into flashcards first. Quizzy closes
+          spend an hour turning messy notes into flashcards first. Reef closes
           that gap: upload your notes and it hands back clean summaries and self
           scoring quizzes in one step, so the actual studying finally happens.
         </CsText>
@@ -141,7 +141,7 @@ const QuizAICaseStudy = () => {
         <CsPanel title="Landing page, dashboard, and AI study assistant">
           <CsImg
             src="/work/quizai/hero-new.webp"
-            alt="Quizzy landing page, dashboard, and AI study assistant screens"
+            alt="Reef landing page, dashboard, and AI study assistant screens"
           />
         </CsPanel>
       </CsSection>
@@ -149,10 +149,10 @@ const QuizAICaseStudy = () => {
       <CsSection
         id="solution-section"
         label="The final product"
-        title="What Quizzy does"
+        title="What Reef does"
       >
         <CsText>
-          Here is what Quizzy does. Every screen was built around one question:
+          Here is what Reef does. Every screen was built around one question:
           what makes a student want to open the app instead of putting studying
           off? You drop in a PDF and it comes back as summaries, quizzes, and
           neatly filed notes in a few taps.
@@ -203,7 +203,7 @@ const QuizAICaseStudy = () => {
           it.
         </CsText>
         <CsText>
-          That&apos;s the gap Quizzy is built to close. It takes a
+          That&apos;s the gap Reef is built to close. It takes a
           student&apos;s raw notes and, in a single step, turns them into
           organized study materials and auto generated, self scoring quizzes,
           so real studying becomes the easy default instead of one more chore to
@@ -233,7 +233,7 @@ const QuizAICaseStudy = () => {
         <CsPanel title="Design process" wide>
           <CsEmbed
             src="/work/quizai/design-process/index.html"
-            title="Design Process, Quizzy"
+            title="Design Process, Reef"
             height="700px"
           />
         </CsPanel>
@@ -264,12 +264,12 @@ const QuizAICaseStudy = () => {
           quizzed. That is the testing effect. You hold onto something far
           better after you try to recall it than after you read it again. With
           everyone trying to remember more in less time, that felt like the
-          center of Quizzy, and it came straight out of asking what the one
-          thing Quizzy could not live without.
+          center of Reef, and it came straight out of asking what the one
+          thing Reef could not live without.
         </CsText>
         <CsText>
           So the direction became a gentle reminder system. Before an exam you
-          choose the days you want Quizzy to check in, and at each moment it
+          choose the days you want Reef to check in, and at each moment it
           does more than remind you. It hands you a quick quiz on the very
           flashcards you were trying to remember. You set your own intervals, so
           recall practice slips into your day instead of piling up the night
@@ -291,7 +291,7 @@ const QuizAICaseStudy = () => {
         <CsPanel title="User flow">
           <CsImg
             src="/work/quizai/user-journey-mapping-frame-1.svg"
-            alt="Quizzy User Flow"
+            alt="Reef User Flow"
           />
         </CsPanel>
 
@@ -305,7 +305,7 @@ const QuizAICaseStudy = () => {
         <CsPanel title="Lo-fi wireframes" wide>
           <iframe
             src="/work/quizai/lofi-wireframes/index.html"
-            title="Lo-Fi Wireframes, Quizzy"
+            title="Lo-Fi Wireframes, Reef"
             className="cs-embed quizai-lofi-frame"
             scrolling="no"
           />
@@ -315,9 +315,9 @@ const QuizAICaseStudy = () => {
       <CsSection id="quizai-impact" label="Impact" title="Moving forward">
         <CsText>
           Rather than stop at a tool for uploading notes, I&apos;m moving
-          forward and building Quizzy into a full application around the
+          forward and building Reef into a full application around the
           testing effect. The point is to help people remember faster: you set
-          your own intervals, Quizzy asks you questions on its own and surfaces
+          your own intervals, Reef asks you questions on its own and surfaces
           your flashcards, and you review right after you answer, while the
           recall is still fresh. The number I want to watch is students keeping
           up with their studying instead of cramming.
@@ -327,7 +327,7 @@ const QuizAICaseStudy = () => {
       <CsSection
         id="quizai-reflection"
         label="Reflections"
-        title="This was my first design role as Quizzy's only designer, handling both product design and development."
+        title="This was my first design role as Reef's only designer, handling both product design and development."
       >
         <CsText>
           Being the only designer, and the one writing the code, meant there
@@ -337,7 +337,7 @@ const QuizAICaseStudy = () => {
         </CsText>
         <CsH3>Universal learning, not just equal learning</CsH3>
         <CsText>
-          The biggest lesson wasn&apos;t technical. Building Quizzy made me
+          The biggest lesson wasn&apos;t technical. Building Reef made me
           think hard about who education tech actually leaves out. Good design
           here isn&apos;t giving everyone the same thing, it&apos;s meeting
           people where they learn, especially the ones who never clicked with

@@ -77,14 +77,14 @@ function WLanding() {
   return (
     <div style={{ ...sketch({ overflow: "hidden" }) }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: 14, borderBottom: `2px solid ${S.ink}` }}>
-        <Label size={15}>◑ QuizAI</Label>
+        <Label size={15}>◑ Reef</Label>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}><Bar w={54} h={8} /><Bar w={70} h={8} /><Btn label="Sign In" small /><Btn label="Get Started" solid small /></div>
       </div>
       <div style={{ padding: "44px 30px", textAlign: "center", borderBottom: `2px dashed ${S.line}` }}>
         <Label size={12} muted mb={12}>( pill badge )</Label>
         <div style={{ fontFamily: S.font, fontSize: 30, lineHeight: 1.2, maxWidth: 520, margin: "0 auto" }}>Every document becomes a study session</div>
         <div style={{ maxWidth: 420, margin: "12px auto 0" }}><Lines n={2} widths={["100%", "80%"]} mt={0} /></div>
-        <div style={{ display: "flex", gap: 10, justifyContent: "center", marginTop: 18 }}><Btn label="Sign In to QuizAI" solid /><Btn label="Create Account" /></div>
+        <div style={{ display: "flex", gap: 10, justifyContent: "center", marginTop: 18 }}><Btn label="Sign In to Reef" solid /><Btn label="Create Account" /></div>
         <Note>animated neural-network canvas behind hero</Note>
       </div>
       <div style={{ padding: 22 }}>
@@ -102,7 +102,7 @@ function WLanding() {
       <div style={{ margin: "0 22px 22px", ...sketch({ background: S.fill, padding: 22, display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14, textAlign: "center" }) }}>
         {["1. Upload", "2. Quiz instantly", "3. Reinforce"].map((t) => <div key={t}><Label size={13}>{t}</Label><Lines n={2} widths={["100%", "80%"]} /></div>)}
       </div>
-      <div style={{ padding: 22, textAlign: "center", borderTop: `2px dashed ${S.line}` }}><Label size={16} mb={10}>Ready when your brain is</Label><Btn label="Sign In to QuizAI" solid /></div>
+      <div style={{ padding: 22, textAlign: "center", borderTop: `2px dashed ${S.line}` }}><Label size={16} mb={10}>Ready when your brain is</Label><Btn label="Sign In to Reef" solid /></div>
     </div>
   );
 }
@@ -111,8 +111,8 @@ function WLogin() {
   return (
     <div style={{ ...sketch({ minHeight: 420, display: "flex", alignItems: "center", justifyContent: "center", background: "#fbfbfb" }) }}>
       <div style={{ ...sketch({ width: 300, padding: 24, textAlign: "center", borderRadius: 22 }) }}>
-        <Label size={15}>◑ QuizAI</Label>
-        <Label size={17} mb={4}>Welcome to QuizAI</Label>
+        <Label size={15}>◑ Reef</Label>
+        <Label size={17} mb={4}>Welcome to Reef</Label>
         <Label size={12} muted mb={16}>Sign in to your account</Label>
         <div style={{ ...sketch({ padding: 11, marginBottom: 10 }) }}><Bar w="35%" h={8} /></div>
         <div style={{ ...sketch({ padding: 11, marginBottom: 14 }) }}><Bar w="45%" h={8} /></div>
@@ -249,7 +249,7 @@ function WTasks() {
 function WQuizzes() {
   return (
     <AppShell active="Quizzes">
-      <div><Label size={20}>Generate a quiz</Label><Label size={12} muted>Tell QuizAI what you want and it writes the questions.</Label></div>
+      <div><Label size={20}>Generate a quiz</Label><Label size={12} muted>Tell Reef what you want and it writes the questions.</Label></div>
       <div style={{ display: "grid", gridTemplateColumns: "1.25fr 0.75fr", gap: 16, alignItems: "start" }}>
         <Box pad={18}>
           <Label size={11} muted mb={8}>SOURCE MATERIAL</Label>
@@ -411,7 +411,7 @@ function QuizAiWireframes() {
           willChange: "transform",
         }}
       >
-        <div style={{ fontSize: 20, lineHeight: 1.2 }}>QuizAI — low-fidelity wireframes</div>
+        <div style={{ fontSize: 20, lineHeight: 1.2 }}>Reef — low-fidelity wireframes</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 6, margin: "12px 0 12px" }}>
           {PAGES.map(([name], i) => (
             <button

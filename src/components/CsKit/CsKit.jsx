@@ -330,7 +330,7 @@ const SEE_NEXT_PROJECTS = [
     to: "/quizai",
     video: "/work/reef/reef-thumb.mp4",
     title: "Reef: AI Powered Notetaking Application",
-    description: "Turning uploaded notes into quizzes and summaries.",
+    description: "A canvas that turns lectures and notes into study material.",
   },
   {
     key: "hiku",
