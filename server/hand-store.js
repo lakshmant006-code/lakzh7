@@ -17,7 +17,9 @@ const SB_KEY = () => process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 const useSupabase = () => !!(SB_URL() && SB_KEY());
 const useMemory = () => !useSupabase() && !process.env.BLOB_READ_WRITE_TOKEN && process.env.NODE_ENV !== "production";
 export const isConfigured = () => useSupabase() || !!process.env.BLOB_READ_WRITE_TOKEN || process.env.NODE_ENV !== "production";
-const sb = (path, init = {}) => fetch(`${SB_URL()}${path}`, { ...init, headers: { apikey: SB_KEY(), Authorization: `Bearer ${SB_KEY()}`, ...(init.headers || {}) } });
+// New-style keys (sb_secret_...) go in the apikey header only; old-style keys are JWTs and also go in Authorization
+const sbAuth = () => (SB_KEY().startsWith("eyJ") ? { apikey: SB_KEY(), Authorization: `Bearer ${SB_KEY()}` } : { apikey: SB_KEY() });
+const sb = (path, init = {}) => fetch(`${SB_URL()}${path}`, { ...init, headers: { ...sbAuth(), ...(init.headers || {}) } });
 
 export function validateDrawing(dataUri) {
   const m = typeof dataUri === "string" && dataUri.match(/^data:image\/png;base64,([A-Za-z0-9+/=]+)$/);
