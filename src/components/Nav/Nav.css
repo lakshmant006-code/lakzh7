@@ -50,6 +50,7 @@
 .nav-grass-icon {
   filter: none;
   transform-origin: 50% 90%;
+  overflow: visible;
 }
 
 .nav-grass-icon:hover {
@@ -59,8 +60,8 @@
 }
 
 @keyframes nav-grass-sway {
-  0%, 100% { transform: rotate(-7deg); }
-  50% { transform: rotate(7deg); }
+  0%, 100% { transform: rotate(-9deg); }
+  50% { transform: rotate(9deg); }
 }
 
 @media (min-width: 768px) {

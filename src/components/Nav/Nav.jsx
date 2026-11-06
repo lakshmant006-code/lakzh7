@@ -12,7 +12,7 @@ import {
 import "./Nav.css";
 import darkLogo from "../../assets/img/dark-logo.png";
 import lightLogo from "../../assets/img/light-logo.png";
-import grassIcon from "../../assets/img/grass-icon.svg";
+import grassIcon from "../../assets/img/sunflower-icon.svg";
 
 const Nav = () => {
   const location = useLocation();
@@ -95,7 +95,7 @@ const Nav = () => {
       return (
         <img
           src={grassIcon}
-          alt="Grass"
+          alt="Scenes"
           className="nav-spiral-icon nav-grass-icon"
         />
       );

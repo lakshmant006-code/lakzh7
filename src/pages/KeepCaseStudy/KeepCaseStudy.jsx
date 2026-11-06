@@ -64,6 +64,106 @@ const KeepCaseStudy = () => {
         <p className="cs-try-note">Shipped and live. Best on a phone, and your memories stay on your device.</p>
       </div>
 
+      <CsSection id="keep-traction" label="Traction" title="The first week live">
+        <CsText>
+          In its first week online, people found Keep and stayed to look around: 20 active users, 18 of
+          them new, between 30 October and 5 November.
+        </CsText>
+        <CsStats
+          items={[
+            { value: "20", label: "Active users in the first week" },
+            { value: "18", label: "New users" },
+            { value: "86", label: "Page views" },
+            { value: "443", label: "Interactions recorded" },
+          ]}
+        />
+        <CsText>Measured with Google Analytics, 30 Oct to 5 Nov 2026.</CsText>
+      </CsSection>
+
+      <CsSection id="solution-section" label="Solutions" title="How it works">
+        <CsH3>Solution #1: Ask your memories</CsH3>
+        <CsCallout>
+          Ask in plain words and get the{" "}
+          <span className="cs-accent">original memory</span> back.
+        </CsCallout>
+        <CsPanel title="Searching the calendar">
+          <CsVideo
+            src="/work/keep/sol-ask.mp4"
+            label="Asking Keep where the user had coffee and opening the matching memories"
+          />
+        </CsPanel>
+        <CsText>
+          The bar at the bottom of every screen takes a question and answers
+          with the places, days, and notes it found, each one tappable. Related
+          questions appear as chips, and a row of past dates shows where it
+          sits in your life.
+        </CsText>
+
+        <CsH3>Solution #2: Re-live a place</CsH3>
+        <CsCallout>
+          Stand where a photo was taken and{" "}
+          <span className="cs-accent">see who was there</span>.
+        </CsCallout>
+        <CsPanel title="Re-live">
+          <CsVideo
+            src="/work/keep/sol-relive.mp4"
+            label="Re-live on a phone: a 3D avatar standing on a real street and changing pose"
+          />
+        </CsPanel>
+        <CsText>
+          Tag a photo with who is in it, their pose, and the spot. Later, point
+          the camera at the same place and a 3D avatar of that person appears in
+          the same pose, with a glass card of every journal kept about that
+          moment. Drag to turn them, change their pose, or restyle their skin
+          tone, hair, and clothes.
+        </CsText>
+        <CsPanel title="Matched on a real street">
+          <CsImg
+            src={`${SHOTS}/relive.webp`}
+            alt="Re-live on a real street: a matched memory with a 3D avatar standing on the pavement"
+            style={{ maxWidth: 300, margin: "0 auto" }}
+          />
+        </CsPanel>
+
+        <CsH3>Solution #3: One calendar, with insights</CsH3>
+        <CsCallout>
+          Everything lands on <span className="cs-accent">the day it happened</span>.
+        </CsCallout>
+        <CsPanel title="Calendar, a day, and Insights">
+          <CsVideo
+            src="/work/keep/sol-calendar.mp4"
+            label="Scrolling the calendar, opening a day with a voice note, and browsing the Insights page"
+          />
+        </CsPanel>
+        <CsText>
+          Each day with a memory shows a circle with its first photo. Opening a
+          day lists everything kept, from photos to voice notes with a waveform.
+          The Insights page counts what you keep and when, with streaks, a
+          busiest day, time of day, people, places, and the words you use most.
+          Any chart also switches to a plain table.
+        </CsText>
+      </CsSection>
+
+      <CsSection id="keep-product" label="Final product" title="Features at a glance">
+        <CsChips
+          items={[
+            "Photos, video, voice, notes, quotes",
+            "People matched on device",
+            "Places map and Street view",
+            "3D avatars and style editor",
+            "Insights and streaks",
+            "Instagram import",
+            "Back up and restore",
+            "Works offline",
+          ]}
+        />
+        <CsText>
+          Install it from the browser and it behaves like a native app, with
+          pull to refresh, an update banner when a new version is ready, and a
+          swipe down gesture to close a photo.
+        </CsText>
+      </CsSection>
+
       <CsSection id="keep-overview" label="Overview" title="What is Keep?">
         <CsText>
           Keep is a concept I designed for <strong>Meta AI</strong>, a way for
@@ -184,106 +284,6 @@ const KeepCaseStudy = () => {
           &quot;Tagged automatically&quot; and one tap removes a wrong match,
           for good.
         </CsText>
-      </CsSection>
-
-      <CsSection id="solution-section" label="Solutions" title="How it works">
-        <CsH3>Solution #1: Ask your memories</CsH3>
-        <CsCallout>
-          Ask in plain words and get the{" "}
-          <span className="cs-accent">original memory</span> back.
-        </CsCallout>
-        <CsPanel title="Searching the calendar">
-          <CsVideo
-            src="/work/keep/sol-ask.mp4"
-            label="Asking Keep where the user had coffee and opening the matching memories"
-          />
-        </CsPanel>
-        <CsText>
-          The bar at the bottom of every screen takes a question and answers
-          with the places, days, and notes it found, each one tappable. Related
-          questions appear as chips, and a row of past dates shows where it
-          sits in your life.
-        </CsText>
-
-        <CsH3>Solution #2: Re-live a place</CsH3>
-        <CsCallout>
-          Stand where a photo was taken and{" "}
-          <span className="cs-accent">see who was there</span>.
-        </CsCallout>
-        <CsPanel title="Re-live">
-          <CsVideo
-            src="/work/keep/sol-relive.mp4"
-            label="Re-live on a phone: a 3D avatar standing on a real street and changing pose"
-          />
-        </CsPanel>
-        <CsText>
-          Tag a photo with who is in it, their pose, and the spot. Later, point
-          the camera at the same place and a 3D avatar of that person appears in
-          the same pose, with a glass card of every journal kept about that
-          moment. Drag to turn them, change their pose, or restyle their skin
-          tone, hair, and clothes.
-        </CsText>
-        <CsPanel title="Matched on a real street">
-          <CsImg
-            src={`${SHOTS}/relive.webp`}
-            alt="Re-live on a real street: a matched memory with a 3D avatar standing on the pavement"
-            style={{ maxWidth: 300, margin: "0 auto" }}
-          />
-        </CsPanel>
-
-        <CsH3>Solution #3: One calendar, with insights</CsH3>
-        <CsCallout>
-          Everything lands on <span className="cs-accent">the day it happened</span>.
-        </CsCallout>
-        <CsPanel title="Calendar, a day, and Insights">
-          <CsVideo
-            src="/work/keep/sol-calendar.mp4"
-            label="Scrolling the calendar, opening a day with a voice note, and browsing the Insights page"
-          />
-        </CsPanel>
-        <CsText>
-          Each day with a memory shows a circle with its first photo. Opening a
-          day lists everything kept, from photos to voice notes with a waveform.
-          The Insights page counts what you keep and when, with streaks, a
-          busiest day, time of day, people, places, and the words you use most.
-          Any chart also switches to a plain table.
-        </CsText>
-      </CsSection>
-
-      <CsSection id="keep-product" label="Final product" title="Features at a glance">
-        <CsChips
-          items={[
-            "Photos, video, voice, notes, quotes",
-            "People matched on device",
-            "Places map and Street view",
-            "3D avatars and style editor",
-            "Insights and streaks",
-            "Instagram import",
-            "Back up and restore",
-            "Works offline",
-          ]}
-        />
-        <CsText>
-          Install it from the browser and it behaves like a native app, with
-          pull to refresh, an update banner when a new version is ready, and a
-          swipe down gesture to close a photo.
-        </CsText>
-      </CsSection>
-
-      <CsSection id="keep-traction" label="Traction" title="The first week live">
-        <CsText>
-          In its first week online, people found Keep and stayed to look around: 20 active users, 18 of
-          them new, between 30 October and 5 November.
-        </CsText>
-        <CsStats
-          items={[
-            { value: "20", label: "Active users in the first week" },
-            { value: "18", label: "New users" },
-            { value: "86", label: "Page views" },
-            { value: "443", label: "Interactions recorded" },
-          ]}
-        />
-        <CsText>Measured with Google Analytics, 30 Oct to 5 Nov 2026.</CsText>
       </CsSection>
 
       <CsSection id="keep-limits" label="Honest limits" title="What it does not do yet">

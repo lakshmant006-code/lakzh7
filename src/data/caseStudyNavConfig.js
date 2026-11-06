@@ -2,11 +2,11 @@ export const caseStudyNavConfig = {
   quizai: {
     accentColor: "#695b4d",
     sections: [
-      { id: "quizai-context", label: "Context" },
+      { id: "quizai-traction", label: "Traction" },
       { id: "solution-section", label: "Final Product" },
+      { id: "quizai-context", label: "Context" },
       { id: "quizai-research", label: "Key Design Moments" },
       { id: "quizai-design-approach", label: "Design Approach" },
-      { id: "quizai-traction", label: "Traction" },
       { id: "quizai-impact", label: "Impact" },
       { id: "quizai-reflection", label: "Reflections" },
       { id: "quizai-see-next", label: "See Next" },

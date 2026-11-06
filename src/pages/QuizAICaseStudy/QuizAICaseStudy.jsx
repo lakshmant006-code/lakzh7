@@ -124,27 +124,19 @@ const QuizAICaseStudy = () => {
         ]}
       />
 
-      <CsSection id="quizai-context" label="Overview" title="What is Reef?">
+      <CsSection id="quizai-traction" label="Traction" title="What the numbers say">
         <CsText>
-          Most students want to study smarter, they just don&apos;t want to
-          spend an hour turning messy notes into flashcards first. Reef closes
-          that gap: upload your notes and it hands back clean summaries and self
-          scoring quizzes in one step, so the actual studying finally happens.
+          Over its last 90 days live, Reef was used by 162 people, nearly all of them new, and together they
+          recorded close to four thousand interactions with it.
         </CsText>
-        <CsH3>My role</CsH3>
-        <CsText>
-          I wore a few hats on this one. I ran the user research with students,
-          turned what I heard into the interaction patterns, and wrote the full
-          stack code. I owned it from the first sketches through what shipped,
-          and worked with stakeholders along the way on both the product
-          direction and how it was built.
-        </CsText>
-        <CsPanel title="Landing page, dashboard, and AI study assistant">
-          <CsImg
-            src="/work/quizai/hero-new.webp"
-            alt="Reef landing page, dashboard, and AI study assistant screens"
-          />
-        </CsPanel>
+        <CsStats
+          items={[
+            { value: "162", label: "Active users in 90 days" },
+            { value: "158", label: "New users" },
+            { value: "3.7k", label: "Interactions recorded" },
+          ]}
+        />
+        <CsText>Measured with Google Analytics, over the last 90 days.</CsText>
       </CsSection>
 
       <CsSection
@@ -171,6 +163,29 @@ const QuizAICaseStudy = () => {
             <CsText>{solution.caption}</CsText>
           </React.Fragment>
         ))}
+      </CsSection>
+
+      <CsSection id="quizai-context" label="Overview" title="What is Reef?">
+        <CsText>
+          Most students want to study smarter, they just don&apos;t want to
+          spend an hour turning messy notes into flashcards first. Reef closes
+          that gap: upload your notes and it hands back clean summaries and self
+          scoring quizzes in one step, so the actual studying finally happens.
+        </CsText>
+        <CsH3>My role</CsH3>
+        <CsText>
+          I wore a few hats on this one. I ran the user research with students,
+          turned what I heard into the interaction patterns, and wrote the full
+          stack code. I owned it from the first sketches through what shipped,
+          and worked with stakeholders along the way on both the product
+          direction and how it was built.
+        </CsText>
+        <CsPanel title="Landing page, dashboard, and AI study assistant">
+          <CsImg
+            src="/work/quizai/hero-new.webp"
+            alt="Reef landing page, dashboard, and AI study assistant screens"
+          />
+        </CsPanel>
       </CsSection>
 
       <CsSection
@@ -311,21 +326,6 @@ const QuizAICaseStudy = () => {
             scrolling="no"
           />
         </CsPanel>
-      </CsSection>
-
-      <CsSection id="quizai-traction" label="Traction" title="What the numbers say">
-        <CsText>
-          Over its last 90 days live, Reef was used by 162 people, nearly all of them new, and together they
-          recorded close to four thousand interactions with it.
-        </CsText>
-        <CsStats
-          items={[
-            { value: "162", label: "Active users in 90 days" },
-            { value: "158", label: "New users" },
-            { value: "3.7k", label: "Interactions recorded" },
-          ]}
-        />
-        <CsText>Measured with Google Analytics, over the last 90 days.</CsText>
       </CsSection>
 
       <CsSection id="quizai-impact" label="Impact" title="Moving forward">
