@@ -72,7 +72,7 @@ export default function ElasticHand() {
     const move = (e) => {
       st.ptr.x = e.clientX; st.ptr.y = e.clientY;
       // over an embedded page (the memories, a live piece) this page stops receiving the pointer: the hand steps aside and the page's own cursor shows
-      canvas.style.opacity = e.target && e.target.tagName === "IFRAME" ? "0" : "1";
+      canvas.style.opacity = e.target && (e.target.tagName === "IFRAME" || e.target.closest?.(".hand-studio")) ? "0" : "1";
     };
     addEventListener("pointermove", move, { passive: true });
     addEventListener("pointerdown", move, true);

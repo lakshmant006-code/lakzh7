@@ -1,0 +1,34 @@
+.hand-studio { position: fixed; inset: 0; z-index: 2147482000; display: flex; align-items: center; justify-content: center; padding: 18px;
+  background: rgba(255, 255, 255, .72); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); animation: hsIn .35s ease both; overscroll-behavior: contain; }
+@keyframes hsIn { from { opacity: 0; } to { opacity: 1; } }
+.hs-card { position: relative; display: flex; gap: clamp(18px, 3vw, 44px); align-items: stretch; max-height: 100%; max-width: 100%; padding: clamp(16px, 2.4vw, 30px);
+  border-radius: 26px; background: #fff; box-shadow: 0 30px 80px rgba(15, 15, 15, .14), 0 0 0 1px rgba(15, 15, 15, .06); animation: hsUp .5s cubic-bezier(.2, .9, .25, 1) both; }
+@keyframes hsUp { from { transform: translateY(18px) scale(.97); opacity: 0; } to { transform: none; opacity: 1; } }
+.hs-x { all: unset; position: absolute; right: 14px; top: 8px; font-size: 26px; line-height: 1; color: rgba(15, 15, 15, .4); cursor: pointer; z-index: 2; }
+.hs-x:hover { color: #0f0f0f; }
+.hs-stage { display: flex; align-items: center; justify-content: center; min-width: 0; }
+.hs-art { position: relative; height: min(78vh, 760px); max-width: 100%; border-radius: 16px; background: #fbf7f1; overflow: hidden; }
+.hs-art img, .hs-draw { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hs-art img { object-fit: contain; pointer-events: none; user-select: none; }
+.hs-draw { touch-action: none; cursor: crosshair; }
+.hs-side { width: clamp(170px, 20vw, 230px); display: flex; flex-direction: column; justify-content: center; gap: 22px; font-family: "DM Sans", system-ui, sans-serif; color: #0f0f0f; }
+.hs-title { margin: 0; font: 500 clamp(1.15rem, 1.6vw, 1.45rem)/1.25 "Crimson Pro", Georgia, serif; letter-spacing: -.01em; }
+.hs-colors { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.hs-swatch { all: unset; box-sizing: border-box; width: 100%; aspect-ratio: 1; border-radius: 50%; background: var(--c); cursor: pointer; box-shadow: inset 0 0 0 1px rgba(15, 15, 15, .14); transition: transform .15s; }
+.hs-swatch:hover { transform: scale(1.1); }
+.hs-swatch.on { transform: scale(1.12); box-shadow: inset 0 0 0 1px rgba(15, 15, 15, .14), 0 0 0 3px #fff, 0 0 0 5px #0f0f0f; }
+.hs-eraser { background: repeating-conic-gradient(#e9e6e1 0 25%, #fff 0 50%) 0 0 / 10px 10px; }
+.hs-actions { display: flex; gap: 8px; }
+.hs-actions button { all: unset; cursor: pointer; padding: 8px 14px; border-radius: 999px; font-size: 13px; background: rgba(15, 15, 15, .06); }
+.hs-actions button:hover:not(:disabled) { background: rgba(15, 15, 15, .12); }
+.hs-actions button:disabled { opacity: .35; cursor: default; }
+@media (max-width: 720px) {
+  .hs-card { flex-direction: column; overflow-y: auto; }
+  .hs-art { height: min(54vh, 520px); }
+  .hs-side { width: auto; gap: 14px; }
+  .hs-colors { grid-template-columns: repeat(6, 1fr); }
+}
+/* inside this tab the elastic hand steps aside and the normal pointer is used to draw */
+html.hand-mode .hand-studio, html.hand-mode .hand-studio * { cursor: auto !important; }
+html.hand-mode .hand-studio .hs-draw { cursor: crosshair !important; }
+html.hand-mode .hand-studio button, html.hand-mode .hand-studio .hs-swatch { cursor: pointer !important; }
