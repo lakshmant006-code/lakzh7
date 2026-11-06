@@ -14,6 +14,7 @@ import {
   CsStats,
   CsImg,
 } from "../../components/CsKit/CsKit";
+import ChimeMicro from "./ChimeMicro";
 import "./ChimeCaseStudy.css";
 
 const BASE = "/projects/chime";
@@ -111,7 +112,7 @@ const ChimeCaseStudy = () => {
             title="Chime interactive phone prototype"
             height={800}
             label="Tap to open the Chime prototype"
-            poster={`${BASE}/media/map-hush.webp`}
+            poster={`${BASE}/media/chime-app.webp`}
           />
         </CsPanel>
         <CsText>
@@ -130,17 +131,17 @@ const ChimeCaseStudy = () => {
         <CsText>The official outcome shows first. Then Chime asks the only question that matters: did it actually get quieter. Yes closes the case. No sends it back.</CsText>
       </CsSection>
 
+      <CsSection id="chime-micro" label="Micro-interactions" title="Small moments, tappable">
+        <CsText>
+          These four moments are lifted straight from the prototype. Tap the orb, replay the banner, step through the stages, and give the last word.
+        </CsText>
+        <ChimeMicro />
+      </CsSection>
+
       <CsSection id="chime-map" label="The city has ears" title="A 3D map of the noise">
         <CsText>
           The map is built from the city's own 3D building data: 15 neighbourhoods plus the whole skyline, cut into small meshes that load on demand so the page stays fast.
         </CsText>
-        <TapToLoad
-          src={`${BASE}/hello.html`}
-          title="Hello? the original single-page concept with the 3D noise map"
-          height={720}
-          label="Tap to explore the full concept and 3D map"
-          poster={`${BASE}/media/map-default.webp`}
-        />
         <CsGrid3
           items={[
             { media: <CsImg src={`${BASE}/media/map-default.webp`} alt="Day view of the 3D noise map" />, caption: "Day" },

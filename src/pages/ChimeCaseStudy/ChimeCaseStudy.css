@@ -39,3 +39,59 @@
 @media (max-width: 640px) { .chime-beat { aspect-ratio: 16 / 8; } .chime-embed { height: 640px !important; } }
 @media (prefers-reduced-motion: reduce) { .chime-beat-loud, .chime-ripple { animation: none; stroke-dashoffset: 0; } }
 .chime-launch{width:100%;display:block;background:#000}
+
+/* Micro-interactions (from the Chime prototype) */
+.cm-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 22px 0; }
+.cm-card { background: #fff; border: 1px solid rgba(15, 15, 15, 0.09); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.cm-eyebrow { margin: 0; font: 600 0.74rem/1 var(--cs-sans, system-ui); letter-spacing: 0.08em; text-transform: uppercase; color: #0866ff; }
+.cm-stage { position: relative; height: 170px; border-radius: 6px; overflow: hidden; background: linear-gradient(160deg, #eaf2ff, #fff); display: grid; place-items: center; }
+.cm-line { margin: 0; min-height: 2.6em; font: 500 0.95rem/1.35 var(--cs-sans, system-ui); color: #141414; }
+.cm-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.cm-btn { all: unset; box-sizing: border-box; cursor: pointer; padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(15, 15, 15, 0.16); font: 500 0.88rem/1 var(--cs-sans, system-ui); color: #141414; transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1), background 0.2s ease; }
+.cm-btn:hover { background: rgba(8, 102, 255, 0.07); }
+.cm-btn:active { transform: scale(0.95); }
+.cm-btn:focus-visible, .cm-orb:focus-visible, .cm-steps button:focus-visible { outline: 2px solid #0866ff; outline-offset: 2px; }
+.cm-btn--primary { background: #0866ff; border-color: #0866ff; color: #fff; }
+.cm-btn--primary:hover { background: #0a5ae0; }
+
+.cm-stage--orb { background: linear-gradient(145deg, #9cc2ff 0%, #0866ff 50%, #050a24 100%); }
+.cm-orb { all: unset; cursor: pointer; position: relative; z-index: 2; width: 84px; height: 84px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, 0.22); border: 1px solid rgba(255, 255, 255, 0.5); backdrop-filter: blur(8px); transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1); }
+.cm-orb:hover { transform: scale(1.06); }
+.cm-orb:active { transform: scale(0.93); }
+.cm-orb svg { width: 44px; height: 44px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.cm-ear { stroke-dasharray: 160; stroke-dashoffset: 0; }
+.cm-orb:active .cm-ear { animation: cm-ear 0.7s ease-out; }
+@keyframes cm-ear { from { stroke-dashoffset: 160; } to { stroke-dashoffset: 0; } }
+.cm-ring { position: absolute; z-index: 1; width: 230px; height: 230px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.8); opacity: 0; animation: cm-listen 1.8s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes cm-listen { 0% { opacity: 0.75; transform: scale(0.25); } 100% { opacity: 0; transform: scale(1); } }
+
+.cm-stage--banner { background: linear-gradient(160deg, #cfe0ff, #7fb0ff); align-items: start; padding-top: 22px; }
+.cm-banner { width: calc(100% - 28px); display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 18px; background: rgba(255, 255, 255, 0.92); box-shadow: 0 10px 28px rgba(8, 102, 255, 0.35); animation: cm-banner-in 0.75s cubic-bezier(0.32, 0.72, 0, 1) both; }
+.cm-banner-icon { width: 34px; height: 34px; border-radius: 9px; background: #fff url(/projects/chime/chime-icon-512.png) center / cover; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18); flex: none; }
+.cm-banner-copy { display: flex; flex-direction: column; min-width: 0; font: 500 0.82rem/1.25 var(--cs-sans, system-ui); }
+.cm-banner-copy em { font-style: normal; color: #6c6c70; font-size: 0.74rem; }
+.cm-banner-now { margin-left: auto; font: 500 0.7rem/1 var(--cs-sans, system-ui); color: #6c6c70; }
+@keyframes cm-banner-in { 0% { opacity: 0; filter: blur(10px); transform: translateY(-130px) scale(0.84); } 60% { opacity: 1; filter: blur(0); transform: translateY(5px) scale(1.01); } 100% { opacity: 1; filter: none; transform: none; } }
+
+.cm-stage--wave, .cm-stage--close { background: #0a1030; }
+.cm-stage--wave svg, .cm-stage--close svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cm-stage--wave path { fill: none; stroke: #8fb0ff; stroke-width: 2.5; vector-effect: non-scaling-stroke; stroke-linecap: round; transition: d 0.4s ease; }
+.cm-stage-name { position: absolute; left: 12px; bottom: 10px; font: 500 0.8rem/1 var(--cs-sans, system-ui); color: #fff; opacity: 0.9; }
+.cm-steps { display: flex; gap: 6px; }
+.cm-steps button { all: unset; cursor: pointer; flex: 1; text-align: center; padding: 9px 0; border-radius: 8px; border: 1px solid rgba(15, 15, 15, 0.14); font: 600 0.85rem/1 var(--cs-sans, system-ui); transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease; }
+.cm-steps button.on { background: #dbe8ff; border-color: #b6d0ff; }
+.cm-steps button[aria-pressed="true"] { background: #0866ff; border-color: #0866ff; color: #fff; }
+.cm-steps button:active { transform: scale(0.94); }
+
+.cm-stage--close path { fill: none; stroke-width: 2.5; vector-effect: non-scaling-stroke; stroke-linecap: round; transition: opacity 0.6s ease; }
+.cm-loud { stroke: #fff; }
+.cm-flat { stroke: #8fb0ff; opacity: 0; }
+.cm-stage--close.quiet .cm-loud { opacity: 0; }
+.cm-stage--close.quiet .cm-flat { opacity: 1; }
+.cm-stage--close.loud .cm-loud { stroke: #ff8a6b; }
+.cm-check { position: absolute; right: 14px; top: 50%; width: 42px; height: 42px; margin-top: -21px; border-radius: 50%; display: grid; place-items: center; background: #0866ff; opacity: 0; transform: scale(0.6); transition: opacity 0.3s ease 0.35s, transform 0.5s cubic-bezier(0.32, 0.72, 0, 1) 0.35s; }
+.cm-check svg { width: 22px; height: 22px; fill: none; stroke: #fff; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.cm-stage--close.quiet .cm-check { opacity: 1; transform: none; }
+
+@media (max-width: 700px) { .cm-grid { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .cm-banner, .cm-ring, .cm-orb:active .cm-ear { animation: none; } .cm-ring { display: none; } }
