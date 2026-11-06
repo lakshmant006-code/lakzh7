@@ -80,6 +80,17 @@ export default function ElasticHand() {
     };
     for (let i = 0; i < N; i++) { st.x[i] = st.px[i] = st.bx; st.y[i] = st.py[i] = st.by; }
 
+    /* a click flicks out two to four short lines either side of the fingertip, which fade straight away */
+    const burst = [];
+    const click = () => {
+      const I = N - 1, ang = Math.atan2(st.y[I] - st.y[I - 2], st.x[I] - st.x[I - 2]);   // the way the finger points
+      const n = 2 + Math.floor(Math.random() * 3), spread = 1.25;
+      for (let i = 0; i < n; i++) {
+        const f = n === 1 ? 0 : i / (n - 1) - 0.5;                                            // -0.5 .. 0.5 across the fan
+        const a = ang + f * 2 * spread + (Math.random() - 0.5) * 0.18 + (Math.abs(f) < 0.05 ? 0.5 : 0);   // never straight ahead of the finger
+        burst.push({ a, r0: 16 + Math.random() * 4, len: 11 + Math.random() * 7, t: 0, w: 2.4 + Math.random() * 1.2 });
+      }
+    };
     const move = (e) => {
       st.ptr.x = e.clientX; st.ptr.y = e.clientY;
       // over an embedded page (the memories, a live piece) this page stops receiving the pointer: the hand steps aside and the page's own cursor shows
@@ -87,7 +98,8 @@ export default function ElasticHand() {
       canvas.style.opacity = hideRef.current ? "0" : String(dimRef.current);
     };
     addEventListener("pointermove", move, { passive: true });
-    addEventListener("pointerdown", move, true);
+    const down = (e) => { move(e); click(); };
+    addEventListener("pointerdown", down, true);
     addEventListener("resize", fit);
 
     // the vector from the wrist to the fingertip in the drawing
@@ -110,7 +122,7 @@ export default function ElasticHand() {
       const wx = tx - dx * tl, wy = ty - dy * tl;
 
       const reach = Math.hypot(wx - st.bx, wy - st.by);
-      st.rest += (Math.max(240, Math.min(3000, reach * 0.9)) - st.rest) * (1 - Math.exp(-dt / 0.16));
+      st.rest += (Math.max(240, Math.min(3000, reach * 0.95)) - st.rest) * (1 - Math.exp(-dt / 0.16));
       const seg = st.rest / (N - 1);
 
       const damp = 0.985, g = 260;
@@ -118,7 +130,7 @@ export default function ElasticHand() {
         const vx = (st.x[i] - st.px[i]) * damp, vy = (st.y[i] - st.py[i]) * damp;
         st.px[i] = st.x[i]; st.py[i] = st.y[i]; st.x[i] += vx; st.y[i] += vy + g * dt * dt;
       }
-      { const k = 1500, c = 2 * Math.sqrt(k), vx = (st.x[I] - st.px[I]) / dt, vy = (st.y[I] - st.py[I]) / dt;
+      { const k = 7000, c = 2 * Math.sqrt(k), vx = (st.x[I] - st.px[I]) / dt, vy = (st.y[I] - st.py[I]) / dt;
         st.x[I] += ((wx - st.x[I]) * k - vx * c) * dt * dt; st.y[I] += ((wy - st.y[I]) * k - vy * c) * dt * dt; }
       st.x[0] = st.px[0] = st.bx; st.y[0] = st.py[0] = st.by;
       for (let it = 0; it < 9; it++) {
@@ -128,6 +140,7 @@ export default function ElasticHand() {
           st.x[i] += ax * diff * wa; st.y[i] += ay * diff * wa; st.x[i + 1] -= ax * diff; st.y[i + 1] -= ay * diff;
         }
       }
+      st.x[I] += (wx - st.x[I]) * 0.4; st.y[I] += (wy - st.y[I]) * 0.4;      // the hand lands on the pointer; only the arm behind it stretches and lags
       for (let i = 1; i < N - 1; i++) { st.x[i] += ((st.x[i - 1] + st.x[i + 1]) * 0.5 - st.x[i]) * 0.3; st.y[i] += ((st.y[i - 1] + st.y[i + 1]) * 0.5 - st.y[i]) * 0.3; }
       if (st.retract) st.retractT += dt;
     };
@@ -144,6 +157,20 @@ export default function ElasticHand() {
       }
       out.push([st.x[N - 1], st.y[N - 1]]);
       return out;
+    };
+
+    const drawBurst = (dt) => {
+      if (!burst.length) return;
+      const I = N - 1, ox = st.ptr.x, oy = st.ptr.y;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.lineCap = "round"; ctx.strokeStyle = "#2a1508";
+      for (const b of burst) {
+        b.t += dt; const k = Math.min(1, b.t / 0.36), e = 1 - Math.pow(1 - k, 3);
+        const a0 = b.r0 + e * 12, a1 = a0 + b.len * (1 - k * 0.6);
+        ctx.globalAlpha = 1 - k * k; ctx.lineWidth = b.w;
+        ctx.beginPath(); ctx.moveTo(ox + Math.cos(b.a) * a0, oy + Math.sin(b.a) * a0); ctx.lineTo(ox + Math.cos(b.a) * a1, oy + Math.sin(b.a) * a1); ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      for (let i = burst.length - 1; i >= 0; i--) if (burst[i].t >= 0.36) burst.splice(i, 1);
     };
 
     const draw = () => {
@@ -192,13 +219,13 @@ export default function ElasticHand() {
       raf = requestAnimationFrame(frame);
       st.acc += Math.min(0.05, (now - st.last) / 1000); st.last = now;
       let n = 0; while (st.acc >= STEP && n < 12) { step(STEP); st.acc -= STEP; n++; }
-      draw();
+      draw(); drawBurst(Math.min(0.05, (now - (st.lastDraw || now)) / 1000)); st.lastDraw = now;
       if (st.retract && st.retractT > 1.1) setOn(false);
     };
     raf = requestAnimationFrame(frame);
     return () => {
       cancelAnimationFrame(raf);
-      removeEventListener("pointermove", move); removeEventListener("pointerdown", move, true); removeEventListener("resize", fit);
+      removeEventListener("pointermove", move); removeEventListener("pointerdown", down, true); removeEventListener("resize", fit);
     };
   }, [on]);
 
