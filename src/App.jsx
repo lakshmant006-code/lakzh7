@@ -19,6 +19,7 @@ const Craft = lazy(() => import("./pages/Craft/Craft"));
 const Scenes = lazy(() => import("./pages/Scenes/Scenes"));
 import RouteSeo from "./components/Seo/RouteSeo";
 import ScenesOverlay from "./components/ScenesOverlay/ScenesOverlay";
+import ElasticHand from "./components/ElasticHand/ElasticHand";
 const PixelCatPage = lazy(() => import("./pages/PixelCat/PixelCat"));
 const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
 import "./App.css";
@@ -71,6 +72,7 @@ function App() {
         <BackToTop />
         <SoundToggle />
         <ScenesOverlay />
+        <ElasticHand />
         <div className="app min-h-screen relative">
           <div
             className="fixed top-0 left-0 w-full"

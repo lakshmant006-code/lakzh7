@@ -44,7 +44,16 @@ const Nav = () => {
     window.dispatchEvent(new CustomEvent("scenes:toggle"));
   };
 
+  const [handOn, setHandOn] = useState(false);
+  useEffect(() => {
+    const onState = (e) => setHandOn(!!e.detail);
+    window.addEventListener("hand:state", onState);
+    return () => window.removeEventListener("hand:state", onState);
+  }, []);
+  const toggleHand = () => window.dispatchEvent(new CustomEvent(handOn ? "hand:retract" : "hand:toggle"));
+
   const navItems = [
+    { label: "hand", hand: true },
     { label: "work", href: "/", isLink: true },
     { label: "about", href: "/about", isLink: true },
     { label: "craft", href: "/craft", isLink: true },
@@ -74,10 +83,14 @@ const Nav = () => {
     if (item.label === "about") return path === "/about";
     if (item.label === "craft") return path === "/craft";
     if (item.label === "grass") return scenesOpen || path === "/scenes";
+    if (item.label === "hand") return handOn;
     return false;
   };
 
   const renderPillLabel = (item) => {
+    if (item.label === "hand") {
+      return <img src="/hand/hand.png" alt="Hand cursor" className="hand-icon" draggable="false" />;
+    }
     if (item.label === "grass") {
       return (
         <img
@@ -493,6 +506,15 @@ const Nav = () => {
                 </>
               );
               const pillClassName = `pill${isNavItemActive(item) ? " pill-active" : ""}`;
+              if (item.hand) {
+                return (
+                  <li key={item.label}>
+                    <button type="button" className={pillClassName} aria-pressed={handOn} aria-label="Turn the elastic hand on or off" onClick={toggleHand} onMouseEnter={() => handleEnter(i)} onMouseLeave={() => handleLeave(i)}>
+                      {pillInner}
+                    </button>
+                  </li>
+                );
+              }
               return (
                 <li key={item.label}>
                   {item.external ? (
@@ -547,6 +569,15 @@ const Nav = () => {
                 item.label
               );
             const mobileClassName = `mobile-menu-link${isNavItemActive(item) ? " mobile-menu-link-active" : ""}`;
+            if (item.hand) {
+              return (
+                <li key="mobile-hand">
+                  <button type="button" className={mobileClassName} style={{ all: "unset", cursor: "pointer" }} onClick={() => { toggleHand(); setIsMobileMenuOpen(false); toggleMobileMenu(); }}>
+                    <span className="mobile-particles-link"><img src="/hand/hand.png" alt="" className="hand-icon" aria-hidden="true" style={{ height: 26 }} />hand</span>
+                  </button>
+                </li>
+              );
+            }
             return (
               <li key={`mobile-${item.label}`}>
                 {item.external ? (
