@@ -50,7 +50,7 @@ const Nav = () => {
     window.addEventListener("hand:state", onState);
     return () => window.removeEventListener("hand:state", onState);
   }, []);
-  const toggleHand = () => window.dispatchEvent(new CustomEvent(handOn ? "hand:retract" : "hand:toggle"));
+  const toggleHand = () => window.dispatchEvent(new CustomEvent("hand:click"));   // the hand is always on now; this button is waiting for its action
 
   const navItems = [
     { label: "hand", hand: true },
@@ -509,7 +509,7 @@ const Nav = () => {
               if (item.hand) {
                 return (
                   <li key={item.label}>
-                    <button type="button" className={pillClassName} aria-pressed={handOn} aria-label="Turn the elastic hand on or off" onClick={toggleHand} onMouseEnter={() => handleEnter(i)} onMouseLeave={() => handleLeave(i)}>
+                    <button type="button" className={pillClassName} aria-label="Hand" onClick={toggleHand} onMouseEnter={() => handleEnter(i)} onMouseLeave={() => handleLeave(i)}>
                       {pillInner}
                     </button>
                   </li>

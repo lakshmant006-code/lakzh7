@@ -25,28 +25,16 @@ function anchorsFor(W, H) {
 }
 
 export default function ElasticHand() {
-  const [on, setOn] = useState(false);
+  // the hand is the cursor everywhere there is a mouse or trackpad; touch screens have no cursor, so they keep their finger
+  const [on, setOn] = useState(() => typeof matchMedia === "function" && matchMedia("(hover: hover) and (pointer: fine)").matches);
   const canvasRef = useRef(null);
   const S = useRef(null);
 
-  useEffect(() => {
-    const toggle = () => setOn((v) => !v);
-    const key = (e) => { if (e.key === "Escape") setOn(false); };
-    window.addEventListener("hand:toggle", toggle);
-    window.addEventListener("keydown", key);
-    return () => { window.removeEventListener("hand:toggle", toggle); window.removeEventListener("keydown", key); };
-  }, []);
   useEffect(() => {
     window.dispatchEvent(new CustomEvent("hand:state", { detail: on }));
     document.documentElement.classList.toggle("hand-mode", on);
     return () => document.documentElement.classList.remove("hand-mode");
   }, [on]);
-  useEffect(() => {
-    const off = () => { if (S.current) { S.current.retract = true; S.current.retractT = 0; } };
-    window.addEventListener("hand:retract", off);
-    return () => window.removeEventListener("hand:retract", off);
-  }, []);
-
   useEffect(() => {
     if (!on) return undefined;
     const canvas = canvasRef.current, ctx = canvas.getContext("2d");
@@ -81,7 +69,11 @@ export default function ElasticHand() {
     };
     for (let i = 0; i < N; i++) { st.x[i] = st.px[i] = st.bx; st.y[i] = st.py[i] = st.by; }
 
-    const move = (e) => { st.ptr.x = e.clientX; st.ptr.y = e.clientY; };
+    const move = (e) => {
+      st.ptr.x = e.clientX; st.ptr.y = e.clientY;
+      // over an embedded page (the memories, a live piece) this page stops receiving the pointer: the hand steps aside and the page's own cursor shows
+      canvas.style.opacity = e.target && e.target.tagName === "IFRAME" ? "0" : "1";
+    };
     addEventListener("pointermove", move, { passive: true });
     addEventListener("pointerdown", move, true);
     addEventListener("resize", fit);
