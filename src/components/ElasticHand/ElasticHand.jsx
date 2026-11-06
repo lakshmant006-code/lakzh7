@@ -5,7 +5,7 @@ import "./ElasticHand.css";
    at the end, and the forearm part of the same picture is stretched along an elastic rope back to the edge of the screen.
    - the rope is a chain of points that swings, lags and wobbles behind the finger
    - its resting length follows the reach, so pulled far it gets long and thin like rubber, and near its shoulder it relaxes
-   - the shoulder sits on whichever edge anchor is nearest, and slides there on a spring
+   - the shoulder is fixed to one side of the screen (see SIDE)
    - the fingertip is the real pointer, so clicks land exactly where it points */
 
 const SPRITE = { w: 58, h: 80, headRows: 32, tip: [6, 1], scale: 1.9 };   // rows 0-32 are the hand, the rest is forearm
@@ -16,11 +16,12 @@ const UP = 6;                                                             // the
 
 const smooth = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
+/* The shoulder is stuck to one side: the bottom-right corner, where the arm comes from in the drawing.
+   Change SIDE to move it ("bottom-right", "bottom-left", "right", "left"). */
+const SIDE = "bottom-right";
 function anchorsFor(W, H) {
-  return [
-    [-60, H + 60], [W * 0.25, H + 80], [W * 0.5, H + 80], [W * 0.75, H + 80], [W + 60, H + 60],
-    [-70, H * 0.62], [W + 70, H * 0.62], [-70, H * 0.3], [W + 70, H * 0.3],
-  ];
+  const at = { "bottom-right": [W + 50, H + 50], "bottom-left": [-50, H + 50], right: [W + 60, H * 0.7], left: [-60, H * 0.7] }[SIDE];
+  return [at];
 }
 
 export default function ElasticHand() {
@@ -77,7 +78,7 @@ export default function ElasticHand() {
     const A = anchorsFor(W, H);
     const st = S.current = {
       x: new Float32Array(N), y: new Float32Array(N), px: new Float32Array(N), py: new Float32Array(N),
-      anchor: 4, bx: A[4][0], by: A[4][1], ptr: { x: W * 0.55, y: H * 0.6 }, rest: 360, retract: false, retractT: 0, acc: 0, last: performance.now(), dirx: -0.4, diry: -1,
+      anchor: 0, bx: A[0][0], by: A[0][1], ptr: { x: W * 0.55, y: H * 0.6 }, rest: 360, retract: false, retractT: 0, acc: 0, last: performance.now(), dirx: -0.4, diry: -1,
     };
     for (let i = 0; i < N; i++) { st.x[i] = st.px[i] = st.bx; st.y[i] = st.py[i] = st.by; }
 
