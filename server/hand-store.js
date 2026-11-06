@@ -12,7 +12,7 @@ const MAX_W = 1400, MAX_H = 2000;
 export const ID_RE = /^[0-9a-f-]{36}$/;
 
 const memory = new Map();                                  // id -> { buffer, uploadedAt }
-const SB_URL = () => (process.env.SUPABASE_URL || "").replace(/\/$/, "");
+const SB_URL = () => (process.env.SUPABASE_URL || "").trim().replace(/\/+$/, "").replace(/\/rest\/v1$/, "");   // the base address; a pasted .../rest/v1/ still works
 const SB_KEY = () => process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 const useSupabase = () => !!(SB_URL() && SB_KEY());
 const useMemory = () => !useSupabase() && !process.env.BLOB_READ_WRITE_TOKEN && process.env.NODE_ENV !== "production";
