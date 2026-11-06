@@ -8,12 +8,12 @@
 .hs-stage { display: flex; align-items: center; justify-content: center; min-width: 0; height: 100%; }
 /* the picture fades out on every side into the background, so it has no frame */
 .hs-art { --h: min(86vh, 900px); position: relative; width: calc(var(--h) * 1129 / 1235); max-width: 100%; aspect-ratio: 1129 / 1235; height: auto; flex: none; overflow: hidden;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent), linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent), linear-gradient(to bottom, transparent, #000 4%, #000 82%, transparent);
   -webkit-mask-composite: source-in;
-          mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent), linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent), linear-gradient(to bottom, transparent, #000 4%, #000 82%, transparent);
           mask-composite: intersect; }
 .hs-art img, .hs-draw { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.hs-art img { object-fit: contain; pointer-events: none; user-select: none; opacity: .5; }   /* the hand sits back, so what is drawn on it stands out */
+.hs-art img { object-fit: contain; pointer-events: none; user-select: none; opacity: .7; }   /* the hand sits back a little, so what is drawn on it stands out */
 .hs-draw { touch-action: none; cursor: crosshair; }
 .hs-side { width: clamp(180px, 20vw, 250px); display: flex; flex-direction: column; justify-content: center; gap: 22px; font-family: "DM Sans", system-ui, sans-serif; color: #0f0f0f; z-index: 2; }
 .hs-title { margin: 0; font: 500 clamp(1.15rem, 1.6vw, 1.5rem)/1.25 "Crimson Pro", Georgia, serif; letter-spacing: -.01em; }
