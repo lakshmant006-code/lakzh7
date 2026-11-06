@@ -29,8 +29,7 @@ export const playProjects = [
     tags: ["Web Design", "Motion Graphics"],
     category: "digital",
     media: {
-      video: "/projects/concentrix/concentrix.mp4",
-      poster: "/projects/concentrix/poster.webp",
+      image: "/projects/concentrix/poster.webp",   // the video file was never added to the repo, so the poster stands in
       staticThumbnail: true,
     },
     actions: [
