@@ -30,7 +30,7 @@
       ]
     },
     {
-      "source": "/(keep|hiku|quizai|time-management|pro-move|work|about|scenes|pixel-cat)",
+      "source": "/(keep|hiku|quizai|time-management|pro-move|work|about|scenes|pixel-cat|hands)",
       "headers": [
         {
           "key": "Cache-Control",
