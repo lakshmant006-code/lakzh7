@@ -5,22 +5,22 @@ import "./ElasticHand.css";
    at the end, and the forearm part of the same picture is stretched along an elastic rope back to the edge of the screen.
    - the rope is a chain of points that swings, lags and wobbles behind the finger
    - its resting length follows the reach, so pulled far it gets long and thin like rubber, and near its shoulder it relaxes
-   - the shoulder is fixed to one side of the screen (see SIDE)
+   - the shoulder is fixed to the middle of the bottom edge (see SIDE)
    - the fingertip is the real pointer, so clicks land exactly where it points */
 
 const SPRITE = { w: 58, h: 80, headRows: 32, tip: [6, 1], scale: 1.9 };   // rows 0-32 are the hand, the rest is forearm
 const WIN = 24;                                                           // width of the forearm window cut from the drawing
 const N = 26;
 const STEP = 1 / 120;
-const UP = 6;                                                             // the forearm strip is smoothed up this much lengthways
+const K = 8;                                                              // the drawing is used at 8x (public/hand/hand-hd.png), the same picture cleaned up at high resolution
 
 const smooth = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
-/* The shoulder is stuck to one side: the bottom-right corner, where the arm comes from in the drawing.
-   Change SIDE to move it ("bottom-right", "bottom-left", "right", "left"). */
-const SIDE = "bottom-right";
+/* The shoulder is stuck to one place: the middle of the bottom edge.
+   Change SIDE to move it ("bottom", "bottom-right", "bottom-left", "right", "left"). */
+const SIDE = "bottom";
 function anchorsFor(W, H) {
-  const at = { "bottom-right": [W + 50, H + 50], "bottom-left": [-50, H + 50], right: [W + 60, H * 0.7], left: [-60, H * 0.7] }[SIDE];
+  const at = { bottom: [W * 0.5, H + 70], "bottom-right": [W + 50, H + 50], "bottom-left": [-50, H + 50], right: [W + 60, H * 0.7], left: [-60, H * 0.7] }[SIDE];
   return [at];
 }
 
@@ -55,23 +55,22 @@ export default function ElasticHand() {
     fit();
 
     /* from the drawing: the forearm straightened (each row centred), then smoothed up lengthways, ready to be stretched */
-    const img = new Image(); img.src = "/hand/hand.png";
+    const img = new Image(); img.src = "/hand/hand-hd.png";
     const strip = { canvas: null, wrist: SPRITE.tip[0] };
     img.onload = () => {
-      const rows = SPRITE.h - SPRITE.headRows, src = document.createElement("canvas"); src.width = SPRITE.w; src.height = SPRITE.h;
-      const sg = src.getContext("2d"); sg.drawImage(img, 0, 0);
-      const px = sg.getImageData(0, 0, SPRITE.w, SPRITE.h).data;
-      const flat = document.createElement("canvas"); flat.width = WIN; flat.height = rows; const fg = flat.getContext("2d");
-      fg.imageSmoothingEnabled = true;
+      const HW = SPRITE.w * K, HH = SPRITE.h * K, rows = (SPRITE.h - SPRITE.headRows) * K, y0 = SPRITE.headRows * K;
+      const src = document.createElement("canvas"); src.width = HW; src.height = HH;
+      const sg = src.getContext("2d"); sg.drawImage(img, 0, 0, HW, HH);
+      const px = sg.getImageData(0, 0, HW, HH).data;
+      const tall = document.createElement("canvas"); tall.width = WIN * K; tall.height = rows; const tg = tall.getContext("2d");
+      tg.imageSmoothingEnabled = true; tg.imageSmoothingQuality = "high";
       for (let r = 0; r < rows; r++) {
-        const y = SPRITE.headRows + r; let xl = -1, xr = -1;
-        for (let x = 0; x < SPRITE.w; x++) if (px[(y * SPRITE.w + x) * 4 + 3] > 60) { if (xl < 0) xl = x; xr = x; }
+        const y = y0 + r; let xl = -1, xr = -1;
+        for (let x = 0; x < HW; x++) if (px[(y * HW + x) * 4 + 3] > 100) { if (xl < 0) xl = x; xr = x; }
         if (xl < 0) continue;
-        const c = (xl + xr + 1) / 2; if (r === 0) strip.wrist = c;
-        fg.drawImage(img, 0, y, SPRITE.w, 1, WIN / 2 - c, r, SPRITE.w, 1);
+        const c = (xl + xr + 1) / 2; if (r === 0) strip.wrist = c / K;
+        tg.drawImage(img, 0, y, HW, 1, (WIN * K) / 2 - c, r, HW, 1);   // each row of the forearm re-centred, so it runs straight
       }
-      const tall = document.createElement("canvas"); tall.width = WIN; tall.height = rows * UP; const tg = tall.getContext("2d");
-      tg.imageSmoothingEnabled = true; tg.imageSmoothingQuality = "high"; tg.drawImage(flat, 0, 0, WIN, rows * UP);
       strip.canvas = tall;
     };
 
@@ -180,7 +179,7 @@ export default function ElasticHand() {
       ctx.save(); ctx.translate(st.x[I], st.y[I]); ctx.rotate(rot); ctx.scale(sc, sc);
       ctx.shadowColor = "rgba(40,20,5,.2)"; ctx.shadowBlur = 8; ctx.shadowOffsetY = 4;
       ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
-      ctx.drawImage(img, 0, 0, SPRITE.w, SPRITE.headRows + 2, -strip.wrist, -SPRITE.headRows, SPRITE.w, SPRITE.headRows + 2);
+      ctx.drawImage(img, 0, 0, SPRITE.w * K, (SPRITE.headRows + 2) * K, -strip.wrist, -SPRITE.headRows, SPRITE.w, SPRITE.headRows + 2);
       ctx.restore();
     };
 

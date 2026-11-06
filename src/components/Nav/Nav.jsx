@@ -89,7 +89,7 @@ const Nav = () => {
 
   const renderPillLabel = (item) => {
     if (item.label === "hand") {
-      return <img src="/hand/hand.png" alt="Hand cursor" className="hand-icon" draggable="false" />;
+      return <img src="/hand/hand-hd.png" alt="Hand cursor" className="hand-icon" draggable="false" />;
     }
     if (item.label === "grass") {
       return (
@@ -573,7 +573,7 @@ const Nav = () => {
               return (
                 <li key="mobile-hand">
                   <button type="button" className={mobileClassName} style={{ all: "unset", cursor: "pointer" }} onClick={() => { toggleHand(); setIsMobileMenuOpen(false); toggleMobileMenu(); }}>
-                    <span className="mobile-particles-link"><img src="/hand/hand.png" alt="" className="hand-icon" aria-hidden="true" style={{ height: 26 }} />hand</span>
+                    <span className="mobile-particles-link"><img src="/hand/hand-hd.png" alt="" className="hand-icon" aria-hidden="true" style={{ height: 26 }} />hand</span>
                   </button>
                 </li>
               );
