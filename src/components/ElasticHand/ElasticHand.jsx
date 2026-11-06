@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import "./ElasticHand.css";
 
 /* The hand cursor. It is made only from the drawing (public/hand/hand.png): the hand and finger stay exactly as drawn
@@ -24,12 +25,22 @@ function anchorsFor(W, H) {
   return [at];
 }
 
+// on the case studies the hand steps back (to this strength) so it never sits over the reading; set to 0 to hide it there
+const CASE_STUDIES = ["/keep", "/quizai", "/hiku", "/time-management", "/pro-move"];
+const CASE_OPACITY = 0.25;
+
 export default function ElasticHand() {
+  const { pathname } = useLocation();
+  const dimRef = useRef(1), hideRef = useRef(false);
   // the hand is the cursor everywhere there is a mouse or trackpad; touch screens have no cursor, so they keep their finger
   const [on, setOn] = useState(() => typeof matchMedia === "function" && matchMedia("(hover: hover) and (pointer: fine)").matches);
   const canvasRef = useRef(null);
   const S = useRef(null);
 
+  useEffect(() => {
+    dimRef.current = CASE_STUDIES.includes(pathname) ? CASE_OPACITY : 1;
+    if (canvasRef.current) canvasRef.current.style.opacity = hideRef.current ? "0" : String(dimRef.current);
+  }, [pathname]);
   useEffect(() => {
     window.dispatchEvent(new CustomEvent("hand:state", { detail: on }));
     document.documentElement.classList.toggle("hand-mode", on);
@@ -40,7 +51,7 @@ export default function ElasticHand() {
     const canvas = canvasRef.current, ctx = canvas.getContext("2d");
     let W = innerWidth, H = innerHeight, dpr = Math.min(devicePixelRatio || 1, 2);
     const fit = () => { W = innerWidth; H = innerHeight; dpr = Math.min(devicePixelRatio || 1, 2); canvas.width = W * dpr; canvas.height = H * dpr; canvas.style.width = W + "px"; canvas.style.height = H + "px"; };
-    fit();
+    fit(); canvas.style.opacity = String(dimRef.current);
 
     /* from the drawing: the forearm straightened (each row centred), then smoothed up lengthways, ready to be stretched */
     const img = new Image(); img.src = "/hand/hand-hd.png";
@@ -72,7 +83,8 @@ export default function ElasticHand() {
     const move = (e) => {
       st.ptr.x = e.clientX; st.ptr.y = e.clientY;
       // over an embedded page (the memories, a live piece) this page stops receiving the pointer: the hand steps aside and the page's own cursor shows
-      canvas.style.opacity = e.target && (e.target.tagName === "IFRAME" || e.target.closest?.(".hand-studio")) ? "0" : "1";
+      hideRef.current = !!(e.target && (e.target.tagName === "IFRAME" || e.target.closest?.(".hand-studio")));
+      canvas.style.opacity = hideRef.current ? "0" : String(dimRef.current);
     };
     addEventListener("pointermove", move, { passive: true });
     addEventListener("pointerdown", move, true);

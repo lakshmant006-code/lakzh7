@@ -41,7 +41,7 @@ export default function Hands() {
             <ul className="hands-grid">
               {items.map((d) => (
                 <li key={d.id} className="hands-card">
-                  <img className="hands-base" src="/hand/open-hand.webp" alt="" loading="lazy" decoding="async" draggable="false" />
+                  <img className="hands-base" src="/hand/open-hand-top.webp" alt="" loading="lazy" decoding="async" draggable="false" />
                   <img className="hands-ink" src={`/api/hand-drawing?id=${d.id}`} alt="A hand with accessories and nail paints drawn on it" loading="lazy" decoding="async" draggable="false" />
                 </li>
               ))}

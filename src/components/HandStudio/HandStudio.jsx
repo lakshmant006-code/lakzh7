@@ -10,8 +10,8 @@ const COLORS = [
   { name: "Yellow", c: "#ffd23f" }, { name: "Gold", c: "#d4a017" }, { name: "Silver", c: "#c0c4cc" },
   { name: "White", c: "#ffffff" }, { name: "Black", c: "#1a1a1a" },
 ];
-const W = 1200, H = 1774;                       // the drawing's own size (the picture is 1200 x 1774)
-const BRUSH = 15;
+const W = 1129, H = 1235;                       // the drawing's own size: the picture is the upper half of the hand, kept at its full resolution (1129 x 1235)
+const BRUSH = 14;
 
 export default function HandStudio() {
   const [open, setOpen] = useState(false);
@@ -44,22 +44,43 @@ export default function HandStudio() {
   const pos = (e) => { const r = cv.current.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * W, (e.clientY - r.top) / r.height * H]; };
   const snapshot = () => { const c = cv.current, g = c.getContext("2d"); undo.current.push(g.getImageData(0, 0, W, H)); if (undo.current.length > 30) undo.current.shift(); setCanUndo(true); };
 
+  /* A stabilized brush. The brush does not sit on the pointer: it glides after it on a soft spring (so hand shake and
+     the steps between pointer events melt away), and the line is a curve through the midpoints of the smoothed points,
+     never straight pieces. When you lift, it finishes the last bit of the way to where you stopped. */
+  const TAU = 0.055;                                       // seconds: how lazily the brush follows (higher = smoother, slower to catch up)
+  const paint = (g, from, ctrl, to) => {
+    g.globalCompositeOperation = erase ? "destination-out" : "source-over";
+    g.strokeStyle = color; g.lineWidth = erase ? BRUSH * 1.8 : BRUSH; g.lineCap = g.lineJoin = "round";
+    g.beginPath(); g.moveTo(from[0], from[1]); g.quadraticCurveTo(ctrl[0], ctrl[1], to[0], to[1]); g.stroke();
+  };
+  const follow = (st, x, y, t) => {
+    const k = 1 - Math.exp(-Math.max(1, t - st.t) / 1000 / TAU); st.t = t;
+    const px = st.sx, py = st.sy;
+    // two stages: the first rope follows the pointer, the brush follows the first rope; wobble has to get through both
+    st.ax += (x - st.ax) * k; st.ay += (y - st.ay) * k;
+    st.sx += (st.ax - st.sx) * k; st.sy += (st.ay - st.sy) * k;
+    const mid = [(px + st.sx) / 2, (py + st.sy) / 2];
+    paint(cv.current.getContext("2d"), st.mid, [px, py], mid);
+    st.mid = mid;
+  };
   const down = (e) => {
     e.preventDefault(); cv.current.setPointerCapture(e.pointerId); snapshot();
     const g = cv.current.getContext("2d"), [x, y] = pos(e);
-    stroke.current = { x, y }; setInk(true); if (sent !== "idle") setSent("idle");
+    stroke.current = { sx: x, sy: y, ax: x, ay: y, mid: [x, y], t: e.timeStamp, tx: x, ty: y };
+    setInk(true); if (sent !== "idle") setSent("idle");
     g.globalCompositeOperation = erase ? "destination-out" : "source-over";
     g.fillStyle = color; g.beginPath(); g.arc(x, y, (erase ? BRUSH * 1.8 : BRUSH) / 2, 0, 6.2832); g.fill();   // a tap leaves a dot
   };
   const move = (e) => {
-    const s = stroke.current; if (!s) return;
-    const g = cv.current.getContext("2d"), [x, y] = pos(e);
-    g.globalCompositeOperation = erase ? "destination-out" : "source-over";
-    g.strokeStyle = color; g.lineWidth = erase ? BRUSH * 1.8 : BRUSH; g.lineCap = g.lineJoin = "round";
-    g.beginPath(); g.moveTo(s.x, s.y); g.quadraticCurveTo(s.x, s.y, (s.x + x) / 2, (s.y + y) / 2); g.stroke();      // smoothed through the midpoints
-    s.x = x; s.y = y;
+    const st = stroke.current; if (!st) return;
+    const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];                // every sample the screen reported, not just the last
+    for (const ev of (evs.length ? evs : [e])) { const [x, y] = pos(ev); st.tx = x; st.ty = y; follow(st, x, y, ev.timeStamp); }
   };
-  const up = () => { stroke.current = null; };
+  const up = (e) => {
+    const st = stroke.current; stroke.current = null; if (!st) return;
+    for (let i = 0; i < 26; i++) follow(st, st.tx, st.ty, st.t + 16);               // let the brush glide on to the end of the stroke
+    const g = cv.current.getContext("2d"); paint(g, st.mid, [st.sx, st.sy], [st.tx, st.ty]);
+  };
   const doUndo = useCallback(() => { const p = undo.current.pop(); if (!p) return; cv.current.getContext("2d").putImageData(p, 0, 0); setCanUndo(undo.current.length > 0); }, []);
   const clear = () => { snapshot(); cv.current.getContext("2d").clearRect(0, 0, W, H); setInk(false); };
 
@@ -79,12 +100,12 @@ export default function HandStudio() {
 
   if (!open) return null;
   return (
-    <div className="hand-studio" ref={shell} role="dialog" aria-label="Draw on the hand" onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
+    <div className="hand-studio" ref={shell} role="dialog" aria-label="Draw on the hand">
       <div className="hs-card">
         <button type="button" className="hs-x" aria-label="Close" onClick={() => setOpen(false)}>×</button>
         <div className="hs-stage">
-          <div className="hs-art" style={{ aspectRatio: `${W} / ${H}` }}>
-            <img src="/hand/open-hand.webp" alt="An open orange hand and arm, ready to be drawn on" draggable="false" />
+          <div className="hs-art">
+            <img src="/hand/open-hand-top.webp" alt="An open orange hand, ready to be drawn on" draggable="false" />
             <canvas ref={cv} width={W} height={H} className="hs-draw" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} />
           </div>
         </div>

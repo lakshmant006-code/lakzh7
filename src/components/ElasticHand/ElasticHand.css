@@ -1,6 +1,6 @@
 /* hand mode: the real cursor is hidden, the drawn hand is the cursor */
 html.hand-mode, html.hand-mode * { cursor: none !important; }
-.elastic-hand { position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; }
+.elastic-hand { position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; transition: opacity .35s ease; }
 
 /* the nav button */
 .pill .hand-icon { display: block; height: 26px; width: auto; transform: rotate(8deg); transition: transform .25s cubic-bezier(.34, 1.6, .5, 1); }
