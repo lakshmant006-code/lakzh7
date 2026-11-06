@@ -1,0 +1,40 @@
+/* Heartbeat hero: draws itself, calms on rest */
+.chime-beat {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 5;
+  background: linear-gradient(145deg, #9cc2ff 0%, #0866ff 48%, #050a24 100%);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.chime-beat svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.chime-beat path { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.chime-beat-loud { stroke: #fff; stroke-width: 3; stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: chime-draw 2.6s ease-out forwards, chime-throb 1.8s ease-in-out 2.6s infinite; transition: opacity 0.6s ease; }
+.chime-beat-calm { stroke: rgba(255, 255, 255, 0.9); stroke-width: 3; opacity: 0; transition: opacity 0.6s ease; }
+.chime-beat.is-calm .chime-beat-loud { opacity: 0; animation-play-state: paused; }
+.chime-beat.is-calm .chime-beat-calm { opacity: 1; }
+.chime-beat-hint { position: absolute; left: 16px; bottom: 12px; font: 500 0.78rem/1 var(--cs-sans, system-ui); color: rgba(255, 255, 255, 0.85); letter-spacing: 0.02em; }
+@keyframes chime-draw { to { stroke-dashoffset: 0; } }
+@keyframes chime-throb { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.08); } }
+.chime-beat-loud { transform-origin: 50% 50%; }
+
+/* Tap-to-load embeds */
+.chime-embed { position: relative; width: 100%; background: #e4e7ee; border-radius: 8px; overflow: hidden; margin: 18px 0; }
+.chime-embed-frame { width: 100%; height: 100%; border: 0; display: block; background: #fff; }
+.chime-embed-cta {
+  all: unset; box-sizing: border-box; position: absolute; inset: 0; display: grid; place-items: center; cursor: pointer; overflow: hidden;
+  background: #e4e7ee center / cover no-repeat; transition: filter 0.3s ease;
+}
+.chime-embed-cta::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5, 10, 36, 0.05), rgba(5, 10, 36, 0.55)); transition: opacity 0.3s ease; }
+.chime-embed-cta:hover::before { opacity: 0.7; }
+.chime-embed-label { position: absolute; left: 20px; bottom: 18px; color: #fff; font: 600 1.05rem/1.2 var(--cs-sans, system-ui); z-index: 1; }
+.chime-embed-play { position: relative; z-index: 1; width: 64px; height: 64px; border-radius: 50%; background: #0866ff; color: #fff; display: grid; place-items: center; font-size: 1.1rem; padding-left: 4px; box-shadow: 0 10px 28px rgba(8, 102, 255, 0.5); transition: transform 0.25s cubic-bezier(0.32, 0.72, 0, 1); }
+.chime-embed-cta:hover .chime-embed-play { transform: scale(1.1); }
+.chime-embed-cta:active .chime-embed-play { transform: scale(0.94); }
+.chime-embed-cta:focus-visible { outline: 3px solid #0866ff; outline-offset: -3px; }
+.chime-ripple { position: absolute; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%; border: 2px solid #fff; z-index: 2; animation: chime-ripple 0.8s ease-out forwards; pointer-events: none; }
+@keyframes chime-ripple { from { transform: scale(0.4); opacity: 0.9; } to { transform: scale(22); opacity: 0; } }
+
+@media (max-width: 640px) { .chime-beat { aspect-ratio: 16 / 8; } .chime-embed { height: 640px !important; } }
+@media (prefers-reduced-motion: reduce) { .chime-beat-loud, .chime-ripple { animation: none; stroke-dashoffset: 0; } }

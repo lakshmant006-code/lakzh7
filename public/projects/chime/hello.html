@@ -1,0 +1,832 @@
+<title>Hello?</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one long scroll. Hero heartbeat -> interactive tracker -> three signature experiences (drop, ears map, silence) -> brand -> motion -> tracks.
+   Loud colors live in tangerine and butter; navy and off-white carry everything else. */
+:root{
+  --bg:#FFF8EC; --fg:#141B3C; --mute:#5B6380; --card:#FFFFFF; --line:#EADFCB; --soft:#F6EBD6;
+  --navy:#141B3C; --tang:#FD4802; --butter:#FFD66B; --off:#FFF8EC; --calm:#3E7BFA;
+  --display:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1430;--fg:#FFF8EC;--mute:#A9B0CF;--card:#18204A;--line:#2A3463;--soft:#1C2552;--calm:#8FB0FF;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1430;--fg:#FFF8EC;--mute:#A9B0CF;--card:#18204A;--line:#2A3463;--soft:#1C2552;--calm:#8FB0FF;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--display);padding-block:0 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1100px;margin:0 auto}
+h1,h2,h3{font-weight:800;letter-spacing:-.03em;line-height:1;text-wrap:balance;margin:0}
+p{margin:0}
+button{font-family:inherit}
+:focus-visible{outline:3px solid var(--tang);outline-offset:2px}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+section{padding-top:88px}
+.sec-head{display:grid;gap:12px;margin-bottom:28px;max-width:660px}
+.sec-head h2{font-size:clamp(32px,5.4vw,56px);font-variation-settings:"wdth" 85}
+.sec-head p{color:var(--mute);font-size:18px}
+.num{font:500 13px var(--mono);color:var(--tang)}
+.btn{font:800 16px var(--display);border:0;border-radius:99px;padding:13px 20px;cursor:pointer;background:var(--tang);color:#141B3C;transition:transform .15s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--fg);border:2px solid var(--fg)}
+.chipbtn{font:600 14px var(--display);border:1.5px solid var(--line);background:var(--card);color:var(--fg);border-radius:99px;padding:8px 13px;cursor:pointer}
+.chipbtn[aria-pressed="true"]{background:var(--butter);color:#141B3C;border-color:var(--butter)}
+.themebtn{position:fixed;right:max(12px,env(safe-area-inset-right,0px));top:calc(12px + env(safe-area-inset-top,0px));z-index:20;font:500 12px var(--mono);border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:99px;padding:8px 12px;cursor:pointer}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:center;padding-top:56px}
+.word{display:flex;align-items:center;gap:14px}
+.word svg{width:72px;height:72px;flex:none;border-radius:16px;box-shadow:0 0 0 1.5px var(--line),0 8px 18px -10px rgba(20,27,60,.45)}
+.iconwrap svg{width:132px;height:132px;display:block;border-radius:28px;animation:listen 3.2s ease-in-out infinite;transform-origin:70% 60%}
+@keyframes listen{0%,70%,100%{transform:rotate(0)}76%{transform:rotate(-4deg) scale(1.03)}84%{transform:rotate(3deg)}90%{transform:rotate(-1deg)}}
+.word b{font-size:30px;font-weight:800;letter-spacing:.02em}
+.hero h1{font-size:clamp(56px,10vw,124px);letter-spacing:-.05em;font-variation-settings:"wdth" 80;margin-top:22px}
+.hero h1 .hb{color:var(--tang)}
+.hero .lede{font-size:20px;color:var(--mute);max-width:34ch;margin-top:18px}
+.hero .ctas{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.heroWave{background:var(--navy);border-radius:32px;aspect-ratio:1/1;max-width:100%;position:relative;overflow:hidden}
+.heroWave canvas{position:absolute;inset:0;width:100%;height:100%}
+.heroWave .tag{position:absolute;left:18px;bottom:16px;font:500 12px var(--mono);color:var(--butter)}
+.heroWave .tag2{position:absolute;right:18px;top:16px;font:500 12px var(--mono);color:#FFF8EC;opacity:.7}
+
+/* tracker */
+.tracker{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:stretch}
+.waveCard{background:var(--navy);border-radius:28px;padding:22px;display:grid;gap:14px;color:#FFF8EC;min-width:0}
+.waveCard canvas{width:100%;height:260px;display:block}
+.waveTop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.ref{font:500 13px var(--mono);color:var(--butter)}
+.pill{font:500 11px var(--mono);border:1px solid rgba(255,248,236,.3);border-radius:99px;padding:5px 10px;color:#FFF8EC}
+.steps{display:flex;gap:8px}
+.steps button{flex:1;height:44px;border-radius:12px;border:1.5px solid rgba(255,248,236,.25);background:transparent;color:#FFF8EC;font:800 16px var(--display);cursor:pointer}
+.steps button.done{background:rgba(255,214,107,.18);border-color:var(--butter);color:var(--butter)}
+.steps button.now{background:var(--tang);border-color:var(--tang);color:#141B3C}
+.stageText{display:grid;gap:12px;align-content:start;background:var(--card);border:1px solid var(--line);border-radius:28px;padding:24px;min-width:0}
+.stageText h3{font-size:34px;font-variation-settings:"wdth" 85}
+.stageText p{color:var(--mute)}
+.stageText .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:auto}
+.small{font:500 12px var(--mono);color:var(--mute)}
+
+/* experiences */
+.xgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.xcard{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:22px;display:grid;gap:14px;align-content:start;min-width:0}
+.xcard h3{font-size:30px;font-variation-settings:"wdth" 85}
+.xcard p{color:var(--mute)}
+.pond{position:relative;border-radius:20px;overflow:hidden;background:var(--navy);height:340px;cursor:crosshair}
+.pond canvas{position:absolute;inset:0;width:100%;height:100%}
+.pond .hint{position:absolute;left:14px;top:12px;font:500 12px var(--mono);color:#FFF8EC;opacity:.8;pointer-events:none}
+.toast{font:500 13px var(--mono);color:var(--fg);min-height:20px}
+.types{display:flex;flex-wrap:wrap;gap:8px}
+.silence canvas{width:100%;height:150px;display:block;border-radius:16px;background:var(--navy)}
+.outcome{background:var(--soft);border-radius:16px;padding:14px;display:grid;gap:6px}
+.outcome b{font-size:17px}
+.ask{display:flex;gap:10px;flex-wrap:wrap}
+
+/* map (the city has ears) */
+.pattern{display:grid;grid-template-columns:1.25fr .75fr;gap:32px;align-items:start}
+.cityMap{width:100%;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:14px;min-width:0}
+.legend{display:flex;gap:6px;align-items:center;font:500 11px var(--mono);color:var(--mute);margin-top:10px;flex-wrap:wrap}
+.legend i{width:22px;height:10px;border-radius:2px;display:inline-block}
+.stats{display:grid;gap:14px}
+.stat{border-top:1px solid var(--line);padding-top:12px}
+.stat .n{font-size:44px;font-weight:800;letter-spacing:-.04em;line-height:1}
+.stat p{color:var(--mute);font-size:14px;margin-top:4px}
+.deckwrap{position:relative;height:460px;border-radius:14px;overflow:hidden;background:linear-gradient(180deg,#4f9fe6 0%,#8ec7f2 38%,#d9eefb 62%,#d9eefb 100%)}
+#deckmap{position:absolute;inset:0}
+.mapctl{position:absolute;right:10px;top:10px;display:flex;gap:6px;z-index:2;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100% - 20px)}
+.mapctl button{font:500 11px var(--mono);border:0;background:#141B3C;color:#FFF8EC;border-radius:99px;padding:7px 11px;cursor:pointer}
+.mapstatus{position:absolute;left:10px;bottom:10px;z-index:2;font:500 11px var(--mono);background:#141B3C;color:#FFF8EC;border-radius:99px;padding:6px 11px}
+.areas{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.areas button{font:600 13px var(--display);border:1.5px solid var(--line);background:var(--card);color:var(--fg);border-radius:99px;padding:7px 12px;cursor:pointer}
+.areas button[aria-pressed="true"]{background:var(--tang);color:#141B3C;border-color:var(--tang)}
+.deckwrap.dio{background:radial-gradient(120% 90% at 50% 38%,#9ddcd0 0%,#5fbdb6 45%,#2f9aa0 100%)}
+.deckwrap.dio #nightbtn,.deckwrap.dio #city,.deckwrap.dio #skyview,.deckwrap.dio #tilt,.deckwrap.dio #street{display:none}
+.deckwrap.night .mapctl button{background:rgba(255,248,236,.12);box-shadow:inset 0 0 0 1px rgba(255,248,236,.25)}
+.deckwrap.night{background:linear-gradient(180deg,#05081a 0%,#141B3C 45%,#2a2f6a 62%,#1c2552 100%)}
+.deckfail{position:absolute;inset:0;display:grid;place-items:center;color:#9aa1ad;font:500 13px var(--mono);padding:20px;text-align:center}
+
+/* brand */
+.brand{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.tile{border-radius:24px;padding:22px;display:grid;gap:10px;align-content:space-between;min-height:220px;min-width:0}
+.tile.navy{background:var(--navy);color:#FFF8EC}
+.tile.tang{background:var(--tang);color:#141B3C}
+.tile.butter{background:var(--butter);color:#141B3C}
+.tile .big{font-size:76px;font-weight:800;letter-spacing:-.02em;line-height:.9;font-variation-settings:"wdth" 80}
+.tile .small{color:inherit;opacity:.75}
+.sw{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:20px}
+.sw div{border-radius:16px;padding:14px;min-height:110px;display:grid;align-content:end;gap:2px;font:500 12px var(--mono);border:1px solid var(--line)}
+.sw b{font:800 18px var(--display)}
+.posters{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;margin-top:28px}
+.poster{aspect-ratio:3/4;border-radius:8px;padding:7%;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;container-type:inline-size;box-shadow:0 20px 40px -24px rgba(0,0,0,.5)}
+.poster.p1{background:#141B3C;color:#FFF8EC}
+.poster.p2{background:#FD4802;color:#141B3C}
+.poster.p3{background:#FFD66B;color:#141B3C}
+.poster .pbig{font-weight:800;letter-spacing:-.05em;line-height:.86;font-size:21cqw;font-variation-settings:"wdth" 75}
+.poster .psm{font:500 3.6cqw/1.4 var(--mono);text-transform:uppercase;letter-spacing:.08em}
+.poster .pmid{font-weight:600;font-size:6cqw;line-height:1.1;letter-spacing:-.02em;max-width:18ch}
+.poster canvas{width:100%;height:24cqw;display:block}
+.cap{font:500 12px var(--mono);color:var(--mute);margin-top:10px}
+
+/* motion */
+.motion{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.mcard{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px;display:grid;gap:12px;min-width:0}
+.mcard canvas{width:100%;height:150px;display:block;border-radius:14px;background:var(--navy)}
+.mcard h3{font-size:20px;letter-spacing:-.02em}
+.mcard p{color:var(--mute);font-size:14px}
+
+/* tracks */
+.tracks{width:100%;border-collapse:collapse}
+.tracks th,.tracks td{text-align:left;padding:14px 10px;border-top:1px solid var(--line);vertical-align:top}
+.tracks th{font:500 12px var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--mute)}
+.tracks td:first-child{font-weight:800;font-size:20px;width:22%}
+.tablewrap{overflow-x:auto}
+.notes{margin-top:72px;border-top:1px solid var(--line);padding-top:20px;color:var(--mute);font-size:13px;max-width:72ch}
+
+@media (max-width:860px){
+  .hero,.tracker,.xgrid,.pattern,.brand,.motion{grid-template-columns:1fr}
+  .sw{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .heroWave{max-width:460px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<button class="themebtn" id="themebtn" type="button">Light / Dark</button>
+
+<div class="wrap">
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div>
+    <div class="word">
+      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"><rect width="256" height="256" rx="52.5" fill="#F8F5E9"/><path fill="#FD4802" fill-rule="evenodd" d="M203.5 193.6Q201.3 193.6 198.9 194.0Q196.6 194.4 195.1 195.0Q193.6 195.5 191.2 196.9Q188.9 198.3 187.0 200.0Q185.1 201.8 183.4 204.2Q181.8 206.5 180.4 210.4Q179.0 214.2 178.9 217.0Q178.7 219.7 179.0 221.6Q179.3 223.6 180.0 225.6Q180.7 227.7 181.9 229.9Q183.1 232.1 185.1 234.1Q187.0 236.2 189.7 237.9Q192.5 239.5 195.0 240.2Q197.4 240.9 199.8 241.0Q202.1 241.2 204.3 240.9Q206.5 240.6 209.3 239.6Q212.0 238.7 213.7 237.7Q215.3 236.8 217.5 234.8Q219.7 232.9 221.2 230.8Q222.7 228.8 223.6 227.1Q224.4 225.5 225.2 222.6Q226.0 219.7 226.2 217.4Q226.3 215.0 225.9 212.6Q225.5 210.1 225.1 208.8Q224.7 207.6 223.1 205.0Q221.6 202.4 220.3 200.9Q218.9 199.4 217.0 198.0Q215.0 196.6 212.4 195.5Q209.8 194.4 207.7 194.0Q205.7 193.6 203.5 193.6ZM206.6 46.9Q203.5 46.7 200.5 47.0Q197.4 47.3 192.8 48.5Q188.1 49.8 183.1 52.2Q178.2 54.7 174.7 57.3Q171.3 59.9 167.5 64.2Q163.6 68.5 161.8 71.2Q160.0 74.0 158.7 76.7Q157.3 79.5 155.5 84.7Q153.7 89.9 153.0 94.0Q152.3 98.2 152.3 101.7Q152.3 105.3 152.9 107.4Q153.4 109.4 154.7 110.4Q155.9 111.4 157.6 111.1Q159.2 110.8 159.5 107.9Q159.8 105.0 160.9 101.3Q162.0 97.6 163.3 94.7Q164.7 91.8 166.8 89.0Q168.8 86.1 172.1 82.9Q175.4 79.7 178.7 77.7Q182.0 75.6 185.1 74.4Q188.1 73.1 191.7 72.5Q195.2 71.8 200.0 72.0Q204.9 72.3 207.7 73.3Q210.6 74.2 212.7 75.3Q214.8 76.4 217.0 78.1Q219.2 79.7 221.5 82.4Q223.8 85.0 226.0 89.0Q228.2 92.9 229.2 96.2Q230.2 99.5 230.6 102.6Q231.0 105.6 230.8 109.4Q230.7 113.3 229.5 118.1Q228.2 122.9 226.7 126.4Q225.2 129.8 223.1 133.4Q221.1 136.9 213.0 147.4Q204.9 157.8 204.2 159.2Q203.5 160.6 202.9 162.8Q202.4 165.0 202.4 167.9Q202.4 170.8 202.8 172.7Q203.2 174.6 203.1 176.1Q202.9 177.6 202.5 178.6Q202.1 179.6 201.1 180.7Q200.2 181.8 198.5 182.4Q196.9 183.1 195.1 183.0Q193.3 182.9 192.5 182.4Q191.7 182.0 190.3 180.8Q188.9 179.6 188.2 178.5Q187.5 177.4 186.4 174.5Q185.3 171.6 185.1 169.7Q184.8 167.7 184.9 165.1Q185.1 162.5 185.6 159.8Q186.2 157.0 187.4 154.0Q188.6 151.0 195.1 141.1Q201.6 131.2 203.2 128.0Q204.9 124.8 205.7 121.8Q206.5 118.8 206.5 115.9Q206.5 113.0 206.2 111.8Q206.0 110.5 204.7 108.1Q203.5 105.6 202.0 104.1Q200.5 102.6 198.7 101.6Q196.9 100.6 194.5 100.1Q192.2 99.5 190.0 99.7Q187.8 99.8 185.5 100.8Q183.1 101.7 181.8 102.8Q180.4 103.9 179.0 106.1Q177.6 108.3 177.4 110.4Q177.1 112.5 177.5 114.0Q177.9 115.5 178.5 116.5Q179.0 117.4 182.3 120.7Q185.6 124.0 186.6 126.4Q187.5 128.7 187.7 130.7Q187.8 132.8 186.8 136.2Q185.9 139.7 182.3 145.7Q178.7 151.8 177.1 155.8Q175.4 159.8 175.0 162.0Q174.6 164.2 174.9 168.8Q175.2 173.5 176.4 176.8Q177.6 180.1 178.9 181.9Q180.1 183.7 181.6 185.2Q183.1 186.7 185.2 187.9Q187.3 189.2 190.7 190.1Q194.1 191.1 196.1 191.0Q198.0 190.8 200.5 189.9Q202.9 188.9 204.4 187.8Q206.0 186.7 207.1 185.3Q208.2 184.0 209.0 181.9Q209.8 179.8 210.4 176.3Q210.9 172.7 212.6 169.0Q214.2 165.3 217.1 161.3Q220.0 157.3 227.5 148.8Q235.1 140.2 238.8 134.7Q242.5 129.2 244.7 124.4Q246.9 119.6 248.6 113.0Q250.2 106.4 250.4 101.6Q250.5 96.8 249.5 91.2Q248.6 85.5 246.1 78.9Q243.6 72.3 241.0 68.1Q238.4 63.8 235.1 60.2Q231.8 56.6 228.8 54.4Q225.8 52.2 222.2 50.6Q218.6 48.9 214.2 48.0Q209.8 47.0 206.6 46.9Z"/><path fill="#0B0B0B" fill-rule="evenodd" d="M198.1 72.0Q195.2 72.0 191.7 72.7Q188.1 73.4 183.5 75.5Q179.0 77.5 176.5 79.3Q174.1 81.1 171.6 83.6Q169.1 86.1 167.0 89.0Q165.0 91.8 163.6 94.7Q162.2 97.6 161.4 100.1Q160.6 102.6 160.0 105.5Q159.5 108.3 159.5 109.3Q159.5 110.3 159.8 110.3Q160.0 110.3 161.1 108.8Q162.2 107.2 163.7 103.8Q165.3 100.4 166.9 97.8Q168.6 95.1 172.3 91.2Q176.0 87.2 178.0 85.7Q180.1 84.1 183.0 82.6Q185.9 81.1 189.3 80.2Q192.8 79.2 197.8 79.2Q202.9 79.2 204.9 79.7Q206.8 80.3 209.1 81.4Q211.5 82.5 213.2 83.9Q215.0 85.2 216.8 87.2Q218.6 89.1 219.8 91.0Q221.1 92.9 222.2 95.4Q223.3 97.9 224.0 100.9Q224.7 103.9 224.8 107.1Q224.9 110.3 224.0 115.4Q223.0 120.4 221.9 123.1Q220.8 125.7 218.6 129.6Q216.4 133.6 213.7 137.6Q210.9 141.6 206.6 147.0Q202.4 152.3 200.7 155.1Q199.1 157.8 198.3 160.7Q197.4 163.6 197.4 166.6Q197.4 169.7 198.0 172.1Q198.5 174.6 198.3 175.4Q198.0 176.3 197.4 176.8Q196.9 177.4 195.8 177.2Q194.7 177.1 193.6 175.7Q192.5 174.3 191.7 170.8Q190.8 167.2 191.0 164.6Q191.1 162.0 191.8 159.6Q192.5 157.3 194.0 154.1Q195.5 151.0 201.8 142.4Q208.2 133.9 209.8 131.2Q211.5 128.4 212.6 125.9Q213.7 123.5 214.6 119.8Q215.6 116.0 215.6 113.0Q215.6 110.0 214.8 106.7Q213.9 103.4 212.4 100.8Q210.9 98.2 208.3 95.8Q205.7 93.5 202.5 92.3Q199.4 91.0 195.6 90.9Q191.9 90.7 188.9 91.6Q185.9 92.4 183.0 94.0Q180.1 95.7 177.9 97.9Q175.7 100.1 174.1 103.0Q172.4 105.9 171.9 108.3Q171.3 110.8 171.9 113.8Q172.4 116.9 173.4 118.5Q174.3 120.2 177.5 123.5Q180.7 126.8 181.3 129.5Q182.0 132.3 181.5 134.6Q180.9 136.9 177.2 143.1Q173.5 149.3 171.7 153.6Q169.9 157.8 169.4 160.6Q168.8 163.3 169.0 167.5Q169.1 171.6 170.2 175.2Q171.3 178.7 172.8 181.2Q174.3 183.7 177.4 186.3Q180.4 188.9 182.2 189.7Q184.0 190.6 186.2 191.1Q188.4 191.7 190.6 191.7Q192.8 191.7 192.8 191.4Q192.8 191.1 188.9 189.7Q185.1 188.4 182.4 186.0Q179.8 183.7 178.5 181.6Q177.1 179.6 176.0 176.5Q174.9 173.5 174.6 171.9Q174.3 170.2 174.3 167.2Q174.3 164.2 175.2 160.7Q176.0 157.3 177.2 154.5Q178.5 151.8 182.0 145.7Q185.6 139.7 186.6 136.2Q187.5 132.8 187.4 130.7Q187.3 128.7 186.3 126.4Q185.3 124.0 182.0 120.7Q178.7 117.4 178.2 116.5Q177.6 115.5 177.2 113.2Q176.8 110.8 177.6 108.5Q178.5 106.1 180.0 104.4Q181.5 102.6 183.4 101.5Q185.3 100.4 187.4 99.8Q189.5 99.3 191.7 99.4Q193.9 99.5 195.4 100.0Q196.9 100.4 198.7 101.3Q200.5 102.3 202.7 104.8Q204.9 107.2 205.7 109.4Q206.5 111.6 206.8 113.6Q207.1 115.5 206.9 117.1Q206.8 118.8 206.0 121.8Q205.1 124.8 203.5 128.0Q201.8 131.2 195.4 141.1Q188.9 151.0 187.7 154.0Q186.4 157.0 185.9 159.8Q185.3 162.5 185.2 165.1Q185.1 167.7 185.9 171.4Q186.7 175.2 187.9 177.4Q189.2 179.6 190.0 180.4Q190.8 181.2 192.8 182.0Q194.7 182.9 196.6 182.6Q198.5 182.3 199.4 181.9Q200.2 181.5 201.0 180.5Q201.8 179.6 202.4 178.0Q202.9 176.5 202.5 173.6Q202.1 170.8 202.1 167.9Q202.1 165.0 202.7 162.8Q203.2 160.6 204.4 158.4Q205.7 156.2 210.8 150.0Q215.9 143.8 219.6 138.3Q223.3 132.8 225.6 127.9Q228.0 122.9 229.2 118.1Q230.4 113.3 230.6 109.4Q230.7 105.6 230.3 102.6Q229.9 99.5 228.9 96.2Q228.0 92.9 225.8 89.0Q223.6 85.0 221.4 82.5Q219.2 80.0 216.3 78.0Q213.4 75.9 209.7 74.4Q206.0 72.9 203.5 72.5Q201.0 72.0 198.1 72.0ZM161.3 18.1Q158.7 17.0 155.4 16.6Q152.1 16.2 148.5 16.5Q144.9 16.8 140.5 17.7Q136.1 18.7 131.7 20.3Q127.3 22.0 124.4 23.5Q121.5 25.0 118.7 27.1Q115.8 29.1 113.8 31.2Q111.9 33.3 111.0 35.3Q110.0 37.4 109.6 39.7Q109.2 42.1 109.6 56.9Q110.0 71.8 110.8 84.0Q111.6 96.2 111.5 101.9Q111.4 107.5 110.4 110.1Q109.4 112.7 107.8 114.5Q106.1 116.3 103.5 117.7Q100.9 119.1 97.5 120.0Q94.0 121.0 90.5 121.1Q86.9 121.3 85.5 120.7Q84.1 120.2 83.0 119.1Q81.9 118.0 81.0 115.2Q80.0 112.5 79.5 108.8Q78.9 105.0 78.8 93.2Q78.6 81.4 79.2 76.0Q79.7 70.7 80.8 66.1Q81.9 61.6 84.7 53.6Q87.4 45.6 88.1 42.1Q88.8 38.5 88.8 36.8Q88.8 35.2 88.3 32.7Q87.7 30.2 87.0 29.0Q86.3 27.8 85.4 26.8Q84.4 25.8 82.9 25.0Q81.4 24.2 80.2 23.9Q78.9 23.6 75.9 23.6Q72.9 23.6 65.2 25.0Q57.5 26.4 50.7 28.2Q44.0 30.0 38.4 31.9Q32.7 33.8 29.1 35.5Q25.6 37.1 22.4 39.2Q19.2 41.2 16.9 43.9Q14.6 46.5 13.7 48.4Q12.9 50.3 12.6 51.8Q12.4 53.3 12.4 55.8Q12.4 58.3 12.8 60.9Q13.2 63.5 15.0 69.8Q16.8 76.2 21.2 88.8Q25.6 101.5 28.2 110.5Q30.8 119.6 33.1 130.2Q35.5 140.8 36.7 149.4Q37.9 158.1 38.2 161.4Q38.5 164.7 38.5 171.3Q38.5 177.9 38.1 182.3Q37.7 186.7 36.6 192.1Q35.5 197.4 32.7 206.0Q30.0 214.5 29.3 218.6Q28.6 222.7 28.7 225.3Q28.9 228.0 29.4 229.9Q30.0 231.8 30.7 233.0Q31.3 234.3 33.1 235.9Q34.9 237.6 37.4 238.5Q39.9 239.5 42.8 239.6Q45.6 239.8 48.8 239.2Q52.0 238.7 56.5 237.3Q61.0 235.9 66.8 233.9Q72.6 231.8 77.5 229.6Q82.5 227.4 85.2 225.6Q88.0 223.8 90.2 221.6Q92.4 219.4 93.8 216.7Q95.1 213.9 95.1 209.8Q95.1 205.7 94.0 201.1Q92.9 196.6 88.5 184.0Q84.1 171.3 83.5 166.5Q82.8 161.7 83.5 159.1Q84.1 156.5 85.8 154.7Q87.4 152.9 90.3 151.6Q93.2 150.4 95.8 150.0Q98.4 149.6 100.5 149.7Q102.6 149.9 103.8 150.4Q105.0 151.0 106.1 152.1Q107.2 153.2 108.1 154.9Q108.9 156.7 109.9 161.5Q110.8 166.4 111.5 171.7Q112.2 177.1 114.1 200.2Q116.0 223.3 117.0 227.4Q118.0 231.5 119.1 233.5Q120.2 235.4 122.0 237.0Q123.7 238.7 125.8 239.8Q127.9 240.9 130.5 241.7Q133.1 242.5 136.9 243.1Q140.8 243.6 146.4 243.5Q152.1 243.4 157.1 242.4Q162.2 241.4 164.8 240.3Q167.5 239.2 169.7 237.3Q171.9 235.4 172.5 233.9Q173.2 232.4 173.4 230.3Q173.5 228.2 170.9 217.8Q168.3 207.3 166.5 197.7Q164.7 188.1 163.9 181.2Q163.1 174.3 162.0 160.4Q160.9 146.6 159.9 139.3Q158.9 132.0 158.1 128.8Q157.3 125.7 156.6 124.4Q155.9 123.2 154.9 122.2Q154.0 121.3 152.3 120.3Q150.7 119.3 149.7 118.1Q148.8 116.9 148.3 115.5Q147.9 114.1 147.7 111.1Q147.4 108.1 147.8 102.8Q148.2 97.6 149.9 90.2Q151.5 82.8 154.3 74.9Q157.0 67.1 162.0 55.3Q166.9 43.4 168.1 38.6Q169.4 33.8 169.4 30.8Q169.4 27.8 169.1 26.7Q168.8 25.6 167.9 23.8Q166.9 22.0 165.4 20.6Q163.9 19.2 161.3 18.1Z"/></svg>
+      <b>Hello?</b>
+    </div>
+    <h1>Give every complaint a <span class="hb">heartbeat.</span></h1>
+    <p class="lede">New Yorkers file about 610,000 noise complaints a year, and most never hear back. Hello? turns each one into a living sound wave that changes every time the city actually does something.</p>
+    <div class="ctas"><a class="btn" href="#tracker" style="text-decoration:none">Watch one beat</a><a class="btn ghost" href="#drop" style="text-decoration:none">Drop a sound</a></div>
+  </div>
+  <div class="heroWave"><canvas id="heroCanvas" aria-label="An animated sound wave unique to one complaint"></canvas><div class="tag2">HLO-48213</div><div class="tag">Your complaint, alive.</div></div>
+</header>
+
+<!-- ============ TRACKER ============ -->
+<section id="tracker">
+  <div class="sec-head">
+    <div class="eyebrow">Explore the Hello? interaction</div>
+    <h2>The wave is the receipt.</h2>
+    <p>Every complaint gets its own wave, generated from its reference number. It shifts each time a real update lands, so you can see your case moving without reading a single form.</p>
+  </div>
+  <div class="tracker">
+    <div class="waveCard">
+      <div class="waveTop"><span class="ref" id="refNo">HLO-48213</span><span class="pill">Conceptual stages · Not live 311 data</span></div>
+      <canvas id="trackCanvas" aria-label="Complaint wave that changes with each stage"></canvas>
+      <div class="steps" id="steps" aria-label="Stages"></div>
+    </div>
+    <div class="stageText">
+      <div class="num" id="stageNum">STAGE 1 OF 5</div>
+      <h3 id="stageTitle">The city received it.</h3>
+      <p id="stageBody">Your complaint has an official reference. It's on the record, with your location and the time.</p>
+      <p class="small">The wave shows progress on your case. It is not a reading of how loud the street is.</p>
+      <div class="row"><button class="btn" id="nextStage" type="button">Next stage</button><button class="btn ghost" id="newWave" type="button">New complaint</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EXPERIENCES ============ -->
+<section>
+  <div class="sec-head">
+    <div class="eyebrow">Three signature experiences</div>
+    <h2>Drop it. See it. Hear the silence.</h2>
+  </div>
+  <div class="xgrid">
+    <div class="xcard" id="drop">
+      <div class="num">01 · DROP A SOUND</div>
+      <h3>Reporting feels like tossing a pebble.</h3>
+      <p>Pick what's bugging you, then tap where you are. A ripple spreads from your spot and turns into a trackable complaint.</p>
+      <div class="types" id="dropTypes">
+        <button type="button" class="chipbtn" aria-pressed="true">Party next door</button>
+        <button type="button" class="chipbtn" aria-pressed="false">Jackhammer at 6 AM</button>
+        <button type="button" class="chipbtn" aria-pressed="false">Car alarm, again</button>
+        <button type="button" class="chipbtn" aria-pressed="false">Ice cream truck jingle</button>
+      </div>
+      <div class="pond" id="pond"><canvas id="pondCanvas"></canvas><div class="hint">Tap anywhere on the block</div></div>
+      <div class="toast" id="dropToast" role="status">Nothing dropped yet. The block is waiting.</div>
+    </div>
+    <div class="xcard silence" id="silence">
+      <div class="num">03 · THE SILENCE MOMENT</div>
+      <h3>You get the last word.</h3>
+      <p>The official outcome shows up first. Then Hello? asks the only question that matters.</p>
+      <div class="outcome"><span class="small">HLO-48213 · OUTCOME · EXAMPLE</span><b>Officer visited at 11:44 PM. Music stopped by 11:58 PM.</b><span class="small">Summons issued to the unit upstairs.</span></div>
+      <canvas id="silenceCanvas" aria-label="Wave that settles when you confirm it got quieter"></canvas>
+      <b style="font-size:22px">Did it actually get quieter?</b>
+      <div class="ask"><button class="btn" id="yesQuiet" type="button">Yes, finally</button><button class="btn ghost" id="noQuiet" type="button">Nope, still loud</button></div>
+      <div class="toast" id="silenceToast" role="status"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EARS (MAP) ============ -->
+<section id="ears">
+  <div class="sec-head">
+    <div class="eyebrow"><span class="num">02</span> · The city has ears</div>
+    <h2>Is it just you, or the whole block?</h2>
+    <p>Complaints show up as clusters, so you can tell a one-off from a neighborhood-wide problem. Hotter hexagons mean more reports in the last 30 days. Tap a neighborhood name to fly in, City to zoom back out, Skyline for the view from the harbor and Street level to stand on the avenue. Buildings come from the NYC 3D Building Model. Every tower over 150 ft is on the map, and the orange ring marks a repeat location. Press Diorama for a toy-like isometric slice of the neighborhood you picked. Press Night for the after-dark view: orange pulses are complaints coming in, soft blue pulses are agencies responding.</p>
+  </div>
+  <div class="pattern">
+    <div class="cityMap">
+      <div class="deckwrap"><div id="deckmap" role="img" aria-label="Example 3D map of noise complaints by area, built with deck.gl"></div><div class="mapstatus" id="mapstatus" role="status" hidden></div><div class="mapctl"><button type="button" id="dioBtn" aria-pressed="false">Diorama</button><button type="button" id="nightbtn" aria-pressed="false">Night</button><button type="button" id="tilt" aria-pressed="true">3D</button><button type="button" id="city">City</button><button type="button" id="skyview">Skyline</button><button type="button" id="street">Street level</button><button type="button" id="reset">Reset view</button></div></div>
+      <div class="areas" id="areas" aria-label="Neighborhoods"></div>
+      <div class="legend"><span>Fewer</span><i style="background:#FFECAA"></i><i style="background:#FFD66B"></i><i style="background:#FFAA46"></i><i style="background:#FD4802"></i><span>More complaints</span><span style="margin-left:auto">Example data</span></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="sBlock">Pick a block</div><p id="sBlockP">Tap a hexagon on the map to see how many complaints it holds and what happened to them.</p></div>
+      <div class="stat"><div class="n">9 of you</div><p>Neighbors who reported the same address get grouped, so nobody carries a case alone.</p></div>
+      <div class="stat"><div class="n">3+</div><p>Reports at one address in 30 days sends it to a repeat-location team.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BRAND ============ -->
+<section id="brand">
+  <div class="sec-head">
+    <div class="eyebrow">Brand</div>
+    <h2>Loud personality. Quiet ending.</h2>
+    <p>Midnight navy for the city at night, signal orange for the complaint, butter for good news and off-white for calm. The icon is a bubbly H next to an ear that doubles as a question mark: the city asking "hello?", then actually listening.</p>
+  </div>
+  <div class="brand">
+    <div class="tile navy"><span class="small">WORDMARK</span><div class="big">Hello?</div><span class="small">Bricolage Grotesque ExtraBold, condensed</span></div>
+    <div class="tile tang"><span class="small">ICON</span><div class="iconwrap"><svg role="img" aria-label="Hello? icon: a bold H beside an ear shaped like a question mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256"><rect width="256" height="256" rx="52.5" fill="#F8F5E9"/><path fill="#FD4802" fill-rule="evenodd" d="M203.5 193.6Q201.3 193.6 198.9 194.0Q196.6 194.4 195.1 195.0Q193.6 195.5 191.2 196.9Q188.9 198.3 187.0 200.0Q185.1 201.8 183.4 204.2Q181.8 206.5 180.4 210.4Q179.0 214.2 178.9 217.0Q178.7 219.7 179.0 221.6Q179.3 223.6 180.0 225.6Q180.7 227.7 181.9 229.9Q183.1 232.1 185.1 234.1Q187.0 236.2 189.7 237.9Q192.5 239.5 195.0 240.2Q197.4 240.9 199.8 241.0Q202.1 241.2 204.3 240.9Q206.5 240.6 209.3 239.6Q212.0 238.7 213.7 237.7Q215.3 236.8 217.5 234.8Q219.7 232.9 221.2 230.8Q222.7 228.8 223.6 227.1Q224.4 225.5 225.2 222.6Q226.0 219.7 226.2 217.4Q226.3 215.0 225.9 212.6Q225.5 210.1 225.1 208.8Q224.7 207.6 223.1 205.0Q221.6 202.4 220.3 200.9Q218.9 199.4 217.0 198.0Q215.0 196.6 212.4 195.5Q209.8 194.4 207.7 194.0Q205.7 193.6 203.5 193.6ZM206.6 46.9Q203.5 46.7 200.5 47.0Q197.4 47.3 192.8 48.5Q188.1 49.8 183.1 52.2Q178.2 54.7 174.7 57.3Q171.3 59.9 167.5 64.2Q163.6 68.5 161.8 71.2Q160.0 74.0 158.7 76.7Q157.3 79.5 155.5 84.7Q153.7 89.9 153.0 94.0Q152.3 98.2 152.3 101.7Q152.3 105.3 152.9 107.4Q153.4 109.4 154.7 110.4Q155.9 111.4 157.6 111.1Q159.2 110.8 159.5 107.9Q159.8 105.0 160.9 101.3Q162.0 97.6 163.3 94.7Q164.7 91.8 166.8 89.0Q168.8 86.1 172.1 82.9Q175.4 79.7 178.7 77.7Q182.0 75.6 185.1 74.4Q188.1 73.1 191.7 72.5Q195.2 71.8 200.0 72.0Q204.9 72.3 207.7 73.3Q210.6 74.2 212.7 75.3Q214.8 76.4 217.0 78.1Q219.2 79.7 221.5 82.4Q223.8 85.0 226.0 89.0Q228.2 92.9 229.2 96.2Q230.2 99.5 230.6 102.6Q231.0 105.6 230.8 109.4Q230.7 113.3 229.5 118.1Q228.2 122.9 226.7 126.4Q225.2 129.8 223.1 133.4Q221.1 136.9 213.0 147.4Q204.9 157.8 204.2 159.2Q203.5 160.6 202.9 162.8Q202.4 165.0 202.4 167.9Q202.4 170.8 202.8 172.7Q203.2 174.6 203.1 176.1Q202.9 177.6 202.5 178.6Q202.1 179.6 201.1 180.7Q200.2 181.8 198.5 182.4Q196.9 183.1 195.1 183.0Q193.3 182.9 192.5 182.4Q191.7 182.0 190.3 180.8Q188.9 179.6 188.2 178.5Q187.5 177.4 186.4 174.5Q185.3 171.6 185.1 169.7Q184.8 167.7 184.9 165.1Q185.1 162.5 185.6 159.8Q186.2 157.0 187.4 154.0Q188.6 151.0 195.1 141.1Q201.6 131.2 203.2 128.0Q204.9 124.8 205.7 121.8Q206.5 118.8 206.5 115.9Q206.5 113.0 206.2 111.8Q206.0 110.5 204.7 108.1Q203.5 105.6 202.0 104.1Q200.5 102.6 198.7 101.6Q196.9 100.6 194.5 100.1Q192.2 99.5 190.0 99.7Q187.8 99.8 185.5 100.8Q183.1 101.7 181.8 102.8Q180.4 103.9 179.0 106.1Q177.6 108.3 177.4 110.4Q177.1 112.5 177.5 114.0Q177.9 115.5 178.5 116.5Q179.0 117.4 182.3 120.7Q185.6 124.0 186.6 126.4Q187.5 128.7 187.7 130.7Q187.8 132.8 186.8 136.2Q185.9 139.7 182.3 145.7Q178.7 151.8 177.1 155.8Q175.4 159.8 175.0 162.0Q174.6 164.2 174.9 168.8Q175.2 173.5 176.4 176.8Q177.6 180.1 178.9 181.9Q180.1 183.7 181.6 185.2Q183.1 186.7 185.2 187.9Q187.3 189.2 190.7 190.1Q194.1 191.1 196.1 191.0Q198.0 190.8 200.5 189.9Q202.9 188.9 204.4 187.8Q206.0 186.7 207.1 185.3Q208.2 184.0 209.0 181.9Q209.8 179.8 210.4 176.3Q210.9 172.7 212.6 169.0Q214.2 165.3 217.1 161.3Q220.0 157.3 227.5 148.8Q235.1 140.2 238.8 134.7Q242.5 129.2 244.7 124.4Q246.9 119.6 248.6 113.0Q250.2 106.4 250.4 101.6Q250.5 96.8 249.5 91.2Q248.6 85.5 246.1 78.9Q243.6 72.3 241.0 68.1Q238.4 63.8 235.1 60.2Q231.8 56.6 228.8 54.4Q225.8 52.2 222.2 50.6Q218.6 48.9 214.2 48.0Q209.8 47.0 206.6 46.9Z"/><path fill="#0B0B0B" fill-rule="evenodd" d="M198.1 72.0Q195.2 72.0 191.7 72.7Q188.1 73.4 183.5 75.5Q179.0 77.5 176.5 79.3Q174.1 81.1 171.6 83.6Q169.1 86.1 167.0 89.0Q165.0 91.8 163.6 94.7Q162.2 97.6 161.4 100.1Q160.6 102.6 160.0 105.5Q159.5 108.3 159.5 109.3Q159.5 110.3 159.8 110.3Q160.0 110.3 161.1 108.8Q162.2 107.2 163.7 103.8Q165.3 100.4 166.9 97.8Q168.6 95.1 172.3 91.2Q176.0 87.2 178.0 85.7Q180.1 84.1 183.0 82.6Q185.9 81.1 189.3 80.2Q192.8 79.2 197.8 79.2Q202.9 79.2 204.9 79.7Q206.8 80.3 209.1 81.4Q211.5 82.5 213.2 83.9Q215.0 85.2 216.8 87.2Q218.6 89.1 219.8 91.0Q221.1 92.9 222.2 95.4Q223.3 97.9 224.0 100.9Q224.7 103.9 224.8 107.1Q224.9 110.3 224.0 115.4Q223.0 120.4 221.9 123.1Q220.8 125.7 218.6 129.6Q216.4 133.6 213.7 137.6Q210.9 141.6 206.6 147.0Q202.4 152.3 200.7 155.1Q199.1 157.8 198.3 160.7Q197.4 163.6 197.4 166.6Q197.4 169.7 198.0 172.1Q198.5 174.6 198.3 175.4Q198.0 176.3 197.4 176.8Q196.9 177.4 195.8 177.2Q194.7 177.1 193.6 175.7Q192.5 174.3 191.7 170.8Q190.8 167.2 191.0 164.6Q191.1 162.0 191.8 159.6Q192.5 157.3 194.0 154.1Q195.5 151.0 201.8 142.4Q208.2 133.9 209.8 131.2Q211.5 128.4 212.6 125.9Q213.7 123.5 214.6 119.8Q215.6 116.0 215.6 113.0Q215.6 110.0 214.8 106.7Q213.9 103.4 212.4 100.8Q210.9 98.2 208.3 95.8Q205.7 93.5 202.5 92.3Q199.4 91.0 195.6 90.9Q191.9 90.7 188.9 91.6Q185.9 92.4 183.0 94.0Q180.1 95.7 177.9 97.9Q175.7 100.1 174.1 103.0Q172.4 105.9 171.9 108.3Q171.3 110.8 171.9 113.8Q172.4 116.9 173.4 118.5Q174.3 120.2 177.5 123.5Q180.7 126.8 181.3 129.5Q182.0 132.3 181.5 134.6Q180.9 136.9 177.2 143.1Q173.5 149.3 171.7 153.6Q169.9 157.8 169.4 160.6Q168.8 163.3 169.0 167.5Q169.1 171.6 170.2 175.2Q171.3 178.7 172.8 181.2Q174.3 183.7 177.4 186.3Q180.4 188.9 182.2 189.7Q184.0 190.6 186.2 191.1Q188.4 191.7 190.6 191.7Q192.8 191.7 192.8 191.4Q192.8 191.1 188.9 189.7Q185.1 188.4 182.4 186.0Q179.8 183.7 178.5 181.6Q177.1 179.6 176.0 176.5Q174.9 173.5 174.6 171.9Q174.3 170.2 174.3 167.2Q174.3 164.2 175.2 160.7Q176.0 157.3 177.2 154.5Q178.5 151.8 182.0 145.7Q185.6 139.7 186.6 136.2Q187.5 132.8 187.4 130.7Q187.3 128.7 186.3 126.4Q185.3 124.0 182.0 120.7Q178.7 117.4 178.2 116.5Q177.6 115.5 177.2 113.2Q176.8 110.8 177.6 108.5Q178.5 106.1 180.0 104.4Q181.5 102.6 183.4 101.5Q185.3 100.4 187.4 99.8Q189.5 99.3 191.7 99.4Q193.9 99.5 195.4 100.0Q196.9 100.4 198.7 101.3Q200.5 102.3 202.7 104.8Q204.9 107.2 205.7 109.4Q206.5 111.6 206.8 113.6Q207.1 115.5 206.9 117.1Q206.8 118.8 206.0 121.8Q205.1 124.8 203.5 128.0Q201.8 131.2 195.4 141.1Q188.9 151.0 187.7 154.0Q186.4 157.0 185.9 159.8Q185.3 162.5 185.2 165.1Q185.1 167.7 185.9 171.4Q186.7 175.2 187.9 177.4Q189.2 179.6 190.0 180.4Q190.8 181.2 192.8 182.0Q194.7 182.9 196.6 182.6Q198.5 182.3 199.4 181.9Q200.2 181.5 201.0 180.5Q201.8 179.6 202.4 178.0Q202.9 176.5 202.5 173.6Q202.1 170.8 202.1 167.9Q202.1 165.0 202.7 162.8Q203.2 160.6 204.4 158.4Q205.7 156.2 210.8 150.0Q215.9 143.8 219.6 138.3Q223.3 132.8 225.6 127.9Q228.0 122.9 229.2 118.1Q230.4 113.3 230.6 109.4Q230.7 105.6 230.3 102.6Q229.9 99.5 228.9 96.2Q228.0 92.9 225.8 89.0Q223.6 85.0 221.4 82.5Q219.2 80.0 216.3 78.0Q213.4 75.9 209.7 74.4Q206.0 72.9 203.5 72.5Q201.0 72.0 198.1 72.0ZM161.3 18.1Q158.7 17.0 155.4 16.6Q152.1 16.2 148.5 16.5Q144.9 16.8 140.5 17.7Q136.1 18.7 131.7 20.3Q127.3 22.0 124.4 23.5Q121.5 25.0 118.7 27.1Q115.8 29.1 113.8 31.2Q111.9 33.3 111.0 35.3Q110.0 37.4 109.6 39.7Q109.2 42.1 109.6 56.9Q110.0 71.8 110.8 84.0Q111.6 96.2 111.5 101.9Q111.4 107.5 110.4 110.1Q109.4 112.7 107.8 114.5Q106.1 116.3 103.5 117.7Q100.9 119.1 97.5 120.0Q94.0 121.0 90.5 121.1Q86.9 121.3 85.5 120.7Q84.1 120.2 83.0 119.1Q81.9 118.0 81.0 115.2Q80.0 112.5 79.5 108.8Q78.9 105.0 78.8 93.2Q78.6 81.4 79.2 76.0Q79.7 70.7 80.8 66.1Q81.9 61.6 84.7 53.6Q87.4 45.6 88.1 42.1Q88.8 38.5 88.8 36.8Q88.8 35.2 88.3 32.7Q87.7 30.2 87.0 29.0Q86.3 27.8 85.4 26.8Q84.4 25.8 82.9 25.0Q81.4 24.2 80.2 23.9Q78.9 23.6 75.9 23.6Q72.9 23.6 65.2 25.0Q57.5 26.4 50.7 28.2Q44.0 30.0 38.4 31.9Q32.7 33.8 29.1 35.5Q25.6 37.1 22.4 39.2Q19.2 41.2 16.9 43.9Q14.6 46.5 13.7 48.4Q12.9 50.3 12.6 51.8Q12.4 53.3 12.4 55.8Q12.4 58.3 12.8 60.9Q13.2 63.5 15.0 69.8Q16.8 76.2 21.2 88.8Q25.6 101.5 28.2 110.5Q30.8 119.6 33.1 130.2Q35.5 140.8 36.7 149.4Q37.9 158.1 38.2 161.4Q38.5 164.7 38.5 171.3Q38.5 177.9 38.1 182.3Q37.7 186.7 36.6 192.1Q35.5 197.4 32.7 206.0Q30.0 214.5 29.3 218.6Q28.6 222.7 28.7 225.3Q28.9 228.0 29.4 229.9Q30.0 231.8 30.7 233.0Q31.3 234.3 33.1 235.9Q34.9 237.6 37.4 238.5Q39.9 239.5 42.8 239.6Q45.6 239.8 48.8 239.2Q52.0 238.7 56.5 237.3Q61.0 235.9 66.8 233.9Q72.6 231.8 77.5 229.6Q82.5 227.4 85.2 225.6Q88.0 223.8 90.2 221.6Q92.4 219.4 93.8 216.7Q95.1 213.9 95.1 209.8Q95.1 205.7 94.0 201.1Q92.9 196.6 88.5 184.0Q84.1 171.3 83.5 166.5Q82.8 161.7 83.5 159.1Q84.1 156.5 85.8 154.7Q87.4 152.9 90.3 151.6Q93.2 150.4 95.8 150.0Q98.4 149.6 100.5 149.7Q102.6 149.9 103.8 150.4Q105.0 151.0 106.1 152.1Q107.2 153.2 108.1 154.9Q108.9 156.7 109.9 161.5Q110.8 166.4 111.5 171.7Q112.2 177.1 114.1 200.2Q116.0 223.3 117.0 227.4Q118.0 231.5 119.1 233.5Q120.2 235.4 122.0 237.0Q123.7 238.7 125.8 239.8Q127.9 240.9 130.5 241.7Q133.1 242.5 136.9 243.1Q140.8 243.6 146.4 243.5Q152.1 243.4 157.1 242.4Q162.2 241.4 164.8 240.3Q167.5 239.2 169.7 237.3Q171.9 235.4 172.5 233.9Q173.2 232.4 173.4 230.3Q173.5 228.2 170.9 217.8Q168.3 207.3 166.5 197.7Q164.7 188.1 163.9 181.2Q163.1 174.3 162.0 160.4Q160.9 146.6 159.9 139.3Q158.9 132.0 158.1 128.8Q157.3 125.7 156.6 124.4Q155.9 123.2 154.9 122.2Q154.0 121.3 152.3 120.3Q150.7 119.3 149.7 118.1Q148.8 116.9 148.3 115.5Q147.9 114.1 147.7 111.1Q147.4 108.1 147.8 102.8Q148.2 97.6 149.9 90.2Q151.5 82.8 154.3 74.9Q157.0 67.1 162.0 55.3Q166.9 43.4 168.1 38.6Q169.4 33.8 169.4 30.8Q169.4 27.8 169.1 26.7Q168.8 25.6 167.9 23.8Q166.9 22.0 165.4 20.6Q163.9 19.2 161.3 18.1Z"/></svg></div><span class="small">The H is all ears</span></div>
+    <div class="tile butter"><span class="small">VOICE</span><div style="font-size:30px;font-weight:800;line-height:1.05;letter-spacing:-.02em">"Your neighbor's subwoofer now has a case number."</div><span class="small">Witty, on your side, never mean</span></div>
+  </div>
+  <div class="sw">
+    <div style="background:#141B3C;color:#FFF8EC;border-color:#141B3C"><b>Midnight navy</b>#141B3C</div>
+    <div style="background:#FD4802;color:#141B3C;border-color:#FD4802"><b>Signal orange</b>#FD4802</div>
+    <div style="background:#FFD66B;color:#141B3C;border-color:#FFD66B"><b>Butter</b>#FFD66B</div>
+    <div style="background:#FFF8EC;color:#141B3C"><b>Off-white</b>#FFF8EC</div>
+  </div>
+  <div class="posters">
+    <div><div class="poster p1" role="img" aria-label="Poster: Shhh, New York."><div class="psm">HELLO? · NYC</div><div class="pbig">SHHH,<br>NEW<br>YORK.</div><div><canvas class="pwave" data-seed="7" data-c="#FD4802"></canvas><div class="pmid" style="margin-top:3cqw">Every noise complaint gets a heartbeat.</div></div></div><div class="cap">Poster A · subway</div></div>
+    <div><div class="poster p2" role="img" aria-label="Poster: 610K complaints. Every one gets an answer."><div class="psm">Every year, in New York</div><div class="pbig" style="font-size:27cqw">610K</div><div><div class="pmid">complaints. Every single one gets an answer now.</div><canvas class="pwave" data-seed="3" data-c="#141B3C" style="margin-top:3cqw"></canvas></div></div><div class="cap">Poster B · bus shelter</div></div>
+    <div><div class="poster p3" role="img" aria-label="Poster: Too loud? Say Hello?"><div class="psm">Brooklyn · Queens · Manhattan</div><div class="pbig">TOO<br>LOUD?</div><div><div class="pmid">Say Hello? The city answers back.</div><canvas class="pwave" data-seed="11" data-c="#141B3C" data-calm="1" style="margin-top:3cqw"></canvas></div></div><div class="cap">Poster C · stoop flyer</div></div>
+  </div>
+</section>
+
+<!-- ============ MOTION ============ -->
+<section id="motion">
+  <div class="sec-head">
+    <div class="eyebrow">Motion</div>
+    <h2>Three moves, all made of sound.</h2>
+  </div>
+  <div class="motion">
+    <div class="mcard"><canvas class="mloop" data-kind="ripple"></canvas><h3>Sound ripples</h3><p>A drop on the map ripples out, then lands as a pin with a number.</p></div>
+    <div class="mcard"><canvas class="mloop" data-kind="morph"></canvas><h3>Waveform transitions</h3><p>Each real update morphs the wave: fewer spikes, softer color, more rhythm.</p></div>
+    <div class="mcard"><canvas class="mloop" data-kind="close"></canvas><h3>Confirmed closure</h3><p>When you say yes, the wave exhales into one calm line and a tick.</p></div>
+  </div>
+</section>
+
+<!-- ============ TRACKS ============ -->
+<section>
+  <div class="sec-head">
+    <div class="eyebrow">How the three Figma tracks map out</div>
+    <h2>One idea, three deliverables.</h2>
+  </div>
+  <div class="tablewrap"><table class="tracks">
+    <thead><tr><th>Track</th><th>Deliverable</th></tr></thead>
+    <tbody>
+      <tr><td>Brand</td><td>Hello? wordmark, listening-ear icon, type system and three NYC posters</td></tr>
+      <tr><td>Product</td><td>Drop-a-sound reporting, the living complaint tracker, the neighborhood sound map and closure feedback</td></tr>
+      <tr><td>Motion</td><td>Sound ripples, waveform transitions and the resident-confirmed closure animation</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<div class="notes">
+  Concept for the NYC noise complaint design challenge. The 610,000 yearly figure comes from the brief (NYC Open Data, 311). Reference numbers, outcomes, stage timings, neighbor counts and every complaint on the map are invented examples, not live 311 data. Building shapes come from the NYC 3D Building Model (Office of Technology and Innovation) and NYC Open Data building footprints; borough outlines from public NYC boundary data. Hello? is a concept and is not affiliated with NYC 311.
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/deck.gl@8.9.35/dist.min.js"></script>
+<script>
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+  var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  $('#themebtn').addEventListener('click',function(){
+    var r=document.documentElement, dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
+    r.dataset.theme=dark?'light':'dark';
+  });
+
+  // ---------- wave engine: one seeded wave per complaint ----------
+  function prng(seed){var s=seed>>>0||1;return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296}}
+  function seedFrom(str){var h=2166136261;for(var i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+  function makeWave(seed){var r=prng(seed),h=[];for(var i=0;i<6;i++)h.push({f:1+r()*9,p:r()*6.28,a:.3+r()*.7,s:.4+r()*1.6});return h}
+  function fit(c){var d=Math.min(2,window.devicePixelRatio||1),w=c.clientWidth,h=c.clientHeight;if(c.width!==Math.round(w*d)||c.height!==Math.round(h*d)){c.width=Math.round(w*d);c.height=Math.round(h*d)}return {x:c.getContext('2d'),w:c.width,h:c.height,d:d}}
+  function lerp(a,b,t){return a+(b-a)*t}
+  function mix(c1,c2,t){return 'rgb('+[0,1,2].map(function(i){return Math.round(lerp(c1[i],c2[i],t))}).join(',')+')'}
+  var TANG=[253,72,2], BUTTER=[255,214,107], OFF=[255,248,236], CALM=[143,176,255];
+  // energy 1 = loud and jagged, 0 = calm line
+  function drawWave(c,wave,t,energy,opts){
+    opts=opts||{};var F=fit(c),x=F.x,W=F.w,H=F.h,mid=H/2,amp=H*.38*(opts.amp||1);
+    x.clearRect(0,0,W,H);
+    var lines=opts.lines||3;
+    for(var L=lines-1;L>=0;L--){
+      x.beginPath();
+      for(var i=0;i<=200;i++){
+        var u=i/200,X=u*W,y=0;
+        for(var k=0;k<wave.length;k++){var hm=wave[k];y+=Math.sin(u*hm.f*Math.PI*2*(1+energy*.6)+hm.p+t*hm.s*(1+energy*2)+L*.6)*hm.a*(k<2?1:energy)}
+        var env=Math.sin(u*Math.PI);var jag=energy*energy*Math.sin(u*90+t*9)*.35;
+        y=(y/2.4+jag)*env*energy+Math.sin(u*Math.PI*4+t*1.2)*.04*(1-energy)*env;
+        x.lineTo(X,mid+y*amp*(1-L*.18));
+      }
+      x.lineWidth=(L===0?3.2:1.6)*F.d;x.lineCap='round';x.lineJoin='round';
+      var col=opts.color||(energy>.5?mix(BUTTER,TANG,(energy-.5)*2):mix(CALM,BUTTER,energy*2));
+      x.strokeStyle=col;x.globalAlpha=L===0?1:.35;x.stroke();x.globalAlpha=1;
+    }
+  }
+  var loops=[];function loop(fn){loops.push(fn)}
+  var t0=performance.now();
+  function frame(now){var t=RM?0:(now-t0)/1000;loops.forEach(function(f){f(t)});requestAnimationFrame(frame)}
+  requestAnimationFrame(frame);
+
+  // ---------- hero ----------
+  var heroWave=makeWave(seedFrom('HLO-48213'));
+  loop(function(t){drawWave($('#heroCanvas'),heroWave,t,.55+.4*Math.sin(t*.5),{lines:4})});
+
+  // ---------- tracker ----------
+  var STAGES=[
+    {t:'The city received it.',b:'Your complaint has an official reference. It is on the record, with your location and the time.',e:1},
+    {t:'It went to the right desk.',b:'Parties go to the NYPD, jackhammers go to the Department of Environmental Protection. Yours is routed.',e:.78},
+    {t:'Someone is on the way.',b:'An officer has your case and is heading over. The wave picks up a steadier rhythm.',e:.58},
+    {t:'They showed up and checked.',b:'Someone stood on your block and looked into it. Notes from the visit are attached to your case.',e:.36},
+    {t:'Official outcome posted.',b:'Here is what the city did about it. Now it is your turn: did it actually get quieter?',e:.16}
+  ];
+  var stage=0, energy=1, target=1, refNo='HLO-48213', tw=makeWave(seedFrom(refNo));
+  var stepsEl=$('#steps');
+  STAGES.forEach(function(s,i){var b=document.createElement('button');b.type='button';b.textContent=i+1;b.setAttribute('aria-label','Stage '+(i+1)+': '+s.t);b.addEventListener('click',function(){setStage(i)});stepsEl.appendChild(b)});
+  function setStage(i){
+    stage=i;target=STAGES[i].e;
+    $$('button',stepsEl).forEach(function(b,k){b.className=k<i?'done':k===i?'now':''});
+    $('#stageNum').textContent='STAGE '+(i+1)+' OF 5';$('#stageTitle').textContent=STAGES[i].t;$('#stageBody').textContent=STAGES[i].b;
+    $('#nextStage').textContent=i===4?'Start over':'Next stage';
+  }
+  $('#nextStage').addEventListener('click',function(){setStage(stage===4?0:stage+1)});
+  $('#newWave').addEventListener('click',function(){refNo='HLO-'+(10000+Math.floor(Math.random()*89999));$('#refNo').textContent=refNo;tw=makeWave(seedFrom(refNo));setStage(0)});
+  setStage(0);
+  loop(function(t){energy+=RM?(target-energy):(target-energy)*.04;drawWave($('#trackCanvas'),tw,t,energy,{lines:3})});
+
+  // ---------- 01 drop a sound ----------
+  var drops=[], pondSeed=prng(42), blocks=[];
+  for(var bx=0;bx<12;bx++)for(var by=0;by<8;by++)blocks.push({x:bx,y:by,h:pondSeed()});
+  var dropType='Party next door', dropN=0;
+  $$('#dropTypes button').forEach(function(b){b.addEventListener('click',function(){$$('#dropTypes button').forEach(function(x){x.setAttribute('aria-pressed','false')});b.setAttribute('aria-pressed','true');dropType=b.textContent})});
+  $('#pond').addEventListener('click',function(e){
+    var r=this.getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1);
+    var id='HLO-'+(48214+dropN++);
+    drops.push({x:(e.clientX-r.left)*d,y:(e.clientY-r.top)*d,t:performance.now()/1000,id:id});
+    if(drops.length>6)drops.shift();
+    $('#dropToast').textContent='Plop. "'+dropType+'" is now '+id+'. Tracking started.';
+  });
+  loop(function(t){
+    var F=fit($('#pondCanvas')),x=F.x,W=F.w,H=F.h,cw=W/12,ch=H/8;
+    x.fillStyle='#141B3C';x.fillRect(0,0,W,H);
+    blocks.forEach(function(b){x.fillStyle='rgba(255,248,236,'+(.05+b.h*.08)+')';x.beginPath();x.roundRect?x.roundRect(b.x*cw+cw*.12,b.y*ch+ch*.14,cw*.76,ch*.72,6*F.d):x.rect(b.x*cw+cw*.12,b.y*ch+ch*.14,cw*.76,ch*.72);x.fill()});
+    var now=performance.now()/1000;
+    drops.forEach(function(d){
+      var age=now-d.t;
+      for(var k=0;k<3;k++){var a=age-k*.35;if(a<0||a>2.2)continue;var r=a*90*F.d;x.strokeStyle='rgba(253,72,2,'+Math.max(0,1-a/2.2)+')';x.lineWidth=3*F.d;x.beginPath();x.arc(d.x,d.y,r,0,Math.PI*2);x.stroke()}
+      var p=Math.min(1,age/.5);x.fillStyle='#FD4802';x.beginPath();x.arc(d.x,d.y,(6+3*Math.sin(now*4))*F.d*p,0,Math.PI*2);x.fill();
+      if(age>.6){x.font=(500)+' '+(11*F.d)+'px IBM Plex Mono, monospace';x.fillStyle='#FFD66B';x.fillText(d.id,d.x+12*F.d,d.y-10*F.d)}
+    });
+  });
+
+  // ---------- 03 the silence moment ----------
+  var sWave=makeWave(seedFrom('HLO-48213-close')), sEnergy=.45, sTarget=.45, sDone=0;
+  $('#yesQuiet').addEventListener('click',function(){sTarget=0;sDone=1;$('#silenceToast').textContent='Ahh. Logged as quieter. Case closed, with your thumbs-up on the record.'});
+  $('#noQuiet').addEventListener('click',function(){sTarget=1;sDone=0;$('#silenceToast').textContent='Reopened. Your first report is attached and the case jumps the line.'});
+  loop(function(t){
+    sEnergy+=RM?(sTarget-sEnergy):(sTarget-sEnergy)*.05;
+    var c=$('#silenceCanvas');drawWave(c,sWave,t,sEnergy,{lines:2,amp:.9});
+    if(sDone&&sEnergy<.05){var F=fit(c),x=F.x;x.strokeStyle='#FFD66B';x.lineWidth=4*F.d;x.lineCap='round';x.lineJoin='round';x.beginPath();var cx=F.w-34*F.d,cy=F.h/2;x.moveTo(cx-12*F.d,cy);x.lineTo(cx-3*F.d,cy+9*F.d);x.lineTo(cx+13*F.d,cy-10*F.d);x.stroke()}
+  });
+
+  // ---------- brand icon + posters ----------
+  $$('.pwave').forEach(function(c){var w=makeWave(+c.dataset.seed),col=c.dataset.c,calm=c.dataset.calm;loop(function(t){drawWave(c,w,t,calm?.25+.1*Math.sin(t):.75+.2*Math.sin(t*.7),{lines:2,color:col})})});
+
+  // ---------- motion loops ----------
+  $$('.mloop').forEach(function(c,ci){
+    var w=makeWave(100+ci);
+    loop(function(t){
+      var k=c.dataset.kind,F=fit(c),x=F.x,W=F.w,H=F.h;
+      if(k==='ripple'){x.fillStyle='#141B3C';x.fillRect(0,0,W,H);var cyc=t%2.6;for(var j=0;j<3;j++){var a=cyc-j*.3;if(a<0)continue;x.strokeStyle='rgba(253,72,2,'+Math.max(0,1-a/2)+')';x.lineWidth=3*F.d;x.beginPath();x.arc(W/2,H/2,a*60*F.d,0,Math.PI*2);x.stroke()}
+        var pp=Math.min(1,Math.max(0,(cyc-1.2)/.3));x.fillStyle='#FFD66B';x.beginPath();x.arc(W/2,H/2,7*F.d*pp,0,Math.PI*2);x.fill();
+        if(pp>=1){x.font='500 '+(11*F.d)+'px IBM Plex Mono, monospace';x.fillText('HLO-48213',W/2+12*F.d,H/2-10*F.d)}}
+      else if(k==='morph'){var e=.5+.5*Math.cos(t*.9);drawWave(c,w,t,e,{lines:2})}
+      else {var cyc2=(t%4)/4,e2=cyc2<.4?1-cyc2/.4*.95:.05;drawWave(c,w,t,cyc2>.55?0:e2,{lines:2});
+        if(cyc2>.6){x.strokeStyle='#FFD66B';x.lineWidth=4*F.d;x.lineCap='round';x.beginPath();var cx=W/2,cy=H/2-22*F.d,pr=Math.min(1,(cyc2-.6)/.15);x.moveTo(cx-12*F.d,cy);x.lineTo(cx-3*F.d,cy+9*F.d);if(pr>.5)x.lineTo(cx-3*F.d+16*F.d*(pr-.5)*2,cy+9*F.d-19*F.d*(pr-.5)*2);x.stroke()}}
+    });
+  });
+
+  // city map (deck.gl): stylized NYC street scene built on the real NYC 3D Building Model
+  var CENTER=[-73.9576,40.7178], HOT=[-73.9576,40.7178];
+  // Each area is a slice of the NYC 3D Building Model, prepared as a binary mesh file next to this page.
+  var AREAS=[
+    {id:'williamsburg',name:'Williamsburg',c:[-73.9576,40.7178],b:-22},
+    {id:'greenpoint',name:'Greenpoint',c:[-73.9540,40.7302],b:-22},
+    {id:'bushwick',name:'Bushwick',c:[-73.9210,40.6944],b:-35},
+    {id:'dumbo',name:'DUMBO',c:[-73.9897,40.7033],b:-20},
+    {id:'dtbk',name:'Downtown Brooklyn',c:[-73.9870,40.6930],b:-20},
+    {id:'lic',name:'Long Island City',c:[-73.9480,40.7447],b:-30},
+    {id:'fidi',name:'Financial District',c:[-74.0090,40.7075],b:-30,dz:15.85},
+    {id:'chinatown',name:'Chinatown',c:[-73.9970,40.7158],b:-30},
+    {id:'les',name:'Lower East Side',c:[-73.9890,40.7187],b:-30},
+    {id:'soho',name:'SoHo',c:[-74.0000,40.7233],b:-30},
+    {id:'village',name:'Greenwich Village',c:[-74.0000,40.7336],b:-30},
+    {id:'eastvillage',name:'East Village',c:[-73.9840,40.7270],b:-30},
+    {id:'chelsea',name:'Chelsea',c:[-73.9997,40.7465],b:-29,dz:15.85},
+    {id:'timessq',name:'Times Square',c:[-73.9855,40.7580],b:-29,dz:15.85},
+    {id:'midtown',name:'Midtown',c:[-73.9857,40.7484],b:-29,dz:15.85}
+  ];
+  var cur=AREAS[0];
+  function areaView(a){return {longitude:a.c[0]+.0004,latitude:a.c[1]-.0006,zoom:15.9,pitch:60,bearing:a.b,maxPitch:85}}
+  var CITY={longitude:-73.962,latitude:40.722,zoom:11.35,pitch:38,bearing:-15,maxPitch:85};
+  var SKYVIEW={longitude:-74.0045,latitude:40.7105,zoom:14.6,pitch:78,bearing:-38,maxPitch:85};
+  var INITIAL=CITY;
+  // real borough coastlines (simplified from the NYC borough boundaries), drawn as land over water
+  var boroughs=[], BLABELS=[{t:'MANHATTAN',p:[-73.9690,40.7700]},{t:'BROOKLYN',p:[-73.9500,40.6990]},{t:'QUEENS',p:[-73.9150,40.7400]},{t:'THE BRONX',p:[-73.8648,40.8448]},{t:'STATEN ISLAND',p:[-74.1502,40.5795]}];
+  fetch('areas/boroughs.json').then(function(r){return r.json()}).then(function(b){boroughs=[];b.forEach(function(x){x.polys.forEach(function(p){boroughs.push({name:x.name,polygon:p})})});draw()}).catch(function(){});
+  var names=['Bedford Ave','Metropolitan Ave','Grand St','N 6 St','Driggs Ave','Wythe Ave','Kent Ave','Roebling St'];
+  function rnd(seed){var x=Math.sin(seed*12.9898)*43758.5453;return x-Math.floor(x)}
+  var pts=[],k=0;
+  var hubs=[];
+  function cluster(c,n,sx,sy,w){hubs.push({p:c,n:n,k:hubs.length});for(var i=0;i<n;i++){k++;var a=rnd(k)*6.283,r=Math.sqrt(-2*Math.log(Math.max(.0001,rnd(k+777))));pts.push({p:[c[0]+Math.cos(a)*r*sx,c[1]+Math.sin(a)*r*sy],w:w||1})}}
+  cluster(HOT,150,.0011,.0008,1);cluster([-73.9488,40.7215],70,.0016,.0010,1);cluster([-73.9660,40.7140],60,.0014,.0011,1);cluster(CENTER,260,.0050,.0034,1);
+  AREAS.slice(1).forEach(function(a,i){cluster([a.c[0]+.0012*(i%2?1:-1),a.c[1]+.0008],60+i*12,.0012,.0009,1);cluster(a.c,140,.0042,.003,1)});
+  var NRANGE=[[70,52,80],[130,64,52],[200,88,36],[253,72,2],[255,186,90]];
+  var range=[[255,236,170],[255,214,107],[255,170,70],[253,72,2],[214,80,20]];
+  var is3d=true, deckInst=null, picked=null;
+  // NYC 3D Building Model (enhanced CityGML, georocket/new-york-city-model-enhanced), tile DA19, about 1.3 km square around the hotspot.
+  function b64(s,T){var b=atob(s),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return new T(u.buffer)}
+  // small mesh helpers for trees and cars
+  function box(sx,sy,z0,z1,out){
+    var x=sx/2,y=sy/2,f=[[[1,0,0],[[x,-y,z0],[x,y,z0],[x,y,z1],[x,-y,z1]]],[[-1,0,0],[[-x,y,z0],[-x,-y,z0],[-x,-y,z1],[-x,y,z1]]],[[0,1,0],[[x,y,z0],[-x,y,z0],[-x,y,z1],[x,y,z1]]],[[0,-1,0],[[-x,-y,z0],[x,-y,z0],[x,-y,z1],[-x,-y,z1]]],[[0,0,1],[[-x,-y,z1],[x,-y,z1],[x,y,z1],[-x,y,z1]]]];
+    f.forEach(function(q){var b=out.p.length/3;q[1].forEach(function(v){out.p.push(v[0],v[1],v[2]);out.n.push(q[0][0],q[0][1],q[0][2])});out.i.push(b,b+1,b+2,b,b+2,b+3)});
+  }
+  function toMesh(o){return {attributes:{positions:{value:new Float32Array(o.p),size:3},normals:{value:new Float32Array(o.n),size:3}},indices:{value:new Uint32Array(o.i),size:1}}}
+  function sphere(r,sx,sy,sz,cz){var o={p:[],n:[],i:[]},A=28,Bn=18;for(var a=0;a<=Bn;a++){var th=a/Bn*Math.PI;for(var b=0;b<=A;b++){var ph=b/A*Math.PI*2,nx=Math.sin(th)*Math.cos(ph),ny=Math.sin(th)*Math.sin(ph),nz=Math.cos(th);o.p.push(nx*sx,ny*sy,nz*sz+cz);var l=Math.hypot(nx/sx,ny/sy,nz/sz);o.n.push(nx/sx/l,ny/sy/l,nz/sz/l)}}for(var a2=0;a2<Bn;a2++)for(var b2=0;b2<A;b2++){var p0=a2*(A+1)+b2,p1=p0+A+1;o.i.push(p0,p1,p0+1,p0+1,p1,p1+1)}return toMesh(o)}
+  function trunk(r,h){var o={p:[],n:[],i:[]},n=16;for(var i=0;i<=n;i++){var ph=i/n*Math.PI*2,c=Math.cos(ph),s=Math.sin(ph);o.p.push(c*r,s*r,0,c*r,s*r,h);o.n.push(c,s,0,c,s,0)}for(var j=0;j<n;j++){var a=j*2;o.i.push(a,a+2,a+1,a+1,a+2,a+3)}return toMesh(o)}
+  var treeCrown=sphere(1,2.5,2.5,2.2,4.6), treeTrunk=trunk(.22,3.6);
+  // binary layout: [u32 header length][JSON header {anchor, nv, h, b:{name:[byteOffset,count]}}][typed buffers]
+  function parseArea(buf){
+    var hl=new DataView(buf).getUint32(0,true), M=JSON.parse(new TextDecoder().decode(new Uint8Array(buf,4,hl))), o=4+hl;
+    function g(k,T){return new T(buf,o+M.b[k][0],M.b[k][1])}
+    var q=g('pos',Int16Array), idx=g('idx',Uint32Array), bid=g('bid',Uint16Array), fl=g('fl',Uint8Array), op=g('ol',Int16Array), on=g('oln',Uint16Array);
+    var nv=M.nv, pos=new Float32Array(nv*3), nor=new Float32Array(nv*3), tc=new Float32Array(nv*2);
+    for(var i=0;i<q.length;i++)pos[i]=q[i]/10;
+    for(var t=0;t<idx.length;t+=3){
+      var a=idx[t]*3,b=idx[t+1]*3,c=idx[t+2]*3;
+      var ux=pos[b]-pos[a],uy=pos[b+1]-pos[a+1],uz=pos[b+2]-pos[a+2],vx=pos[c]-pos[a],vy=pos[c+1]-pos[a+1],vz=pos[c+2]-pos[a+2];
+      var nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx,l=Math.hypot(nx,ny,nz)||1;
+      nx/=l;ny/=l;nz/=l;
+      nor[a]=nor[b]=nor[c]=nx;nor[a+1]=nor[b+1]=nor[c+1]=ny;nor[a+2]=nor[b+2]=nor[c+2]=nz;
+    }
+    for(var vv=0;vv<nv;vv++){tc[vv*2]=M.h[bid[vv]];tc[vv*2+1]=fl[vv]}
+    var NP=8, cls=[];for(var ci=0;ci<NP;ci++)cls.push([]);
+    for(var t2=0;t2<idx.length;t2+=3){var bb=bid[idx[t2]];cls[(Math.imul(bb+7,2654435761)>>>0)%NP].push(idx[t2],idx[t2+1],idx[t2+2])}
+    var meshes=cls.map(function(c){return {attributes:{positions:{value:pos,size:3},normals:{value:nor,size:3},texCoords:{value:tc,size:2}},indices:{value:new Uint32Array(c),size:1}}});
+    // footprints become sidewalks; trees go along the curb; curbside road points seed the street-level camera
+    var opf=new Float32Array(op.length), st=new Uint32Array(on.length+1), acc=0, trees=[], spots=[];
+    for(var oi=0;oi<op.length;oi++)opf[oi]=op[oi]/10;
+    for(var ok=0;ok<on.length;ok++){st[ok]=acc;acc+=on[ok]}st[on.length]=acc;
+    var seed=11, R=function(){seed=(seed*16807)%2147483647;return seed/2147483647};
+    for(var r=0;r<on.length;r++){
+      var s0=st[r],n0=on[r],area=0;
+      for(var e=0;e<n0-1;e++){var P0=(s0+e)*3,P1=(s0+e+1)*3;area+=opf[P0]*opf[P1+1]-opf[P1]*opf[P0+1]}
+      var sg=area>=0?1:-1;
+      for(var e2=0;e2<n0-1;e2++){
+        var A0=(s0+e2)*3,A1=(s0+e2+1)*3,dx=opf[A1]-opf[A0],dy=opf[A1+1]-opf[A0+1],L=Math.hypot(dx,dy);
+        if(L<7)continue;
+        var ux2=dx/L,uy2=dy/L,onx=uy2*sg,ony=-ux2*sg;
+        for(var d=3;d<L-2;d+=11){if(R()<.5&&trees.length<3200)trees.push({p:[opf[A0]+ux2*d+onx*2.5,opf[A0+1]+uy2*d+ony*2.5,0],s:.8+R()*.5,g:R()})}
+        if(L>20)spots.push({p:[opf[A0]+ux2*L/2+onx*5.9,opf[A0+1]+uy2*L/2+ony*5.9],yaw:Math.atan2(dy,dx)*180/Math.PI});
+      }
+    }
+    var best=null,bd=1e9;spots.forEach(function(c){var d=Math.hypot(c.p[0]+40,c.p[1]);if(d<bd){bd=d;best=c}});
+    var kx=111320*Math.cos(M.anchor[1]*Math.PI/180);
+    var street=best?{longitude:M.anchor[0]+best.p[0]/kx,latitude:M.anchor[1]+best.p[1]/110574,zoom:18.0,pitch:72,bearing:90-best.yaw,maxPitch:85}:null;
+    return {anchor:M.anchor,meshes:meshes,outlines:{length:on.length,startIndices:st,attributes:{getPath:{value:opf,size:3}}},trees:trees,street:street};
+  }
+  // area files are gzip-compressed binary, base64-encoded so they can be served as text
+  function unpack(txt){
+    var b=atob(txt.trim()),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);
+    return new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+  }
+  function loadArea(a){
+    if(a.data||a.loading)return a.loading||Promise.resolve(a.data);
+    setStatus('Loading '+a.name+'\u2026');
+    a.loading=fetch('areas/'+a.id+'.txt').then(function(r){if(!r.ok)throw new Error(r.status);return r.text()}).then(unpack).then(function(buf){a.data=parseArea(buf);a.loading=null;setStatus('');draw();return a.data})
+      .catch(function(){a.loading=null;setStatus('Could not load '+a.name+'. Try again.')});
+    return a.loading;
+  }
+  // Skyline: every NYC building taller than 150 ft (NYC Open Data building footprints), drawn from the city's official
+  // 3D Building Model where it has them, and extruded from the current footprint and roof height where it doesn't (mostly built after 2014).
+  var skyline=[];
+  function loadSkyline(){
+    fetch('areas/skyline.txt').then(function(r){if(!r.ok)throw new Error(r.status);return r.text()}).then(unpack).then(function(buf){
+      var hl=new DataView(buf).getUint32(0,true), M=JSON.parse(new TextDecoder().decode(new Uint8Array(buf,4,hl))), o=4+hl;
+      skyline=M.groups.map(function(G){
+        function g(k,T){return new T(buf,o+G.b[k][0],G.b[k][1])}
+        var q=g('pos',Int16Array), idx=g('idx',Uint32Array), bid=g('bid',Uint16Array), nv=G.nv;
+        var pos=new Float32Array(nv*3), nor=new Float32Array(nv*3), tc=new Float32Array(nv*2);
+        for(var i=0;i<q.length;i++)pos[i]=q[i]/10;
+        for(var t=0;t<idx.length;t+=3){
+          var a=idx[t]*3,b=idx[t+1]*3,c=idx[t+2]*3;
+          var ux=pos[b]-pos[a],uy=pos[b+1]-pos[a+1],uz=pos[b+2]-pos[a+2],vx=pos[c]-pos[a],vy=pos[c+1]-pos[a+1],vz=pos[c+2]-pos[a+2];
+          var nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx,l=Math.hypot(nx,ny,nz)||1;
+          nor[a]=nor[b]=nor[c]=nx/l;nor[a+1]=nor[b+1]=nor[c+1]=ny/l;nor[a+2]=nor[b+2]=nor[c+2]=nz/l;
+        }
+        for(var v=0;v<nv;v++){tc[v*2]=G.h[bid[v]];tc[v*2+1]=2+((Math.imul(bid[v]+7,2654435761)>>>0)%8)}
+        return {key:G.key,area:G.key.indexOf('area:')===0?G.key.slice(5):null,anchor:G.anchor,
+          mesh:{attributes:{positions:{value:pos,size:3},normals:{value:nor,size:3},texCoords:{value:tc,size:2}},indices:{value:idx,size:1}}};
+      });
+      draw();
+    }).catch(function(){});
+  }
+  function setStatus(t){var el=$('#mapstatus');if(el){el.textContent=t;el.hidden=!t}}
+  function pick(info){
+    var o=info&&info.object; if(!o)return;
+    picked=o.index;
+    var count=o.count, nm=names[Math.abs(Math.round(o.position[0]*1e4+o.position[1]*1e4))%names.length];
+    $('#sBlock').textContent=count+' reports';
+    $('#sBlockP').textContent=nm+' area · '+(count>=25?'Repeat location queue, '+Math.max(1,Math.round(count/14))+' addresses flagged':'No repeat addresses')+' · '+Math.round(count*.82)+' closed with an outcome';
+    draw();
+  }
+  // Stylized 3D-cartoon look: brick and stone palette, soft cel shading, cornices and belt courses, framed windows with sky reflections,
+  // air conditioners, fire escapes, shopfronts with awnings and wooden rooftop water tanks. Fine detail fades in with zoom (detailAmt).
+  var detailAmt=0, hexOn=true, labelsOn=true;
+  var PAL=[[181,86,68],[205,128,88],[218,182,128],[232,208,166],[118,134,150],[160,178,194],[150,64,58],[236,222,190]];
+  class DetailExt extends deck.LayerExtension{
+    getShaders(){return {inject:{
+      'vs:#decl':'varying vec3 vWp; varying vec3 vNn; varying vec2 vTc;',
+      'vs:#main-end':'vWp=positions; vNn=normals; vTc=texCoords;',
+      'fs:#decl':'uniform float detailAmt; uniform float night; uniform float clipH; varying vec3 vWp; varying vec3 vNn; varying vec2 vTc;\nfloat h21(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}\nfloat rbox(vec2 p,vec2 b,float r){return length(max(abs(p)-b+r,0.0))-r;}',
+      'fs:DECKGL_FILTER_COLOR':`
+        if(clipH>0.0&&max(abs(vWp.x),abs(vWp.y))>clipH) discard;
+        vec3 n=normalize(vNn);
+        float H=vTc.x;
+        float winM=0.0,litM=0.0,winRaw=0.0,shopM=0.0;
+        float L=dot(n,normalize(vec3(-0.45,-0.6,0.66)));
+        float band=0.8+0.28*smoothstep(-0.3,0.9,L);
+        if(vTc.y>1.5){
+          float c=vTc.y-2.0;
+          color.rgb=c<0.5?vec3(0.71,0.34,0.27):c<1.5?vec3(0.8,0.5,0.35):c<2.5?vec3(0.85,0.71,0.5):c<3.5?vec3(0.91,0.82,0.65):c<4.5?vec3(0.46,0.53,0.59):c<5.5?vec3(0.63,0.7,0.76):c<6.5?vec3(0.59,0.25,0.23):vec3(0.93,0.87,0.75);
+        }
+        if(vTc.y>0.5&&vTc.y<1.5){
+          float zz=vWp.z-H;
+          vec3 wood=vec3(0.66,0.45,0.28);
+          if(zz<1.6) wood=vec3(0.26,0.25,0.27);
+          else if(zz>4.2) wood=vec3(0.45,0.28,0.2);
+          else wood*=0.9+0.1*sin(atan(vWp.y,vWp.x)*18.0);
+          color.rgb=wood*band;
+        } else if(n.z>0.7){
+          color.rgb=mix(color.rgb*0.55,vec3(0.43,0.41,0.40),0.62)*band;
+          vec2 g=fract(vWp.xy/1.8);
+          color.rgb*=1.0-detailAmt*0.08*step(0.95,max(g.x,g.y));
+        } else {
+          color.rgb*=band;
+          if(abs(n.z)<0.35){
+            vec2 t=normalize(vec2(-n.y,n.x));
+            float along=dot(vWp.xy,t);
+            float u=along/3.0, v=vWp.z/3.4;
+            vec2 id=floor(vec2(u,v)); vec2 f=fract(vec2(u,v));
+            float hs=h21(id*0.37+floor(vWp.xy*0.02));
+            float up=step(3.6,vWp.z)*step(vWp.z,H-1.4);
+            vec3 stone=vec3(0.93,0.89,0.8)*band;
+            // soft ground-contact shadow
+            color.rgb*=0.82+0.18*smoothstep(0.0,3.0,vWp.z);
+            // cornice and belt course
+            float top=smoothstep(H-1.2,H-1.0,vWp.z);
+            color.rgb=mix(color.rgb,stone,top);
+            color.rgb*=1.0-0.28*(smoothstep(H-1.6,H-1.15,vWp.z)*(1.0-top))*detailAmt;
+            float belt=step(f.y,0.07)*step(7.0,vWp.z)*step(0.6,h21(vec2(floor(v/3.0),floor(along*0.01))));
+            color.rgb=mix(color.rgb,stone,belt*detailAmt);
+            // brick courses
+            float row=floor(vWp.z/0.22); float bx=fract(along/0.5+0.5*mod(row,2.0));
+            float brick=max(1.0-smoothstep(0.03,0.09,fract(vWp.z/0.22)),1.0-smoothstep(0.02,0.07,bx));
+            color.rgb*=1.0-detailAmt*0.045*brick;
+            // framed windows
+            vec2 p=f-vec2(0.5,0.52);
+            float d=rbox(p,vec2(0.27,0.32),0.04);
+            float win=(1.0-smoothstep(-0.01,0.025,d))*up;
+            float frame=(1.0-smoothstep(-0.01,0.025,d-0.05))*up;
+            float lintel=step(abs(p.x),0.33)*step(0.34,p.y)*step(p.y,0.42)*up;
+            vec3 sky=mix(vec3(0.45,0.66,0.9),vec3(0.78,0.9,1.0),clamp(p.y+0.5,0.0,1.0));
+            float lit=step(0.84,hs);
+            vec3 glass=mix(sky,vec3(1.0,0.84,0.5),lit);
+            float sh=p.x*0.9-p.y*0.7+0.05;
+            glass=mix(glass,vec3(1.0),0.55*smoothstep(0.0,0.03,sh)*(1.0-smoothstep(0.06,0.11,sh)));
+            float mull=(1.0-smoothstep(0.008,0.02,abs(p.x)))+(1.0-smoothstep(0.008,0.02,abs(p.y)));
+            glass=mix(glass,vec3(0.95),mull*0.8);
+            vec3 c=mix(color.rgb,stone,max(frame,lintel)*detailAmt);
+            c=mix(c,glass,win*detailAmt);
+            winRaw=win;litM=lit;winM=win*detailAmt;
+            // sill and air conditioner
+            float sill=step(abs(p.x),0.31)*step(-0.4,p.y)*step(p.y,-0.34)*up;
+            c=mix(c,stone*0.9,sill*detailAmt);
+            float ac=step(0.78,hs)*step(abs(p.x),0.2)*step(-0.5+0.0,p.y)*step(p.y,-0.14)*up*win;
+            c=mix(c,vec3(0.72,0.74,0.77),ac*detailAmt);
+            // fire escape on some facades
+            float fe=step(0.66,h21(floor(vWp.xy*0.03)+floor(vec2(n.x,n.y)*2.0)))*step(8.0,H);
+            float plat=step(f.y,0.09)*step(0.1,f.x)*step(f.x,0.9)*step(6.5,vWp.z)*step(vWp.z,H-2.0);
+            float rail=step(0.09,f.y)*step(f.y,0.36)*step(0.1,f.x)*step(f.x,0.9)*step(6.5,vWp.z)*step(vWp.z,H-2.0)*(1.0-smoothstep(0.05,0.14,abs(fract(f.x*7.0)-0.5)*2.0-0.84));
+            float stair=step(0.55,f.x)*step(f.x,0.9)*step(6.5,vWp.z)*step(vWp.z,H-2.0)*step(abs(f.y-(f.x-0.55)/0.35),0.045);
+            c=mix(c,vec3(0.12,0.13,0.15),clamp(plat+rail*0.8+stair,0.0,1.0)*fe*detailAmt);
+            // shopfront on the ground floor
+            float gf=step(vWp.z,3.4);
+            float shop=step(0.3,vWp.z)*step(vWp.z,2.45)*step(0.1,fract(u*0.5+hs))*step(fract(u*0.5+hs),0.9);
+            vec3 sg=vec3(0.18,0.28,0.38)+vec3(1.0,0.8,0.4)*0.35*step(0.5,hs);
+            c=mix(c,sg,shop*gf*detailAmt*step(0.25,hs));
+            shopM=shop*gf*step(0.25,hs);
+            float aw=step(2.45,vWp.z)*step(vWp.z,3.3)*gf;
+            vec3 awc=hs<0.5?vec3(0.2,0.55,0.4):(hs<0.75?vec3(0.2,0.4,0.75):vec3(0.85,0.28,0.25));
+            c=mix(c,mix(vec3(1.0),awc,step(0.5,fract(u*2.0))),aw*detailAmt*step(0.3,hs));
+            color.rgb=c;
+          }
+        }
+        if(night>0.5){
+          // Night mode: midnight-blue massing, warm lit windows, cool unlit glass, faint height glow
+          vec3 base=vec3(0.085,0.115,0.27)*(0.72+0.42*smoothstep(-0.3,0.9,L));
+          if(n.z>0.7) base=vec3(0.06,0.08,0.2);
+          if(vTc.y>0.5&&vTc.y<1.5) base=vec3(0.05,0.06,0.13);
+          base+=vec3(0.12,0.16,0.36)*0.35*smoothstep(20.0,250.0,vWp.z);
+          float wm=max(winM,winRaw*0.55);
+          vec3 warm=mix(vec3(1.0,0.48,0.1),vec3(1.0,0.84,0.42),fract(H*7.13));
+          color.rgb=base+warm*litM*wm*0.95+vec3(0.18,0.26,0.55)*wm*(1.0-litM)*0.35+vec3(1.0,0.6,0.25)*shopM*0.55;
+        }`
+    }}}
+    draw(params,extension){this.state.model.setUniforms({detailAmt:extension.opts.amount||0,night:extension.opts.night||0,clipH:extension.opts.clip||0})}
+  }
+  var night=0, extCache={};
+  function ext(clip){var k=detailAmt+'|'+night+'|'+(clip||0);return extCache[k]||(extCache[k]=new DetailExt({amount:detailAmt,night:night,clip:clip||0}))}
+  DetailExt.extensionName='DetailExt';DetailExt.componentName='DetailExt';
+  var GC=[-73.95,40.70], GR=0.45, groundPoly=[[[GC[0]-GR,GC[1]-GR*.75,-.6],[GC[0]+GR,GC[1]-GR*.75,-.6],[GC[0]+GR,GC[1]+GR*.75,-.6],[GC[0]-GR,GC[1]+GR*.75,-.6]]];
+  var TREE_G=[[86,168,92],[110,190,100],[70,150,96]];
+
+  // ---------- Diorama: a floating isometric slice of the neighborhood, like a toy city block ----------
+  var dio=false, DH=118, DI=96, R0=107;
+  function boxAt(cx,cy,sx,sy,z0,z1,out){var x=sx/2,y=sy/2,f=[[[1,0,0],[[x,-y,z0],[x,y,z0],[x,y,z1],[x,-y,z1]]],[[-1,0,0],[[-x,y,z0],[-x,-y,z0],[-x,-y,z1],[-x,y,z1]]],[[0,1,0],[[x,y,z0],[-x,y,z0],[-x,y,z1],[x,y,z1]]],[[0,-1,0],[[-x,-y,z0],[x,-y,z0],[x,-y,z1],[-x,-y,z1]]],[[0,0,1],[[-x,-y,z1],[x,-y,z1],[x,y,z1],[-x,y,z1]]]];
+    f.forEach(function(q){var b=out.p.length/3;q[1].forEach(function(v){out.p.push(v[0]+cx,v[1]+cy,v[2]);out.n.push(q[0][0],q[0][1],q[0][2])});out.i.push(b,b+1,b+2,b,b+2,b+3)})}
+  function mk(fn){var o={p:[],n:[],i:[]};fn(o);return toMesh(o)}
+  var M_taxi=mk(function(o){boxAt(0,0,4.7,1.95,.3,1.2,o);boxAt(-.2,0,2.5,1.75,1.2,1.95,o);boxAt(-.2,0,.9,.5,1.95,2.25,o)});
+  var M_truck=mk(function(o){boxAt(-.9,0,5.6,2.5,.5,3.5,o);boxAt(3.2,0,2.2,2.4,.5,2.3,o)});
+  var M_awn=mk(function(o){boxAt(-.9,1.75,3.6,1.5,2.55,2.8,o)});
+  var M_dog=mk(function(o){boxAt(-.9,0,3.4,.95,3.5,4.4,o)});
+  var M_dogs=mk(function(o){boxAt(-.9,0,3.5,.3,4.4,4.62,o)});
+  var M_pipeR=trunk(.5,3.4), M_pipeW=trunk(.53,.7), M_puff=sphere(1,1,1,1,0), M_lampP=trunk(.14,6), M_lampB=sphere(1,.5,.5,.5,6.3);
+  function dioDataFor(ar){
+    var D=ar.data;if(!D)return null;if(D.dio)return D.dio;
+    var P=D.outlines.attributes.getPath.value, st=D.outlines.startIndices, n=D.outlines.length, keep=[], total=0;
+    for(var r=0;r<n;r++){var a=st[r]*3;if(Math.abs(P[a])<DI+6&&Math.abs(P[a+1])<DI+6){keep.push(r);total+=st[r+1]-st[r]}}
+    var buf=new Float32Array(total*3), ss=new Uint32Array(keep.length+1), o=0, c=0;
+    keep.forEach(function(r,i){ss[i]=c;var a=st[r]*3,len=(st[r+1]-st[r])*3;buf.set(P.subarray(a,a+len),o);o+=len;c+=st[r+1]-st[r]});ss[keep.length]=c;
+    var trees=D.trees.filter(function(t){return Math.abs(t.p[0])<DI-3&&Math.abs(t.p[1])<DI-3});
+    return D.dio={outlines:{length:keep.length,startIndices:ss,attributes:{getPath:{value:buf,size:3}}},trees:trees};
+  }
+  function sq(h,z){return [[-h,-h,z],[h,-h,z],[h,h,z],[-h,h,z],[-h,-h,z]]}
+  function dioLayers(){
+    var D=cur.data, X=dioDataFor(cur), ls=[];
+    var O={coordinateSystem:deck.COORDINATE_SYSTEM.METER_OFFSETS,coordinateOrigin:[cur.c[0],cur.c[1],0]};
+    ls.push(new deck.SolidPolygonLayer(Object.assign({id:'d-shadow',data:[{p:sq(DH+16,-30).slice(0,4).map(function(q){return [q[0]+22,q[1]-26,q[2]]})}],getPolygon:function(d){return d.p},getFillColor:[0,52,58,70],material:false},O)));
+    ls.push(new deck.SolidPolygonLayer(Object.assign({id:'d-slab',data:[{p:sq(DH,-18).slice(0,4)}],getPolygon:function(d){return d.p},extruded:true,getElevation:18,getFillColor:[168,170,176,255],material:{ambient:.6,diffuse:.55,shininess:8,specularColor:[40,40,48]}},O)));
+    ls.push(new deck.SolidPolygonLayer(Object.assign({id:'d-top',data:[{p:sq(DH,.02).slice(0,4)}],getPolygon:function(d){return d.p},getFillColor:[62,66,76,255],material:false},O)));
+    // lane dashes around the road ring
+    var dashes=[];for(var t=-DH+12;t<DH-14;t+=11){dashes.push({path:[[t,-R0,.1],[t+6,-R0,.1]]},{path:[[t,R0,.1],[t+6,R0,.1]]},{path:[[-R0,t,.1],[-R0,t+6,.1]]},{path:[[R0,t,.1],[R0,t+6,.1]]})}
+    ls.push(new deck.PathLayer(Object.assign({id:'d-dash',data:dashes,getPath:function(d){return d.path},getColor:[236,238,240,255],getWidth:.7,widthUnits:'meters',capRounded:true},O)));
+    ls.push(new deck.PathLayer(Object.assign({id:'d-curb',data:[{path:sq(DI+1,.08)}],getPath:function(d){return d.path},getColor:[196,192,184,255],getWidth:3,widthUnits:'meters',jointRounded:true},O)));
+    if(D&&X){
+      var OD={coordinateSystem:deck.COORDINATE_SYSTEM.METER_OFFSETS,coordinateOrigin:[D.anchor[0],D.anchor[1],0]};
+      ls.push(new deck.PathLayer(Object.assign({id:'d-sidewalk',data:X.outlines,_pathType:'open',getColor:[198,194,186,255],getWidth:5,widthUnits:'meters',jointRounded:true},OD)));
+      ls.push(new deck.PathLayer(Object.assign({id:'d-curb2',data:X.outlines,_pathType:'open',getColor:[150,146,142,255],getWidth:.5,widthUnits:'meters'},OD)));
+      D.meshes.forEach(function(m,i){ls.push(new deck.SimpleMeshLayer(Object.assign({id:'d-b'+i,data:[{}],mesh:m,getPosition:[0,0,0],getColor:PAL[i].concat(255),extensions:[ext(DI)],pickable:false,material:false},OD)))});
+      ls.push(new deck.SimpleMeshLayer(Object.assign({id:'d-trunks',data:X.trees,mesh:treeTrunk,getPosition:function(d){return d.p},getColor:[110,78,52,255],getScale:function(d){return [d.s,d.s,d.s]},material:{ambient:.6,diffuse:.6}},OD)));
+      ls.push(new deck.SimpleMeshLayer(Object.assign({id:'d-crowns',data:X.trees,mesh:treeCrown,getPosition:function(d){return d.p},getColor:function(d){return TREE_G[Math.floor(d.g*3)].concat(255)},getScale:function(d){return [d.s,d.s,d.s]},material:{ambient:.5,diffuse:.7,shininess:4,specularColor:[30,40,30]}},OD)));
+    }
+    var mat={ambient:.55,diffuse:.8,shininess:30};
+    function prop(id,mesh,data,color){ls.push(new deck.SimpleMeshLayer(Object.assign({id:'d-'+id,data:data,mesh:mesh,getPosition:function(d){return d.p},getOrientation:function(d){return [0,d.y||0,0]},getScale:function(d){var k=d.s||1.6;return [k,k,k]},getColor:color,material:mat},O)))}
+    var cars=[{p:[-34,-R0+3.4,.1],y:0},{p:[R0-3.4,40,.1],y:90},{p:[-R0+3.4,-18,.1],y:270}];
+    prop('taxi',M_taxi,[{p:[-34,-R0+3.4,.1],y:0},{p:[-R0+3.4,52,.1],y:90},{p:[34,R0-3.4,.1],y:180}],[255,206,32,255]);
+    prop('truck',M_truck,[{p:[R0-3.4,-34,.1],y:90}],[56,178,170,255]);
+    prop('awn',M_awn,[{p:[R0-3.4,-34,.1],y:90}],[226,58,52,255]);
+    prop('dog',M_dog,[{p:[R0-3.4,-34,.1],y:90}],[222,160,92,255]);
+    prop('dogs',M_dogs,[{p:[R0-3.4,-34,.1],y:90}],[210,50,40,255]);
+    prop('pipe',M_pipeR,[{p:[DI+3,-62,.1]}],[222,64,52,255]);
+    prop('pipew',M_pipeW,[{p:[DI+3,-62,1.4]}],[250,250,250,255]);
+    prop('puff',M_puff,[{p:[DI+3,-62,4.2],s:.9},{p:[DI+3.6,-61.6,5.7],s:1.25},{p:[DI+4.6,-61,7.6],s:1.65}],[255,255,255,225]);
+    var lamps=[[-DI-3,-DI-3],[DI+3,-DI-3],[-DI-3,DI+3],[DI+3,DI+3]].map(function(q){return {p:[q[0],q[1],0.1]}});
+    prop('lampp',M_lampP,lamps,[40,44,52,255]);prop('lampb',M_lampB,lamps,[255,214,107,255]);
+    ls.push(new deck.ScatterplotLayer(Object.assign({id:'d-ring',data:[{p:[0,0,.3]}],getPosition:function(d){return d.p},getRadius:22,radiusUnits:'meters',stroked:true,filled:false,getLineColor:[253,72,2],getLineWidth:1.6,lineWidthUnits:'meters',parameters:{depthTest:false}},O)));
+    return ls;
+  }
+  function dioView(a){return {longitude:a.c[0],latitude:a.c[1],zoom:a.dz||16.6,pitch:54.7,bearing:45,maxPitch:85,minZoom:15.5,maxZoom:19}}
+  function setDio(on){
+    dio=!!on;var w=$('.deckwrap');w.classList.toggle('dio',dio);var b=$('#dioBtn');b.setAttribute('aria-pressed',dio);b.textContent=dio?'Exit diorama':'Diorama';
+    if(dio){if(night)setNight(false);labelsOn=false;is3d=true;loadArea(cur).then(function(){draw()})}
+    deckInst.setProps({views:new deck.MapView({id:'map',orthographic:dio,controller:{maxZoom:20,minZoom:dio?15:10}}),initialViewState:dio?dioView(cur):Object.assign({},areaView(cur)),layers:layers().concat(pulseLayers())});
+    pulseClock();
+  }
+  function layers(){
+    if(dio)return dioLayers();
+    var ls=[
+      new deck.SolidPolygonLayer({id:'water',data:groundPoly.map(function(p){return {polygon:p}}),getPolygon:function(d){return d.polygon},getFillColor:night?[8,13,34]:[128,190,230],material:false,updateTriggers:{getFillColor:night}}),
+      new deck.SolidPolygonLayer({id:'land',data:boroughs,getPolygon:function(d){return d.polygon},getFillColor:night?[22,30,66]:[178,176,170],material:false,updateTriggers:{getFillColor:night},parameters:{depthTest:false}}),
+      new deck.PathLayer({id:'shore',data:boroughs,getPath:function(d){return d.polygon},getColor:night?[62,92,180]:[236,240,242],updateTriggers:{getColor:night},getWidth:2,widthUnits:'pixels',widthMinPixels:1.5,parameters:{depthTest:false}}),
+      !hexOn?null:new deck.HexagonLayer({id:'hex',data:pts,getPosition:function(d){return d.p},radius:90,extruded:false,coverage:.92,opacity:(night?.5:.7)-.3*detailAmt,colorRange:night?NRANGE:range,upperPercentile:100,pickable:true,autoHighlight:true,highlightColor:[255,255,255,120],onClick:pick})
+    ];
+    if(is3d)skyline.forEach(function(G){
+      if(G.area){var ar=AREAS.filter(function(a){return a.id===G.area})[0];if(ar&&ar.data)return}
+      ls.push(new deck.SimpleMeshLayer({id:'sky-'+G.key,data:[{}],mesh:G.mesh,getPosition:[0,0,0],coordinateSystem:deck.COORDINATE_SYSTEM.METER_OFFSETS,coordinateOrigin:[G.anchor[0],G.anchor[1],0],getColor:[255,255,255,255],extensions:[ext()],pickable:false,material:false}));
+    });
+    if(is3d)AREAS.forEach(function(ar){
+      var D=ar.data;if(!D)return;
+      var O={coordinateSystem:deck.COORDINATE_SYSTEM.METER_OFFSETS,coordinateOrigin:[D.anchor[0],D.anchor[1],0]}, id=ar.id+'-';
+      ls.push(new deck.PathLayer(Object.assign({id:id+'sidewalk',data:D.outlines,_pathType:'open',getColor:night?[40,52,98,255]:[196,192,184,255],updateTriggers:{getColor:night},getWidth:5,widthUnits:'meters',jointRounded:true,pickable:false},O)));
+      ls.push(new deck.PathLayer(Object.assign({id:id+'curb',data:D.outlines,_pathType:'open',getColor:night?[255,190,110,170]:[160,156,150,255],updateTriggers:{getColor:night},getWidth:night?.9:.5,widthUnits:'meters',pickable:false},O)));
+      D.meshes.forEach(function(m,i){ls.push(new deck.SimpleMeshLayer(Object.assign({id:id+'b'+i,data:[{}],mesh:m,getPosition:[0,0,0],getColor:PAL[i].concat(255),extensions:[ext()],pickable:false,material:false},O)))});
+      ls.push(new deck.SimpleMeshLayer(Object.assign({id:id+'trunks',data:D.trees,mesh:treeTrunk,getPosition:function(d){return d.p},getColor:night?[30,26,34,255]:[110,78,52,255],updateTriggers:{getColor:night},getScale:function(d){return [d.s,d.s,d.s]},material:{ambient:.6,diffuse:.6}},O)));
+      ls.push(new deck.SimpleMeshLayer(Object.assign({id:id+'crowns',data:D.trees,mesh:treeCrown,getPosition:function(d){return d.p},getColor:function(d){return night?[22,58,64,255]:TREE_G[Math.floor(d.g*3)].concat(255)},updateTriggers:{getColor:night},getScale:function(d){return [d.s,d.s,d.s]},material:{ambient:.5,diffuse:.7,shininess:4,specularColor:[30,40,30]}},O)));
+    });
+    if(labelsOn){
+      ls.push(new deck.TextLayer({id:'boro-labels',data:BLABELS,getPosition:function(d){return d.p},getText:function(d){return d.t},getSize:20,getColor:night?[255,248,236,235]:[60,64,74,235],fontFamily:'Bricolage Grotesque, Helvetica, Arial, sans-serif',fontWeight:800,characterSet:'auto',fontSettings:{sdf:true},outlineWidth:4,outlineColor:night?[20,27,60,230]:[255,255,255,220],updateTriggers:{getColor:night},billboard:true,parameters:{depthTest:false}}));
+      ls.push(new deck.TextLayer({id:'area-labels',data:AREAS,getPosition:function(d){return d.c},getText:function(d){return d.name},getSize:13,getColor:function(d){return night?(d===cur?[255,214,107,255]:[255,248,236,240]):(d===cur?[16,18,22,255]:[40,44,54,230])},fontFamily:'Bricolage Grotesque, Helvetica, Arial, sans-serif',fontWeight:700,characterSet:'auto',fontSettings:{sdf:true},outlineWidth:5,outlineColor:night?[14,20,48,235]:[255,214,107,240],background:false,billboard:true,pickable:true,onClick:function(i){if(i.object)selectArea(i.object)},updateTriggers:{getColor:cur.id+night},parameters:{depthTest:false}}));
+    }
+    ls.push(new deck.ScatterplotLayer({id:'ring',data:[{p:HOT}],getPosition:function(d){return d.p},getRadius:120,radiusUnits:'meters',stroked:true,filled:false,getLineColor:[253,72,2],lineWidthMinPixels:4}));
+    return ls.filter(Boolean);
+  }
+  // Night pulses are animated on the GPU: one static layer each, a time uniform, and deck's _animate redraw loop.
+  // Per-hub phase rides in the fill alpha so the rings don't beat in unison.
+  class PulseExt extends deck.LayerExtension{
+    getShaders(){return {inject:{
+      'fs:#decl':'uniform float uTime; uniform float uSpeed; uniform vec3 uRing; uniform float uCore;',
+      'fs:DECKGL_FILTER_COLOR':`
+        float ph=color.a;
+        float r=length(geometry.uv);
+        float k=fract(uTime*uSpeed+ph);
+        float ring=(1.0-smoothstep(0.0,0.07,abs(r-k)))*(1.0-k);
+        float ring2=(1.0-smoothstep(0.0,0.05,abs(r-fract(k+0.5))))*(1.0-fract(k+0.5))*0.6;
+        float core=uCore*(1.0-smoothstep(0.045,0.07,r))*(0.85+0.15*sin(uTime*3.0+ph*6.28));
+        float glow=uCore*(1.0-smoothstep(0.0,0.22,r))*0.18;
+        vec3 rgb=mix(uRing,vec3(1.0,0.84,0.42),core);
+        color=vec4(rgb,clamp(max(max(ring,ring2),max(core,glow)),0.0,1.0));
+      `}}}
+    draw(params,extension){var o=extension.opts;this.state.model.setUniforms({uTime:(performance.now()/1000)%1000,uSpeed:o.speed,uRing:o.ring,uCore:o.core})}
+  }
+  PulseExt.extensionName='PulseExt';PulseExt.componentName='PulseExt';
+  var pulseC=new PulseExt({speed:.5,ring:[1,.478,.102],core:1}), pulseA=new PulseExt({speed:.28,ring:[.56,.69,1],core:0});
+  function pulseLayers(){
+    if(!night||detailAmt>=1)return [];
+    var op=1-.6*detailAmt;
+    return [
+      new deck.ScatterplotLayer({id:'pulse-complaints',data:hubs,getPosition:function(d){return d.p},radiusUnits:'meters',getRadius:function(d){return 200+d.n*1.6},
+        getFillColor:function(d){return [255,255,255,Math.round(((d.k*0.37)%1)*255)]},extensions:[pulseC],opacity:op,parameters:{depthMask:false}}),
+      new deck.ScatterplotLayer({id:'pulse-agency',data:hubs.filter(function(d){return d.k%3===1}),getPosition:function(d){return [d.p[0]+.0018,d.p[1]-.0012]},radiusUnits:'meters',getRadius:220,
+        getFillColor:function(d){return [255,255,255,Math.round(((d.k*0.21)%1)*255)]},extensions:[pulseA],opacity:op,parameters:{depthMask:false}})
+    ];
+  }
+  // redraw at ~20 fps while Night is on, so pulses move without a full-speed render loop
+  var pulseTimer=0, mapVisible=true;
+  try{new IntersectionObserver(function(es){mapVisible=es[0].isIntersecting}).observe($('#deckmap'))}catch(e){}
+  function pulseClock(){
+    if(night&&!pulseTimer)pulseTimer=setInterval(function(){if(deckInst&&!document.hidden&&mapVisible&&detailAmt<1)deckInst.redraw(true)},50);
+    if(!night&&pulseTimer){clearInterval(pulseTimer);pulseTimer=0}
+  }
+  function draw(){if(!deckInst)return;deckInst.setProps({layers:layers().concat(pulseLayers())});pulseClock()}
+  function setNight(on){
+    night=on?1:0;$('.deckwrap').classList.toggle('night',!!on);var b=$('#nightbtn');b.setAttribute('aria-pressed',!!on);b.textContent=on?'Day':'Night';draw();
+  }
+  function selectArea(a){
+    cur=a;var row=$('#areas');Array.prototype.forEach.call(row.children,function(x){x.setAttribute('aria-pressed',x.textContent===a.name)});
+    loadArea(a);draw();
+    deckInst.setProps({initialViewState:dio?Object.assign({},dioView(a),{transitionDuration:900,transitionInterpolator:new deck.FlyToInterpolator({speed:1.6})}):view(Object.assign({},areaView(a),{pitch:is3d?60:0,bearing:is3d?a.b:0}))});
+  }
+  function view(v){return Object.assign({},v,{transitionDuration:1400,transitionInterpolator:new deck.FlyToInterpolator({speed:1.4})})}
+  try{
+    deckInst=new deck.Deck({parent:$('#deckmap'),useDevicePixels:true,glOptions:{antialias:true},initialViewState:INITIAL,controller:{maxZoom:20,minZoom:10},maxPitch:85,layers:layers(),
+      onViewStateChange:function(e){var z=e.viewState.zoom,a=z<15.4?0:z>16.4?1:(z-15.4);a=Math.round(a*4)/4;if(dio){a=1}var h=!dio&&z<17.3&&e.viewState.pitch<70,lb=!dio&&z<15.3;if(a!==detailAmt||h!==hexOn||lb!==labelsOn){detailAmt=a;hexOn=h;labelsOn=lb;draw()}},
+      getTooltip:function(i){return i.object&&i.object.count?{text:i.object.count+' reports in this hexagon',style:{font:'12px IBM Plex Mono, monospace',background:'#171b23',color:'#f1f2f4',padding:'6px 8px',borderRadius:'8px'}}:null}});
+    $('#tilt').addEventListener('click',function(){is3d=!is3d;this.setAttribute('aria-pressed',is3d);this.textContent=is3d?'3D':'2D';deckInst.setProps({initialViewState:Object.assign({},areaView(cur),{pitch:is3d?60:0,bearing:is3d?cur.b:0,transitionDuration:600}),layers:layers()})});
+    $('#reset').addEventListener('click',function(){deckInst.setProps({initialViewState:view(Object.assign({},areaView(cur),{pitch:is3d?60:0,bearing:is3d?cur.b:0}))})});
+    $('#street').addEventListener('click',function(){if(!is3d)$('#tilt').click();loadArea(cur).then(function(D){if(D&&D.street)deckInst.setProps({initialViewState:view(D.street)})})});
+    var row=$('#areas');
+    AREAS.forEach(function(a){var b=document.createElement('button');b.type='button';b.textContent=a.name;b.setAttribute('aria-pressed',a===cur);
+      b.addEventListener('click',function(){selectArea(a)});
+      row.appendChild(b)});
+    $('#skyview').addEventListener('click',function(){if(!is3d)$('#tilt').click();deckInst.setProps({initialViewState:view(SKYVIEW)})});
+    $('#nightbtn').addEventListener('click',function(){if(dio)setDio(false);setNight(!night)});
+    $('#dioBtn').addEventListener('click',function(){setDio(!dio)});
+    $('#city').addEventListener('click',function(){deckInst.setProps({initialViewState:view(Object.assign({},CITY,{pitch:is3d?40:0,bearing:is3d?-15:0}))})});
+    loadSkyline();loadArea(cur);
+  }catch(e){
+    var m=document.createElement('div');m.className='deckfail';m.textContent='This map needs WebGL, which is not available here.';$('#deckmap').appendChild(m);
+  }
+
+
+})();
+</script>

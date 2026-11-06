@@ -15,6 +15,7 @@ const KeepCaseStudy = lazy(() => import("./pages/KeepCaseStudy/KeepCaseStudy"));
 const QuizAICaseStudy = lazy(() => import("./pages/QuizAICaseStudy/QuizAICaseStudy"));
 const HikuCaseStudy = lazy(() => import("./pages/HikuCaseStudy/HikuCaseStudy"));
 const ProMoveCaseStudy = lazy(() => import("./pages/ProMoveCaseStudy/ProMoveCaseStudy"));
+const ChimeCaseStudy = lazy(() => import("./pages/ChimeCaseStudy/ChimeCaseStudy"));
 const Craft = lazy(() => import("./pages/Craft/Craft"));
 const Hands = lazy(() => import("./pages/Hands/Hands"));
 const Scenes = lazy(() => import("./pages/Scenes/Scenes"));
@@ -100,6 +101,7 @@ function App() {
             <Route path="/hiku" element={<HikuCaseStudy />} />
             <Route path="/pro-move" element={<ProMoveCaseStudy />} />
             <Route path="/craft" element={<Craft />} />
+            <Route path="/craft/chime" element={<ChimeCaseStudy />} />
             <Route path="/hands" element={<Hands />} />
             <Route path="/scenes" element={<Scenes />} />
             <Route path="/pixel-cat" element={<PixelCatPage />} />

@@ -6,6 +6,7 @@ import "./Craft.css";
 
 /* Everything on the craft wall: the experiments, then prototype clips from the case studies. */
 const EXTRAS = [
+  { id: "chime", title: "Chime · noise complaints", tags: ["NYC challenge", "Interactive prototype", "3D city map"], media: { image: "/projects/chime/media/map-hush.webp" }, about: "A voice-first concept for NYC noise complaints. Every complaint gets a heartbeat: a sound wave that changes as the city acts on it, a live 3D map built on the city's own building model, and a last word for you on whether it got quieter. Open the working prototype inside the case study.", to: "/craft/chime", toLabel: "Open case study →" },
   { id: "keep-relive", title: "Keep · Re-live", tags: ["Meta AI concept", "Prototype"], media: { video: "/work/keep/sol-relive.mp4" }, to: "/keep" },
   { id: "keep-ask", title: "Keep · Ask", tags: ["Meta AI concept", "Prototype"], media: { video: "/work/keep/sol-ask.mp4" }, to: "/keep" },
 ];

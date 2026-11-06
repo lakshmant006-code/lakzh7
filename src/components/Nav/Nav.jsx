@@ -81,7 +81,7 @@ const Nav = () => {
       if (item.label === "about") return false;
     }
     if (item.label === "about") return path === "/about";
-    if (item.label === "craft") return path === "/craft";
+    if (item.label === "craft") return path === "/craft" || path.startsWith("/craft/");
     if (item.label === "grass") return scenesOpen || path === "/scenes";
     if (item.label === "hand") return handOn;
     return false;
@@ -116,6 +116,7 @@ const Nav = () => {
     "/quizai",
     "/hiku",
     "/keep",
+    "/craft/chime",
   ];
   const NAV_FADE_DELAY = isDefaultHomePath(location.pathname)
     ? LANDING_NAV_DELAY
