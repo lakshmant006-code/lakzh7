@@ -14,6 +14,7 @@ import {
   CsImg,
   CsVideo,
   CsEmbed,
+  CsStats,
   CsSeeNext,
 } from "../../components/CsKit/CsKit";
 // Still provides the lo-fi wireframe embed sizing (.quizai-lofi-frame).
@@ -310,6 +311,21 @@ const QuizAICaseStudy = () => {
             scrolling="no"
           />
         </CsPanel>
+      </CsSection>
+
+      <CsSection id="quizai-traction" label="Traction" title="What the numbers say">
+        <CsText>
+          Over its last 90 days live, Reef was used by 162 people, nearly all of them new, and together they
+          recorded close to four thousand interactions with it.
+        </CsText>
+        <CsStats
+          items={[
+            { value: "162", label: "Active users in 90 days" },
+            { value: "158", label: "New users" },
+            { value: "3.7k", label: "Interactions recorded" },
+          ]}
+        />
+        <CsText>Measured with Google Analytics, over the last 90 days.</CsText>
       </CsSection>
 
       <CsSection id="quizai-impact" label="Impact" title="Moving forward">
