@@ -38,3 +38,4 @@
 
 @media (max-width: 640px) { .chime-beat { aspect-ratio: 16 / 8; } .chime-embed { height: 640px !important; } }
 @media (prefers-reduced-motion: reduce) { .chime-beat-loud, .chime-ripple { animation: none; stroke-dashoffset: 0; } }
+.chime-launch{width:100%;display:block;background:#000}

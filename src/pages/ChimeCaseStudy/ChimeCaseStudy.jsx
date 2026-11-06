@@ -12,7 +12,6 @@ import {
   CsPanel,
   CsGrid3,
   CsStats,
-  CsVideo,
   CsImg,
 } from "../../components/CsKit/CsKit";
 import "./ChimeCaseStudy.css";
@@ -159,9 +158,17 @@ const ChimeCaseStudy = () => {
         />
       </CsSection>
 
-      <CsSection id="chime-walk" label="In motion" title="A walkthrough">
-        <CsPanel title="Screen recording of the concept">
-          <CsVideo src={`${BASE}/media/walkthrough.mp4`} label="A screen recording of the Chime concept: the heartbeat, the tracker and the 3D map" />
+      <CsSection id="chime-walk" label="Launch" title="The launch video">
+        <CsPanel title="Chime, launched">
+          <video
+            className="cs-media chime-launch"
+            src={`${BASE}/media/launch.mp4`}
+            poster={`${BASE}/media/launch-poster.jpg`}
+            controls
+            playsInline
+            preload="none"
+            aria-label="The Chime launch video"
+          />
         </CsPanel>
       </CsSection>
 
