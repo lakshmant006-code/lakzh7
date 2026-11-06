@@ -56,3 +56,12 @@ The dev server runs at `http://localhost:5173` by default.
 ## License
 
 Private portfolio project. All rights reserved.
+
+## Hands gallery (drawings from the hand canvas)
+
+People draw accessories and nail paints on the hand (nav hand button); **Add to the gallery** saves the strokes and `/hands` shows everyone's.
+
+- Backend: `api/hand-drawings.js` (list and save) and `api/hand-drawing.js` (one picture), using `server/hand-store.js`.
+- Storage: **Supabase**. `supabase/migrations/` creates the `hand_drawings` table and the private `hands` storage bucket; the GitHub integration applies it when `master` is merged.
+- Vercel environment variables (server only, never in the browser): `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`.
+- Without those, it falls back to Vercel Blob (`BLOB_READ_WRITE_TOKEN`), and in local development to memory.

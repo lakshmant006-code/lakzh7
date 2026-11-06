@@ -1,4 +1,4 @@
-import { validateDrawing, saveDrawing, listDrawings, allowed } from "../server/hand-store.js";
+import { validateDrawing, saveDrawing, listDrawings, allowed, isConfigured } from "../server/hand-store.js";
 
 // GET  -> the newest drawings, [{ id, uploadedAt }]
 // POST -> { imageDataUri } saves one more, returns { id }
@@ -10,8 +10,8 @@ export default async function handler(req, res) {
       return;
     }
     if (req.method === "POST") {
-      if (!process.env.BLOB_READ_WRITE_TOKEN && process.env.NODE_ENV === "production") {
-        res.status(500).json({ error: "server not configured (missing BLOB_READ_WRITE_TOKEN)" });
+      if (!isConfigured()) {
+        res.status(500).json({ error: "server not configured (add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY)" });
         return;
       }
       const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.socket?.remoteAddress || "unknown";
