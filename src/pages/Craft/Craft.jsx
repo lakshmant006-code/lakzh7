@@ -84,7 +84,6 @@ function Tile({ item, onOpen, hidden }) {
       {item.gallery ? (
         <span className="craft-tile-gallery">
           {item.gallery.map((g, i) => <img key={g.src} src={g.src} alt="" loading="lazy" decoding="async" className={i === frame ? "on" : ""} />)}
-          <span className="craft-tile-count">{item.gallery.length} drawings</span>
         </span>
       ) : m.video ? (
         <video ref={vid} src={m.video} poster={m.poster} muted loop playsInline preload="metadata" />
