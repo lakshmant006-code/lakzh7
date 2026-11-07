@@ -4,9 +4,9 @@
 .hands-draw { all: unset; box-sizing: border-box; cursor: pointer; padding: 11px 20px; border-radius: 999px; background: #0f0f0f; color: #fff; font: 500 14px/1 "DM Sans", system-ui, sans-serif; transition: transform .15s; }
 .hands-draw:hover { transform: translateY(-1px); }
 .hands-count, .hands-note { margin: 2rem 0 1rem; font-size: .9rem; color: rgba(15, 15, 15, .5); }
-.hands-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); gap: 0; }
-@media (min-width: 760px) { .hands-grid { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 1100px) { .hands-grid { grid-template-columns: repeat(4, 1fr); } }
+.hands-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(3, 1fr); gap: 0; }
+@media (min-width: 760px) { .hands-grid { grid-template-columns: repeat(5, 1fr); } }
+@media (min-width: 1100px) { .hands-grid { grid-template-columns: repeat(6, 1fr); } }
 .hands-card { position: relative; aspect-ratio: 1129 / 1235; overflow: hidden;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent), linear-gradient(to bottom, transparent, #000 4%, #000 82%, transparent);
   -webkit-mask-composite: source-in;
