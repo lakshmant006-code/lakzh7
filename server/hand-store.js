@@ -33,9 +33,9 @@ export function validateDrawing(dataUri) {
   return null;
 }
 
-export async function saveDrawing(dataUri) {
+export async function saveDrawing(dataUri, wantId) {
   const buffer = Buffer.from(dataUri.slice(dataUri.indexOf(",") + 1), "base64");
-  const id = randomUUID();
+  const id = ID_RE.test(wantId || "") ? wantId : randomUUID();               // the page picks it, because the id decides which look the hand takes
   if (useMemory()) { memory.set(id, { buffer, uploadedAt: new Date() }); return id; }
   if (useSupabase()) {
     const up = await sb(`/storage/v1/object/hands/${id}.png`, { method: "POST", headers: { "Content-Type": "image/png", "x-upsert": "false" }, body: buffer });

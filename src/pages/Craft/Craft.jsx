@@ -38,6 +38,35 @@ const PROMOVE_TESTING = {
   about: "First hands on pro-move. We handed the iPad prototype to people around the studio and watched them perform, draw and laugh as their characters copied them. What they tried first, where they hesitated and what made them smile shaped the next round of the design.",
   to: "/pro-move",
 };
+/* AIGA design hackathon: Hello? / Chime. the poster and brand, then the app */
+const H = "/projects/hello/";
+const CHIME_BRAND = {
+  id: "chime-brand", title: "Chime · poster & brand", tags: ["AIGA hackathon", "Brand identity", "Poster"], count: "pieces",
+  media: {}, blurb: "New Yorkers file about 610,000 noise complaints a year, and most never hear back. Hello? began as a poster, a giant ear asking the city to answer, and became Chime: a brand built from sound waves, soft chimes and signal orange.",
+  gallery: [
+    { src: H + "poster-final.webp", w: 1423, h: 2000, title: "Hello? The city should answer" },
+    { src: H + "poster-draft.webp", w: 1390, h: 2000, title: "Hello? Can you hear me?" },
+    { src: H + "brand-board.webp", w: 1424, h: 2000, title: "The brand board" },
+    { src: H + "icon-sheet.webp", w: 1536, h: 1024, title: "The Chime icon, edited" },
+    { src: H + "icon.webp", w: 1000, h: 1000, title: "The H is all ears" },
+    { src: H + "pattern.webp", w: 1400, h: 1080, title: "A sculpted chime, repeated" },
+  ],
+};
+const CHIME_APP = {
+  id: "chime-app", title: "Chime · the app", tags: ["AIGA hackathon", "Product design", "NYC 311"], count: "screens",
+  media: {}, blurb: "Report the noise, hear that the city heard you, then follow it until something changes. Each complaint becomes a living sound wave that shifts every time the city acts.",
+  gallery: [
+    { src: H + "product-flow.webp", w: 2400, h: 904, title: "The product flow" },
+    { src: H + "screen-report.webp", w: 402, h: 874, title: "Rough night? Report it" },
+    { src: H + "screen-heard.webp", w: 402, h: 874, title: "We heard you" },
+    { src: H + "screen-follow.webp", w: 402, h: 874, title: "Follow your signal" },
+    { src: H + "screen-insights.webp", w: 402, h: 874, title: "Insights" },
+    { src: H + "screen-widgets.webp", w: 402, h: 874, title: "On the home screen" },
+    { src: H + "map-3d.webp", w: 1200, h: 880, title: "Where the noise is" },
+    { src: H + "map-night.webp", w: 1200, h: 880, title: "The city at night" },
+    { src: H + "map-street.webp", w: 1200, h: 880, title: "Street level" },
+  ],
+};
 const GALLERY = { id: "illustrations", title: "Illustrations", tags: ["Procreate", "Ink & watercolour"], media: {}, gallery: ILLUSTRATIONS };
 const REST = [
   ...playProjects.map((p) => ({ id: p.id, title: p.title, tags: p.tags || [], media: p.media || {}, href: p.actions?.[0]?.url })),
@@ -47,6 +76,8 @@ const REST = [
 const ITEMS = [];
 for (let i = 0; i < Math.max(LIVE.length, REST.length); i++) { if (LIVE[i]) ITEMS.push(LIVE[i]); if (REST[i]) ITEMS.push(REST[i]); }
 ITEMS.splice(1, 0, GALLERY);
+ITEMS.splice(4, 0, CHIME_BRAND);
+ITEMS.splice(9, 0, CHIME_APP);
 ITEMS.unshift(PROCREATE_MOTION);
 ITEMS.splice(1, 0, PROMOVE_TESTING);
 const srcOf = (m) => m.video || m.image || m.thumbnail || m.poster;
@@ -189,7 +220,7 @@ function Gallery({ open, onClose }) {
   const layout = () => {
     const vw = window.innerWidth, vh = window.innerHeight, n = imgs.length;
     const cols = vw < 640 ? 2 : 3, rows = Math.ceil(n / cols), gap = vw < 640 ? 12 : 22, pad = vw < 640 ? 16 : 48;
-    const top = 92, bottom = 70, cw = (vw - pad * 2 - gap * (cols - 1)) / cols, ch = (vh - top - bottom - gap * (rows - 1)) / rows;
+    const top = 92, bottom = item.blurb ? 150 : 70, cw = (vw - pad * 2 - gap * (cols - 1)) / cols, ch = (vh - top - bottom - gap * (rows - 1)) / rows;
     return imgs.map((g, i) => {
       const r = Math.floor(i / cols), inRow = Math.min(cols, n - r * cols), c = i % cols;
       const a = g.w / g.h; let w = cw * 0.94, h = w / a; if (h > ch * 0.94) { h = ch * 0.94; w = h * a; }
@@ -258,8 +289,9 @@ function Gallery({ open, onClose }) {
           <img src={g.src} alt={g.title} />
         </button>
       ))}
-      <div className="craft-detail-meta" style={{ bottom: "1.6rem" }}>
-        <span>{focus === null ? "tap a drawing to bring it up" : `${focus + 1} / ${imgs.length} · tap again to put it back`}</span>
+      <div className={`craft-detail-meta${item.blurb ? " has-about" : ""}`} style={{ bottom: "1.6rem" }}>
+        {item.blurb && focus === null && <p className="craft-detail-about">{item.blurb}</p>}
+        <span>{focus === null ? "tap one to bring it up" : `${focus + 1} / ${imgs.length} · tap again to put it back`}</span>
       </div>
     </div>
   );

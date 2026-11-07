@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { lookSrc, newId } from "./handLook";
 import "./HandStudio.css";
 
 /* Opens from the hand button in the nav: the open hand as a canvas, colours on the right, to draw
@@ -21,6 +22,7 @@ export default function HandStudio() {
   const [ink, setInk] = useState(false);                    // anything drawn yet
   const [sent, setSent] = useState("idle");                 // idle | saving | saved | error
   const [msg, setMsg] = useState("");
+  const [id, setId] = useState(newId);                    // chosen up front: it decides which look the hand takes
   const navigate = useNavigate();
   const cv = useRef(null), undo = useRef([]), stroke = useRef(null);
 
@@ -90,10 +92,10 @@ export default function HandStudio() {
     try {
       const out = document.createElement("canvas"); out.width = 800; out.height = Math.round(800 * H / W);
       const g = out.getContext("2d"); g.imageSmoothingQuality = "high"; g.drawImage(cv.current, 0, 0, out.width, out.height);
-      const r = await fetch("/api/hand-drawings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ imageDataUri: out.toDataURL("image/png") }) });
+      const r = await fetch("/api/hand-drawings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, imageDataUri: out.toDataURL("image/png") }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.id) throw new Error(j.error || "the drawing store did not answer, so nothing was saved");
-      setSent("saved"); window.dispatchEvent(new CustomEvent("hand:saved"));
+      setSent("saved"); setId(newId()); window.dispatchEvent(new CustomEvent("hand:saved"));
     } catch (e) { setSent("error"); setMsg(e.message || "could not save"); }
   };
   const gallery = () => { setOpen(false); navigate("/hands"); };
@@ -104,8 +106,9 @@ export default function HandStudio() {
       <div className="hs-card">
         <button type="button" className="hs-x" aria-label="Close" onClick={() => setOpen(false)}>×</button>
         <div className="hs-stage">
-          <div className="hs-art">
-            <img src="/hand/open-hand-top.webp" alt="An open orange hand, ready to be drawn on" draggable="false" />
+          <div className={`hs-art${ink ? " ink-on" : ""}`}>
+            <img className="hs-base" src="/hand/open-hand-top.webp" alt="An open orange hand, ready to be drawn on" draggable="false" />
+            <img className={`hs-look${ink ? " on" : ""}`} src={lookSrc(id)} alt="" draggable="false" />
             <canvas ref={cv} width={W} height={H} className="hs-draw" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} />
           </div>
         </div>

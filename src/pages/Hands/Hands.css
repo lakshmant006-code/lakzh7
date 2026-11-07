@@ -17,4 +17,4 @@
 @keyframes handCardIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
 /* the hand sits back so the accessories and nail paints pop */
-.hands-card .hands-base { opacity: .7; }
+.hands-card .hands-base { opacity: .95; }

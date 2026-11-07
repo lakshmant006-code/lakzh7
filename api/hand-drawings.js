@@ -18,7 +18,7 @@ export default async function handler(req, res) {
       if (!allowed(ip)) { res.status(429).json({ error: "that's a lot of drawings, try again in a while" }); return; }
       const bad = validateDrawing(req.body?.imageDataUri);
       if (bad) { res.status(400).json({ error: bad }); return; }
-      res.status(200).json({ ok: true, id: await saveDrawing(req.body.imageDataUri) });
+      res.status(200).json({ ok: true, id: await saveDrawing(req.body.imageDataUri, req.body.id) });
       return;
     }
     res.status(405).json({ error: "method not allowed" });

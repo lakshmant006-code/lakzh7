@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Footer from "../../components/Footer/Footer";
+import { lookSrc } from "../../components/HandStudio/handLook";
 import "./Hands.css";
 
 /* Everything people have drawn on the hand: accessories, nail paints, nail ideas. It refreshes by itself. */
@@ -41,7 +42,7 @@ export default function Hands() {
             <ul className="hands-grid">
               {items.map((d) => (
                 <li key={d.id} className="hands-card">
-                  <img className="hands-base" src="/hand/open-hand-top.webp" alt="" loading="lazy" decoding="async" draggable="false" />
+                  <img className="hands-base" src={lookSrc(d.id)} alt="" loading="lazy" decoding="async" draggable="false" />
                   <img className="hands-ink" src={`/api/hand-drawing?id=${d.id}`} alt="A hand with accessories and nail paints drawn on it" loading="lazy" decoding="async" draggable="false" />
                 </li>
               ))}
