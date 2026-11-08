@@ -149,6 +149,19 @@ export function CsIntro({ title, lead, meta = [] }) {
   );
 }
 
+/* a small colour icon in front of every section label and panel title, picked from the words in it */
+const ICONS = [
+  [/overview/i, "🌱"], [/traction/i, "📈"], [/reflect|learned/i, "💭"], [/final product|finished|the final/i, "✨"],
+  [/key design|process/i, "🛠️"], [/design approach/i, "✏️"], [/thinking/i, "🧠"], [/problem/i, "🧩"], [/the idea/i, "💡"],
+  [/concept/i, "💫"], [/solution|how it works/i, "⚙️"], [/audience/i, "👥"], [/research/i, "🔍"], [/requirement|^users/i, "👥"],
+  [/motion/i, "🎞️"], [/feedback/i, "💬"], [/impact/i, "🎯"], [/limit/i, "⚖️"], [/launch/i, "🚀"], [/brand/i, "🎨"], [/city/i, "🏙️"],
+  [/context/i, "🧭"], [/hikers/i, "⛰️"], [/prototype|try the/i, "🎮"], [/flow/i, "🧭"], [/video|launched/i, "🎬"], [/clients/i, "🤝"],
+  [/skills/i, "🌟"], [/roles|access/i, "🔐"], [/time tracking/i, "⏱️"], [/calendar/i, "🗓️"], [/re-live/i, "🌆"], [/pipeline/i, "🧱"],
+  [/beanie/i, "🧢"], [/naheel/i, "📞"], [/dashboard|landing/i, "🖥️"], [/admin|employee/i, "🧑‍💼"], [/tracking/i, "📷"], [/smooth|snappy/i, "🎛️"],
+];
+const iconOf = (text) => { const t = String(text || ""); const hit = ICONS.find(([re]) => re.test(t)); return hit ? hit[1] : null; };
+const WithIcon = ({ text }) => { const i = iconOf(text); return i ? <><span className="cs-emoji" aria-hidden="true">{i}</span>{text}</> : text; };
+
 const slug = (text) =>
   String(text).toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
@@ -159,7 +172,7 @@ export function CsSection({ id, label, title, children }) {
       className="cs-section cs-col"
       data-nav-label={label || undefined}
     >
-      {label ? <p className="cs-label">{label}</p> : null}
+      {label ? <p className="cs-label"><WithIcon text={label} /></p> : null}
       {title ? (
         <Reveal as="h2" className="cs-h2">
           {title}
@@ -201,7 +214,7 @@ export function CsPanel({ title, wide = false, padded = false, children }) {
       as="figure"
       className={`cs-panel${wide ? " cs-panel--wide" : ""}`}
     >
-      {title ? <figcaption className="cs-panel-title">{title}</figcaption> : null}
+      {title ? <figcaption className="cs-panel-title"><WithIcon text={title} /></figcaption> : null}
       <div className={`cs-panel-body${padded ? " cs-panel-body--padded" : ""}`}>
         {children}
       </div>

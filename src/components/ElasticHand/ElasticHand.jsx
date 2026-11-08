@@ -112,7 +112,7 @@ export default function ElasticHand() {
       canvas.style.opacity = hideRef.current ? "0" : String(dimRef.current);
     };
     addEventListener("pointermove", move, { passive: true });
-    const down = (e) => { if (e.button === 2) return; move(e); if (!awayRef.current) click(); };
+    const down = (e) => { if (e.button === 2 || (e.button === 0 && e.ctrlKey)) return; move(e); if (!awayRef.current) click(); };
     addEventListener("pointerdown", down, true);
     addEventListener("contextmenu", contextmenu, true);
     addEventListener("resize", fit);
