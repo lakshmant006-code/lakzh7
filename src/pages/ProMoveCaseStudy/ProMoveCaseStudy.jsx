@@ -19,6 +19,7 @@ import {
   CsVideo,
   CsSeeNext,
 } from "../../components/CsKit/CsKit";
+import FlowRoute from "../../components/FlowRoute/FlowRoute";
 import "./ProMoveCaseStudy.css";
 
 const BASE = "/work/pro-move";
@@ -549,6 +550,21 @@ const ProMoveCaseStudy = () => {
           up everywhere downstream, which is why so many of our problems were
           really system problems.
         </CsText>
+        <CsPanel title="User flow" padded>
+          <FlowRoute
+            node="pro-move"
+            question="Add this frame?"
+            yes={{ label: "YES", title: "Timeline", icon: "▦", idle: "EMPTY", active: "{n} FRAMES" }}
+            no={{ label: "NO", title: "Live only", icon: "◔", idle: "NOTHING YET", active: "{n} PASSED" }}
+            items={[
+              { icon: "↑", title: "Raise an arm", sub: "Shoulder and elbow tracked", to: "yes" },
+              { icon: "↔", title: "Shift weight", sub: "A pose between poses", to: "no" },
+              { icon: "◐", title: "Turn the head", sub: "Add Frame keeps the pose", to: "yes" },
+              { icon: "✋", title: "Wave", sub: "The character copies, live", to: "yes" },
+              { icon: "~", title: "Hands drop", sub: "Smoothing hides the jitter", to: "no" },
+            ]}
+          />
+        </CsPanel>
         <CsPanel title="The pipeline, from camera to export" padded>
           <PipelineStack />
         </CsPanel>
