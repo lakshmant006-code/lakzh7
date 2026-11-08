@@ -16,6 +16,7 @@ import {
   CsVideo,
   CsSeeNext,
 } from "../../components/CsKit/CsKit";
+import FlowRoute from "../../components/FlowRoute/FlowRoute";
 // Still provides the app-screens embed and full-screen prototype styles.
 import "./HikuCaseStudy.css";
 
@@ -112,6 +113,21 @@ const HikuCaseStudy = () => {
           those findings into wireframes and high fidelity screens, focusing on
           simple, intuitive navigation from the very first screen.
         </CsText>
+        <CsPanel title="User flow" padded>
+          <FlowRoute
+            node="Hiku"
+            question="Ready to hike?"
+            yes={{ label: "YES", title: "On the trail", icon: "▲", idle: "NOT YET", active: "{n} OUT TODAY" }}
+            no={{ label: "NO", title: "Getting ready", icon: "…", idle: "ALL SET", active: "{n} TO SORT" }}
+            items={[
+              { icon: "⌕", title: "Find a trail", sub: "Filter by difficulty, length and season", to: "no" },
+              { icon: "☺", title: "Find your people", sub: "Local clubs and shared trip logs", to: "no" },
+              { icon: "⛺", title: "Gear up", sub: "The shop pairs gear with the trail", to: "no" },
+              { icon: "▲", title: "Out on the trail", sub: "With a club, with the right gear", to: "yes" },
+              { icon: "✎", title: "Trip logged", sub: "A story for the next newcomer", to: "yes" },
+            ]}
+          />
+        </CsPanel>
         <CsPanel title="The final screens">
           <CsImg
             src="/work/Hiku/HIKU- HERO.webp"
