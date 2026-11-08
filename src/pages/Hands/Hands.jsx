@@ -43,6 +43,7 @@ export default function Hands() {
               {items.map((d) => (
                 <li key={d.id} className="hands-card">
                   <img className="hands-base" src={lookSrc(d.id)} alt="" loading="lazy" decoding="async" draggable="false" />
+                  <span className="hands-glitter" style={{ "--ink": `url(/api/hand-drawing?id=${d.id})`, "--d": `${(parseInt(d.id.slice(2, 4), 16) % 7) * -0.9}s` }} aria-hidden="true" />
                   <img className="hands-ink" src={`/api/hand-drawing?id=${d.id}`} alt="A hand with accessories and nail paints drawn on it" loading="lazy" decoding="async" draggable="false" />
                 </li>
               ))}

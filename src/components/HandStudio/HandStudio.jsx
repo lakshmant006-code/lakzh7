@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { lookSrc, newId } from "./handLook";
+import { newId } from "./handLook";
 import "./HandStudio.css";
 
 /* Opens from the hand button in the nav: the open hand as a canvas, colours on the right, to draw
@@ -106,9 +106,8 @@ export default function HandStudio() {
       <div className="hs-card">
         <button type="button" className="hs-x" aria-label="Close" onClick={() => setOpen(false)}>×</button>
         <div className="hs-stage">
-          <div className={`hs-art${ink ? " ink-on" : ""}`}>
+          <div className="hs-art">
             <img className="hs-base" src="/hand/open-hand-top.webp" alt="An open orange hand, ready to be drawn on" draggable="false" />
-            <img className={`hs-look${ink ? " on" : ""}`} src={lookSrc(id)} alt="" draggable="false" />
             <canvas ref={cv} width={W} height={H} className="hs-draw" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} />
           </div>
         </div>

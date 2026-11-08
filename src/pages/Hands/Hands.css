@@ -18,3 +18,17 @@
 
 /* the hand sits back so the accessories and nail paints pop */
 .hands-card .hands-base { opacity: .95; }
+
+/* glitter on the ornaments only: sparkles and a slow sheen, cut out by the drawing itself */
+.hands-card .hands-glitter { position: absolute; inset: 0; z-index: 2; pointer-events: none; 
+  -webkit-mask: var(--ink) center / contain no-repeat; mask: var(--ink) center / contain no-repeat;
+  background:
+    radial-gradient(circle, #fff 0 1.1px, transparent 1.8px) 0 0 / 7px 8px,
+    radial-gradient(circle, #fff3b0 0 1.4px, transparent 2.2px) 3px 4px / 11px 10px,
+    radial-gradient(circle, #bfe6ff 0 .9px, transparent 1.5px) 2px 1px / 5px 6px;
+  animation: handTwinkle 2.4s steps(1, end) infinite; animation-delay: var(--d); }
+.hands-card .hands-glitter::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, .8) 50%, transparent 60%) 120% 0 / 250% 100% no-repeat; animation: handSheen 4.6s ease-in-out infinite; animation-delay: var(--d); }
+@keyframes handTwinkle { 0% { background-position: 0 0, 5px 7px, 3px 2px; opacity: .95; } 25% { background-position: 4px 3px, 9px 2px, 1px 6px; opacity: .55; }
+  50% { background-position: 2px 8px, 1px 12px, 6px 4px; opacity: 1; } 75% { background-position: 7px 1px, 12px 9px, 2px 8px; opacity: .6; } }
+@keyframes handSheen { 0%, 35% { background-position: 120% 0; } 75%, 100% { background-position: -20% 0; } }
+@media (prefers-reduced-motion: reduce) { .hands-card .hands-glitter { animation: none; } }
