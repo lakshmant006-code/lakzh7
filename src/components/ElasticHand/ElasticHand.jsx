@@ -13,7 +13,7 @@ const SPRITE = { w: 58, h: 80, headRows: 32, tip: [6, 1], scale: 1.9 };   // row
 const WIN = 24;                                                           // width of the forearm window cut from the drawing
 const N = 26;
 const STEP = 1 / 120;
-const K = 8;                                                              // the drawing is used at 8x (public/hand/hand-hd.png), the same picture cleaned up at high resolution
+const K = 16;                                                             // the drawing is used at 16x (public/hand/hand-hd2.png): the high resolution picture, doubled with a fine sharpen, so edges stay crisp on Retina screens
 
 const smooth = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
@@ -62,12 +62,12 @@ export default function ElasticHand() {
   useEffect(() => {
     if (!on) return undefined;
     const canvas = canvasRef.current, ctx = canvas.getContext("2d");
-    let W = innerWidth, H = innerHeight, dpr = Math.min(devicePixelRatio || 1, 2);
-    const fit = () => { W = innerWidth; H = innerHeight; dpr = Math.min(devicePixelRatio || 1, 2); canvas.width = W * dpr; canvas.height = H * dpr; canvas.style.width = W + "px"; canvas.style.height = H + "px"; };
+    let W = innerWidth, H = innerHeight, dpr = Math.min(devicePixelRatio || 1, 3);
+    const fit = () => { W = innerWidth; H = innerHeight; dpr = Math.min(devicePixelRatio || 1, 3); canvas.width = W * dpr; canvas.height = H * dpr; canvas.style.width = W + "px"; canvas.style.height = H + "px"; };
     fit(); canvas.style.opacity = awayRef.current ? "0" : String(dimRef.current); document.documentElement.classList.toggle("hand-away", awayRef.current);
 
     /* from the drawing: the forearm straightened (each row centred), then smoothed up lengthways, ready to be stretched */
-    const img = new Image(); img.src = "/hand/hand-hd.png";
+    const img = new Image(); img.src = "/hand/hand-hd2.png";
     const strip = { canvas: null, wrist: SPRITE.tip[0] };
     img.onload = () => {
       const HW = SPRITE.w * K, HH = SPRITE.h * K, rows = (SPRITE.h - SPRITE.headRows) * K, y0 = SPRITE.headRows * K;

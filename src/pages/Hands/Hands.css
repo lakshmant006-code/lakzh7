@@ -32,3 +32,7 @@
   50% { background-position: 2px 8px, 1px 12px, 6px 4px; opacity: 1; } 75% { background-position: 7px 1px, 12px 9px, 2px 8px; opacity: .6; } }
 @keyframes handSheen { 0%, 35% { background-position: 120% 0; } 75%, 100% { background-position: -20% 0; } }
 @media (prefers-reduced-motion: reduce) { .hands-card .hands-glitter { animation: none; } }
+
+/* placeholders while the list is on its way: soft shapes where the hands will be, not a word */
+.hands-skeleton { background: radial-gradient(ellipse 38% 46% at 50% 52%, rgba(15, 15, 15, .06), transparent 70%); animation: handSkel 1.4s ease-in-out infinite alternate; }
+@keyframes handSkel { from { opacity: .45; } to { opacity: 1; } }

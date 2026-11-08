@@ -5,7 +5,7 @@ import { validateDrawing, saveDrawing, listDrawings, allowed, isConfigured } fro
 export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
-      res.setHeader("Cache-Control", "public, s-maxage=5, stale-while-revalidate=20");
+      res.setHeader("Cache-Control", "public, max-age=10, s-maxage=30, stale-while-revalidate=600");
       res.status(200).json({ drawings: await listDrawings() });
       return;
     }

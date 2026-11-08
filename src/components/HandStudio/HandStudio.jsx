@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { newId } from "./handLook";
+import { fetchHands, warmHands } from "../../utils/handCache";
 import "./HandStudio.css";
 
 /* Opens from the hand button in the nav: the open hand as a canvas, colours on the right, to draw
@@ -26,6 +27,7 @@ export default function HandStudio() {
   const navigate = useNavigate();
   const cv = useRef(null), undo = useRef([]), stroke = useRef(null);
 
+  useEffect(() => { warmHands(); }, []);                    // the gallery is fetched while the browser is idle
   useEffect(() => {
     const show = () => setOpen(true);
     const key = (e) => { if (e.key === "Escape") setOpen(false); };
@@ -90,12 +92,12 @@ export default function HandStudio() {
   const share = async () => {
     setSent("saving"); setMsg("");
     try {
-      const out = document.createElement("canvas"); out.width = 800; out.height = Math.round(800 * H / W);
+      const out = document.createElement("canvas"); out.width = 600; out.height = Math.round(600 * H / W);
       const g = out.getContext("2d"); g.imageSmoothingQuality = "high"; g.drawImage(cv.current, 0, 0, out.width, out.height);
       const r = await fetch("/api/hand-drawings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, imageDataUri: out.toDataURL("image/png") }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok || !j.id) throw new Error(j.error || "the drawing store did not answer, so nothing was saved");
-      setSent("saved"); setId(newId()); window.dispatchEvent(new CustomEvent("hand:saved"));
+      setSent("saved"); setId(newId()); fetchHands(true).catch(() => {}); window.dispatchEvent(new CustomEvent("hand:saved"));
     } catch (e) { setSent("error"); setMsg(e.message || "could not save"); }
   };
   const gallery = () => { setOpen(false); navigate("/hands"); };
