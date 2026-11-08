@@ -136,6 +136,12 @@ const TimeManagementCaseStudy = () => {
             ]}
           />
         </CsPanel>
+        <CsPanel title="Requirements, user flow, and roles" wide>
+          <CsImg
+            src="/work/time-management/user-flow.webp"
+            alt="Time Management Requirements, User Flow, and Roles Diagram"
+          />
+        </CsPanel>
         <CsH3>Impact</CsH3>
         <CsStats
           items={[
