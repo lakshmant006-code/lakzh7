@@ -105,6 +105,13 @@ export default function ElasticHand() {
     const html = document.documentElement;
     const apply = () => { html.classList.toggle("hand-away", awayRef.current); if (awayRef.current) hideRef.current = true; canvas.style.opacity = awayRef.current || hideRef.current ? "0" : String(dimRef.current); };
     const contextmenu = () => { awayRef.current = !awayRef.current; if (!awayRef.current) hideRef.current = false; apply(); };
+    /* on a Mac a double click does the same (it is easier than a right click on a trackpad); links, buttons and fields keep their own double click */
+    const isMac = (/Mac/i.test(navigator.platform) || /Macintosh/.test(navigator.userAgent)) && !(navigator.maxTouchPoints > 1);
+    const dbl = (e) => {
+      if (!isMac || e.target.closest?.("a, button, input, textarea, select, summary, [role=button], .hand-studio")) return;
+      getSelection()?.removeAllRanges(); contextmenu();
+    };
+    if (isMac) addEventListener("dblclick", dbl);
     const move = (e) => {
       st.ptr.x = e.clientX; st.ptr.y = e.clientY;
       // over an embedded page (the memories, a live piece) this page stops receiving the pointer: the hand steps aside and the page's own cursor shows
@@ -240,7 +247,7 @@ export default function ElasticHand() {
     raf = requestAnimationFrame(frame);
     return () => {
       cancelAnimationFrame(raf);
-      removeEventListener("pointermove", move); removeEventListener("pointerdown", down, true); removeEventListener("contextmenu", contextmenu, true); removeEventListener("resize", fit);
+      removeEventListener("pointermove", move); removeEventListener("pointerdown", down, true); removeEventListener("contextmenu", contextmenu, true); removeEventListener("dblclick", dbl); removeEventListener("resize", fit);
     };
   }, [on]);
 
