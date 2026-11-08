@@ -28,12 +28,15 @@ function anchorsFor(W, H) {
 // on the case studies the hand steps back (to this strength) so it never sits over the reading; set to 0 to hide it there
 const CASE_STUDIES = ["/keep", "/quizai", "/hiku", "/time-management", "/pro-move"];
 const CASE_OPACITY = 0.25;
+// pages where there is no hand at all, just the normal pointer
+const NO_HAND = ["/scenes"];
 
 export default function ElasticHand() {
   const { pathname } = useLocation();
   const dimRef = useRef(1), hideRef = useRef(false);
   // the hand is the cursor wherever there is a mouse or trackpad; touch screens (phone, iPad) have no cursor, so they keep their finger
-  const [on, setOn] = useState(() => typeof matchMedia === "function" && matchMedia("(hover: hover) and (pointer: fine)").matches);
+  const [want, setOn] = useState(() => typeof matchMedia === "function" && matchMedia("(hover: hover) and (pointer: fine)").matches);
+  const on = want && !NO_HAND.includes(pathname);
   const canvasRef = useRef(null);
   const S = useRef(null);
 
