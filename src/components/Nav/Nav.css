@@ -399,6 +399,7 @@ body.mobile-menu-open {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .mobile-menu-popover .mobile-menu-link {

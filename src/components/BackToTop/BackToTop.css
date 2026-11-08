@@ -1,7 +1,7 @@
 .back-to-top-button {
   position: fixed;
-  bottom: 2rem;
-  right: 1.5rem;
+  bottom: max(2rem, calc(env(safe-area-inset-bottom) + 0.75rem));
+  right: max(1.5rem, env(safe-area-inset-right));
   width: 42px;
   height: 42px;
   border-radius: 3px;

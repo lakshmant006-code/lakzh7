@@ -3,6 +3,7 @@ html.craft-dark, html.craft-dark body { background: #fff; }
 
 .craft-wall-page {
   min-height: 100vh;
+  min-height: 100dvh;
   background: #fff;
   padding: 6.2rem 6px 6px;
   box-sizing: border-box;

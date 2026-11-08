@@ -1,5 +1,6 @@
 .pixel-cat-page {
   min-height: 100vh;
+  min-height: 100dvh;
   background: #2a2a2a;
   display: flex;
   align-items: center;

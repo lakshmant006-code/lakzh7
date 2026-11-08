@@ -54,6 +54,19 @@
     }
   }
 
+  /* the same page on every system: no iOS text zoom on rotate, no grey tap flash, crisp text on macOS, and on Windows the scrollbar's
+     width is reserved up front so nothing shifts sideways when it appears */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    color-scheme: light;
+    scrollbar-gutter: stable;
+  }
+  a, button, [role="button"], summary, label { touch-action: manipulation; }          /* no 300 ms tap delay, no double-tap zoom on controls */
+  img, video { -webkit-touch-callout: none; }
   html,
   body {
     @apply antialiased;
