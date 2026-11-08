@@ -116,15 +116,16 @@ const HikuCaseStudy = () => {
         <CsPanel title="User flow" padded>
           <FlowRoute
             node="Hiku"
-            question="Ready to hike?"
-            yes={{ label: "YES", title: "On the trail", icon: "▲", idle: "NOT YET", active: "{n} OUT TODAY" }}
-            no={{ label: "NO", title: "Getting ready", icon: "…", idle: "ALL SET", active: "{n} TO SORT" }}
+            title="Trail to trip log"
+            icon="🧭"
+            idle="NOT STARTED"
+            active="{n} OF 5 STEPS"
             items={[
-              { icon: "⌕", title: "Find a trail", sub: "Filter by difficulty, length and season", to: "no" },
-              { icon: "☺", title: "Find your people", sub: "Local clubs and shared trip logs", to: "no" },
-              { icon: "⛺", title: "Gear up", sub: "The shop pairs gear with the trail", to: "no" },
-              { icon: "▲", title: "Out on the trail", sub: "With a club, with the right gear", to: "yes" },
-              { icon: "✎", title: "Trip logged", sub: "A story for the next newcomer", to: "yes" },
+              { icon: "🥾", title: "Find a trail", sub: "Filter by difficulty, length and season" },
+              { icon: "🧑‍🤝‍🧑", title: "Find your people", sub: "Local clubs and shared trip logs" },
+              { icon: "⛺", title: "Gear up", sub: "The shop pairs gear with the trail" },
+              { icon: "🏔️", title: "Out on the trail", sub: "With a club, with the right gear" },
+              { icon: "📝", title: "Trip logged", sub: "A story for the next newcomer" },
             ]}
           />
         </CsPanel>

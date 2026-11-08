@@ -132,14 +132,15 @@ const ChimeCaseStudy = () => {
         <CsPanel title="User flow" padded>
           <FlowRoute
             node="Chime"
-            question="Did it get quieter?"
-            yes={{ label: "YES", title: "Case closed", icon: "✓", idle: "NONE YET", active: "{n} CLOSED" }}
-            no={{ label: "NO", title: "Back to the city", icon: "↺", idle: "NONE", active: "{n} REOPENED" }}
+            title="A complaint's journey"
+            icon="📣"
+            idle="NOT STARTED"
+            active="{n} OF 4 STEPS"
             items={[
-              { icon: "♪", title: "Loud music, Williamsburg", sub: "Outcome: summons issued", to: "yes" },
-              { icon: "⚒", title: "Construction, 6 AM", sub: "Outcome: no violation found", to: "no" },
-              { icon: "♫", title: "Party upstairs", sub: "Outcome: officers spoke to them", to: "yes" },
-              { icon: "⚑", title: "Car alarm, every night", sub: "Outcome: could not verify", to: "no" },
+              { icon: "🎙️", title: "Say it out loud", sub: "Tap the orb and describe the noise" },
+              { icon: "🔔", title: "Watch the city answer", sub: "Five stages, from received to outcome" },
+              { icon: "🗺️", title: "See where the sound is", sub: "A 3D map of the loudest blocks" },
+              { icon: "🤫", title: "Get the last word", sub: "Did it get quieter? Yes closes the case" },
             ]}
           />
         </CsPanel>

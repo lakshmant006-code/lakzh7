@@ -531,15 +531,16 @@ const ProMoveCaseStudy = () => {
         <CsPanel title="User flow" padded>
           <FlowRoute
             node="pro-move"
-            question="Add this frame?"
-            yes={{ label: "YES", title: "Timeline", icon: "▦", idle: "EMPTY", active: "{n} FRAMES" }}
-            no={{ label: "NO", title: "Live only", icon: "◔", idle: "NOTHING YET", active: "{n} PASSED" }}
+            title="Perform to export"
+            icon="🎬"
+            idle="NOT STARTED"
+            active="{n} OF 5 STEPS"
             items={[
-              { icon: "↑", title: "Raise an arm", sub: "Shoulder and elbow tracked", to: "yes" },
-              { icon: "↔", title: "Shift weight", sub: "A pose between poses", to: "no" },
-              { icon: "◐", title: "Turn the head", sub: "Add Frame keeps the pose", to: "yes" },
-              { icon: "✋", title: "Wave", sub: "The character copies, live", to: "yes" },
-              { icon: "~", title: "Hands drop", sub: "Smoothing hides the jitter", to: "no" },
+              { icon: "🙌", title: "Perform", sub: "Move in front of the camera" },
+              { icon: "📷", title: "Pose tracked", sub: "Shoulders, elbows and head follow you" },
+              { icon: "📌", title: "Add Frame", sub: "Keep the pose you like" },
+              { icon: "🎛️", title: "Refine", sub: "Smoothing and springs tune the motion" },
+              { icon: "📤", title: "Export", sub: "Frame by frame, ready to play" },
             ]}
           />
         </CsPanel>

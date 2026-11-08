@@ -123,16 +123,17 @@ const TimeManagementCaseStudy = () => {
         </CsText>
         <CsPanel title="User flow" padded>
           <FlowRoute
-            node="Timesheet"
-            question="Approve it?"
-            yes={{ label: "YES", title: "Approved", icon: "✓", idle: "NONE YET", active: "{n} APPROVED" }}
-            no={{ label: "NO", title: "Exceptions", icon: "!", idle: "CLEAR", active: "{n} TO REVIEW" }}
+            node="Summer"
+            title="A working week"
+            icon="🗓️"
+            idle="NOT STARTED"
+            active="{n} OF 5 STEPS"
             items={[
-              { icon: "◔", title: "Daily log", sub: "3 hrs on Client Y, App Debugging", to: "yes" },
-              { icon: "✎", title: "Off-site meeting", sub: "Logged by hand, needs a reason", to: "no" },
-              { icon: "▦", title: "Weekly timesheet", sub: "Bulk approve by Friday 5 PM", to: "yes" },
-              { icon: "⚑", title: "Punch-in mismatch", sub: "Flagged for the manager", to: "no" },
-              { icon: "↗", title: "Client report", sub: "Exported by client and project", to: "yes" },
+              { icon: "🔑", title: "Sign in", sub: "Email or mobile, then an OTP" },
+              { icon: "📁", title: "Set up a project", sub: "Activities and hours assigned" },
+              { icon: "⏱️", title: "Log daily time", sub: "3 hrs on Client Y, App Debugging" },
+              { icon: "🗓️", title: "Weekly approval", sub: "Managers approve by Friday 5 PM" },
+              { icon: "📊", title: "Client report", sub: "Exported by client and project" },
             ]}
           />
         </CsPanel>

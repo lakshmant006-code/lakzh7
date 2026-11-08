@@ -304,15 +304,16 @@ const QuizAICaseStudy = () => {
         <CsPanel title="User flow" padded>
           <FlowRoute
             node="Reef"
-            question="Ready to study?"
-            yes={{ title: "Study", icon: "✓", idle: "WAITING", active: "{n} READY" }}
-            no={{ title: "Processing", icon: "…", idle: "EMPTY", active: "{n} IN QUEUE" }}
+            title="Upload to quiz"
+            icon="📚"
+            idle="NOT STARTED"
+            active="{n} OF 5 STEPS"
             items={[
-              { icon: "↑", title: "Upload material", sub: "Notes.pdf, 24 pages", to: "no" },
-              { icon: "✦", title: "Summary ready", sub: "Synthesised from your notes", to: "yes" },
-              { icon: "?", title: "Pick a quiz type", sub: "Type A or Type B", to: "no" },
-              { icon: "✓", title: "Quiz generated", sub: "12 questions, ready to take", to: "yes" },
-              { icon: "▤", title: "Flashcards", sub: "Saved to your folder", to: "yes" },
+              { icon: "📄", title: "Upload material", sub: "Notes.pdf, 24 pages" },
+              { icon: "🧠", title: "Reef reads it", sub: "Processing the document" },
+              { icon: "🎯", title: "Pick a quiz type", sub: "Type A or Type B" },
+              { icon: "✅", title: "Quiz generated", sub: "12 questions, ready to take" },
+              { icon: "🗂️", title: "Summary and flashcards", sub: "Saved to your folder" },
             ]}
           />
         </CsPanel>
