@@ -30,19 +30,16 @@ const CASE_STUDIES = ["/keep", "/quizai", "/hiku", "/time-management", "/pro-mov
 const CASE_OPACITY = 0.25;
 // pages where there is no hand at all, just the normal pointer
 const NO_HAND = ["/scenes"];
-const HAND_DELAY = 4000;                                  // ms of normal pointer before the hand arrives
 const IS_MAC = typeof navigator !== "undefined" && (/Mac/i.test(navigator.platform) || /Macintosh/.test(navigator.userAgent)) && !(navigator.maxTouchPoints > 1);
 
 export default function ElasticHand() {
   const { pathname } = useLocation();
-  const dimRef = useRef(1), hideRef = useRef(false), awayRef = useRef(false);
+  const dimRef = useRef(1), hideRef = useRef(false), awayRef = useRef(true);
   // the hand is the cursor wherever there is a mouse or trackpad; touch screens (phone, iPad) have no cursor, so they keep their finger
   const [want, setOn] = useState(() => typeof matchMedia === "function" && matchMedia("(hover: hover) and (pointer: fine)").matches);
-  // for the first few seconds it is the ordinary pointer; then the hand takes over (and the little hint appears)
-  const [ready, setReady] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setReady(true), HAND_DELAY); return () => clearTimeout(t); }, []);
-  const [away, setAway] = useState(false);
-  const on = want && ready && !NO_HAND.includes(pathname);
+  // the page opens with the ordinary pointer; the hand only shows up if someone asks for it (the hint in the top-right says how)
+  const [away, setAway] = useState(true);
+  const on = want && !NO_HAND.includes(pathname);
   const canvasRef = useRef(null);
   const S = useRef(null);
 
@@ -261,7 +258,7 @@ export default function ElasticHand() {
   return (
     <>
       <canvas ref={canvasRef} className="elastic-hand" aria-hidden="true" />
-      <span className="hand-hint" aria-hidden="true">{IS_MAC ? <><kbd>⌘</kbd> double-click</> : <>right-click</>} {away ? "to bring the hand back" : "to hide the hand"}</span>
+      <span className="hand-hint" aria-hidden="true">{IS_MAC ? <><kbd>⌘</kbd> double-click</> : <>right-click</>} {away ? "to show the hand" : "to hide the hand"}</span>
     </>
   );
 }
