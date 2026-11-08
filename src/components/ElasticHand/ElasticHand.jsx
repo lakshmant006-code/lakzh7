@@ -9,11 +9,11 @@ import "./ElasticHand.css";
    - the shoulder is fixed to the middle of the bottom edge (see SIDE)
    - the fingertip is the real pointer, so clicks land exactly where it points */
 
-const SPRITE = { w: 58, h: 80, headRows: 32, tip: [6, 1], scale: 1.9 };   // rows 0-32 are the hand, the rest is forearm
-const WIN = 24;                                                           // width of the forearm window cut from the drawing
+const SPRITE = { w: 109, h: 196, headRows: 102, tip: [15.75, 0.25], scale: 1.45 };   // units of 8 px: rows 0-102 are the hand, the rest is forearm
+const WIN = 44;                                                           // width of the forearm window cut from the drawing
 const N = 26;
 const STEP = 1 / 120;
-const K = 16;                                                             // the drawing is used at 16x (public/hand/hand-hd2.png): the high resolution picture, doubled with a fine sharpen, so edges stay crisp on Retina screens
+const K = 8;                                                              // pixels per unit in public/hand/hand-svg.png: the hand cursor, rendered from the vector drawing (public/hand/hand.svg) at its full size
 
 const smooth = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
@@ -67,7 +67,7 @@ export default function ElasticHand() {
     fit(); canvas.style.opacity = awayRef.current ? "0" : String(dimRef.current); document.documentElement.classList.toggle("hand-away", awayRef.current);
 
     /* from the drawing: the forearm straightened (each row centred), then smoothed up lengthways, ready to be stretched */
-    const img = new Image(); img.src = "/hand/hand-hd2.png";
+    const img = new Image(); img.src = "/hand/hand-svg.png";
     const strip = { canvas: null, wrist: SPRITE.tip[0] };
     img.onload = () => {
       const HW = SPRITE.w * K, HH = SPRITE.h * K, rows = (SPRITE.h - SPRITE.headRows) * K, y0 = SPRITE.headRows * K;
@@ -204,7 +204,7 @@ export default function ElasticHand() {
       const pts = catmull(), M = pts.length;
       let len = 0; const cum = [0];
       for (let i = M - 1; i > 0; i--) { len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); cum.push(len); }   // measured from the hand back to the shoulder
-      const thinAll = Math.max(0.4, Math.min(1, Math.sqrt(170 / Math.max(len, 1))));
+      const thinAll = Math.max(0.36, Math.min(1, Math.sqrt(170 / Math.max(len, 1))));
       const tall = strip.canvas, th = tall.height, tw = tall.width, sc = SPRITE.scale;
 
       ctx.save();

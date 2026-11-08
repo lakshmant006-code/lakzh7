@@ -3,6 +3,21 @@ import Footer from "../../components/Footer/Footer";
 import { cachedHands, drawingUrl, fetchHands } from "../../utils/handCache";
 import "./Hands.css";
 
+/* one hand in the gallery. Drawings made on the first open hand are told apart by their shape and keep that hand. */
+const LEGACY_RATIO = 1129 / 1235;
+function HandCard({ d, n }) {
+  const [legacy, setLegacy] = useState(false);
+  const eager = n < 12;
+  return (
+    <li className={`hands-card${legacy ? " is-legacy" : ""}`}>
+      <img className="hands-base" src={legacy ? "/hand/open-hand-top-bw.webp" : "/hand/open-hand-svg-bw.webp"} alt="" loading={eager ? "eager" : "lazy"} decoding="async" draggable="false" />
+      <span className="hands-glitter" style={{ "--ink": `url(${drawingUrl(d.id)})`, "--d": `${(parseInt(d.id.slice(2, 4), 16) % 7) * -0.9}s` }} aria-hidden="true" />
+      <img className="hands-ink" src={drawingUrl(d.id)} alt="A hand with accessories and nail paints drawn on it" loading={eager ? "eager" : "lazy"} fetchpriority={eager ? "high" : "auto"} decoding="async" draggable="false"
+        onLoad={(e) => { const r = e.currentTarget.naturalWidth / e.currentTarget.naturalHeight; if (Math.abs(r - LEGACY_RATIO) < 0.02) setLegacy(true); }} />
+    </li>
+  );
+}
+
 /* Everything people have drawn on the hand: accessories, nail paints, nail ideas. It refreshes by itself. */
 export default function Hands() {
   const [items, setItems] = useState(cachedHands);                 // the last list shows straight away, then it refreshes
@@ -39,13 +54,7 @@ export default function Hands() {
           <>
             <p className="hands-count">{items.length} {items.length === 1 ? "hand" : "hands"}</p>
             <ul className="hands-grid">
-              {items.map((d, n) => (
-                <li key={d.id} className="hands-card">
-                  <img className="hands-base" src="/hand/open-hand-top-bw.webp" alt="" loading={n < 12 ? "eager" : "lazy"} decoding="async" draggable="false" />
-                  <span className="hands-glitter" style={{ "--ink": `url(${drawingUrl(d.id)})`, "--d": `${(parseInt(d.id.slice(2, 4), 16) % 7) * -0.9}s` }} aria-hidden="true" />
-                  <img className="hands-ink" src={drawingUrl(d.id)} alt="A hand with accessories and nail paints drawn on it" loading={n < 12 ? "eager" : "lazy"} fetchpriority={n < 12 ? "high" : "auto"} decoding="async" draggable="false" />
-                </li>
-              ))}
+              {items.map((d, n) => <HandCard key={d.id} d={d} n={n} />)}
             </ul>
           </>
         )}

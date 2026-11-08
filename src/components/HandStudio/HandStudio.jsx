@@ -12,7 +12,7 @@ const COLORS = [
   { name: "Yellow", c: "#ffd23f" }, { name: "Gold", c: "#d4a017" }, { name: "Silver", c: "#c0c4cc" },
   { name: "White", c: "#ffffff" }, { name: "Black", c: "#1a1a1a" },
 ];
-const W = 1129, H = 1235;                       // the drawing's own size: the picture is the upper half of the hand, kept at its full resolution (1129 x 1235)
+const W = 860, H = 1160;                       // the drawing's own size: it matches the open hand (public/hand/open-hand-svg.webp, drawn from open-hand.svg)
 const BRUSH = 14;
 
 export default function HandStudio() {
@@ -109,7 +109,7 @@ export default function HandStudio() {
         <button type="button" className="hs-x" aria-label="Close" onClick={() => setOpen(false)}>×</button>
         <div className="hs-stage">
           <div className="hs-art">
-            <img className="hs-base" src="/hand/open-hand-top.webp" alt="An open orange hand, ready to be drawn on" draggable="false" />
+            <img className="hs-base" src="/hand/open-hand-svg.webp" alt="An open orange hand, ready to be drawn on" draggable="false" />
             <canvas ref={cv} width={W} height={H} className="hs-draw" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} />
           </div>
         </div>

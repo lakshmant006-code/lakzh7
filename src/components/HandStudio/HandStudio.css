@@ -7,7 +7,7 @@
 .hs-x:hover { color: #0f0f0f; }
 .hs-stage { display: flex; align-items: center; justify-content: center; min-width: 0; height: 100%; }
 /* the picture fades out on every side into the background, so it has no frame */
-.hs-art { --h: min(86vh, 900px); position: relative; width: calc(var(--h) * 1129 / 1235); max-width: 100%; aspect-ratio: 1129 / 1235; height: auto; flex: none; overflow: hidden;
+.hs-art { --h: min(86vh, 900px); position: relative; width: calc(var(--h) * 860 / 1160); max-width: 100%; aspect-ratio: 860 / 1160; height: auto; flex: none; overflow: hidden;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent), linear-gradient(to bottom, transparent, #000 4%, #000 82%, transparent);
   -webkit-mask-composite: source-in;
           mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent), linear-gradient(to bottom, transparent, #000 4%, #000 82%, transparent);
