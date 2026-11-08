@@ -18,6 +18,7 @@ import {
   CsSeeNext,
 } from "../../components/CsKit/CsKit";
 // Still provides the lo-fi wireframe embed sizing (.quizai-lofi-frame).
+import FlowRoute from "../../components/FlowRoute/FlowRoute";
 import "./QuizAICaseStudy.css";
 
 const QUIZAI_SOLUTIONS = [
@@ -304,10 +305,19 @@ const QuizAICaseStudy = () => {
           each step explicit: <strong>upload, process, generate</strong>, so
           students always know where they are and what comes next.
         </CsText>
-        <CsPanel title="User flow">
-          <CsImg
-            src="/work/quizai/user-journey-mapping-frame-1.svg"
-            alt="Reef User Flow"
+        <CsPanel title="User flow" padded>
+          <FlowRoute
+            node="Reef"
+            question="Ready to study?"
+            yes={{ title: "Study", icon: "✓", idle: "WAITING", active: "{n} READY" }}
+            no={{ title: "Processing", icon: "…", idle: "EMPTY", active: "{n} IN QUEUE" }}
+            items={[
+              { icon: "↑", title: "Upload material", sub: "Notes.pdf, 24 pages", to: "no" },
+              { icon: "✦", title: "Summary ready", sub: "Synthesised from your notes", to: "yes" },
+              { icon: "?", title: "Pick a quiz type", sub: "Type A or Type B", to: "no" },
+              { icon: "✓", title: "Quiz generated", sub: "12 questions, ready to take", to: "yes" },
+              { icon: "▤", title: "Flashcards", sub: "Saved to your folder", to: "yes" },
+            ]}
           />
         </CsPanel>
 

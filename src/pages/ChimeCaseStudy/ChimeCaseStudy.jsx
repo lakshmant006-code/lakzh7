@@ -15,6 +15,7 @@ import {
   CsImg,
 } from "../../components/CsKit/CsKit";
 import ChimeMicro from "./ChimeMicro";
+import FlowRoute from "../../components/FlowRoute/FlowRoute";
 import "./ChimeCaseStudy.css";
 
 const BASE = "/projects/chime";
@@ -129,6 +130,20 @@ const ChimeCaseStudy = () => {
         <CsText>A 3D map built on the NYC building model shows which blocks are loudest, in day, night and diorama views. Tap anywhere on a block to drop a sound.</CsText>
         <CsH3>4. Get the last word</CsH3>
         <CsText>The official outcome shows first. Then Chime asks the only question that matters: did it actually get quieter. Yes closes the case. No sends it back.</CsText>
+        <CsPanel title="User flow" padded>
+          <FlowRoute
+            node="Chime"
+            question="Did it get quieter?"
+            yes={{ label: "YES", title: "Case closed", icon: "✓", idle: "NONE YET", active: "{n} CLOSED" }}
+            no={{ label: "NO", title: "Back to the city", icon: "↺", idle: "NONE", active: "{n} REOPENED" }}
+            items={[
+              { icon: "♪", title: "Loud music, Williamsburg", sub: "Outcome: summons issued", to: "yes" },
+              { icon: "⚒", title: "Construction, 6 AM", sub: "Outcome: no violation found", to: "no" },
+              { icon: "♫", title: "Party upstairs", sub: "Outcome: officers spoke to them", to: "yes" },
+              { icon: "⚑", title: "Car alarm, every night", sub: "Outcome: could not verify", to: "no" },
+            ]}
+          />
+        </CsPanel>
       </CsSection>
 
       <CsSection id="chime-micro" label="Micro-interactions" title="Small moments, tappable">

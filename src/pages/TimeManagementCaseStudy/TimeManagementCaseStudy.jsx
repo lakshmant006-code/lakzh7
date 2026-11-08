@@ -18,6 +18,7 @@ import {
   CsEmbed,
   CsSeeNext,
 } from "../../components/CsKit/CsKit";
+import FlowRoute from "../../components/FlowRoute/FlowRoute";
 import "./SummerTypography.css";
 
 // From the app's design tokens (time-manager src/styles/colors.css).
@@ -120,10 +121,19 @@ const TimeManagementCaseStudy = () => {
           that would be using the application. Then I defined the user flow and
           came up with a development plan for <strong>over 3 weeks</strong>.
         </CsText>
-        <CsPanel title="Requirements, user flow, and roles" wide>
-          <CsImg
-            src="/work/time-management/user-flow.webp"
-            alt="Time Management Requirements, User Flow, and Roles Diagram"
+        <CsPanel title="User flow" padded>
+          <FlowRoute
+            node="Timesheet"
+            question="Approve it?"
+            yes={{ label: "YES", title: "Approved", icon: "✓", idle: "NONE YET", active: "{n} APPROVED" }}
+            no={{ label: "NO", title: "Exceptions", icon: "!", idle: "CLEAR", active: "{n} TO REVIEW" }}
+            items={[
+              { icon: "◔", title: "Daily log", sub: "3 hrs on Client Y, App Debugging", to: "yes" },
+              { icon: "✎", title: "Off-site meeting", sub: "Logged by hand, needs a reason", to: "no" },
+              { icon: "▦", title: "Weekly timesheet", sub: "Bulk approve by Friday 5 PM", to: "yes" },
+              { icon: "⚑", title: "Punch-in mismatch", sub: "Flagged for the manager", to: "no" },
+              { icon: "↗", title: "Client report", sub: "Exported by client and project", to: "yes" },
+            ]}
           />
         </CsPanel>
         <CsH3>Impact</CsH3>
