@@ -32,8 +32,8 @@ const CASE_OPACITY = 0.25;
 export default function ElasticHand() {
   const { pathname } = useLocation();
   const dimRef = useRef(1), hideRef = useRef(false);
-  // the hand is the cursor wherever there is a mouse or trackpad, and on tablets too (it reaches to wherever you touch); phones keep their finger
-  const [on, setOn] = useState(() => typeof matchMedia === "function" && (matchMedia("(hover: hover) and (pointer: fine)").matches || (matchMedia("(pointer: coarse)").matches && Math.min(innerWidth, innerHeight) >= 700)));
+  // the hand is the cursor wherever there is a mouse or trackpad; touch screens (phone, iPad) have no cursor, so they keep their finger
+  const [on, setOn] = useState(() => typeof matchMedia === "function" && matchMedia("(hover: hover) and (pointer: fine)").matches);
   const canvasRef = useRef(null);
   const S = useRef(null);
 
