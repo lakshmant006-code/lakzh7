@@ -40,6 +40,13 @@ export default function ElasticHand() {
   const canvasRef = useRef(null);
   const S = useRef(null);
 
+  // no browser menu on right click on a desktop (the right click belongs to the hand), so a screen recording stays clean; text fields keep theirs
+  useEffect(() => {
+    if (!want) return undefined;
+    const quiet = (e) => { if (!e.target.closest?.("input, textarea, [contenteditable=true]")) e.preventDefault(); };
+    addEventListener("contextmenu", quiet);
+    return () => removeEventListener("contextmenu", quiet);
+  }, [want]);
   useEffect(() => {
     dimRef.current = CASE_STUDIES.includes(pathname) ? CASE_OPACITY : 1;
     if (canvasRef.current) canvasRef.current.style.opacity = hideRef.current ? "0" : String(dimRef.current);
