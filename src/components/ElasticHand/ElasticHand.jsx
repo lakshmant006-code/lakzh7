@@ -30,13 +30,19 @@ const CASE_STUDIES = ["/keep", "/quizai", "/hiku", "/time-management", "/pro-mov
 const CASE_OPACITY = 0.25;
 // pages where there is no hand at all, just the normal pointer
 const NO_HAND = ["/scenes"];
+const HAND_DELAY = 4000;                                  // ms of normal pointer before the hand arrives
+const IS_MAC = typeof navigator !== "undefined" && (/Mac/i.test(navigator.platform) || /Macintosh/.test(navigator.userAgent)) && !(navigator.maxTouchPoints > 1);
 
 export default function ElasticHand() {
   const { pathname } = useLocation();
   const dimRef = useRef(1), hideRef = useRef(false), awayRef = useRef(false);
   // the hand is the cursor wherever there is a mouse or trackpad; touch screens (phone, iPad) have no cursor, so they keep their finger
   const [want, setOn] = useState(() => typeof matchMedia === "function" && matchMedia("(hover: hover) and (pointer: fine)").matches);
-  const on = want && !NO_HAND.includes(pathname);
+  // for the first few seconds it is the ordinary pointer; then the hand takes over (and the little hint appears)
+  const [ready, setReady] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setReady(true), HAND_DELAY); return () => clearTimeout(t); }, []);
+  const [away, setAway] = useState(false);
+  const on = want && ready && !NO_HAND.includes(pathname);
   const canvasRef = useRef(null);
   const S = useRef(null);
 
@@ -104,9 +110,9 @@ export default function ElasticHand() {
     /* a right click sends the hand away (the normal pointer is back for the menu); the next right click brings it back */
     const html = document.documentElement;
     const apply = () => { html.classList.toggle("hand-away", awayRef.current); if (awayRef.current) hideRef.current = true; canvas.style.opacity = awayRef.current || hideRef.current ? "0" : String(dimRef.current); };
-    const contextmenu = () => { awayRef.current = !awayRef.current; if (!awayRef.current) hideRef.current = false; apply(); };
+    const contextmenu = () => { awayRef.current = !awayRef.current; setAway(awayRef.current); if (!awayRef.current) hideRef.current = false; apply(); };
     /* on a Mac a double click does the same (it is easier than a right click on a trackpad); links, buttons and fields keep their own double click */
-    const isMac = (/Mac/i.test(navigator.platform) || /Macintosh/.test(navigator.userAgent)) && !(navigator.maxTouchPoints > 1);
+    const isMac = IS_MAC;
     const dbl = (e) => {
       if (!isMac || e.target.closest?.("a, button, input, textarea, select, summary, [role=button], .hand-studio")) return;
       getSelection()?.removeAllRanges(); contextmenu();
@@ -252,5 +258,10 @@ export default function ElasticHand() {
   }, [on]);
 
   if (!on) return null;
-  return <canvas ref={canvasRef} className="elastic-hand" aria-hidden="true" />;
+  return (
+    <>
+      <canvas ref={canvasRef} className="elastic-hand" aria-hidden="true" />
+      <span className="hand-hint" aria-hidden="true">{IS_MAC ? <><kbd>⌘</kbd> double-click</> : <>right-click</>} {away ? "to bring the hand back" : "to hide the hand"}</span>
+    </>
+  );
 }
