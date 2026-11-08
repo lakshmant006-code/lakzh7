@@ -7,6 +7,7 @@ import "./Craft.css";
 /* Everything on the craft wall: the experiments, then prototype clips from the case studies. */
 const EXTRAS = [
   { id: "portfolio-reel", title: "Portfolio reel", tags: ["Motion", "Remotion"], media: { video: "/projects/portfolio-reel/portfolio-reel.mp4", poster: "/projects/portfolio-reel/poster.jpg" } },
+  { id: "garden-particle", title: "Garden · particles", tags: ["Particles", "Interactive", "Mobile"], media: { video: "/projects/garden-particle/garden-particle.mp4", poster: "/projects/garden-particle/poster.jpg" } },
   { id: "prayerbox", title: "Prayer Box", tags: ["Web app", "Motion"], media: { video: "/projects/prayerbox/prayerbox.mp4", poster: "/projects/prayerbox/poster.jpg" }, href: "https://www.prayerbox.site" },
 ];
 /* the playful ones: tap and the real thing loads right there, to play with */
