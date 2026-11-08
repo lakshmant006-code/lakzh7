@@ -33,7 +33,7 @@ const NO_HAND = ["/scenes"];
 
 export default function ElasticHand() {
   const { pathname } = useLocation();
-  const dimRef = useRef(1), hideRef = useRef(false);
+  const dimRef = useRef(1), hideRef = useRef(false), awayRef = useRef(false);
   // the hand is the cursor wherever there is a mouse or trackpad; touch screens (phone, iPad) have no cursor, so they keep their finger
   const [want, setOn] = useState(() => typeof matchMedia === "function" && matchMedia("(hover: hover) and (pointer: fine)").matches);
   const on = want && !NO_HAND.includes(pathname);
@@ -54,7 +54,7 @@ export default function ElasticHand() {
     const canvas = canvasRef.current, ctx = canvas.getContext("2d");
     let W = innerWidth, H = innerHeight, dpr = Math.min(devicePixelRatio || 1, 2);
     const fit = () => { W = innerWidth; H = innerHeight; dpr = Math.min(devicePixelRatio || 1, 2); canvas.width = W * dpr; canvas.height = H * dpr; canvas.style.width = W + "px"; canvas.style.height = H + "px"; };
-    fit(); canvas.style.opacity = String(dimRef.current);
+    fit(); canvas.style.opacity = awayRef.current ? "0" : String(dimRef.current); document.documentElement.classList.toggle("hand-away", awayRef.current);
 
     /* from the drawing: the forearm straightened (each row centred), then smoothed up lengthways, ready to be stretched */
     const img = new Image(); img.src = "/hand/hand-hd.png";
@@ -94,15 +94,20 @@ export default function ElasticHand() {
         burst.push({ a, r0: 16 + Math.random() * 4, len: 11 + Math.random() * 7, t: 0, w: 2.4 + Math.random() * 1.2 });
       }
     };
+    /* a right click sends the hand away (the normal pointer is back for the menu); the next right click brings it back */
+    const html = document.documentElement;
+    const apply = () => { html.classList.toggle("hand-away", awayRef.current); if (awayRef.current) hideRef.current = true; canvas.style.opacity = awayRef.current || hideRef.current ? "0" : String(dimRef.current); };
+    const contextmenu = () => { awayRef.current = !awayRef.current; if (!awayRef.current) hideRef.current = false; apply(); };
     const move = (e) => {
       st.ptr.x = e.clientX; st.ptr.y = e.clientY;
       // over an embedded page (the memories, a live piece) this page stops receiving the pointer: the hand steps aside and the page's own cursor shows
-      hideRef.current = !!(e.target && (e.target.tagName === "IFRAME" || e.target.closest?.(".hand-studio")));
+      hideRef.current = awayRef.current || !!(e.target && (e.target.tagName === "IFRAME" || e.target.closest?.(".hand-studio")));
       canvas.style.opacity = hideRef.current ? "0" : String(dimRef.current);
     };
     addEventListener("pointermove", move, { passive: true });
-    const down = (e) => { move(e); click(); };
+    const down = (e) => { if (e.button === 2) return; move(e); if (!awayRef.current) click(); };
     addEventListener("pointerdown", down, true);
+    addEventListener("contextmenu", contextmenu, true);
     addEventListener("resize", fit);
 
     // the vector from the wrist to the fingertip in the drawing
@@ -228,7 +233,7 @@ export default function ElasticHand() {
     raf = requestAnimationFrame(frame);
     return () => {
       cancelAnimationFrame(raf);
-      removeEventListener("pointermove", move); removeEventListener("pointerdown", down, true); removeEventListener("resize", fit);
+      removeEventListener("pointermove", move); removeEventListener("pointerdown", down, true); removeEventListener("contextmenu", contextmenu, true); removeEventListener("resize", fit);
     };
   }, [on]);
 

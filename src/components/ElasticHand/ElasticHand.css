@@ -1,5 +1,6 @@
 /* hand mode: the real cursor is hidden, the drawn hand is the cursor */
 html.hand-mode, html.hand-mode * { cursor: none !important; }
+html.hand-mode.hand-away, html.hand-mode.hand-away * { cursor: auto !important; }
 .elastic-hand { position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; transition: opacity .35s ease; }
 
 /* the nav button */
