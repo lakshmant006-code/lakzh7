@@ -8,7 +8,6 @@ import "./Craft.css";
 const EXTRAS = [
   { id: "portfolio-reel", title: "Portfolio reel", tags: ["Motion", "Remotion"], media: { video: "/projects/portfolio-reel/portfolio-reel.mp4", poster: "/projects/portfolio-reel/poster.jpg" } },
   { id: "prayerbox", title: "Prayer Box", tags: ["Web app", "Motion"], media: { video: "/projects/prayerbox/prayerbox.mp4", poster: "/projects/prayerbox/poster.jpg" }, href: "https://www.prayerbox.site" },
-  { id: "chime", title: "Chime · noise complaints", tags: ["NYC challenge", "Interactive prototype", "3D city map"], media: { image: "/projects/chime/media/chime-app.webp" }, about: "A voice-first concept for NYC noise complaints. Every complaint gets a heartbeat: a sound wave that changes as the city acts on it, a live 3D map built on the city's own building model, and a last word for you on whether it got quieter. Open the working prototype inside the case study.", to: "/craft/chime", toLabel: "Open case study →" },
 ];
 /* the playful ones: tap and the real thing loads right there, to play with */
 const LIVE = [
