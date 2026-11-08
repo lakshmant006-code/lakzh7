@@ -14,7 +14,6 @@ import {
   CsStats,
   CsImg,
 } from "../../components/CsKit/CsKit";
-import ChimeMicro from "./ChimeMicro";
 import FlowRoute from "../../components/FlowRoute/FlowRoute";
 import "./ChimeCaseStudy.css";
 
@@ -144,13 +143,6 @@ const ChimeCaseStudy = () => {
             ]}
           />
         </CsPanel>
-      </CsSection>
-
-      <CsSection id="chime-micro" label="Micro-interactions" title="Small moments, tappable">
-        <CsText>
-          These four moments are lifted straight from the prototype. Tap the orb, replay the banner, step through the stages, and give the last word.
-        </CsText>
-        <ChimeMicro />
       </CsSection>
 
       <CsSection id="chime-map" label="The city has ears" title="A 3D map of the noise">

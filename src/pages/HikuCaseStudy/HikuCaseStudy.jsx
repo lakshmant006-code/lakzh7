@@ -128,12 +128,6 @@ const HikuCaseStudy = () => {
             ]}
           />
         </CsPanel>
-        <CsPanel title="The final screens">
-          <CsImg
-            src="/work/Hiku/HIKU- HERO.webp"
-            alt="Hiku, a mobile application for hiking enthusiasts"
-          />
-        </CsPanel>
       </CsSection>
 
       <CsSection id="solution-section" label="Final product" title="Final Screens">

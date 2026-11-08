@@ -381,18 +381,6 @@ const ProMoveCaseStudy = () => {
             label="The red beanie character raising and lowering both arms four times at once, once for each motion feel"
           />
         </CsPanel>
-        <CsPanel title="What each feel changes" padded>
-          <ul className="pm-papers">
-            {FEEL_PRESETS.map(([name, values, text]) => (
-              <li key={name} className="pm-paper">
-                <p className="pm-paper-name">{name}</p>
-                <p className="pm-paper-text">
-                  {values}. {text}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </CsPanel>
         <CsText>
           We tuned in a fixed order, and it saved us from chasing the wrong
           bug: turn the springs and the cloth off, fix the deformation, and
@@ -527,16 +515,6 @@ const ProMoveCaseStudy = () => {
           ]}
         />
 
-        <CsH3>Small things that turned out big</CsH3>
-        <CsText>
-          The camera only works on localhost or HTTPS, so testing on an iPad
-          needed a local certificate. Joint fixes and captured frames live in
-          the browser&apos;s storage, which they quickly outgrow, so they
-          aren&apos;t in the shareable build yet. And the red beanie&apos;s
-          front view is now an open-arms pose, because open arms keep the
-          sleeves and hands clear of the body and the automatic cut comes out
-          clean.
-        </CsText>
       </CsSection>
 
       <CsSection
@@ -591,44 +569,6 @@ const ProMoveCaseStudy = () => {
           prototyping, then testing against fixed poses and a real webcam.
           Along the way the questions themselves changed.
         </CsText>
-        <CsPanel title="From, to" padded>
-          <ul className="pm-papers">
-            {SHIFTS.map(([from, to, text]) => (
-              <li key={from} className="pm-paper">
-                <p className="pm-paper-name">
-                  {from} <span className="pm-paper-year">to</span> {to}
-                </p>
-                <p className="pm-paper-text">{text}</p>
-              </li>
-            ))}
-          </ul>
-        </CsPanel>
-      </CsSection>
-
-      <CsSection
-        id="promove-research"
-        label="Research"
-        title="What we read to fix it next"
-      >
-        <CsText>
-          To plan the next round, we read five character-deformation papers in
-          full and mapped each one onto the code. This was research and
-          planning only, and no code was changed yet. A measuring step comes
-          first, so every later fix is judged against numbers, followed by the
-          head and neck, then the shoulders and arms, then the squat and knees.
-        </CsText>
-        <CsPanel title="Five papers, five artefacts" padded>
-          <ul className="pm-papers">
-            {PAPERS.map(([name, year, text]) => (
-              <li key={name} className="pm-paper">
-                <p className="pm-paper-name">
-                  {name} <span className="pm-paper-year">{year}</span>
-                </p>
-                <p className="pm-paper-text">{text}</p>
-              </li>
-            ))}
-          </ul>
-        </CsPanel>
       </CsSection>
 
       <CsSection
@@ -655,13 +595,6 @@ const ProMoveCaseStudy = () => {
           feedback went straight back into the next round of design, from how
           the controls read to which parts of the motion felt right and which
           needed more work.
-        </CsText>
-        <CsH3>Prototyping, then feedback, then prototyping</CsH3>
-        <CsText>
-          Each round followed the same loop: change the prototype, show it
-          running rather than describing it, listen, and fold what we heard
-          back in. Seeing the character move in front of him made the feedback
-          specific, so we could act on it the same day.
         </CsText>
       </CsSection>
 

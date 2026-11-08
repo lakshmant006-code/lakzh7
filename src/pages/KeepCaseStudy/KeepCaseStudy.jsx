@@ -117,14 +117,6 @@ const KeepCaseStudy = () => {
           moment. Drag to turn them, change their pose, or restyle their skin
           tone, hair, and clothes.
         </CsText>
-        <CsPanel title="Matched on a real street">
-          <CsImg
-            src={`${SHOTS}/relive.webp`}
-            alt="Re-live on a real street: a matched memory with a 3D avatar standing on the pavement"
-            style={{ maxWidth: 300, margin: "0 auto" }}
-          />
-        </CsPanel>
-
         <CsH3>Solution #3: One calendar, with insights</CsH3>
         <CsCallout>
           Everything lands on <span className="cs-accent">the day it happened</span>.
@@ -223,12 +215,6 @@ const KeepCaseStudy = () => {
           in the same place again, with an avatar you can restyle or replace
           with your own.
         </CsText>
-        <CsPanel title="The characters the concept grew from">
-          <CsImg
-            src="/work/keep/meta-ai-characters.webp"
-            alt="A line up of colourful 3D avatar characters standing together outdoors"
-          />
-        </CsPanel>
       </CsSection>
 
       <CsSection id="keep-problem" label="Problem" title="Keeping is easy. Finding is not.">

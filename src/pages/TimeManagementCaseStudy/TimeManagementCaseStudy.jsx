@@ -362,65 +362,6 @@ const TimeManagementCaseStudy = () => {
           <strong>focus on what they were actually lacking</strong> in.
         </CsText>
 
-        <CsH3>Color Palette</CsH3>
-        <CsText>
-          This project adopted a minimalistic visual style: an electric brand
-          blue and a deep navy against black and white to build the brand and
-          convey trust, with a soft gray surface behind the app. I also
-          followed the 60-30-10 rule to maintain a better visual balance.
-        </CsText>
-        <CsPanel title="Palette">
-          <div className="cs-swatches">
-            {SWATCHES.map((swatch) => (
-              <div key={swatch.hex}>
-                <div
-                  className="cs-swatch-block"
-                  style={{ background: swatch.hex }}
-                />
-                <div className="cs-swatch-hex">{swatch.hex}</div>
-                <div className="cs-swatch-label">{swatch.label}</div>
-              </div>
-            ))}
-          </div>
-        </CsPanel>
-
-        <CsH3>Typography</CsH3>
-        <CsText>
-          I paired two sans serifs. Avant Gothic carries the big headlines and
-          the wordmark, and Inter handles everything in the interface, from
-          labels and buttons to tables. Both are easy to read and
-          approachable, which suits the app&apos;s clean, minimal look.
-        </CsText>
-        <CsPanel title="Type specimen">
-          <div className="summer-type">
-            <div className="summer-type-row">
-              <div className="summer-type-aa summer-type--display" aria-hidden="true">
-                Aa
-              </div>
-              <div>
-                <p className="summer-type-name">Avant Gothic, Medium</p>
-                <p className="summer-type-use">Headlines and the wordmark</p>
-                <p className="summer-type-sample summer-type--display">
-                  Manage Projects Smarter
-                </p>
-              </div>
-            </div>
-            <div className="summer-type-row">
-              <div className="summer-type-aa summer-type--ui" aria-hidden="true">
-                Aa
-              </div>
-              <div>
-                <p className="summer-type-name">Inter, 400 to 700</p>
-                <p className="summer-type-use">
-                  Labels, buttons, and tables across the app
-                </p>
-                <p className="summer-type-sample summer-type--ui">
-                  Timesheet&nbsp;&nbsp;·&nbsp;&nbsp;Start Timer&nbsp;&nbsp;·&nbsp;&nbsp;02:14:37
-                </p>
-              </div>
-            </div>
-          </div>
-        </CsPanel>
       </CsSection>
 
       <CsSection

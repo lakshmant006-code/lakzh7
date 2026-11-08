@@ -244,9 +244,6 @@ const QuizAICaseStudy = () => {
           glance. Each one had to pass the same test, does it make studying
           feel lighter, or just add one more thing to do?
         </CsText>
-        <CsPanel title="User journey">
-          <CsImg src="/work/quizai/user-journey.webp" alt="User Journey" />
-        </CsPanel>
         <CsPanel title="Design process" wide>
           <CsEmbed
             src="/work/quizai/design-process/index.html"
@@ -328,14 +325,6 @@ const QuizAICaseStudy = () => {
           placed AI generated summaries and quizzes{" "}
           <strong>one click away from any uploaded document</strong>.
         </CsText>
-        <CsPanel title="Lo-fi wireframes" wide>
-          <iframe
-            src="/work/quizai/lofi-wireframes/index.html"
-            title="Lo-Fi Wireframes, Reef"
-            className="cs-embed quizai-lofi-frame"
-            scrolling="no"
-          />
-        </CsPanel>
       </CsSection>
 
       <CsSection id="quizai-impact" label="Impact" title="Moving forward">
