@@ -17,7 +17,6 @@ import {
   CsStats,
   CsSeeNext,
 } from "../../components/CsKit/CsKit";
-// Still provides the lo-fi wireframe embed sizing (.quizai-lofi-frame).
 import FlowRoute from "../../components/FlowRoute/FlowRoute";
 import "./QuizAICaseStudy.css";
 

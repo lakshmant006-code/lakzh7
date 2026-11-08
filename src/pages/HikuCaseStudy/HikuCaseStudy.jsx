@@ -110,7 +110,7 @@ const HikuCaseStudy = () => {
         <CsText>
           As UX Researcher and Designer, I led user interviews and a
           quantitative survey to understand hikers&apos; needs, then translated
-          those findings into wireframes and high fidelity screens, focusing on
+          those findings into high fidelity screens, focusing on
           simple, intuitive navigation from the very first screen.
         </CsText>
         <CsPanel title="User flow" padded>
@@ -264,7 +264,7 @@ const HikuCaseStudy = () => {
         <CsText>
           Hiku stretched me. Taking one small idea all the way from a hunch to
           screens someone could actually navigate taught me how much of design
-          lives in the unglamorous middle, the wireframes, the redos, the tiny
+          lives in the unglamorous middle, the redos, the tiny
           navigation calls, and how good it feels when it finally clicks into
           something real.
         </CsText>

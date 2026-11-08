@@ -219,16 +219,7 @@ const TimeManagementCaseStudy = () => {
           experimenting with.
         </CsText>
 
-        <CsH3>Low Fidelity Prototypes</CsH3>
-        <CsPanel title="Lo-fi wireframes" wide>
-          <CsEmbed
-            src="/work/time-management/wireframe-lofi-prototypes.html"
-            title="Lo-Fi Wireframes, Summer"
-            height="700px"
-          />
-        </CsPanel>
-
-        <CsH3>High Fidelity Prototypes</CsH3>
+        <CsH3>Prototypes</CsH3>
         <CsPanel title="Employee area" wide>
           <div className="cs-shot-grid">
             {EMPLOYEE_SCREENS.map((screen) => (
@@ -257,7 +248,7 @@ const TimeManagementCaseStudy = () => {
           for running the business: a searchable client list with a profile
           for each client (contact, projects, and invoices), an add client
           flow, and roles with a per module access checklist. Together they
-          carry the clean, minimal visual language from wireframe to working
+          carry the clean, minimal visual language through to a working
           interface.
         </CsText>
 
