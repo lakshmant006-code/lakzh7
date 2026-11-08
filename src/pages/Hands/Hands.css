@@ -17,7 +17,7 @@
 @keyframes handCardIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
 /* the hand sits back so the accessories and nail paints pop */
-.hands-card .hands-base { opacity: .95; }
+.hands-card .hands-base { opacity: .8; }
 
 /* glitter on the ornaments only: sparkles and a slow sheen, cut out by the drawing itself */
 .hands-card .hands-glitter { position: absolute; inset: 0; z-index: 2; pointer-events: none; 
