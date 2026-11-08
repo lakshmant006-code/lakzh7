@@ -6,9 +6,9 @@
 
 /* where things arrive */
 .fr-slot { width: min(74%, 340px); height: 62px; margin: 0 auto; border: 1px dashed #c9c9cd; border-radius: 12px; }
-.fr-trav { position: absolute; left: 0; top: 0; z-index: 3; pointer-events: none; display: flex; align-items: center; gap: 11px; padding: 0 12px; overflow: hidden; white-space: nowrap;
-  background: #fff; border: 1px solid #ececee; border-radius: 12px; box-shadow: 0 6px 18px rgba(0, 0, 0, .08); transform-origin: 50% 50%; will-change: transform; }
-.fr-trav > span { min-width: 0; } .fr-trav b, .fr-trav em { overflow: hidden; text-overflow: ellipsis; }
+.fr-slot { position: relative; }
+.fr-slot-card { position: absolute; inset: 3px; display: flex; align-items: center; gap: 11px; padding: 0 14px; background: #fff; border-radius: 10px; border: 1px solid #ececee; box-shadow: 0 4px 14px rgba(0, 0, 0, .06); }
+.fr-dot { fill: var(--fr-ink); opacity: 0; filter: drop-shadow(0 0 3px rgba(0, 0, 0, .25)); }
 .fr-nodeRow { position: relative; display: flex; justify-content: center; margin-top: 46px; }
 .fr-node { padding: 9px 26px; border-radius: 10px; background: var(--fr-blue); color: #fff; font: 500 .9rem/1 var(--cs-sans, system-ui);
   box-shadow: 0 6px 20px color-mix(in srgb, var(--fr-blue) 45%, transparent); position: relative; z-index: 2; }
