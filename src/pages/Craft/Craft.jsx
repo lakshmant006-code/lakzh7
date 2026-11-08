@@ -15,6 +15,7 @@ const LIVE = [
 ];
 /* drawings: a little screen on the wall that drifts from one to the next; tap it and they all spill out */
 const ILLUSTRATIONS = [
+  { src: "/projects/illustrations/hello-poster.webp", w: 1097, h: 1500, title: "Hello? The city needs to answer" },
   { src: "/projects/illustrations/scrap-metal.webp", w: 1600, h: 1600, title: "Pine Metalworks" },
   { src: "/projects/illustrations/lucky-13.webp", w: 1600, h: 1600, title: "Lucky 13 Cycles" },
   { src: "/projects/illustrations/road-trip.webp", w: 1600, h: 1600, title: "Everything we own" },
