@@ -103,3 +103,15 @@
   left: -20px;
   color: var(--cs-accent);
 }
+
+/* the pipeline stack: a grey slab with layers that rise from the base one at a time */
+.pm-stack { position: relative; padding: 22px 22px 26px; background: #ececee; border: 1px solid #dcdce0; border-radius: 4px; }
+.pm-stack-label { display: block; font: 400 .74rem/1 ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: .06em; color: #8a8a90; margin-bottom: 18px; }
+.pm-stack-rows { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.pm-stack-row { display: flex; gap: 8px; justify-content: center; width: var(--w); min-width: 250px; max-width: 100%; opacity: 0; transform: translateY(16px);
+  transition: opacity .6s ease var(--d), transform .7s cubic-bezier(.2, .9, .25, 1) var(--d); }
+.pm-stack.on .pm-stack-row { opacity: 1; transform: none; }
+.pm-stack-cell { flex: 1 1 0; min-width: 0; display: grid; place-items: center; min-height: 54px; padding: 8px 10px; background: #f6f6f7; border-radius: 3px; text-align: center; font: 400 .82rem/1.25 var(--cs-sans); color: var(--cs-ink); }
+.pm-stack-cell.is-hot { background: var(--cs-accent, #e8571d); color: #fff; font-weight: 500; }
+.pm-stack-note { display: block; margin-top: 16px; text-align: center; font: 400 .74rem/1 ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: .04em; color: #8a8a90; }
+@media (prefers-reduced-motion: reduce) { .pm-stack-row { transition: none; opacity: 1; transform: none; } }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useScrollReset from "../../hooks/useScrollReset";
 import {
   CsPage,
@@ -75,16 +75,35 @@ const FEEL_PRESETS = [
   ["Bouncy", "Smoothing 50%, cloth bounce 85%, follow-through 50%", "Medium speed with a lively, swinging jacket and cuffs."],
 ];
 
-const PIPELINE = [
-  "Camera",
-  "Jitter filter",
-  "Bone angles",
-  "Springs",
-  "Mesh skinning",
-  "Cloth",
-  "Render",
-  "Export",
+/* the pipeline as a stack: each layer stands on the one below and hands its output up */
+const STACK = [
+  ["Render", "Export"],
+  ["Mesh skinning", "Cloth"],
+  ["Bone angles", "Springs"],
+  ["Camera", "Jitter filter"],
 ];
+function PipelineStack() {
+  const ref = useRef(null);
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setOn(true); io.disconnect(); } }, { threshold: 0.35 });
+    io.observe(ref.current);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div className={`pm-stack${on ? " on" : ""}`} ref={ref} role="img" aria-label="The pipeline as a stack, from the bottom: camera, jitter filter, bone angles, springs, mesh skinning, cloth, render, export">
+      <span className="pm-stack-label">“THE PIPELINE”</span>
+      <div className="pm-stack-rows">
+        {STACK.map((row, r) => (
+          <div key={r} className="pm-stack-row" style={{ "--w": `${42 + (3 - r) * 0 + (r) * 16}%`, "--d": `${(3 - r) * 0.28}s` }}>
+            {row.map((t) => <span key={t} className={`pm-stack-cell${t === "Springs" ? " is-hot" : ""}`}>{t}</span>)}
+          </div>
+        ))}
+      </div>
+      <span className="pm-stack-note">Springs, tuned last</span>
+    </div>
+  );
+}
 
 const SHIFTS = [
   ["Does it move?", "How does it feel?", "We began by asking whether a drawing could follow a body. We ended up treating smoothness as the main design material."],
@@ -531,13 +550,7 @@ const ProMoveCaseStudy = () => {
           really system problems.
         </CsText>
         <CsPanel title="The pipeline, from camera to export" padded>
-          <ol className="pm-flow">
-            {PIPELINE.map((step) => (
-              <li key={step} className="pm-flow-step">
-                {step}
-              </li>
-            ))}
-          </ol>
+          <PipelineStack />
         </CsPanel>
         <CsText>
           Smoothing could hide a broken joint, so we tuned the springs last.
