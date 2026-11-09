@@ -1,0 +1,29 @@
+.resume-modal { position: fixed; inset: 0; z-index: 400; display: flex; justify-content: center; background: rgba(250, 249, 246, 0); -webkit-backdrop-filter: blur(0); backdrop-filter: blur(0);
+  transition: background .3s ease, backdrop-filter .35s ease, -webkit-backdrop-filter .35s ease; font-family: "Satoshi", system-ui, sans-serif; }
+.resume-modal.on { background: rgba(250, 249, 246, .62); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.rm-scroll { width: 100%; height: 100%; overflow-y: auto; overscroll-behavior: contain; padding: 7vh 16px 14vh; box-sizing: border-box; display: flex; justify-content: center; align-items: flex-start; scrollbar-width: none; }
+.rm-scroll::-webkit-scrollbar { display: none; }
+.rm-card { width: min(780px, 100%); background: #fbfaf6; border-radius: 14px; padding: clamp(22px, 4vw, 42px); box-sizing: border-box; color: #1d1d1f;
+  box-shadow: 0 30px 80px rgba(15, 15, 15, .18), 0 2px 8px rgba(15, 15, 15, .06); opacity: 0; transform: translateY(18px) scale(.975); transition: opacity .35s ease, transform .5s cubic-bezier(.2, .9, .25, 1); }
+.resume-modal.on .rm-card { opacity: 1; transform: none; }
+.rm-head { display: flex; justify-content: space-between; align-items: baseline; gap: 18px; flex-wrap: wrap; margin-bottom: 26px; }
+.rm-name { margin: 0; font: 500 1.35rem/1.2 "Crimson Pro", Georgia, serif; letter-spacing: -.01em; } .rm-name span { font-weight: 400; color: #8a8a8f; margin-left: .3em; }
+.rm-contact { margin: 0; display: flex; gap: 14px; flex-wrap: wrap; font: 400 .66rem/1.3 ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: #6b6b70; }
+.rm-contact a { color: inherit; text-decoration: none; } .rm-contact a:hover { color: #0f0f0f; }
+.rm-row { display: grid; grid-template-columns: 120px 1fr; gap: 14px 24px; padding: 14px 0; border-top: 1px solid rgba(15, 15, 15, .07); }
+.rm-row h3 { margin: 2px 0 0; font: 500 .62rem/1.4 ui-monospace, "SF Mono", Menlo, Consolas, monospace; letter-spacing: .08em; color: #9a9a9f; }
+.rm-row p, .rm-row li, .rm-row dd { margin: 0; font: 400 .76rem/1.55 "Satoshi", system-ui, sans-serif; color: #55555a; }
+.rm-line { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; } .rm-row .rm-line { color: #1d1d1f; font-size: .8rem; }
+.rm-line b { font-weight: 500; } .rm-line i { font-style: normal; color: #8a8a8f; } .rm-line em { margin-left: auto; font: 400 .62rem/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-style: normal; color: #9a9a9f; letter-spacing: .04em; }
+.rm-job { margin-bottom: 14px; } .rm-job:last-child { margin-bottom: 0; }
+.rm-job ul { margin: 6px 0 0; padding-left: 15px; display: grid; gap: 4px; } .rm-job > p:not(.rm-line) { margin-top: 5px; }
+.rm-row dl { margin: 0; display: grid; gap: 8px; } .rm-row dl div { display: grid; grid-template-columns: 110px 1fr; gap: 12px; } .rm-row dt { font: 500 .74rem/1.55 "Satoshi", system-ui, sans-serif; color: #1d1d1f; }
+.rm-x { all: unset; position: fixed; top: 18px; right: 22px; z-index: 2; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; font-size: 1.5rem; line-height: 1; color: #55555a; background: rgba(255, 255, 255, .7); transition: background .2s, transform .2s; }
+.rm-x:hover { background: #fff; transform: scale(1.06); }
+.rm-download { position: fixed; right: 22px; bottom: 22px; z-index: 2; padding: 11px 18px; border-radius: 999px; background: #0f0f0f; color: #fff; text-decoration: none; font: 500 .8rem/1 "Satoshi", system-ui, sans-serif; box-shadow: 0 10px 30px rgba(15, 15, 15, .25); transition: transform .2s; }
+.rm-download:hover { transform: translateY(-2px); }
+@media (max-width: 640px) { .rm-row { grid-template-columns: 1fr; gap: 6px; } .rm-row dl div { grid-template-columns: 1fr; gap: 2px; } .rm-line em { margin-left: 0; flex-basis: 100%; } .rm-scroll { padding-top: 64px; } }
+/* the elastic hand steps aside over the resume and the normal pointer is used */
+html.hand-mode .resume-modal, html.hand-mode .resume-modal * { cursor: auto !important; }
+html.hand-mode .resume-modal a, html.hand-mode .resume-modal button { cursor: pointer !important; }
+@media (prefers-reduced-motion: reduce) { .rm-card, .resume-modal { transition: none; } }

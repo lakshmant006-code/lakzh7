@@ -371,11 +371,7 @@ const Nav = () => {
 
   const handleResumeClick = (e) => {
     e.preventDefault();
-    window.open(
-      "https://drive.google.com/file/d/1t8BBP__xqK7TDSD1hLv0WFaMLLgeufTK/view?usp=sharing",
-      "_blank",
-      "noopener,noreferrer",
-    );
+    window.dispatchEvent(new CustomEvent("resume:open"));          // the resume opens over the page
   };
 
   useEffect(() => {

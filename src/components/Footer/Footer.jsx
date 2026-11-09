@@ -34,9 +34,9 @@ const SOCIAL_LINKS = [
   },
   {
     label: "Resume",
-    href: "https://drive.google.com/file/d/1t8BBP__xqK7TDSD1hLv0WFaMLLgeufTK/view?usp=sharing",
+    href: "/Lakshman_Thota_Resume.pdf",
     icon: FileText,
-    external: true,
+    external: false,
   },
   {
     label: "Celestera",
@@ -141,11 +141,13 @@ const Footer = () => {
             <a
               key={label}
               href={href}
-              {...(external
+              {...(label === "Resume"
+                ? { onClick: (e) => { e.preventDefault(); window.dispatchEvent(new CustomEvent("resume:open")); } }   // the resume opens over the page
+                : external
                 ? { target: "_blank", rel: "noopener noreferrer" }
                 : {})}
               className="footer-icon-link"
-              aria-label={external ? `${label} (opens in new tab)` : label}
+              aria-label={label !== "Resume" && external ? `${label} (opens in new tab)` : label}
               title={label}
             >
               <Icon size={18} strokeWidth={1.75} aria-hidden="true" />

@@ -24,6 +24,7 @@ import ElasticHand from "./components/ElasticHand/ElasticHand";
 import HandStudio from "./components/HandStudio/HandStudio";
 const PixelCatPage = lazy(() => import("./pages/PixelCat/PixelCat"));
 const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
+import ResumeModal from "./components/ResumeModal/ResumeModal";
 import "./App.css";
 
 const LenisScrollTriggerIntegration = () => {
@@ -76,6 +77,7 @@ function App() {
         <ScenesOverlay />
         <ElasticHand />
         <HandStudio />
+        <ResumeModal />
         <div className="app min-h-screen relative">
           <div
             className="fixed top-0 left-0 w-full"
