@@ -38,7 +38,7 @@ const About = () => {
       <section className="about-sandbox-polaroid">
         <div className="about-sandbox-hi-wrap">
           <div className="home-bento about-home-bento">
-            <HomeHero />
+            <HomeHero caption={false} />
           </div>
           <p className="about-sandbox-hi-caption">{HI_CAPTION_TEXT}</p>
         </div>

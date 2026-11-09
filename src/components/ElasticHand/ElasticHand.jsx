@@ -86,6 +86,13 @@ export default function ElasticHand() {
         tg.drawImage(img, 0, y, HW, 1, (WIN * K) / 2 - c, r, HW, 1);   // each row of the forearm re-centred, so it runs straight
       }
       strip.canvas = tall;
+      // the hand on its own; below its wrist edge the last row is carried on and faded out, so the hand always overlaps the arm
+      const HR = SPRITE.headRows + 8, EDGE = (SPRITE.headRows + 2) * K, hc = document.createElement("canvas"); hc.width = HW; hc.height = HR * K; const hg = hc.getContext("2d");
+      hg.drawImage(img, 0, 0, HW, EDGE, 0, 0, HW, EDGE);
+      hg.drawImage(img, 0, EDGE - 1, HW, 1, 0, EDGE, HW, HR * K - EDGE);
+      const fade = hg.createLinearGradient(0, 0, 0, HR * K); fade.addColorStop(0, "rgba(0,0,0,1)"); fade.addColorStop(EDGE / (HR * K), "rgba(0,0,0,1)"); fade.addColorStop(1, "rgba(0,0,0,0)");
+      hg.globalCompositeOperation = "destination-in"; hg.fillStyle = fade; hg.fillRect(0, 0, HW, HR * K);
+      strip.head = hc;
     };
 
     const A = anchorsFor(W, H);
@@ -237,7 +244,7 @@ export default function ElasticHand() {
       ctx.save(); ctx.translate(st.x[I], st.y[I]); ctx.rotate(rot); ctx.scale(sc, sc);
       ctx.shadowColor = "rgba(40,20,5,.2)"; ctx.shadowBlur = 8; ctx.shadowOffsetY = 4;
       ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
-      ctx.drawImage(img, 0, 0, SPRITE.w * K, (SPRITE.headRows + 2) * K, -strip.wrist, -SPRITE.headRows, SPRITE.w, SPRITE.headRows + 2);
+      ctx.drawImage(strip.head, 0, 0, strip.head.width, strip.head.height, -strip.wrist, -SPRITE.headRows, SPRITE.w, SPRITE.headRows + 8);
       ctx.restore();
     };
 

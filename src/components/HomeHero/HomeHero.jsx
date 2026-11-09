@@ -48,7 +48,7 @@ function Typewriter({ lines, typingSpeed = 55, erasingSpeed = 26, holdTime = 180
 }
 
 
-const HomeHero = forwardRef(function HomeHero(_, outerRef) {
+const HomeHero = forwardRef(function HomeHero({ caption = true }, outerRef) {
   const [askOpen, setAskOpen] = useState(false);
   const landingCatRef = useRef(null);
   const hotspotsRef = useRef(null);
@@ -121,7 +121,7 @@ const HomeHero = forwardRef(function HomeHero(_, outerRef) {
                 </div>
                 {askOpen ? (
                   <DudeAsk onClose={() => setAskOpen(false)} />
-                ) : (
+                ) : !caption ? null : (
                   <p className="home-hero-caption">
                     <span>
                       <Typewriter lines={WELCOME_LINES} />
