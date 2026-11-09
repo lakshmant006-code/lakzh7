@@ -5,7 +5,6 @@ import { useLenisScroll } from "../../hooks/useLenisScroll";
 import Footer from "../../components/Footer/Footer";
 import WorkBentoGrid from "../../components/Work/WorkBentoGrid";
 import PokemonIntro from "../../components/PokemonIntro/PokemonIntro";
-import HomeHero from "../../components/HomeHero/HomeHero";
 import "./Home.css";
 
 const LANDING_FADE_DURATION = 1;
@@ -183,14 +182,6 @@ const Home = () => {
         className={`home${isGoogleCreative ? " home-google-creative" : ""}`}
         style={{ backgroundColor: "#ffffff" }}
       >
-        <section id="landing" className="home-landing">
-          <div className="home-landing-content page-content-shell">
-            <div className="home-bento">
-            <HomeHero ref={landingCatRef} />
-            </div>
-          </div>
-        </section>
-
         {workSection}
         <Footer />
       </main>

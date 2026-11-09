@@ -643,3 +643,6 @@
 }
 
 /* content-visibility removed: was causing mid/lower grid scroll jank (visibility recalc during scroll) */
+
+/* the Work page starts with the projects (the shop-house now lives on the About page): clear the nav */
+.home > .home-work:first-child { padding-top: 104px; }
