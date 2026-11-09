@@ -29,7 +29,7 @@ function anchorsFor(W, H) {
 const CASE_STUDIES = ["/keep", "/quizai", "/hiku", "/time-management", "/pro-move"];
 const CASE_OPACITY = 0.25;
 // pages where there is no hand at all, just the normal pointer
-const NO_HAND = ["/scenes", "/about"];
+const NO_HAND = ["/scenes"];
 const IS_MAC = typeof navigator !== "undefined" && (/Mac/i.test(navigator.platform) || /Macintosh/.test(navigator.userAgent)) && !(navigator.maxTouchPoints > 1);
 
 export default function ElasticHand() {
