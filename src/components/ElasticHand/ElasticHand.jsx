@@ -9,12 +9,11 @@ import "./ElasticHand.css";
    - the shoulder is fixed to the middle of the bottom edge (see SIDE)
    - the fingertip is the real pointer, so clicks land exactly where it points */
 
-const SPRITE = { w: 109, h: 196, headRows: 102, tip: [15.75, 0.25], scale: 1.45 };   // units of 8 px: rows 0-102 are the hand, the rest is forearm
-const NECK = 0.62;                                                        // how slim the wrist and arm are, next to the hand
-const WIN = 44;                                                           // width of the forearm window cut from the drawing
+const SPRITE = { w: 58, h: 80, headRows: 32, tip: [6, 1], scale: 1.9 };   // rows 0-32 are the hand, the rest is forearm
+const WIN = 24;                                                           // width of the forearm window cut from the drawing
 const N = 26;
 const STEP = 1 / 120;
-const K = 8;                                                              // pixels per unit in public/hand/hand-svg.png: the hand cursor, rendered from the vector drawing (public/hand/hand.svg) at its full size
+const K = 16;                                                             // the drawing is used at 16x (public/hand/hand-hd2.png): the high resolution picture, doubled with a fine sharpen, so edges stay crisp on Retina screens
 
 const smooth = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
@@ -70,7 +69,7 @@ export default function ElasticHand() {
     fit(); canvas.style.opacity = awayRef.current ? "0" : String(dimRef.current); document.documentElement.classList.toggle("hand-away", awayRef.current);
 
     /* from the drawing: the forearm straightened (each row centred), then smoothed up lengthways, ready to be stretched */
-    const img = new Image(); img.src = "/hand/hand-svg.png";
+    const img = new Image(); img.src = "/hand/hand-hd2.png";
     const strip = { canvas: null, wrist: SPRITE.tip[0] };
     img.onload = () => {
       const HW = SPRITE.w * K, HH = SPRITE.h * K, rows = (SPRITE.h - SPRITE.headRows) * K, y0 = SPRITE.headRows * K;
@@ -87,22 +86,6 @@ export default function ElasticHand() {
         tg.drawImage(img, 0, y, HW, 1, (WIN * K) / 2 - c, r, HW, 1);   // each row of the forearm re-centred, so it runs straight
       }
       strip.canvas = tall;
-      // the hand on its own. Its palm narrows into a slim wrist (rows scaled in towards their own centre), and the very last rows fade out
-      // over the first rows of forearm, so the hand and the arm meet without a seam
-      const HR = SPRITE.headRows + 4, hc = document.createElement("canvas"); hc.width = HW; hc.height = HR * K; const hg = hc.getContext("2d");
-      hg.imageSmoothingEnabled = true; hg.imageSmoothingQuality = "high";
-      const yh = (SPRITE.headRows - 14) * K, yw = SPRITE.headRows * K;
-      hg.drawImage(img, 0, 0, HW, yh, 0, 0, HW, yh);
-      for (let y = yh; y < HR * K; y++) {
-        let xl = -1, xr = -1;
-        for (let x = 0; x < HW; x++) if (px[(y * HW + x) * 4 + 3] > 100) { if (xl < 0) xl = x; xr = x; }
-        if (xl < 0) continue;
-        const c = (xl + xr + 1) / 2, t = Math.min(1, (y - yh) / (yw - yh)), sx = 1 - (1 - NECK) * (t * t * (3 - 2 * t));
-        hg.drawImage(img, 0, y, HW, 1, c - c * sx, y, HW * sx, 1);
-      }
-      const fade = hg.createLinearGradient(0, (SPRITE.headRows + 1) * K, 0, HR * K); fade.addColorStop(0, "rgba(0,0,0,1)"); fade.addColorStop(1, "rgba(0,0,0,0)");
-      hg.globalCompositeOperation = "destination-in"; hg.fillStyle = fade; hg.fillRect(0, 0, HW, HR * K);
-      strip.head = hc;
     };
 
     const A = anchorsFor(W, H);
@@ -223,7 +206,7 @@ export default function ElasticHand() {
       const pts = catmull(), M = pts.length;
       let len = 0; const cum = [0];
       for (let i = M - 1; i > 0; i--) { len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); cum.push(len); }   // measured from the hand back to the shoulder
-      const thinAll = Math.max(0.36, Math.min(1, Math.sqrt(170 / Math.max(len, 1))));
+      const thinAll = Math.max(0.4, Math.min(1, Math.sqrt(170 / Math.max(len, 1))));
       const tall = strip.canvas, th = tall.height, tw = tall.width, sc = SPRITE.scale;
 
       ctx.save();
@@ -238,7 +221,7 @@ export default function ElasticHand() {
         // sharp bends narrow the arm a little, so a fold never looks lumpy
         const prev = pts[Math.min(M - 1, i + 3)], nxt = pts[Math.max(0, i - 3)];
         let da = Math.abs(Math.atan2(nxt[1] - a[1], nxt[0] - a[0]) - Math.atan2(a[1] - prev[1], a[0] - prev[0])); if (da > Math.PI) da = 2 * Math.PI - da;
-        const w = sc * NECK * (1 - (1 - thinAll) * smooth(0.02, 0.3, t0)) / (1 + da * 1.2);
+        const w = sc * (1 - (1 - thinAll) * smooth(0.02, 0.3, t0)) / (1 + da * 1.2);
         const ux = yx / sl, uy = yy / sl;                          // along the arm, away from the hand
         const xx = uy, xy = -ux;                                   // across it
         ctx.setTransform(dpr * xx * w, dpr * xy * w, dpr * ux * (sl + 0.8), dpr * uy * (sl + 0.8), dpr * a[0], dpr * a[1]);
@@ -254,7 +237,7 @@ export default function ElasticHand() {
       ctx.save(); ctx.translate(st.x[I], st.y[I]); ctx.rotate(rot); ctx.scale(sc, sc);
       ctx.shadowColor = "rgba(40,20,5,.2)"; ctx.shadowBlur = 8; ctx.shadowOffsetY = 4;
       ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
-      ctx.drawImage(strip.head, 0, 0, strip.head.width, strip.head.height, -strip.wrist, -SPRITE.headRows, SPRITE.w, SPRITE.headRows + 4);
+      ctx.drawImage(img, 0, 0, SPRITE.w * K, (SPRITE.headRows + 2) * K, -strip.wrist, -SPRITE.headRows, SPRITE.w, SPRITE.headRows + 2);
       ctx.restore();
     };
 
