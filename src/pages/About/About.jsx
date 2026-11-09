@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import Footer from "../../components/Footer/Footer";
-import LazyVideo from "../../components/LazyVideo/LazyVideo";
+import HomeHero from "../../components/HomeHero/HomeHero";
 import ExperienceTimeline from "../../components/ExperienceTimeline/ExperienceTimeline";
 import PhotoCardStack from "../../components/PhotoCardStack/PhotoCardStack";
 import enjoy1 from "../../assets/img/about-pictures/enjoy 1.jpeg";
@@ -37,15 +37,9 @@ const About = () => {
     <main className="about-sandbox">
       <section className="about-sandbox-polaroid">
         <div className="about-sandbox-hi-wrap">
-          <LazyVideo
-            className="about-sandbox-hi-video"
-            src="/about/diary-fall.mp4"
-            aria-label="Hand-drawn animation of Lakshman in a notebook"
-            autoPlay
-            loop
-            muted
-            playsInline
-          />
+          <div className="home-bento about-home-bento">
+            <HomeHero />
+          </div>
           <p className="about-sandbox-hi-caption">{HI_CAPTION_TEXT}</p>
         </div>
       </section>

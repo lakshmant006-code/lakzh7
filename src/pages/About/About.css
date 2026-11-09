@@ -503,3 +503,8 @@
   font-weight: 300;
 }
 
+
+/* the shop-house from the Work page opens the About page, in place of the video */
+.about-sandbox-hi-wrap { width: 100%; }
+.about-sandbox-hi-wrap .about-home-bento { width: 100%; max-width: 1100px; height: clamp(380px, calc(100svh - 190px), 700px); }
+@media (max-width: 900px) { .about-sandbox-hi-wrap .about-home-bento { height: auto; } }
