@@ -5,15 +5,19 @@ import "./Hands.css";
 
 /* one hand in the gallery. Drawings made on the first open hand are told apart by their shape and keep that hand. */
 const LEGACY_RATIO = 1129 / 1235;
+// which drawings were made on the first hand is remembered, so the card is the right size from the first paint
+const LEG_KEY = "hands:legacy:v1";
+const legacyIds = (() => { try { return new Set(JSON.parse(localStorage.getItem(LEG_KEY) || "[]")); } catch { return new Set(); } })();
+const rememberLegacy = (id) => { legacyIds.add(id); try { localStorage.setItem(LEG_KEY, JSON.stringify([...legacyIds].slice(-300))); } catch { /* ignore */ } };
 function HandCard({ d, n }) {
-  const [legacy, setLegacy] = useState(false);
+  const [legacy, setLegacy] = useState(() => legacyIds.has(d.id));
   const eager = n < 12;
   return (
     <li className={`hands-card${legacy ? " is-legacy" : ""}`}>
       <img className="hands-base" src={legacy ? "/hand/open-hand-top-bw.webp" : "/hand/open-hand-svg-bw.webp"} alt="" loading={eager ? "eager" : "lazy"} decoding="async" draggable="false" />
       <span className="hands-glitter" style={{ "--ink": `url(${drawingUrl(d.id)})`, "--d": `${(parseInt(d.id.slice(2, 4), 16) % 7) * -0.9}s` }} aria-hidden="true" />
       <img className="hands-ink" src={drawingUrl(d.id)} alt="A hand with accessories and nail paints drawn on it" loading={eager ? "eager" : "lazy"} fetchpriority={eager ? "high" : "auto"} decoding="async" draggable="false"
-        onLoad={(e) => { const r = e.currentTarget.naturalWidth / e.currentTarget.naturalHeight; if (Math.abs(r - LEGACY_RATIO) < 0.02) setLegacy(true); }} />
+        onLoad={(e) => { const r = e.currentTarget.naturalWidth / e.currentTarget.naturalHeight; if (Math.abs(r - LEGACY_RATIO) < 0.02) { rememberLegacy(d.id); setLegacy(true); } }} />
     </li>
   );
 }

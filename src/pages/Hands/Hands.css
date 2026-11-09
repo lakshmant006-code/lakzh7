@@ -39,3 +39,6 @@
 
 /* drawings made on the first open hand keep that hand's shape */
 .hands-card.is-legacy { aspect-ratio: 1129 / 1235; }
+
+/* hands drawn on the newer open hand fill their card more, so they are set a little smaller to sit at the same size as the earlier ones */
+.hands-card:not(.is-legacy) { width: 80%; justify-self: center; align-self: start; }
