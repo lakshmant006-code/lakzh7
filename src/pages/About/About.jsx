@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import Footer from "../../components/Footer/Footer";
 import HomeHero from "../../components/HomeHero/HomeHero";
 import ExperienceTimeline from "../../components/ExperienceTimeline/ExperienceTimeline";
-import PhotoCardStack from "../../components/PhotoCardStack/PhotoCardStack";
+import ArcFan from "../../components/ArcFan/ArcFan";
 import enjoy1 from "../../assets/img/about-pictures/enjoy 1.jpeg";
 import enjoy2 from "../../assets/img/about-pictures/enjoy 2.webp";
 import enjoy3 from "../../assets/img/about-pictures/enjoy 3.jpeg";
@@ -18,8 +18,9 @@ import "./About.css";
 const HI_CAPTION_TEXT =
   "Hi, I'm Lakshman, a UX designer and researcher turning into a design engineer. I'm interested in interactions and experimenting with details.";
 
+const ENJOY_CAPTIONS = ["Concrete and sky", "Tree and facade", "Storm light", "Palm and pavilion", "On the trail", "Red rocks", "Last light", "At the pier"];
 const ENJOY_PHOTOS = [enjoy1, enjoy2, enjoy3, enjoy4, enjoy5, enjoy6, enjoy7, enjoy8].map(
-  (src, i) => ({ src, alt: `Photo ${i + 1} of things I enjoy` }),
+  (src, i) => ({ src, caption: ENJOY_CAPTIONS[i], alt: `${ENJOY_CAPTIONS[i]}: photo ${i + 1} of things I enjoy` }),
 );
 
 const About = () => {
@@ -78,7 +79,7 @@ const About = () => {
             enthusiasts.
           </p>
           <div ref={enjoyImagesRef} className="about-sandbox-enjoy-images">
-            <PhotoCardStack photos={ENJOY_PHOTOS} label="Things I enjoy" />
+            <ArcFan photos={ENJOY_PHOTOS} label="Things I enjoy" />
           </div>
         </div>
       </section>
