@@ -62,6 +62,18 @@ const workProjects = [
     category: "case-study",
   },
   {
+    id: "ubcbim-website",
+    title: "UBC BIM: A Website for a Building Design and Detailing Company",
+    role: "Product Designer, Developer",
+    tags: ["Website", "BIM", "Construction"],
+    summary:
+      "A BIM and construction services company needed its work to be easy to understand. The website explains modeling, engineering, permit sets and bills of materials, and shows real projects in 3D.",
+    shortSummary: "A company site that makes BIM services easy to understand.",
+    image: "/work/ubcbim/ubcbim-thumb.jpg",
+    liveUrl: "https://ubcbim.com/",
+    category: "website",
+  },
+  {
     id: "promove-svsd-hackathon",
     title: "pro-move by Procreate: A Motion Capture Concept",
     role: "SVSD Design Competition",
