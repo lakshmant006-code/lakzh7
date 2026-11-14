@@ -17,9 +17,9 @@
 </head>
 <body>
 <canvas id="c"></canvas>
-<div class="count" id="count">0 / 6 caught</div>
+<div class="count" id="count">0 / 8 on the poles</div>
 <div class="win" id="win">all caught!</div>
-<div class="hud" id="hud">press and hold to blow bubbles from below · lift the rings onto the octopus</div>
+<div class="hud" id="hud">press and hold to blow bubbles from below · lift the rings and drop them over a pole</div>
 <script>
 const W = 1672, H = 941;
 const BG_OPACITY = 0.4;                                        // how strong the underwater picture is over the white page
@@ -51,18 +51,16 @@ const R = 34;                                                 // ring radius
 const FLOOR = (x) => 800 + Math.sin(x / 160) * 12 - 0;       // the sand
 const rings = [];
 const bubbles = [], pops = [];
-const octo = { x: 818, y: 440 };
-const HOOKS = [[0, -112], [-126, -25], [-103, 65], [126, -25], [107, 60], [-44, 120]];   // where a ring can hang, relative to the octopus
-const hookFilled = HOOKS.map(() => null);
+const POLES = [{ x: 470, n: 0 }, { x: 1200, n: 0 }];            // two poles standing in the sand; the rings go over the top and slide down
+const POLE_H = 300, PW = 8, TOTAL = 8;
+const poleBase = (p) => FLOOR(p.x) - 4, poleTop = (p) => poleBase(p) - POLE_H;
 let t = 0, jets = new Map(), won = 0, winT = 0;
 
 function spawnRings() {
-  rings.length = 0; hookFilled.fill(null);
-  for (let i = 0; i < 8; i++) rings.push({ x: 300 + i * 150 + (Math.random() - 0.5) * 40, y: 640 + (i % 2) * 60, vx: 0, vy: 0, a: Math.random() * 6, va: 0, c: COLORS[i % COLORS.length], hook: -1, hx: 0, hy: 0 });
+  rings.length = 0; POLES.forEach((p) => (p.n = 0));
+  for (let i = 0; i < 8; i++) rings.push({ x: 300 + i * 150 + (Math.random() - 0.5) * 40, y: 640 + (i % 2) * 60, vx: 0, vy: 0, a: Math.random() * 6, va: 0, c: COLORS[i % COLORS.length], pole: -1, slot: 0 });
 }
 spawnRings();
-
-function hookPos(i) { return [octo.x + HOOKS[i][0], octo.y + Math.sin(t * 1.3) * 8 + HOOKS[i][1]]; }
 
 function pop(x, y, r) { pops.push({ x, y, r, t: 0 }); }
 
@@ -86,17 +84,18 @@ function step(dt) {
   }
   // rings
   for (const g of rings) {
-    if (g.hook >= 0) {                                         // caught: it hangs from its tentacle and sways
-      const [hx, hy] = hookPos(g.hook);
-      g.x += (hx - g.x) * Math.min(1, dt * 9); g.y += (hy + 16 - g.y) * Math.min(1, dt * 9);
-      g.a += (Math.sin(t * 1.8 + g.hook) * 0.2 - g.a) * Math.min(1, dt * 3); g.vx = g.vy = 0; continue;
+    if (g.pole >= 0) {                                         // threaded: it slides down the pole and stacks
+      const pl = POLES[g.pole], ty = poleBase(pl) - 12 - g.slot * 17;
+      g.x += (pl.x - g.x) * Math.min(1, dt * 14); g.vy = Math.min(g.vy + 900 * dt, 520);
+      g.y = Math.min(ty, g.y + g.vy * dt); if (g.y >= ty && g.vy > 120) { g.vy = 0; blip(); }
+      g.a += (Math.sin(t * 0.8 + g.slot) * 0.04 - g.a) * Math.min(1, dt * 4); g.vx = 0; continue;
     }
     // water: gentle sinking and a lot of drag
     g.vy += 230 * dt; const drag = Math.exp(-1.7 * dt); g.vx *= drag; g.vy *= drag;
     // each jet is a column of moving water
     jets.forEach((j) => {
       const dx = g.x - j.x, top = FLOOR(j.x) - 640;
-      if (Math.abs(dx) < 150 && g.y > top) { const f = (1 - Math.abs(dx) / 150) ** 1.3; g.vy -= 1700 * f * dt; g.vx += (dx / 120) * 260 * f * dt * 60 * 0.12; }
+      if (Math.abs(dx) < 150 && g.y > top) { const f = (1 - Math.abs(dx) / 150) ** 1.3; g.vy -= 1250 * f * dt; g.vx += (dx / 120) * 260 * f * dt * 60 * 0.12; }
     });
     // bubbles shove it, and some of them pop on it
     for (const b of bubbles) {
@@ -111,16 +110,20 @@ function step(dt) {
     if (g.x < 50 + R) { g.x = 50 + R; g.vx = Math.abs(g.vx) * 0.5; } if (g.x > W - 50 - R) { g.x = W - 50 - R; g.vx = -Math.abs(g.vx) * 0.5; }
     if (g.y < 70 + R) { g.y = 70 + R; g.vy = Math.abs(g.vy) * 0.3; }
     const fl = FLOOR(g.x) - R * 0.7; if (g.y > fl) { g.y = fl; g.vy = -Math.abs(g.vy) * 0.25; g.vx *= 0.9; }
-    // caught on a tentacle?
-    for (let h = 0; h < HOOKS.length; h++) {
-      if (hookFilled[h] !== null) continue;
-      const [hx, hy] = hookPos(h);
-      if (Math.hypot(g.x - hx, g.y - hy) < 30 && g.vy > -140) { g.hook = h; hookFilled[h] = g; ting(); for (let k = 0; k < 7; k++) pops.push({ x: hx + (Math.random() - 0.5) * 50, y: hy + (Math.random() - 0.5) * 50, r: 4 + Math.random() * 6, t: -Math.random() * 0.2 }); break; }
+    // the poles: over the top and down onto one threads the ring, from the side it bumps into it
+    for (let h = 0; h < POLES.length; h++) {
+      const pl = POLES[h], top = poleTop(pl), dx = g.x - pl.x;
+      if (g.y < top + 12 && g.y > top - 40 && g.vy > 0 && Math.abs(dx) < R * 0.55) {
+        g.pole = h; g.slot = pl.n++; g.vy = Math.max(g.vy, 60); ting();
+        for (let k = 0; k < 6; k++) pops.push({ x: pl.x + (Math.random() - 0.5) * 70, y: top + (Math.random() - 0.5) * 40, r: 4 + Math.random() * 6, t: -Math.random() * 0.15 });
+        break;
+      }
+      if (g.y > top && g.y < poleBase(pl) + 10 && Math.abs(dx) < R + PW) { g.x = pl.x + Math.sign(dx || 1) * (R + PW); g.vx = Math.sign(dx || 1) * Math.abs(g.vx) * 0.4; }
     }
   }
   // rings push each other
   for (let i = 0; i < rings.length; i++) for (let j = i + 1; j < rings.length; j++) {
-    const a = rings[i], b = rings[j]; if (a.hook >= 0 || b.hook >= 0) continue;
+    const a = rings[i], b = rings[j]; if (a.pole >= 0 || b.pole >= 0) continue;
     const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy), min = R * 1.75;
     if (d < min && d > 0.01) {
       const nx = dx / d, ny = dy / d, push = (min - d) / 2; a.x -= nx * push; a.y -= ny * push; b.x += nx * push; b.y += ny * push;
@@ -129,21 +132,22 @@ function step(dt) {
   }
   for (let i = pops.length - 1; i >= 0; i--) { pops[i].t += dt; if (pops[i].t > 0.32) pops.splice(i, 1); }
   // everything caught: a little celebration, then the rings float free and it starts over
-  const n = hookFilled.filter(Boolean).length;
-  document.getElementById("count").textContent = `${n} / ${HOOKS.length} caught`;
-  if (n === HOOKS.length && !won) { won = 1; winT = 0; document.getElementById("win").classList.add("on"); for (let k = 0; k < 40; k++) bubbles.push({ x: 200 + Math.random() * 1270, y: 780, r: 5 + Math.random() * 10, vx: 0, vy: -(120 + Math.random() * 200), ph: Math.random() * 6, life: 0 }); tone(523, 1046, 0.5, 0.06, "triangle"); }
+  const n = rings.filter((g) => g.pole >= 0).length;
+  document.getElementById("count").textContent = `${n} / ${TOTAL} on the poles`;
+  if (n === TOTAL && !won) { won = 1; winT = 0; document.getElementById("win").classList.add("on"); for (let k = 0; k < 40; k++) bubbles.push({ x: 200 + Math.random() * 1270, y: 780, r: 5 + Math.random() * 10, vx: 0, vy: -(120 + Math.random() * 200), ph: Math.random() * 6, life: 0 }); tone(523, 1046, 0.5, 0.06, "triangle"); }
   if (won) { winT += dt; if (winT > 4) { won = 0; document.getElementById("win").classList.remove("on"); spawnRings(); } }
 }
 
 /* ---------- drawing ---------- */
-function drawRing(g) {
+function drawRing(g, part) {                                   // part: "back" (far side of a threaded ring), "front", or the whole ring
+  const a0 = part === "back" ? Math.PI : 0, a1 = part === "back" ? 6.2832 : part === "front" ? Math.PI : 6.2832;
   ctx.save(); ctx.translate(g.x, g.y);
-  const tilt = g.hook >= 0 ? 0.62 : 0.78 + Math.sin(g.a) * 0.12;
-  ctx.rotate(g.hook >= 0 ? g.a : g.a * 0.35); ctx.scale(1, tilt);
+  const tilt = g.pole >= 0 ? 0.42 : 0.78 + Math.sin(g.a) * 0.12;
+  ctx.rotate(g.pole >= 0 ? 0 : g.a * 0.35); ctx.scale(1, tilt);
   ctx.shadowColor = "rgba(0, 20, 80, .35)"; ctx.shadowBlur = 8; ctx.shadowOffsetY = 5;
-  ctx.lineWidth = 13; ctx.strokeStyle = g.c[1]; ctx.beginPath(); ctx.arc(0, 0, R, 0, 6.2832); ctx.stroke();
-  ctx.shadowColor = "transparent"; ctx.lineWidth = 9.5; ctx.strokeStyle = g.c[0]; ctx.beginPath(); ctx.arc(0, 0, R, 0, 6.2832); ctx.stroke();
-  ctx.lineWidth = 2.5; ctx.strokeStyle = "rgba(255,255,255,.55)"; ctx.beginPath(); ctx.arc(0, 0, R - 1.5, 3.5, 4.7); ctx.stroke();
+  ctx.lineWidth = 13; ctx.strokeStyle = g.c[1]; ctx.beginPath(); ctx.arc(0, 0, R, a0, a1); ctx.stroke();
+  ctx.shadowColor = "transparent"; ctx.lineWidth = 9.5; ctx.strokeStyle = g.c[0]; ctx.beginPath(); ctx.arc(0, 0, R, a0, a1); ctx.stroke();
+  if (part !== "front") { ctx.lineWidth = 2.5; ctx.strokeStyle = "rgba(255,255,255,.55)"; ctx.beginPath(); ctx.arc(0, 0, R - 1.5, 3.5, 4.7); ctx.stroke(); }
   ctx.restore();
 }
 function drawBubble(b) {
@@ -162,9 +166,20 @@ function draw() {
   // jet columns: a faint shimmer of moving water where you press
   jets.forEach((j) => { const g = ctx.createLinearGradient(0, FLOOR(j.x), 0, 160); g.addColorStop(0, "rgba(210,240,255,.28)"); g.addColorStop(1, "rgba(210,240,255,0)");
     ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(j.x - 26, FLOOR(j.x)); ctx.lineTo(j.x - 70, 160); ctx.lineTo(j.x + 70, 160); ctx.lineTo(j.x + 26, FLOOR(j.x)); ctx.fill(); });
-  // the octopus sways a little, on top of the picture (the picture's own octopus sits under it)
-  for (const g of rings) if (g.hook < 0) drawRing(g);
-  for (const g of rings) if (g.hook >= 0) drawRing(g);
+  for (const g of rings) if (g.pole < 0) drawRing(g);
+  POLES.forEach((pl, h) => {
+    const base = poleBase(pl), top = poleTop(pl);
+    ctx.fillStyle = "rgba(60, 40, 10, .22)"; ctx.beginPath(); ctx.ellipse(pl.x, base + 2, 44, 11, 0, 0, 6.2832); ctx.fill();          // shadow on the sand
+    const mine = rings.filter((g) => g.pole === h);
+    mine.forEach((g) => drawRing(g, "back"));
+    const gr = ctx.createLinearGradient(pl.x - PW, 0, pl.x + PW, 0); gr.addColorStop(0, "#ff9a4d"); gr.addColorStop(0.45, "#ffd0a0"); gr.addColorStop(1, "#e0661f");
+    ctx.fillStyle = gr; ctx.beginPath(); ctx.roundRect(pl.x - PW, top, PW * 2, base - top, PW); ctx.fill();
+    ctx.fillStyle = "#ff7a2a"; ctx.beginPath(); ctx.arc(pl.x, top, PW + 3, 0, 6.2832); ctx.fill();                                    // the cap
+    ctx.fillStyle = "rgba(255,255,255,.7)"; ctx.beginPath(); ctx.arc(pl.x - 3, top - 3, 3, 0, 6.2832); ctx.fill();
+    ctx.fillStyle = "#e0661f"; ctx.beginPath(); ctx.ellipse(pl.x, base, 30, 9, 0, 0, 6.2832); ctx.fill();                              // the foot
+    ctx.fillStyle = "#ff9a4d"; ctx.beginPath(); ctx.ellipse(pl.x, base - 2, 30, 8, 0, 0, 6.2832); ctx.fill();
+    mine.forEach((g) => drawRing(g, "front"));
+  });
   for (const b of bubbles) drawBubble(b);
   for (const p of pops) { if (p.t < 0) continue; const k = p.t / 0.32; ctx.strokeStyle = `rgba(235,250,255,${0.8 * (1 - k)})`; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * (1 + k * 0.9), 0, 6.2832); ctx.stroke(); }
 }

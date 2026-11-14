@@ -890,7 +890,7 @@ const META = {
   street: ["Street", "Midday · a city street from above", "Traffic keeps its lanes and stops at the signal · hover to honk · or be the cow", "street"],
   bollywood: ["Bollywood", "A memory · a dance under the arch, the Taj Mahal behind", "Move to stir the wind · tap to wrap the dupatta around him, tap again to let go · the slider sets the breeze", "bollywood"],
   vhs: ["Lion King", "A memory · the tape we wore out", "Tap the tape to put it in · tap the screen to pause · EJECT to take it out", "lion king"],
-  rings: ["Water rings", "A memory · the toy that lived in my pocket", "Press and hold to blow bubbles from the sand · lift the rings onto the octopus", "water rings"],
+  rings: ["Water rings", "A memory · the toy that lived in my pocket", "Press and hold to blow bubbles from the sand · lift the rings and drop them over the poles", "water rings"],
   focus: ["Focus", "A memory · the long road and the balloon", "Try the lenses from the tray and turn the lens by its tab · the right lens at the right angle brings it into focus", "focus"],
   grass: ["Grass from above", "Meadow · combed by the wind", "Tap to plant flowers and watch them bloom · someone will come over", "grass"],
 };
