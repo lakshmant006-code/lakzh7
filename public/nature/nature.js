@@ -890,10 +890,11 @@ const META = {
   street: ["Street", "Midday · a city street from above", "Traffic keeps its lanes and stops at the signal · hover to honk · or be the cow", "street"],
   bollywood: ["Bollywood", "A memory · a dance under the arch, the Taj Mahal behind", "Move to stir the wind · tap to wrap the dupatta around him, tap again to let go · the slider sets the breeze", "bollywood"],
   vhs: ["Lion King", "A memory · the tape we wore out", "Tap the tape to put it in · tap the screen to pause · EJECT to take it out", "lion king"],
+  rings: ["Water rings", "A memory · the toy that lived in my pocket", "Press and hold to blow bubbles from the sand · lift the rings onto the octopus", "water rings"],
   focus: ["Focus", "A memory · the long road and the balloon", "Try the lenses from the tray and turn the lens by its tab · the right lens at the right angle brings it into focus", "focus"],
   grass: ["Grass from above", "Meadow · combed by the wind", "Tap to plant flowers and watch them bloom · someone will come over", "grass"],
 };
-const ORDER = ["mites", "grass", "street", "focus", "vhs"];
+const ORDER = ["mites", "grass", "street", "focus", "vhs", "rings"];
 const nav = document.getElementById("scenes");
 const deck = document.getElementById("deck");
 const built = {};
@@ -905,10 +906,14 @@ const streetFrame = document.getElementById("street");
 const bollyFrame = document.getElementById("bollywood");
 const focusFrame = document.getElementById("focus");
 const vhsFrame = document.getElementById("vhs");
+const ringsFrame = document.getElementById("rings");
 
 /** swap what is on screen right now (no animation) */
 function showNow(id) {
-  const isMites = id === "mites", isGrass = id === "grass", isStreet = id === "street", isBolly = id === "bollywood", isFocus = id === "focus", isVhs = id === "vhs";
+  const isMites = id === "mites", isGrass = id === "grass", isStreet = id === "street", isBolly = id === "bollywood", isFocus = id === "focus", isVhs = id === "vhs", isRings = id === "rings";
+  document.body.classList.toggle("is-rings", isRings);
+  if (isRings && !ringsFrame.src) ringsFrame.src = ringsFrame.dataset.src;
+  if (!isRings && ringsFrame.src) setTimeout(() => { if (currentId !== "rings") ringsFrame.removeAttribute("src"); }, 700);
   document.body.classList.toggle("is-vhs", isVhs);
   document.body.classList.toggle("is-focus", isFocus);
   document.body.classList.toggle("is-bollywood", isBolly);
@@ -931,7 +936,7 @@ function showNow(id) {
   if (!isMites && mitesFrame.src) setTimeout(() => { if (currentId !== "mites") mitesFrame.removeAttribute("src"); }, 700);
   if (!isGrass && grassFrame.src) setTimeout(() => { if (currentId !== "grass") grassFrame.removeAttribute("src"); }, 700);
   currentId = id;
-  if (isMites || isGrass || isStreet || isBolly || isFocus || isVhs) { mitesing = true; }
+  if (isMites || isGrass || isStreet || isBolly || isFocus || isVhs || isRings) { mitesing = true; }
   else {
     mitesing = false;
     if (current?.leave) current.leave();
@@ -951,7 +956,7 @@ function showNow(id) {
 let fade = 0, fadeDir = 0, pending = null, elapsed = 0, autoplay = false;   // memories stay where you put them: no slideshow, no play button
 const DURATION = 11;
 function goto(id, manual) {
-  if (!SCENES[id] && id !== "mites" && id !== "grass" && id !== "street" && id !== "bollywood" && id !== "focus" && id !== "vhs" || ORDER.indexOf(id) < 0) id = ORDER[0];
+  if (!SCENES[id] && id !== "mites" && id !== "grass" && id !== "street" && id !== "bollywood" && id !== "focus" && id !== "vhs" && id !== "rings" || ORDER.indexOf(id) < 0) id = ORDER[0];
   elapsed = 0;
   if (manual && id === currentId) return;
   if (currentId === null) { showNow(id); return; }
