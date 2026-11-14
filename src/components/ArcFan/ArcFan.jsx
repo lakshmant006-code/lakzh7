@@ -27,14 +27,14 @@ export default function ArcFan({ photos, label = "Photos" }) {
 
   // sizes follow the width of the page: the fan is a bit under a semicircle of cards, each card about a sixth of the width
   const g = useMemo(() => {
-    const cw = Math.max(64, Math.min(132, w * 0.15)), ch = cw * 1.32, r0 = cw * 1.0, padB = ch * 0.55;
+    const cw = Math.max(60, Math.min(128, w * 0.14)), ch = cw * 1.32, r0 = cw * 2.7, padB = ch * 0.55;
     const angles = photos.map((_, i) => (n === 1 ? 0 : -SPAN / 2 + (SPAN * i) / (n - 1)));
-    return { cw, ch, r0, padB, angles, height: ch * 1.45 + r0 + padB + 40 };
+    return { cw, ch, r0, padB, angles, height: ch * 1.55 + r0 * 0.95 + padB + 44 };
   }, [w, n, photos]);
 
   const pose = (i) => {
     const th = g.angles[i];
-    if (!open) return { x: 0, y: 0, rotate: 0, scale: 0.7, opacity: 0 };
+    if (!open) return { x: 0, y: 0, rotate: 0, scale: 0.7, opacity: 0, filter: "blur(6px)" };
     let rot = th, lift = 0, scale = 1;
     if (active !== null) {
       const d = i - active, step = SPAN / (n - 1);
@@ -42,7 +42,9 @@ export default function ArcFan({ photos, label = "Photos" }) {
       else rot = th + Math.sign(d) * Math.min(16, 26 / Math.abs(d + 0.0001) ** 0.9) * (step / 18);   // neighbours step aside, the further the less
     }
     const rad = (th * Math.PI) / 180, r = g.r0 + lift;
-    return { x: Math.sin(rad) * r, y: -Math.cos(rad) * r * 0.92, rotate: rot, scale, opacity: 1 };
+    // the cards at either end of the fan dissolve into the page: soft and a little faint, sharp again when the pointer is on them
+    const edge = Math.abs(th) / (SPAN / 2), soft = active === i ? 0 : edge ** 2 * (active === null ? 3.4 : 2.4);
+    return { x: Math.sin(rad) * r, y: -Math.cos(rad) * r * 0.92, rotate: rot, scale, opacity: active === i ? 1 : 1 - 0.42 * edge ** 2.4, filter: `blur(${soft.toFixed(2)}px)` };
   };
 
   // which card is the pointer over: the one whose direction (seen from the centre of the fan) is closest
