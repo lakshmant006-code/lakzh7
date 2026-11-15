@@ -9,12 +9,13 @@
 <style>
   html, body { margin: 0; height: 100%; overflow: hidden; background: #fff; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
   canvas { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: block; }
-  .btns { position: absolute; left: 0; right: 0; bottom: 38px; display: flex; justify-content: center; gap: min(22vw, 190px); pointer-events: none; }
+  :root { --bar: 100px; }
+  .btns { position: absolute; left: 0; right: 0; bottom: 0; height: var(--bar); display: flex; justify-content: center; align-items: center; gap: min(34vw, 300px); pointer-events: none; }
   .btn { all: unset; pointer-events: auto; width: 64px; height: 64px; border-radius: 22px; cursor: pointer; background: linear-gradient(#ffd84d, #f5b700); box-shadow: 0 7px 0 #c48a00, 0 12px 22px rgba(0, 40, 110, .28);
     transition: transform .08s, box-shadow .08s; touch-action: none; display: grid; place-items: center; }
   .btn::after { content: ""; width: 26px; height: 26px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff, rgba(255, 255, 255, .15) 60%); opacity: .8; }
   .btn.on { transform: translateY(6px); box-shadow: 0 1px 0 #c48a00, 0 4px 12px rgba(0, 40, 110, .25); }
-  .hud { position: absolute; left: 0; right: 0; bottom: 12px; text-align: center; font: 400 12px/1.4 "DM Sans", system-ui, sans-serif; color: rgba(20, 50, 100, .75); text-shadow: none; pointer-events: none; transition: opacity .6s; }
+  .hud { position: absolute; left: 0; right: 0; bottom: calc(var(--bar) / 2 - 8px); text-align: center; font: 400 12px/1.4 "DM Sans", system-ui, sans-serif; color: rgba(20, 50, 100, .75); text-shadow: none; pointer-events: none; transition: opacity .6s; }
   .count { position: absolute; left: 16px; top: 14px; font: 500 13px/1 "DM Sans", system-ui, sans-serif; color: #14325f; text-shadow: none; pointer-events: none; letter-spacing: .02em; }
   .win { position: absolute; left: 50%; top: 14%; transform: translate(-50%, -10px); opacity: 0; font: 500 22px/1 "DM Sans", system-ui, sans-serif; color: #14325f; text-shadow: none; transition: opacity .5s, transform .6s cubic-bezier(.2, .9, .25, 1); pointer-events: none; }
   .win.on { opacity: 1; transform: translate(-50%, 0); }
@@ -35,7 +36,8 @@ let vw = 0, vh = 0, dpr = 1, sc = 1, ox = 0, oy = 0;
 function resize() {
   dpr = Math.min(devicePixelRatio || 1, 2); vw = innerWidth; vh = innerHeight;
   cv.width = vw * dpr; cv.height = vh * dpr;
-  sc = Math.min(vw / W, vh / H); ox = (vw - W * sc) / 2; oy = (vh - H * sc) / 2;
+  const bar = Math.min(112, Math.max(84, vh * 0.15)); document.documentElement.style.setProperty("--bar", bar + "px");   // the buttons live in a strip under the picture
+  const ah = vh - bar; sc = Math.min(vw / W, ah / H); ox = (vw - W * sc) / 2; oy = (ah - H * sc) / 2;
 }
 addEventListener("resize", resize); resize();
 
