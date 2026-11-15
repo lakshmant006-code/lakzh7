@@ -179,6 +179,7 @@ function draw() {
   // the two nozzles in the sand
   for (const k of ["L", "R"]) { const n = NOZ[k], y = FLOOR(n.x); ctx.fillStyle = "rgba(60,40,10,.25)"; ctx.beginPath(); ctx.ellipse(n.x, y + 3, 26, 8, 0, 0, 6.2832); ctx.fill();
     ctx.fillStyle = jets.has(k) ? "#ffe27a" : "#f5b700"; ctx.beginPath(); ctx.ellipse(n.x, y, 20, 7, 0, 0, 6.2832); ctx.fill(); ctx.fillStyle = "#6a4a00"; ctx.beginPath(); ctx.ellipse(n.x, y - 1, 10, 3.2, 0, 0, 6.2832); ctx.fill(); }
+  for (const b of bubbles) drawBubble(b);
   for (const g of rings) if (g.pole < 0) drawRing(g);
   POLES.forEach((pl, h) => {
     const base = poleBase(pl), top = poleTop(pl);
@@ -193,7 +194,6 @@ function draw() {
     ctx.fillStyle = "#ff9a4d"; ctx.beginPath(); ctx.ellipse(pl.x, base - 2, 30, 8, 0, 0, 6.2832); ctx.fill();
     mine.forEach((g) => drawRing(g, "front"));
   });
-  for (const b of bubbles) drawBubble(b);
   for (const p of pops) { if (p.t < 0) continue; const k = p.t / 0.32; ctx.strokeStyle = `rgba(235,250,255,${0.8 * (1 - k)})`; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * (1 + k * 0.9), 0, 6.2832); ctx.stroke(); }
 }
 
