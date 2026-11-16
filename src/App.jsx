@@ -17,6 +17,7 @@ const ProMoveCaseStudy = lazy(() => import("./pages/ProMoveCaseStudy/ProMoveCase
 const ChimeCaseStudy = lazy(() => import("./pages/ChimeCaseStudy/ChimeCaseStudy"));
 const Craft = lazy(() => import("./pages/Craft/Craft"));
 const Hands = lazy(() => import("./pages/Hands/Hands"));
+const Library = lazy(() => import("./pages/Library/Library"));
 const Scenes = lazy(() => import("./pages/Scenes/Scenes"));
 import RouteSeo from "./components/Seo/RouteSeo";
 import ScenesOverlay from "./components/ScenesOverlay/ScenesOverlay";
@@ -104,6 +105,7 @@ function App() {
             <Route path="/craft" element={<Craft />} />
             <Route path="/craft/chime" element={<ChimeCaseStudy />} />
             <Route path="/hands" element={<Hands />} />
+            <Route path="/library" element={<Library />} />
             <Route path="/scenes" element={<Scenes />} />
             <Route path="/pixel-cat" element={<PixelCatPage />} />
             <Route path="*" element={<NotFound />} />
