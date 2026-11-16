@@ -10,10 +10,12 @@ import Typewriter from "./components/Typewriter.jsx";
 import Skeleton from "./components/Skeleton.jsx";
 import SwipeToConfirm from "./components/SwipeToConfirm.jsx";
 import TiltCard from "./components/TiltCard.jsx";
+import NodeConnect from "./components/NodeConnect.jsx";
 import MorphSpringCurve from "./components/MorphSpringCurve.jsx";
 import MorphThemeSwitch from "./components/MorphThemeSwitch.jsx";
 import MorphNumberField from "./components/MorphNumberField.jsx";
 import MorphIconButtons from "./components/MorphIconButtons.jsx";
+import nodeConnectSrc from "./components/NodeConnect.jsx?raw";
 import cardStackSrc from "./components/CardStack.jsx?raw";
 import contextMeterSrc from "./components/ContextMeter.jsx?raw";
 import dotSphereSrc from "./components/DotSphere.jsx?raw";
@@ -54,6 +56,8 @@ export const COMPONENTS = [
     controls: [c("threshold", "Threshold %", 50, 100, 1, 85)] },
   { id: "tilt-card", name: "Tilt card", category: "Hover", Component: TiltCard, source: tiltSrc, added: "2026-11-16", description: "A card that leans toward your pointer, with a soft light that follows it.",
     controls: [c("tilt", "Tilt", 0, 30, 1, 14), c("glare", "Glare", 0, 80, 1, 40)] },
+  { id: "node-connect", name: "Node connect", category: "Drag", Component: NodeConnect, source: nodeConnectSrc, added: "2026-11-17", description: "Two nodes. Drag a wire from the first to the second: the second card starts to shiver as the wire gets close, jitters when it connects, then a solid tab forms between them. Tap the tab to disconnect.",
+    controls: [c("shiver", "Shiver", 0, 10, 0.5, 4), c("duration", "Duration (s)", 0.2, 1.4, 0.05, 0.5), c("tab", "Tab size", 6, 26, 1, 14)] },
   { id: "morph-spring-curve", name: "Spring curve", category: "Physics", from: "MORPH", Component: MorphSpringCurve, source: springSrc, added: "2026-11-16", description: "From MORPH. The response curve of a damped spring, in a designer's terms: Response and Bounce. Click the plot to replay the motion.",
     controls: [c("response", "Response", 0.1, 1.2, 0.01, 0.45), c("bounce", "Bounce", 0, 0.9, 0.01, 0.25)] },
   { id: "morph-theme-switch", name: "Theme switch", category: "Select", from: "MORPH", Component: MorphThemeSwitch, source: themeSrc, added: "2026-11-16", description: "From MORPH. A three-way radio group (dark, light, split) in a recessed track.",
