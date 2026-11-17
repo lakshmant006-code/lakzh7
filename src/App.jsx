@@ -26,6 +26,7 @@ import HandStudio from "./components/HandStudio/HandStudio";
 const PixelCatPage = lazy(() => import("./pages/PixelCat/PixelCat"));
 const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
 import ResumeModal from "./components/ResumeModal/ResumeModal";
+import SiteLoader from "./components/SiteLoader/SiteLoader";
 import "./App.css";
 
 const LenisScrollTriggerIntegration = () => {
@@ -72,6 +73,7 @@ function App() {
       <Router>
         <LenisScrollTriggerIntegration />
         <RouteSeo />
+        <SiteLoader />
         <ScrollToTop />
         <BackToTop />
         <SoundToggle />

@@ -49,6 +49,19 @@ ITEMS.unshift(PROCREATE_MOTION);
 ITEMS.splice(1, 0, PROMOVE_TESTING);
 const srcOf = (m) => m.video || m.image || m.thumbnail || m.poster;
 
+/* Only a few videos play at once. Phones and iPads can only decode so many streams, and playing a whole wall of clips together is what made
+   this page lag. The tiles on screen are ranked by how close they sit to the middle of the screen; the closest few play, the rest wait. */
+const MAX_PLAYING = 3;
+const watched = new Map();                                      // video element -> is its tile on screen
+function reconcile() {
+  const mid = innerHeight / 2;
+  const on = [...watched].filter(([, vis]) => vis).map(([v]) => v).sort((a, b) => { const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return Math.abs(ra.top + ra.height / 2 - mid) - Math.abs(rb.top + rb.height / 2 - mid); });
+  on.forEach((v, i) => { if (i < MAX_PLAYING) { if (v.paused) v.play().catch(() => {}); } else if (!v.paused) v.pause(); });
+  watched.forEach((vis, v) => { if (!vis && !v.paused) v.pause(); });
+}
+let reconcileT = 0;
+const soon = () => { clearTimeout(reconcileT); reconcileT = setTimeout(reconcile, 120); };
+
 /* one tile: plays only while on screen, and comes into focus as it scrolls in */
 function Tile({ item, onOpen, hidden }) {
   const ref = useRef(null);
@@ -65,10 +78,11 @@ function Tile({ item, onOpen, hidden }) {
     const io = new IntersectionObserver(([e]) => {
       if (e.isIntersecting) setInView(true);
       const v = vid.current;
-      if (v) { if (e.isIntersecting) v.play().catch(() => {}); else v.pause(); }
+      if (v) { watched.set(v, e.isIntersecting); soon(); }
     }, { rootMargin: "0px 0px -6% 0px", threshold: 0.08 });
     io.observe(el);
-    return () => io.disconnect();
+    addEventListener("scroll", soon, { passive: true }); addEventListener("resize", soon);
+    return () => { io.disconnect(); removeEventListener("scroll", soon); removeEventListener("resize", soon); if (vid.current) watched.delete(vid.current); };
   }, []);
   const m = item.media;
   return (

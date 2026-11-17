@@ -1,0 +1,8 @@
+.site-loader { position: fixed; inset: 0; z-index: 2147483600; display: grid; place-items: center; background: #fff; transition: opacity .55s ease, visibility 0s linear .55s; }
+.site-loader.out { opacity: 0; visibility: hidden; pointer-events: none; }
+.site-loader-inner { display: grid; justify-items: center; gap: 14px; animation: slIn .5s ease both; }
+.site-loader p { margin: 0; font: 500 15px/1 "Crimson Pro", Georgia, serif; letter-spacing: .01em; color: #0f0f0f; }
+.site-loader-bar { width: 120px; height: 2px; border-radius: 2px; background: #ececec; overflow: hidden; }
+.site-loader-bar i { display: block; width: 100%; height: 100%; background: #0f0f0f; transform-origin: 0 50%; transition: transform .35s ease; }
+@keyframes slIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .site-loader, .site-loader-inner { animation: none; transition: none; } }
