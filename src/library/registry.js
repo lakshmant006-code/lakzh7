@@ -4,6 +4,7 @@ import CardStack from "./components/CardStack.jsx";
 import ContextMeter from "./components/ContextMeter.jsx";
 import DotSphere from "./components/DotSphere.jsx";
 import Slingshot from "./components/Slingshot.jsx";
+import MorphSlingshot from "./components/MorphSlingshot.jsx";
 import PressButton from "./components/PressButton.jsx";
 import SegmentedPill from "./components/SegmentedPill.jsx";
 import Typewriter from "./components/Typewriter.jsx";
@@ -20,6 +21,7 @@ import cardStackSrc from "./components/CardStack.jsx?raw";
 import contextMeterSrc from "./components/ContextMeter.jsx?raw";
 import dotSphereSrc from "./components/DotSphere.jsx?raw";
 import slingshotSrc from "./components/Slingshot.jsx?raw";
+import morphSlingSrc from "./components/MorphSlingshot.jsx?raw";
 import pressButtonSrc from "./components/PressButton.jsx?raw";
 import segmentedPillSrc from "./components/SegmentedPill.jsx?raw";
 import typewriterSrc from "./components/Typewriter.jsx?raw";
@@ -42,8 +44,10 @@ export const COMPONENTS = [
     controls: [c("used", "Used", 0, 200, 1, 175), c("total", "Total", 100, 400, 10, 200), c("compact", "Compact", 0, 1, 1, 0)] },
   { id: "dot-sphere", name: "Dot sphere", category: "Hover", Component: DotSphere, source: dotSphereSrc, added: "2026-11-16", description: "A ball made of dots, turning on its own. Move over it and it swirls toward your pointer while the dots jitter, hardest right under it.",
     controls: [c("density", "Density", 10, 34, 1, 22), c("speed", "Speed", 0, 20, 1, 6), c("size", "Size", 30, 100, 1, 70), c("jitter", "Jitter", 0, 14, 1, 5)] },
-  { id: "slingshot", name: "Slingshot", category: "Drag", Component: Slingshot, source: slingshotSrc, added: "2026-11-16", description: "Pull the ball back, let go, and it flies off and returns with a bounce.",
+  { id: "slingshot", name: "Pull and release", category: "Drag", Component: Slingshot, source: slingshotSrc, added: "2026-11-16", description: "Pull the ball back, let go, and it flies off and returns with a bounce.",
     controls: [c("stretch", "Stretch", 30, 110, 1, 60), c("bounce", "Bounce", 0, 10, 1, 6)] },
+  { id: "morph-slingshot", name: "Slingshot", category: "Drag", from: "MORPH", Component: MorphSlingshot, source: morphSlingSrc, added: "2026-11-18", description: "From MORPH. The full Slingshot interaction: pull the ball back in its elastic socket and let go. It flies on an arc, bounces off the walls and ceiling, settles and returns to the band, with sparks, a trembling strain and a turning arrow.",
+    controls: [c("power", "Power %", 40, 220, 1, 145), c("bounce", "Bounce", 0, 100, 1, 55)] },
   { id: "press-button", name: "Press button", category: "Press", Component: PressButton, source: pressButtonSrc, added: "2026-11-16", description: "A chunky key that sinks when you press it and springs back, with a little squash.",
     controls: [c("depth", "Depth", 2, 14, 1, 8), c("squish", "Squish", 0, 10, 1, 4)] },
   { id: "segmented-pill", name: "Segmented pill", category: "Select", Component: SegmentedPill, source: segmentedPillSrc, added: "2026-11-16", description: "Pick one option and a pill slides under it, with a touch of overshoot.",
