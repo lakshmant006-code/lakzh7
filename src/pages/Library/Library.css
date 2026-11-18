@@ -62,3 +62,7 @@ html.hand-mode .lib button, html.hand-mode .lib .lib-tile { cursor: pointer !imp
 .lib-tile-foot b { margin-left: auto; font-weight: 400; color: var(--faint); opacity: 0; transition: opacity .15s, color .15s; }
 .lib-tile:hover .lib-tile-foot b { opacity: 1; } .lib-tile-foot:hover b { color: var(--ink); }
 .lib-tile-foot { cursor: pointer; }
+
+/* the buttons at the bottom of the panel must clear the browser bar on phones */
+.lib-side { padding-bottom: max(18px, calc(env(safe-area-inset-bottom) + 18px)); }
+@media (max-width: 820px) { .lib-detail { padding-bottom: 0; } .lib-panel { border-radius: 10px 10px 0 0; } }

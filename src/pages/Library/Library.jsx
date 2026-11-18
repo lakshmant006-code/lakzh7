@@ -29,7 +29,6 @@ function Detail({ c, onClose, onCopy }) {
         <div className="lib-canvas"><div className="lib-canvas-box" key={c.id}><div className="lib-fill"><Comp {...vals} /></div></div></div>
         <aside className="lib-side">
           <header><h2>{c.name}</h2><button type="button" className="lib-x" aria-label="Close" onClick={onClose}>×</button></header>
-          <p>{c.description}</p>
           <p className="lib-meta"><span>{c.category}</span>{c.from && <span className="accent">from {c.from}</span>}<span>{c.added}</span></p>
           <div className="lib-controls">
             {c.controls.map((k) => (
@@ -45,7 +44,6 @@ function Detail({ c, onClose, onCopy }) {
             <button type="button" className="lib-btn" onClick={() => onCopy(c, usageOf(c, vals), "usage")}>Copy usage</button>
             <button type="button" className="lib-btn" onClick={() => { download(fileName(c), c.source); }}>Download {fileName(c)}</button>
           </div>
-          <p className="lib-note">Self-contained: React is the only dependency. Paste the file in your project and use it as shown in "Copy usage".</p>
         </aside>
       </div>
     </div>
