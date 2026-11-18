@@ -57,7 +57,6 @@ const Nav = () => {
     { label: "work", href: "/", isLink: true },
     { label: "about", href: "/about", isLink: true },
     { label: "craft", href: "/craft", isLink: true },
-    { label: "grass", href: "/", isLink: true, scenes: true },
   ];
 
   const handleLogoClick = (e) => {

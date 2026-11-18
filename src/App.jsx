@@ -18,9 +18,7 @@ const ChimeCaseStudy = lazy(() => import("./pages/ChimeCaseStudy/ChimeCaseStudy"
 const Craft = lazy(() => import("./pages/Craft/Craft"));
 const Hands = lazy(() => import("./pages/Hands/Hands"));
 const Library = lazy(() => import("./pages/Library/Library"));
-const Scenes = lazy(() => import("./pages/Scenes/Scenes"));
 import RouteSeo from "./components/Seo/RouteSeo";
-import ScenesOverlay from "./components/ScenesOverlay/ScenesOverlay";
 import ElasticHand from "./components/ElasticHand/ElasticHand";
 import HandStudio from "./components/HandStudio/HandStudio";
 const PixelCatPage = lazy(() => import("./pages/PixelCat/PixelCat"));
@@ -77,7 +75,6 @@ function App() {
         <ScrollToTop />
         <BackToTop />
         <SoundToggle />
-        <ScenesOverlay />
         <ElasticHand />
         <HandStudio />
         <ResumeModal />
@@ -108,7 +105,6 @@ function App() {
             <Route path="/craft/chime" element={<ChimeCaseStudy />} />
             <Route path="/hands" element={<Hands />} />
             <Route path="/library" element={<Library />} />
-            <Route path="/scenes" element={<Scenes />} />
             <Route path="/pixel-cat" element={<PixelCatPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
