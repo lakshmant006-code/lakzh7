@@ -4,6 +4,8 @@ import CardStack from "./components/CardStack.jsx";
 import ContextMeter from "./components/ContextMeter.jsx";
 import MorphSlingshot from "./components/MorphSlingshot.jsx";
 import MorphPasscode from "./components/MorphPasscode.jsx";
+import ScrollParallax from "./components/ScrollParallax.jsx";
+import VerticalSliders from "./components/VerticalSliders.jsx";
 import PressButton from "./components/PressButton.jsx";
 import SegmentedPill from "./components/SegmentedPill.jsx";
 import Typewriter from "./components/Typewriter.jsx";
@@ -17,6 +19,8 @@ import cardStackSrc from "./components/CardStack.jsx?raw";
 import contextMeterSrc from "./components/ContextMeter.jsx?raw";
 import morphSlingSrc from "./components/MorphSlingshot.jsx?raw";
 import passcodeSrc from "./components/MorphPasscode.jsx?raw";
+import scrollParallaxSrc from "./components/ScrollParallax.jsx?raw";
+import verticalSlidersSrc from "./components/VerticalSliders.jsx?raw";
 import pressButtonSrc from "./components/PressButton.jsx?raw";
 import segmentedPillSrc from "./components/SegmentedPill.jsx?raw";
 import typewriterSrc from "./components/Typewriter.jsx?raw";
@@ -38,6 +42,10 @@ export const COMPONENTS = [
     controls: [c("power", "Power %", 40, 220, 1, 145), c("bounce", "Bounce", 0, 100, 1, 55)] },
   { id: "morph-passcode", name: "Passcode field", category: "Press", from: "MORPH", Component: MorphPasscode, source: passcodeSrc, added: "2026-11-19", description: "From MORPH. A protected value with a reveal and a copy button.",
     controls: [c("speed", "Reveal speed", 1, 10, 1, 5)] },
+  { id: "scroll-parallax", name: "Scroll parallax", category: "Swipe", Component: ScrollParallax, source: scrollParallaxSrc, added: "2026-11-19", description: "A strip of picture cards you scroll sideways; each picture slides inside its frame as it passes the middle, with a reflection below.",
+    controls: [c("travel", "Travel", 0, 1.2, 0.05, 0.75), c("gap", "Gap (rem)", 0.5, 3, 0.1, 1.5), c("padding", "Padding (rem)", 0, 4, 0.1, 1.5), c("reflect", "Reflect", 0, 1, 1, 1), c("animate", "Animate", 0, 1, 1, 1), c("cards", "Cards", 4, 12, 1, 8)] },
+  { id: "vertical-sliders", name: "Sliders", category: "Slide", Component: VerticalSliders, source: verticalSlidersSrc, added: "2026-11-19", description: "Three tall sliders you drag up and down. The fill rises, the icon follows the level, and the pill swells under your finger.",
+    controls: [c("height", "Height", 80, 200, 1, 120), c("radius", "Roundness", 4, 22, 1, 14)] },
   { id: "press-button", name: "Press button", category: "Press", Component: PressButton, source: pressButtonSrc, added: "2026-11-16", description: "A chunky key that sinks when you press it and springs back, with a little squash.",
     controls: [c("depth", "Depth", 2, 14, 1, 8), c("squish", "Squish", 0, 10, 1, 4)] },
   { id: "segmented-pill", name: "Segmented pill", category: "Select", Component: SegmentedPill, source: segmentedPillSrc, added: "2026-11-16", description: "Pick one option and a pill slides under it, with a touch of overshoot.",
