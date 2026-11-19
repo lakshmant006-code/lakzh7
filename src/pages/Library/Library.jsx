@@ -62,6 +62,7 @@ export default function Library() {
     return () => document.documentElement.classList.remove("lib-dark");
   }, []);
   useEffect(() => { history.replaceState(null, "", location.pathname + (open ? "#" + open : "")); }, [open]);
+  useEffect(() => { const h = () => setOpen((location.hash || "").slice(1) || null); window.addEventListener("hashchange", h); return () => window.removeEventListener("hashchange", h); }, []);
   useEffect(() => {
     const key = (e) => {
       if (e.key === "Escape") setOpen(null);

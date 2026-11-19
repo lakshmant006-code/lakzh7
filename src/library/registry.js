@@ -7,6 +7,14 @@ import Slingshot from "./components/Slingshot.jsx";
 import MorphSlingshot from "./components/MorphSlingshot.jsx";
 import ArcFan from "./components/ArcFan.jsx";
 import MorphPasscode from "./components/MorphPasscode.jsx";
+import MorphColorField from "./components/MorphColorField.jsx";
+import MorphSegmented from "./components/MorphSegmented.jsx";
+import MorphRangeField from "./components/MorphRangeField.jsx";
+import MorphAiPrompt from "./components/MorphAiPrompt.jsx";
+import MorphSelectionBox from "./components/MorphSelectionBox.jsx";
+import MorphSpringPresets from "./components/MorphSpringPresets.jsx";
+import MorphLayers from "./components/MorphLayers.jsx";
+import MorphCommandPalette from "./components/MorphCommandPalette.jsx";
 import PressButton from "./components/PressButton.jsx";
 import SegmentedPill from "./components/SegmentedPill.jsx";
 import Typewriter from "./components/Typewriter.jsx";
@@ -26,6 +34,14 @@ import slingshotSrc from "./components/Slingshot.jsx?raw";
 import morphSlingSrc from "./components/MorphSlingshot.jsx?raw";
 import arcFanSrc from "./components/ArcFan.jsx?raw";
 import passcodeSrc from "./components/MorphPasscode.jsx?raw";
+import morphColorFieldSrc from "./components/MorphColorField.jsx?raw";
+import morphSegmentedSrc from "./components/MorphSegmented.jsx?raw";
+import morphRangeFieldSrc from "./components/MorphRangeField.jsx?raw";
+import morphAiPromptSrc from "./components/MorphAiPrompt.jsx?raw";
+import morphSelectionBoxSrc from "./components/MorphSelectionBox.jsx?raw";
+import morphSpringPresetsSrc from "./components/MorphSpringPresets.jsx?raw";
+import morphLayersSrc from "./components/MorphLayers.jsx?raw";
+import morphCommandPaletteSrc from "./components/MorphCommandPalette.jsx?raw";
 import pressButtonSrc from "./components/PressButton.jsx?raw";
 import segmentedPillSrc from "./components/SegmentedPill.jsx?raw";
 import typewriterSrc from "./components/Typewriter.jsx?raw";
@@ -56,6 +72,22 @@ export const COMPONENTS = [
     controls: [c("cards", "Cards", 3, 9, 1, 7), c("radius", "Radius", 1.5, 4, 0.1, 2.7), c("span", "Span °", 60, 170, 1, 132), c("blur", "Edge blur", 0, 6, 0.1, 3.4)] },
   { id: "morph-passcode", name: "Passcode field", category: "Press", from: "MORPH", Component: MorphPasscode, source: passcodeSrc, added: "2026-11-19", description: "From MORPH. A protected value with a reveal and a copy button.",
     controls: [c("speed", "Reveal speed", 1, 10, 1, 5)] },
+  { id: "morph-color-field", name: "Colour field", category: "Select", from: "MORPH", Component: MorphColorField, source: morphColorFieldSrc, added: "2026-11-19", description: "From MORPH. Swatch and hex box in one field. Type a hex and press Enter.",
+    controls: [c("swatches", "Fields", 1, 3, 1, 3)] },
+  { id: "morph-segmented", name: "Segmented control", category: "Select", from: "MORPH", Component: MorphSegmented, source: morphSegmentedSrc, added: "2026-11-19", description: "From MORPH. Radio buttons in a recessed track, and a quiet select.",
+    controls: [c("weight", "Text weight", 300, 800, 100, 500)] },
+  { id: "morph-range-field", name: "Range field", category: "Slide", from: "MORPH", Component: MorphRangeField, source: morphRangeFieldSrc, added: "2026-11-19", description: "From MORPH. Label, slider and mono value, driving a live layer.",
+    controls: [c("max", "Opacity max", 20, 100, 1, 100)] },
+  { id: "morph-ai-prompt", name: "AI prompt", category: "Type", from: "MORPH", Component: MorphAiPrompt, source: morphAiPromptSrc, added: "2026-11-19", description: "From MORPH. The floating prompt bar with the selection chip.",
+    controls: [] },
+  { id: "morph-selection-box", name: "Selection box", category: "Drag", from: "MORPH", Component: MorphSelectionBox, source: morphSelectionBoxSrc, added: "2026-11-19", description: "From MORPH. A layer with eight resize handles, a size badge and a hover outline.",
+    controls: [c("minSize", "Min size", 8, 80, 1, 24)] },
+  { id: "morph-spring-presets", name: "Spring feels", category: "Physics", from: "MORPH", Component: MorphSpringPresets, source: morphSpringPresetsSrc, added: "2026-11-19", description: "From MORPH. One-click feels: Gentle, Snappy, Bouncy and Stiff.",
+    controls: [c("distance", "Travel", 30, 100, 1, 70)] },
+  { id: "morph-layers", name: "Layers panel", category: "Select", from: "MORPH", Component: MorphLayers, source: morphLayersSrc, added: "2026-11-19", description: "From MORPH. The layers tree: collapse, select, rename, hide.",
+    controls: [c("indent", "Indent", 8, 28, 1, 14)] },
+  { id: "morph-command-palette", name: "Command palette", category: "Type", from: "MORPH", Component: MorphCommandPalette, source: morphCommandPaletteSrc, added: "2026-11-19", description: "From MORPH. Search every command; arrows move, Enter runs.",
+    controls: [c("rows", "Visible rows", 3, 10, 1, 4)] },
   { id: "press-button", name: "Press button", category: "Press", Component: PressButton, source: pressButtonSrc, added: "2026-11-16", description: "A chunky key that sinks when you press it and springs back, with a little squash.",
     controls: [c("depth", "Depth", 2, 14, 1, 8), c("squish", "Squish", 0, 10, 1, 4)] },
   { id: "segmented-pill", name: "Segmented pill", category: "Select", Component: SegmentedPill, source: segmentedPillSrc, added: "2026-11-16", description: "Pick one option and a pill slides under it, with a touch of overshoot.",
