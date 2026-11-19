@@ -58,7 +58,7 @@ html.lib-dark, html.lib-dark body { background: #181818; }
 html.hand-mode .lib, html.hand-mode .lib * { cursor: auto !important; }
 html.hand-mode .lib button, html.hand-mode .lib .lib-tile { cursor: pointer !important; }
 
-.lib-fill { width: 100%; height: 100%; display: grid; place-items: center; }
+.lib-fill { width: 100%; height: 100%; display: grid; place-items: center; container-type: size; }
 .lib-tile-foot b { margin-left: auto; font-weight: 400; color: var(--faint); opacity: 0; transition: opacity .15s, color .15s; }
 .lib-tile:hover .lib-tile-foot b { opacity: 1; } .lib-tile-foot:hover b { color: var(--ink); }
 .lib-tile-foot { cursor: pointer; }

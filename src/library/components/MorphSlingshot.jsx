@@ -124,7 +124,7 @@ export default function MorphSlingshot({ power = 145, bounce = 55 }) {
   const up = () => sim.current && sim.current.release();
   return (
     <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center" }}>
-      <div style={{ width: "min(100%, calc((100cqh) * 360 / 260))", aspectRatio: "360 / 260", background: "#1B1B1B", borderRadius: 10, overflow: "hidden", boxShadow: "inset 0 0 0 1px #333", touchAction: "none" }}>
+      <div style={{ width: "min(92%, calc((100cqh) * 360 / 260))", aspectRatio: "360 / 260", background: "#1B1B1B", borderRadius: 10, overflow: "hidden", boxShadow: "inset 0 0 0 1px #333", touchAction: "none" }}>
         <svg ref={svg} viewBox={`0 0 ${W} ${H}`} style={{ display: "block", width: "100%", height: "100%", cursor: "grab" }} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
           <path ref={band} d={slingHull(W / 2, H / 2, SLING.SOCKET, W / 2, H / 2, SLING.R + 6)} fill="#fff" opacity="0.1" />
           {Array.from({ length: SLING.POOL }, (_, i) => <path key={i} ref={(n) => (sparks.current[i] = n)} d="M0 0L0 0" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" opacity="0" fill="none" />)}

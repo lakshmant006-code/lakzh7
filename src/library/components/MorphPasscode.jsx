@@ -16,14 +16,14 @@ export default function MorphPasscode({ number = "4821 7390 6615 9204", label = 
   const chars = number.split("");
   const lastFour = chars.length - 4;
   const copyIt = async () => { try { await navigator.clipboard.writeText(number.replace(/\s/g, "")); } catch { /* clipboard blocked: still show the tick */ } setDone(true); clearTimeout(timer.current); timer.current = setTimeout(() => setDone(false), 1400); };
-  const btn = { all: "unset", cursor: "pointer", width: 54, alignSelf: "stretch", display: "grid", placeItems: "center", color: M.muted, borderLeft: `1px solid ${M.line}`, transition: "color .15s, background .15s" };
+  const btn = { all: "unset", cursor: "pointer", width: 44, alignSelf: "stretch", display: "grid", placeItems: "center", color: M.muted, borderLeft: `1px solid ${M.line}`, transition: "color .15s, background .15s" };
   return (
     <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center" }}>
-      <div style={{ width: "88%", maxWidth: 380, color: M.ink, fontFamily: "ui-sans-serif, system-ui, sans-serif" }}>
+      <div style={{ width: "88%", maxWidth: 380, minWidth: 0, boxSizing: "border-box", color: M.ink, fontFamily: "ui-sans-serif, system-ui, sans-serif" }}>
         <div style={{ font: "500 12px/1 inherit", color: M.muted, marginBottom: 8 }}>{label}</div>
         <div style={{ font: "400 8.5px/1 ui-monospace, Menlo, monospace", letterSpacing: ".12em", color: M.faint, marginBottom: 6, textTransform: "uppercase" }}>{sub}</div>
         <div style={{ display: "flex", alignItems: "center", background: M.base, borderRadius: 4, boxShadow: `inset 0 0 0 1px ${M.line}`, minHeight: 58, overflow: "hidden" }}>
-          <div style={{ flex: 1, display: "flex", alignItems: "center", padding: "0 22px", font: "500 21px/1 ui-monospace, Menlo, Consolas, monospace", letterSpacing: ".02em", whiteSpace: "pre" }} aria-label={shown ? number : `Hidden, ends in ${number.slice(-4)}`}>
+          <div style={{ flex: 1, display: "flex", alignItems: "center", padding: "0 clamp(10px, 4cqw, 22px)", minWidth: 0, font: "500 clamp(12px, 4.4cqw, 21px)/1 ui-monospace, Menlo, Consolas, monospace", letterSpacing: ".02em", whiteSpace: "pre" }} aria-label={shown ? number : `Hidden, ends in ${number.slice(-4)}`}>
             {chars.map((ch, i) => {
               const secret = ch !== " " && i < lastFour, visible = !secret || shown;
               return (

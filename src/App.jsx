@@ -1,5 +1,5 @@
 import React, { useEffect, Suspense, lazy } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ReactLenis, useLenis } from "@studio-freight/react-lenis";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Nav from "./components/Nav/Nav";
@@ -15,9 +15,8 @@ const QuizAICaseStudy = lazy(() => import("./pages/QuizAICaseStudy/QuizAICaseStu
 const HikuCaseStudy = lazy(() => import("./pages/HikuCaseStudy/HikuCaseStudy"));
 const ProMoveCaseStudy = lazy(() => import("./pages/ProMoveCaseStudy/ProMoveCaseStudy"));
 const ChimeCaseStudy = lazy(() => import("./pages/ChimeCaseStudy/ChimeCaseStudy"));
-const Craft = lazy(() => import("./pages/Craft/Craft"));
+const CraftHub = lazy(() => import("./pages/CraftHub/CraftHub"));
 const Hands = lazy(() => import("./pages/Hands/Hands"));
-const Library = lazy(() => import("./pages/Library/Library"));
 import RouteSeo from "./components/Seo/RouteSeo";
 import ElasticHand from "./components/ElasticHand/ElasticHand";
 import HandStudio from "./components/HandStudio/HandStudio";
@@ -101,10 +100,11 @@ function App() {
             <Route path="/quizai" element={<QuizAICaseStudy />} />
             <Route path="/hiku" element={<HikuCaseStudy />} />
             <Route path="/pro-move" element={<ProMoveCaseStudy />} />
-            <Route path="/craft" element={<Craft />} />
+            <Route path="/craft" element={<CraftHub />} />
+            <Route path="/craft/works" element={<CraftHub />} />
             <Route path="/craft/chime" element={<ChimeCaseStudy />} />
             <Route path="/hands" element={<Hands />} />
-            <Route path="/library" element={<Library />} />
+            <Route path="/library" element={<Navigate to="/craft" replace />} />
             <Route path="/pixel-cat" element={<PixelCatPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

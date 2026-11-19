@@ -53,7 +53,6 @@ const Nav = () => {
   const toggleHand = () => window.dispatchEvent(new CustomEvent("hand:click"));   // the hand is always on now; this button is waiting for its action
 
   const navItems = [
-    { label: "library", href: "/library", isLink: true },
     { label: "work", href: "/", isLink: true },
     { label: "about", href: "/about", isLink: true },
     { label: "craft", href: "/craft", isLink: true },
@@ -81,7 +80,6 @@ const Nav = () => {
     }
     if (item.label === "about") return path === "/about";
     if (item.label === "craft") return path === "/craft" || path.startsWith("/craft/");
-    if (item.label === "library") return path === "/library";
     if (item.label === "grass") return scenesOpen || path === "/scenes";
     if (item.label === "hand") return handOn;
     return false;
