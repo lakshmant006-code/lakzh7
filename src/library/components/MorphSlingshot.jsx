@@ -40,10 +40,11 @@ class Slingshot {
     this.x = this.restX + dx; this.y = this.restY + dy; this.strain = strainOf(m);
   }
   release() {
-    if (!this.grip) return; this.grip = null; this.strain = 0;
+    if (!this.grip) return false; this.grip = null; this.strain = 0;
     const pulled = Math.hypot(this.restX - this.x, this.restY - this.y);
-    if (pulled < 8) { this.phase = "rest"; this.x = this.restX; this.y = this.restY; return; }
+    if (pulled < 8) { this.phase = "rest"; this.x = this.restX; this.y = this.restY; return false; }
     const v = this.launch(this.x, this.y); this.vx = v.vx; this.vy = v.vy; this.phase = "fly"; this.pull = clamp(pulled / SLING.PULL, 0, 1); this.fired = false;   // the burst waits until the ball clears the sling
+    return true;          // a real launch: the toggle flips
   }
   puff(x, y, dx, dy, n, speed, spread) {
     if (this.reduced) return; const aim = Math.atan2(dy, dx);
@@ -100,17 +101,18 @@ class Slingshot {
 }
 
 export default function MorphSlingshot({ power = 145, bounce = 55 }) {
-  const svg = useRef(null), band = useRef(null), ball = useRef(null), arrow = useRef(null), sparks = useRef([]), sim = useRef(null);
+  const svg = useRef(null), band = useRef(null), bandOn = useRef(null), tog = useRef({ on: true, mix: 1 }), ball = useRef(null), sparks = useRef([]), sim = useRef(null);
   useEffect(() => {
     sim.current = new Slingshot({ width: W, height: H, power, bounce, reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches });
     let raf, last = performance.now();
     const frame = (now) => {
-      raf = requestAnimationFrame(frame); const s = sim.current; s.advance((now - last) / 1000); last = now;
+      raf = requestAnimationFrame(frame); const s = sim.current, dt = (now - last) / 1000; s.advance(dt); last = now;
+      const t = tog.current; t.mix += ((t.on ? 1 : 0) - t.mix) * (1 - Math.exp(-Math.min(dt, 0.05) * 14)); if (Math.abs((t.on ? 1 : 0) - t.mix) < 0.004) t.mix = t.on ? 1 : 0;
+      bandOn.current?.setAttribute("opacity", t.mix.toFixed(3));
       const v = s.view(now / 1000);
       ball.current?.setAttribute("transform", `translate(${(W / 2 + v.dx).toFixed(2)} ${(H / 2 + v.dy).toFixed(2)}) rotate(${(v.angle * 180 / Math.PI).toFixed(2)}) scale(${v.sx.toFixed(4)} ${v.sy.toFixed(4)}) rotate(${(-v.angle * 180 / Math.PI).toFixed(2)})`);
       ball.current?.setAttribute("opacity", v.visible ? "1" : "0");
-      arrow.current?.setAttribute("transform", `rotate(${(v.arrow * 180 / Math.PI).toFixed(2)})`);
-      band.current?.setAttribute("d", v.band);
+      band.current?.setAttribute("d", v.band); bandOn.current?.setAttribute("d", v.band);
       sparks.current.forEach((el, i) => { if (!el) return; const p = v.sparks[i]; if (p) { el.setAttribute("d", `M${p.x1.toFixed(1)} ${p.y1.toFixed(1)}L${p.x2.toFixed(1)} ${p.y2.toFixed(1)}`); el.setAttribute("stroke-width", p.width.toFixed(2)); el.setAttribute("opacity", p.opacity.toFixed(3)); } else el.setAttribute("opacity", "0"); });
     };
     raf = requestAnimationFrame(frame);
@@ -121,16 +123,17 @@ export default function MorphSlingshot({ power = 145, bounce = 55 }) {
   const pt = (e) => { const r = svg.current.getBoundingClientRect(); return [((e.clientX - r.left) / r.width) * W, ((e.clientY - r.top) / r.height) * H]; };
   const down = (e) => { const [x, y] = pt(e); if (sim.current.grab(x, y)) e.currentTarget.setPointerCapture(e.pointerId); };
   const move = (e) => { if (sim.current.holding) { const [x, y] = pt(e); sim.current.move(x, y); } };
-  const up = () => sim.current && sim.current.release();
+  const up = () => { if (sim.current && sim.current.release()) tog.current.on = !tog.current.on; };
   return (
     <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center" }}>
-      <div style={{ width: "min(92%, calc((100cqh) * 360 / 260))", aspectRatio: "360 / 260", background: "#1B1B1B", borderRadius: 10, overflow: "hidden", boxShadow: "inset 0 0 0 1px #333", touchAction: "none" }}>
+      <div style={{ width: "min(92%, calc((100cqh) * 360 / 260))", aspectRatio: "360 / 260", background: "#262828", borderRadius: 10, overflow: "hidden", touchAction: "none" }}>
         <svg ref={svg} viewBox={`0 0 ${W} ${H}`} style={{ display: "block", width: "100%", height: "100%", cursor: "grab" }} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
-          <path ref={band} d={slingHull(W / 2, H / 2, SLING.SOCKET, W / 2, H / 2, SLING.R + 6)} fill="#fff" opacity="0.1" />
-          {Array.from({ length: SLING.POOL }, (_, i) => <path key={i} ref={(n) => (sparks.current[i] = n)} d="M0 0L0 0" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" opacity="0" fill="none" />)}
+          <path ref={band} d={slingHull(W / 2, H / 2, SLING.SOCKET, W / 2, H / 2, SLING.R + 6)} fill="#0D0D0E" stroke="#0D0D0E" strokeWidth="0.6" strokeLinejoin="round" />
+          <path ref={bandOn} d={slingHull(W / 2, H / 2, SLING.SOCKET, W / 2, H / 2, SLING.R + 6)} fill="#FF4405" stroke="#FF4405" strokeWidth="0.6" strokeLinejoin="round" />
+          {Array.from({ length: SLING.POOL }, (_, i) => <path key={i} ref={(n) => (sparks.current[i] = n)} d="M0 0L0 0" stroke="#FF6A2B" strokeWidth="1.5" strokeLinecap="round" opacity="0" fill="none" />)}
           <g ref={ball} transform={`translate(${W / 2} ${H / 2})`}>
-            <circle r={SLING.R} fill="#fff" />
-            <g ref={arrow} transform="rotate(0)"><path d="M0 8.5 L0 -8.5 M-5.5 -3 L0 -8.5 L5.5 -3" stroke="#1B1B1B" strokeWidth="2.3" fill="none" strokeLinecap="round" strokeLinejoin="round" transform="rotate(45)" /></g>
+            <circle r={SLING.R - 1} fill="#171818" stroke="#0C0C0C" strokeWidth="2" />
+            {[22, 16, 10].map((r) => <circle key={r} r={r} fill="none" stroke="#2C2E2E" strokeWidth="1" />)}
           </g>
         </svg>
       </div>

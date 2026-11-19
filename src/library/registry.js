@@ -38,7 +38,7 @@ export const COMPONENTS = [
     controls: [c("cards", "Cards", 2, 6, 1, 4), c("spread", "Spread", 4, 40, 1, 18), c("corner", "Corner", 0, 32, 1, 14), c("bounce", "Bounce", 0, 10, 1, 5)] },
   { id: "context-meter", name: "Context meter", category: "Loading", Component: ContextMeter, source: contextMeterSrc, added: "2026-11-16", description: "A number that counts up and a segmented bar that fills in. Good for usage, storage and progress readouts.",
     controls: [c("used", "Used", 0, 200, 1, 175), c("total", "Total", 100, 400, 10, 200), c("compact", "Compact", 0, 1, 1, 0)] },
-  { id: "morph-slingshot", name: "Slingshot", category: "Drag", from: "MORPH", Component: MorphSlingshot, source: morphSlingSrc, added: "2026-11-18", description: "From MORPH. The full Slingshot interaction: pull the ball back in its elastic socket and let go. It flies on an arc, bounces off the walls and ceiling, settles and returns to the band, with sparks, a trembling strain and a turning arrow.",
+  { id: "morph-slingshot", name: "Slingshot toggle", category: "Drag", from: "MORPH", Component: MorphSlingshot, source: morphSlingSrc, added: "2026-11-18", description: "From MORPH. Pull the ball back in its elastic socket and let go: it flies on an arc, bounces off the walls, settles back, and each launch flips the band between orange and dark.",
     controls: [c("power", "Power %", 40, 220, 1, 145), c("bounce", "Bounce", 0, 100, 1, 55)] },
   { id: "morph-passcode", name: "Passcode field", category: "Press", from: "MORPH", Component: MorphPasscode, source: passcodeSrc, added: "2026-11-19", description: "From MORPH. A protected value with a reveal and a copy button.",
     controls: [c("speed", "Reveal speed", 1, 10, 1, 5)] },
