@@ -5,6 +5,7 @@ import ContextMeter from "./components/ContextMeter.jsx";
 import DotSphere from "./components/DotSphere.jsx";
 import Slingshot from "./components/Slingshot.jsx";
 import MorphSlingshot from "./components/MorphSlingshot.jsx";
+import ArcFan from "./components/ArcFan.jsx";
 import PressButton from "./components/PressButton.jsx";
 import SegmentedPill from "./components/SegmentedPill.jsx";
 import Typewriter from "./components/Typewriter.jsx";
@@ -22,6 +23,7 @@ import contextMeterSrc from "./components/ContextMeter.jsx?raw";
 import dotSphereSrc from "./components/DotSphere.jsx?raw";
 import slingshotSrc from "./components/Slingshot.jsx?raw";
 import morphSlingSrc from "./components/MorphSlingshot.jsx?raw";
+import arcFanSrc from "./components/ArcFan.jsx?raw";
 import pressButtonSrc from "./components/PressButton.jsx?raw";
 import segmentedPillSrc from "./components/SegmentedPill.jsx?raw";
 import typewriterSrc from "./components/Typewriter.jsx?raw";
@@ -48,6 +50,8 @@ export const COMPONENTS = [
     controls: [c("stretch", "Stretch", 30, 110, 1, 60), c("bounce", "Bounce", 0, 10, 1, 6)] },
   { id: "morph-slingshot", name: "Slingshot", category: "Drag", from: "MORPH", Component: MorphSlingshot, source: morphSlingSrc, added: "2026-11-18", description: "From MORPH. The full Slingshot interaction: pull the ball back in its elastic socket and let go. It flies on an arc, bounces off the walls and ceiling, settles and returns to the band, with sparks, a trembling strain and a turning arrow.",
     controls: [c("power", "Power %", 40, 220, 1, 145), c("bounce", "Bounce", 0, 100, 1, 55)] },
+  { id: "arc-fan", name: "Arc fan", category: "Hover", Component: ArcFan, source: arcFanSrc, added: "2026-11-19", description: "A hand of cards that opens along a semicircle as it scrolls into view. The card under your pointer lifts out and gets a name tag.",
+    controls: [c("cards", "Cards", 3, 9, 1, 7), c("radius", "Radius", 1.5, 4, 0.1, 2.7), c("span", "Span °", 60, 170, 1, 132), c("blur", "Edge blur", 0, 6, 0.1, 3.4)] },
   { id: "press-button", name: "Press button", category: "Press", Component: PressButton, source: pressButtonSrc, added: "2026-11-16", description: "A chunky key that sinks when you press it and springs back, with a little squash.",
     controls: [c("depth", "Depth", 2, 14, 1, 8), c("squish", "Squish", 0, 10, 1, 4)] },
   { id: "segmented-pill", name: "Segmented pill", category: "Select", Component: SegmentedPill, source: segmentedPillSrc, added: "2026-11-16", description: "Pick one option and a pill slides under it, with a touch of overshoot.",
