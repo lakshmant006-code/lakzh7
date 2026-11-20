@@ -63,8 +63,8 @@ export default function NodeConnect({ shiver = 4, duration = 0.5, tab = 14 }) {
     return { body: `M${L.join("L")}L${R.reverse().join("L")}Z`, core: `M${core.join("L")}` }; };
   const sparks = (x, y) => { const j = () => (Math.random() - 0.5) * 6, r = Math.random(), power = r < 0.15 ? 0.2 : r > 0.75 ? 1 : 0.6 + Math.random() * 0.3, n = 4 + Math.floor(Math.random() * 4);
     const pop = Math.max(0, 1 - (performance.now() - pop0.current) / 650);                 // the burst when the wire lands: flares thrown out in every direction, dying down
-    const flares = Array.from({ length: n }, () => flare(x - 3, y, Math.PI + (Math.random() - 0.5) * 2.6, (16 + Math.random() * 34) * (power > 0.9 ? 1.5 : 1), 3 + Math.random() * 3));
-    if (pop > 0) for (let i = 0; i < 12; i++) flares.push(flare(x, y, (i / 12) * Math.PI * 2 + Math.random() * 0.5, (26 + Math.random() * 46) * (0.5 + pop * 0.7), 4 + Math.random() * 4));
+    const flares = Array.from({ length: n }, () => flare(x - 3, y, Math.PI + (Math.random() - 0.5) * 2.6, (8 + Math.random() * 16) * (power > 0.9 ? 1.4 : 1), 2.5 + Math.random() * 2.5));
+    if (pop > 0) for (let i = 0; i < 12; i++) flares.push(flare(x, y, (i / 12) * Math.PI * 2 + Math.random() * 0.5, (13 + Math.random() * 22) * (0.5 + pop * 0.7), 3 + Math.random() * 3));
     return { power: Math.max(power, pop), flares, arcUp: `M${x - 1} ${y - 7} C${x - 6 + j()} ${y - 18} ${x - 6 + j()} ${y - 32} ${x + 12 + j()} ${y - 44 + j()}`, arcDown: `M${x - 1} ${y + 7} C${x - 6 + j()} ${y + 18} ${x - 6 + j()} ${y + 32} ${x + 12 + j()} ${y + 44 + j()}` }; };
   const sp = live ? sparks(bx, by) : null;
 
@@ -72,7 +72,8 @@ export default function NodeConnect({ shiver = 4, duration = 0.5, tab = 14 }) {
   const card = (k, title, sub, side, extra, cls) => (
     <div ref={k === "a" ? wrapA : wrapB} onPointerDown={grab(k)} onPointerMove={carry} onPointerUp={drop} onPointerCancel={drop}
       style={{ position: "absolute", top: "50%", [side]: "7%", width: "36%", minWidth: 110, marginTop: -44, height: 88, transform: `translate(${off[k][0]}px, ${off[k][1]}px)`, cursor: "grab", touchAction: "none", zIndex: 2 }}>
-      <div className={cls} key={k === "b" ? snap : undefined} style={{ "--a": shiver, width: "100%", height: "100%", boxSizing: "border-box", padding: 12, borderRadius: 11, background: C.card, boxShadow: "0 8px 18px rgba(0,0,0,.24)", font: "500 11.5px/1.3 system-ui, sans-serif", color: C.ink, }}>
+      <div className={cls} key={k === "b" ? snap : undefined} style={{ "--a": shiver, position: "relative", width: "100%", height: "100%", boxSizing: "border-box", padding: 12, borderRadius: 11, background: C.card, boxShadow: "0 8px 18px rgba(0,0,0,.24)", font: "500 11.5px/1.3 system-ui, sans-serif", color: C.ink, }}>
+        {extra && <i style={{ position: "absolute", inset: 0, borderRadius: 11, border: `1px solid ${C.accent}`, pointerEvents: "none", WebkitMaskImage: "linear-gradient(90deg, #000 0%, transparent 85%)", maskImage: "linear-gradient(90deg, #000 0%, transparent 85%)" }} />}
         <div>{title}</div><div style={{ marginTop: 3, color: C.faint, fontWeight: 400, fontSize: 11 }}>{sub}</div>{bar("70%", 0)}{bar("46%", 1)}
       </div>
       {k === "a"
