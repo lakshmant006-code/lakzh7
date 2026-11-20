@@ -11,7 +11,7 @@ const CSS = (a, t) => `
 .nc-near{animation:ncNear .13s linear infinite}.nc-snap{animation:ncSnap ${t}s cubic-bezier(.3,.7,.4,1) both}`;
 
 export default function NodeConnect({ shiver = 4, duration = 0.5, tab = 14 }) {
-  const box = useRef(null), portA = useRef(null), portB = useRef(null), wrapA = useRef(null), wrapB = useRef(null), mv = useRef(null);
+  const box = useRef(null), portA = useRef(null), portB = useRef(null), wrapA = useRef(null), wrapB = useRef(null), mv = useRef(null), pop0 = useRef(-1e9);
   const [phase, setPhase] = useState("idle");           // idle, dragging, connected
   const [p, setP] = useState(null);                      // wire end while dragging, in box pixels
   const [near, setNear] = useState(false);
@@ -37,7 +37,7 @@ export default function NodeConnect({ shiver = 4, duration = 0.5, tab = 14 }) {
   const move = (e) => { if (phase === "idle" && !e.buttons) return; const b = box.current.getBoundingClientRect(), x = e.clientX - b.left, y = e.clientY - b.top; setP([x, y]);
     const [bx, by] = centre(portB.current); setNear(Math.hypot(x - bx, y - by) < 90); };
   const up = (e) => { if (phase !== "dragging") return; const b = box.current.getBoundingClientRect(), [bx, by] = centre(portB.current);
-    if (Math.hypot(e.clientX - b.left - bx, e.clientY - b.top - by) < 40) { setPhase("connected"); setSnap((n) => n + 1); setZap(true); } else setPhase("idle"); setP(null); setNear(false); };
+    if (Math.hypot(e.clientX - b.left - bx, e.clientY - b.top - by) < 40) { setPhase("connected"); setSnap((n) => n + 1); setZap(true); pop0.current = performance.now(); } else setPhase("idle"); setP(null); setNear(false); };
   const [ax, ay] = box.current && portA.current ? centre(portA.current) : [0, 0], [bx, by] = box.current && portB.current ? centre(portB.current) : [0, 0];
   const wireEnd = phase === "dragging" && p ? p : [bx, by];
   const reach = Math.max(40, Math.abs(wireEnd[0] - ax) / 2);
@@ -56,18 +56,23 @@ export default function NodeConnect({ shiver = 4, duration = 0.5, tab = 14 }) {
       L.push(`${(x + nx * (jig + w)).toFixed(1)} ${(y + ny * (jig + w)).toFixed(1)}`); R.push(`${(x + nx * (jig - w)).toFixed(1)} ${(y + ny * (jig - w)).toFixed(1)}`); });
     return `M${L.join("L")}L${R.reverse().join("L")}Z`; };
   // sparks: forks that fan out of the input port and two arcs along the card's edge. They zap: every frame is a new bolt, some frames are dark, some flare.
-  const fork = (x, y, ang, len) => { let out = `M${x.toFixed(1)} ${y.toFixed(1)}`, px = x, py = y; const n = 5;
-    for (let i = 1; i <= n; i++) { const a = ang + (Math.random() - 0.5) * 1.5, l = (len / n) * (0.5 + Math.random()); px += Math.cos(a) * l; py += Math.sin(a) * l; out += `L${px.toFixed(1)} ${py.toFixed(1)}`; } return out; };
-  const sparks = (x, y) => { const j = () => (Math.random() - 0.5) * 6, r = Math.random(), power = r < 0.18 ? 0.12 : r > 0.8 ? 1 : 0.55 + Math.random() * 0.35, n = 3 + Math.floor(Math.random() * 4);
-    const forks = Array.from({ length: n }, () => fork(x - 3, y, Math.PI + (Math.random() - 0.5) * 2.1, (14 + Math.random() * 30) * (power > 0.9 ? 1.5 : 1)));
-    return { power, forks, arcUp: `M${x - 1} ${y - 7} C${x - 6 + j()} ${y - 18} ${x - 6 + j()} ${y - 32} ${x + 12 + j()} ${y - 44 + j()}`, arcDown: `M${x - 1} ${y + 7} C${x - 6 + j()} ${y + 18} ${x - 6 + j()} ${y + 32} ${x + 12 + j()} ${y + 44 + j()}` }; };
+  // a flare is a flame tongue: a curved shape that is wide where it leaves the dot and a point at the tip, wavering like fire / a lick of electricity
+  const flare = (x, y, ang, len, w) => { const N = 16, bend = (Math.random() - 0.5) * 1.1, ca = Math.cos(ang), sa = Math.sin(ang), L = [], R = [], core = [];
+    for (let i = 0; i <= N; i++) { const t = i / N, side = bend * Math.sin(Math.PI * t) * len * 0.32 + (Math.random() - 0.5) * len * 0.1 * t, cx = x + ca * len * t - sa * side, cy = y + sa * len * t + ca * side, wd = (w / 2) * Math.pow(1 - t, 0.9);
+      L.push(`${(cx - sa * -wd).toFixed(1)} ${(cy + ca * -wd).toFixed(1)}`); R.push(`${(cx - sa * wd).toFixed(1)} ${(cy + ca * wd).toFixed(1)}`); core.push(`${cx.toFixed(1)} ${cy.toFixed(1)}`); }
+    return { body: `M${L.join("L")}L${R.reverse().join("L")}Z`, core: `M${core.join("L")}` }; };
+  const sparks = (x, y) => { const j = () => (Math.random() - 0.5) * 6, r = Math.random(), power = r < 0.15 ? 0.2 : r > 0.75 ? 1 : 0.6 + Math.random() * 0.3, n = 4 + Math.floor(Math.random() * 4);
+    const pop = Math.max(0, 1 - (performance.now() - pop0.current) / 650);                 // the burst when the wire lands: flares thrown out in every direction, dying down
+    const flares = Array.from({ length: n }, () => flare(x - 3, y, Math.PI + (Math.random() - 0.5) * 2.6, (16 + Math.random() * 34) * (power > 0.9 ? 1.5 : 1), 3 + Math.random() * 3));
+    if (pop > 0) for (let i = 0; i < 12; i++) flares.push(flare(x, y, (i / 12) * Math.PI * 2 + Math.random() * 0.5, (26 + Math.random() * 46) * (0.5 + pop * 0.7), 4 + Math.random() * 4));
+    return { power: Math.max(power, pop), flares, arcUp: `M${x - 1} ${y - 7} C${x - 6 + j()} ${y - 18} ${x - 6 + j()} ${y - 32} ${x + 12 + j()} ${y - 44 + j()}`, arcDown: `M${x - 1} ${y + 7} C${x - 6 + j()} ${y + 18} ${x - 6 + j()} ${y + 32} ${x + 12 + j()} ${y + 44 + j()}` }; };
   const sp = live ? sparks(bx, by) : null;
 
   const bar = (w, v) => <div style={{ marginTop: v ? 5 : 10, height: 5, borderRadius: 3, background: v ? "#2D2F2A" : "#343530", width: w }} />;
   const card = (k, title, sub, side, extra, cls) => (
     <div ref={k === "a" ? wrapA : wrapB} onPointerDown={grab(k)} onPointerMove={carry} onPointerUp={drop} onPointerCancel={drop}
       style={{ position: "absolute", top: "50%", [side]: "7%", width: "36%", minWidth: 110, marginTop: -44, height: 88, transform: `translate(${off[k][0]}px, ${off[k][1]}px)`, cursor: "grab", touchAction: "none", zIndex: 2 }}>
-      <div className={cls} key={k === "b" ? snap : undefined} style={{ "--a": shiver, width: "100%", height: "100%", boxSizing: "border-box", padding: 12, borderRadius: 11, background: C.card, boxShadow: `inset 0 0 0 1px ${extra ? C.accent : C.line}, 0 8px 18px rgba(0,0,0,.24)`, font: "500 11.5px/1.3 system-ui, sans-serif", color: C.ink, transition: "box-shadow .2s" }}>
+      <div className={cls} key={k === "b" ? snap : undefined} style={{ "--a": shiver, width: "100%", height: "100%", boxSizing: "border-box", padding: 12, borderRadius: 11, background: C.card, boxShadow: "0 8px 18px rgba(0,0,0,.24)", font: "500 11.5px/1.3 system-ui, sans-serif", color: C.ink, }}>
         <div>{title}</div><div style={{ marginTop: 3, color: C.faint, fontWeight: 400, fontSize: 11 }}>{sub}</div>{bar("70%", 0)}{bar("46%", 1)}
       </div>
       {k === "a"
@@ -91,10 +96,9 @@ export default function NodeConnect({ shiver = 4, duration = 0.5, tab = 14 }) {
         {sp && <g fill="none" strokeLinecap="round" strokeLinejoin="round" opacity={sp.power}>
           <path d={sp.arcUp} stroke="rgba(21,255,0,.3)" strokeWidth="6" style={{ filter: "blur(2px)" }} /><path d={sp.arcDown} stroke="rgba(21,255,0,.3)" strokeWidth="6" style={{ filter: "blur(2px)" }} />
           <path d={sp.arcUp} stroke="rgba(21,255,0,.55)" strokeWidth="1" strokeDasharray="2 3" /><path d={sp.arcDown} stroke="rgba(21,255,0,.55)" strokeWidth="1" strokeDasharray="2 3" />
-          {sp.forks.map((f, i) => <g key={i}><path d={f} stroke={C.accent} strokeWidth="1.8" style={{ filter: "drop-shadow(0 0 4px rgba(21,255,0,.8))" }} /><path d={f} stroke="#eaffe6" strokeWidth=".6" opacity=".8" /></g>)}
+          {sp.flares.map((f, i) => <g key={i}><path d={f.body} fill={C.accent} stroke="none" style={{ filter: "drop-shadow(0 0 4px rgba(21,255,0,.8))" }} /><path d={f.core} stroke="#eaffe6" strokeWidth=".7" opacity=".85" /></g>)}
         </g>}
       </svg>
-      {phase === "connected" && <i key={"r" + snap} style={{ position: "absolute", left: bx, top: by, width: 40, height: 40, borderRadius: "50%", border: `2px solid ${C.accent}`, animation: "ncRing .6s ease-out both", pointerEvents: "none", zIndex: 5 }} />}
       <div style={{ position: "absolute", left: 0, right: 0, bottom: 10, textAlign: "center", color: C.faint, font: "400 10.5px/1 ui-monospace, Menlo, monospace", pointerEvents: "none" }}>{phase === "connected" ? "connected · tap the wire to undo" : "drag the cards · drag from the dot"}</div>
     </div>
   );

@@ -19,7 +19,7 @@ export default function CardStack({ cards = 4, spread = 18, corner = 14, bounce 
         return (
           <div key={id} onPointerDown={top ? down : undefined} onPointerMove={top ? move : undefined} onPointerUp={top ? up : undefined} onPointerCancel={top ? up : undefined}
             style={{ position: "absolute", width: "46%", aspectRatio: "3 / 4", borderRadius: corner, background: `${COLORS[id][0]} url(/library/art-${[1, 2, 3, 4, 5, 6][id]}.webp) center / cover`, cursor: top ? "grab" : "default",
-              boxShadow: "0 14px 30px rgba(0,0,0,.35)", border: "3px solid rgba(255,255,255,.9)", zIndex: depth,
+              boxShadow: "0 14px 30px rgba(0,0,0,.35)", zIndex: depth,
               transform: `translate(${d.x + k * spread}px, ${d.y - k * spread * 0.4}px) rotate(${rot + d.x * 0.05}deg) scale(${1 - k * 0.03})`,
               transition: drag && top ? "none" : `transform .55s cubic-bezier(.3, ${1 + bounce * 0.18}, .4, 1)` }} />
         );
