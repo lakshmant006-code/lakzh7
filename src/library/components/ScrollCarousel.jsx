@@ -4,18 +4,18 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
    come round to the front are lit, the ones turning away dim. Rotation X and Z lean the whole barrel (Z is what makes it run diagonally),
    Gap spaces the cards round it, Perspective is how strong the depth is, Ratio how far one scroll turns it. Vertical turns it about its
    other axis, Infinite lets it spin round forever (off: it stops at the first and last card), Animate keeps it drifting when you are not
-   scrolling, Backface shows the backs of cards, Sort them keeps the pictures in order, Debug draws the scroll area. */
+   scrolling, Backface shows the backs of cards, Sort them keeps the pictures in order, Debug draws the scroll area. Grid is the scroll ruler: its lines are one card apart and slide with the barrel, so you can see how far you have scrolled. */
 const PICS = Array.from({ length: 8 }, (_, i) => `/library/art-${i + 1}.webp`);   // swap these for your own pictures
 const W = 96, H = 128;                                                              // one card, before the stage scales it
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const SHUFFLE = [3, 6, 1, 7, 0, 4, 2, 5];
 
-export default function ScrollCarousel({ animate = 0, vertical = 0, infinite = 1, ratio = 1, rotX = 15, rotZ = 37, backface = 1, perspective = 900, gap = 0.1, items = 16, sort = 1, debug = 0, smoothness = 0.28, snap = 0 }) {
+export default function ScrollCarousel({ grid = 1, animate = 0, vertical = 0, infinite = 1, ratio = 1, rotX = 15, rotZ = 37, backface = 1, perspective = 900, gap = 0.1, items = 16, sort = 1, debug = 0, smoothness = 0.28, snap = 0 }) {
   const wrap = useRef(null), ring = useRef(null), els = useRef([]);
   const S = useRef({ a: 0, t: 0, idle: 0, drag: null, vel: 0 }), cfg = useRef({});
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState(1), sc = useRef(1); sc.current = scale;
   const half = (vertical ? H : W) / 2, radius = Math.round(half / Math.tan(Math.PI / items) * (1 + gap));
-  cfg.current = { animate, vertical, infinite, ratio, rotX, rotZ, backface, perspective, gap, items, sort, debug, smoothness, snap, radius };
+  cfg.current = { grid, scale: 1, animate, vertical, infinite, ratio, rotX, rotZ, backface, perspective, gap, items, sort, debug, smoothness, snap, radius };
   useLayoutEffect(() => { const el = wrap.current, f = () => setScale(clamp(Math.min(el.clientWidth / (radius * 2 + 130), el.clientHeight / 300), 0.3, 1.5)); f(); const ro = new ResizeObserver(f); ro.observe(el); return () => ro.disconnect(); }, [radius]);
   useEffect(() => {
     const el = wrap.current, s = S.current;
@@ -27,6 +27,10 @@ export default function ScrollCarousel({ animate = 0, vertical = 0, infinite = 1
       if (c.animate && !s.drag && now - s.idle > 900) s.t += dt * 0.35;
       if (c.snap && !s.drag && now - s.idle > 140) s.t = Math.round(s.t / step) * step;
       s.a += (s.t - s.a) * (1 - Math.exp(-dt / Math.max(0.03, c.smoothness)));
+      // the grid is the scroll ruler: one cell is the distance between two cards at the front, and it slides with the barrel,
+      // so the lines show how far and which way you have scrolled (and each card passes exactly one cell)
+      const w = wrap.current; if (w) { if (c.grid) { const pitch = Math.max(8, step * c.radius * sc.current), off = -s.a * c.radius * sc.current, mid = (c.vertical ? w.clientHeight : w.clientWidth) / 2 - pitch / 2;
+        w.style.backgroundSize = `${pitch}px ${pitch}px`; w.style.backgroundPosition = c.vertical ? `0 ${(mid + off).toFixed(1)}px` : `${(mid + off).toFixed(1)}px 0`; } }
       const r = ring.current; if (!r) return;
       r.style.transform = `translateZ(${-c.radius}px) rotateZ(${c.rotZ}deg) rotateX(${c.rotX}deg) ${c.vertical ? `rotateX(${(s.a * 57.3).toFixed(2)}deg)` : `rotateY(${(-s.a * 57.3).toFixed(2)}deg)`}`;
       els.current.forEach((n, i) => { if (!n) return; const f = Math.cos(i * step - s.a), lit = clamp(0.28 + 0.72 * (f * 0.5 + 0.5), 0, 1);
@@ -42,7 +46,7 @@ export default function ScrollCarousel({ animate = 0, vertical = 0, infinite = 1
   const step = 360 / items;
   return (
     <div ref={wrap} tabIndex={0} role="group" aria-label="Scroll carousel: scroll, drag or use the arrow keys" onKeyDown={key} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}
-      style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden", touchAction: "none", cursor: "grab", outline: "none", display: "grid", placeItems: "center", background: "#0d0d0d", borderRadius: 10, backgroundImage: "linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px)", backgroundSize: "24px 24px" }}>
+      style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden", touchAction: "none", cursor: "grab", outline: "none", display: "grid", placeItems: "center", background: "#0d0d0d", borderRadius: 10, backgroundImage: grid ? (vertical ? "linear-gradient(rgba(255,255,255,.07) 1px, transparent 1px)" : "linear-gradient(90deg, rgba(255,255,255,.07) 1px, transparent 1px)") : "none" }}>
       {debug ? <>
         <i style={{ position: "absolute", left: 0, right: 0, top: "34%", height: 0, borderTop: "1px dashed #ff2b2b", pointerEvents: "none" }} /><i style={{ position: "absolute", left: 0, right: 0, bottom: "14%", height: 0, borderTop: "1px dashed #ff2b2b", pointerEvents: "none" }} />
         {[8, 28, 50, 72].map((x) => <i key={x} style={{ position: "absolute", top: "34%", bottom: "14%", left: x + "%", width: 0, borderLeft: "1px dashed #ff2b2b", pointerEvents: "none" }} />)}
