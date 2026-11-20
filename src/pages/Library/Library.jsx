@@ -31,13 +31,21 @@ function Detail({ c, onClose, onCopy }) {
           <header><h2>{c.name}</h2><button type="button" className="lib-x" aria-label="Close" onClick={onClose}>×</button></header>
           <p className="lib-meta"><span>{c.category}</span>{c.from && <span className="accent">from {c.from}</span>}<span>{c.added}</span></p>
           <div className="lib-controls">
-            {c.controls.map((k) => (
-              <label key={k.key} className="lib-ctl">
-                <span>{k.label}</span>
-                <input type="range" min={k.min} max={k.max} step={k.step} value={vals[k.key]} onChange={(e) => setVals((v) => ({ ...v, [k.key]: parseFloat(e.target.value) }))} />
-                <output>{vals[k.key]}</output>
-              </label>
-            ))}
+            {c.controls.map((k, i) => {
+              const toggle = k.min === 0 && k.max === 1 && k.step === 1, on = !!vals[k.key], set = (n) => setVals((v) => ({ ...v, [k.key]: n }));
+              return (
+                <React.Fragment key={k.key}>
+                  {k.group && k.group !== c.controls[i - 1]?.group && <h3 className="lib-group">{k.group}</h3>}
+                  {toggle
+                    ? <button type="button" role="switch" aria-checked={on} className="lib-ctl lib-tog" onClick={() => set(on ? 0 : 1)}><span>{k.label}</span><i className={on ? "on" : ""} /></button>
+                    : <label className="lib-ctl">
+                        <span>{k.label}</span>
+                        <input type="range" min={k.min} max={k.max} step={k.step} value={vals[k.key]} onChange={(e) => set(parseFloat(e.target.value))} />
+                        <output>{vals[k.key]}</output>
+                      </label>}
+                </React.Fragment>
+              );
+            })}
           </div>
           <div className="lib-actions">
             <button type="button" className="lib-btn primary" onClick={() => onCopy(c)}>Copy code</button>

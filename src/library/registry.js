@@ -36,6 +36,7 @@ import iconBtnSrc from "./components/MorphIconButtons.jsx?raw";
 export const CATEGORIES = ["All", "Hover", "Press", "Drag", "Slide", "Swipe", "Type", "Select", "Loading", "Physics"];
 
 const c = (key, label, min, max, step, value) => ({ key, label, min, max, step, value });
+const g = (group, ctl) => ({ ...ctl, group });
 
 export const COMPONENTS = [
   { id: "card-stack", name: "Card stack", category: "Swipe", Component: CardStack, source: cardStackSrc, added: "2026-11-16", description: "A small stack of photos that fans out as you reach for it. Drag the top card away, let go, and it springs back under the pile.",
@@ -62,8 +63,11 @@ export const COMPONENTS = [
     controls: [c("threshold", "Threshold %", 50, 100, 1, 85)] },
   { id: "tilt-card", name: "Tilt card", category: "Hover", Component: TiltCard, source: tiltSrc, added: "2026-11-16", description: "A card that leans toward your pointer, with a soft light that follows it.",
     controls: [c("tilt", "Tilt", 0, 30, 1, 14), c("glare", "Glare", 0, 80, 1, 40)] },
-  { id: "scroll-carousel", name: "Scroll carousel", category: "Swipe", Component: ScrollCarousel, source: scrollCarouselSrc, added: "2026-11-20", description: "Picture cards stood round a 3D barrel. Scroll, drag or use the arrow keys and the barrel turns, tilts and rolls, with the cards facing away dimmed.",
-    controls: [c("cards", "Cards", 6, 20, 1, 12), c("radius", "Radius", 120, 360, 5, 210), c("tilt", "Tilt (deg)", -40, 40, 1, 8), c("roll", "Roll", 0, 1.5, 0.05, 0.35), c("speed", "Speed", 0.3, 3, 0.1, 1), c("smoothness", "Smoothness (s)", 0.05, 0.9, 0.05, 0.28), c("backs", "Back faces", 0, 1, 1, 1), c("snap", "Snap to card", 0, 1, 1, 0)] },
+  { id: "scroll-carousel", name: "Scroll carousel", category: "Swipe", Component: ScrollCarousel, source: scrollCarouselSrc, added: "2026-11-20", description: "Picture cards stood round a 3D barrel. Scroll, drag or use the arrow keys and the barrel turns, with the cards facing away dimmed. Rotation X and Z lean it, and there are switches for vertical, infinite, backface and debug.",
+    controls: [g("Config", c("animate", "Animate", 0, 1, 1, 0)),
+      g("Scrolling", c("vertical", "Vertical", 0, 1, 1, 0)), g("Scrolling", c("infinite", "Infinite", 0, 1, 1, 1)), g("Scrolling", c("ratio", "Ratio", 0.3, 3, 0.1, 1)), g("Scrolling", c("smoothness", "Smoothness (s)", 0.05, 0.9, 0.05, 0.28)), g("Scrolling", c("snap", "Snap to card", 0, 1, 1, 0)), g("Scrolling", c("debug", "Debug", 0, 1, 1, 0)),
+      g("Rotation", c("rotX", "X", -60, 60, 1, 15)), g("Rotation", c("rotZ", "Z", -90, 90, 1, 37)),
+      g("Mask", c("backface", "Backface", 0, 1, 1, 1)), g("Mask", c("perspective", "Perspective (px)", 300, 2000, 10, 900)), g("Mask", c("gap", "Gap", 0, 1, 0.05, 0.1)), g("Mask", c("items", "Items", 6, 24, 1, 16)), g("Mask", c("sort", "Sort them", 0, 1, 1, 1))] },
   { id: "morph-signin", name: "Morph sign-in", category: "Press", Component: MorphSignIn, source: morphSignInSrc, added: "2026-11-20", description: "A Sign In pill that grows into a sign-in card and back: size, corner and colour follow one spring while the contents blur in row by row.",
     controls: [c("duration", "Smoothness (s)", 0.2, 1.4, 0.05, 0.55), c("bounce", "Bounce", 0, 0.6, 0.05, 0.15), c("blur", "Blur (px)", 0, 14, 1, 6), c("stagger", "Stagger", 0, 0.3, 0.02, 0.1)] },
   { id: "node-connect", name: "Node connect", category: "Drag", Component: NodeConnect, source: nodeConnectSrc, added: "2026-11-17", description: "Two nodes. Drag a wire from the first to the second: the second card starts to shiver as the wire gets close, jitters when it connects, then a solid tab forms between them. Tap the tab to disconnect.",
