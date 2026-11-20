@@ -1,10 +1,37 @@
 import React, { useEffect, useRef, useState } from "react";
 
 /* From MORPH: a protected value (a passcode or card number) with a reveal and a copy button.
-   It shows only the last four digits behind dots. The eye turns the dots into the real digits one after another;
+   It shows only the last four digits behind dots. The eye follows the cursor, blinks, and turns the dots into the real digits one after another;
    the copy button puts the whole number on the clipboard and shows a tick. */
 const M = { base: "#161616", line: "#333333", strong: "#454545", ink: "#f5f5f3", muted: "#a8a8a4", faint: "#7c7c78", accent: "#e68a42" };
-const eye = (off) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" />{off && <path d="M4 4l16 16" />}</svg>;
+/* The eye is alive: its pupil looks at the cursor wherever it is on the page, on a soft spring, and it blinks now and then and whenever you press it. */
+function LiveEye({ lit, blinkKey }) {
+  const root = useRef(null), pupil = useRef(null), lid = useRef(null), blinkAt = useRef(-1), look = useRef({ x: 0, y: 0, vx: 0, vy: 0, tx: 0, ty: 0, b: 1, bv: 0, next: 1.5 });
+  useEffect(() => { blinkAt.current = performance.now(); }, [blinkKey]);
+  useEffect(() => {
+    const L = look.current, mv = (e) => { const r = root.current?.getBoundingClientRect(); if (!r) return; const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2), d = Math.hypot(dx, dy) || 1, k = Math.tanh(d / 90);
+      L.tx = (dx / d) * k; L.ty = (dy / d) * k; };
+    window.addEventListener("pointermove", mv, { passive: true });
+    let raf, last = performance.now(), t = 0;
+    const frame = (now) => { raf = requestAnimationFrame(frame); const dt = Math.min(0.05, (now - last) / 1000); last = now; t += dt;
+      const K = 220, D = 22;                                                 // spring: lively, a little overshoot
+      L.vx += (K * (L.tx - L.x) - D * L.vx) * dt; L.x += L.vx * dt; L.vy += (K * (L.ty - L.y) - D * L.vy) * dt; L.y += L.vy * dt;
+      if (blinkAt.current >= 0 || t > L.next) { if (blinkAt.current < 0) blinkAt.current = now; L.next = t + 2.8 + Math.random() * 3.2; }
+      let b = 1; if (blinkAt.current >= 0) { const e = (now - blinkAt.current) / 190; if (e >= 1) blinkAt.current = -1; else b = 1 - Math.sin(Math.PI * e) * 0.92; }
+      pupil.current?.setAttribute("transform", `translate(${(L.x * 4.6).toFixed(2)} ${(L.y * 2.4).toFixed(2)})`);
+      lid.current?.setAttribute("transform", `translate(0 12) scale(1 ${b.toFixed(3)}) translate(0 -12)`); };
+    raf = requestAnimationFrame(frame); return () => { cancelAnimationFrame(raf); window.removeEventListener("pointermove", mv); };
+  }, []);
+  return (
+    <svg ref={root} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <defs><clipPath id="mp-eye-clip"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" /></clipPath></defs>
+      <g ref={lid}>
+        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
+        <g clipPath="url(#mp-eye-clip)"><g ref={pupil}><circle cx="12" cy="12" r="3.3" fill={lit ? "currentColor" : "none"} /><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none" /></g></g>
+      </g>
+    </svg>
+  );
+}
 const copy = (done) => done
   ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={M.accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
   : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V6a2 2 0 0 1 2-2h9" /></svg>;
@@ -34,7 +61,7 @@ export default function MorphPasscode({ number = "4821 7390 6615 9204", label = 
               );
             })}
           </div>
-          <button type="button" style={btn} aria-label={shown ? "Hide" : "Reveal"} aria-pressed={shown} onClick={() => { setShown((v) => !v); setTick((t) => t + 1); }} onMouseEnter={(e) => (e.currentTarget.style.color = M.ink)} onMouseLeave={(e) => (e.currentTarget.style.color = M.muted)}>{eye(shown)}</button>
+          <button type="button" style={{ ...btn, color: shown ? M.ink : M.muted }} aria-label={shown ? "Hide" : "Reveal"} aria-pressed={shown} onClick={() => { setShown((v) => !v); setTick((t) => t + 1); }} onMouseEnter={(e) => (e.currentTarget.style.color = M.ink)} onMouseLeave={(e) => (e.currentTarget.style.color = shown ? M.ink : M.muted)}><LiveEye lit={shown} blinkKey={tick} /></button>
           <button type="button" style={btn} aria-label="Copy" onClick={copyIt} onMouseEnter={(e) => (e.currentTarget.style.color = M.ink)} onMouseLeave={(e) => (e.currentTarget.style.color = M.muted)}>{copy(done)}</button>
         </div>
       </div>
