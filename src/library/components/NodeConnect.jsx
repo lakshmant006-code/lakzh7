@@ -19,8 +19,8 @@ export default function NodeConnect({ shiver = 4, duration = 0.5, tab = 14 }) {
   const [, tick] = useState(0);                          // re-roll the electric jitter while it is live
   const [zap, setZap] = useState(false);                 // the sparks also fire for a moment when the connection lands
   const [snap, setSnap] = useState(0);                   // counts connects so the jitter replays each time
-  const live = (phase === "dragging" && near) || zap;
-  useEffect(() => { if (phase !== "dragging" && !zap) return undefined; let id, last = 0;
+  const live = (phase === "dragging" && near) || phase === "connected" || zap;
+  useEffect(() => { if (phase === "idle" && !zap) return undefined; let id, last = 0;
     const f = (t) => { id = requestAnimationFrame(f); if (t - last > 38) { last = t; tick((n) => n + 1); } }; id = requestAnimationFrame(f); return () => cancelAnimationFrame(id); }, [phase, zap]);
   useEffect(() => { if (!zap) return undefined; const id = setTimeout(() => setZap(false), 900); return () => clearTimeout(id); }, [zap, snap]);
   useLayoutEffect(() => { tick((n) => n + 1); }, [off]);      // the ports move with the cards: measure again before the frame is drawn
@@ -46,6 +46,15 @@ export default function NodeConnect({ shiver = 4, duration = 0.5, tab = 14 }) {
   const crackle = (amp) => { const N = 46; let out = "";
     for (let i = 0; i <= N; i++) { const t = i / N, u = 1 - t, x = u * u * u * ax + 3 * u * u * t * (ax + reach) + 3 * u * t * t * (wireEnd[0] - reach) + t * t * t * wireEnd[0], y = u * u * u * ay + 3 * u * u * t * ay + 3 * u * t * t * wireEnd[1] + t * t * t * wireEnd[1];
       const k = i === 0 || i === N ? 0 : amp * (Math.random() * 2 - 1); out += `${i ? "L" : "M"}${(x + (Math.random() - 0.5) * k).toFixed(1)} ${(y + k * 0.8).toFixed(1)} `; } return out; };
+  // the connected link is a bolt: the same crackling line, drawn as a shape that is a point at both ends and fat in the middle. A new one every frame, so it keeps zapping.
+  const bolt = (mid) => { const N = 64, pts = [];
+    for (let i = 0; i <= N; i++) { const t = i / N, u = 1 - t, x = u * u * u * ax + 3 * u * u * t * (ax + reach) + 3 * u * t * t * (bx - reach) + t * t * t * bx, y = u * u * u * ay + 3 * u * u * t * ay + 3 * u * t * t * by + t * t * t * by, k = Math.sin(Math.PI * t);
+      pts.push([x, y, k]); }
+    const L = [], R = [];
+    pts.forEach(([x, y, k], i) => { const a = pts[Math.max(0, i - 1)], c = pts[Math.min(N, i + 1)]; let tx = c[0] - a[0], ty = c[1] - a[1]; const m = Math.hypot(tx, ty) || 1; tx /= m; ty /= m;
+      const nx = -ty, ny = tx, jig = (Math.random() * 2 - 1) * 5.5 * Math.pow(k, 0.6), w = (mid / 2) * Math.pow(k, 0.85) * (0.8 + Math.random() * 0.4);
+      L.push(`${(x + nx * (jig + w)).toFixed(1)} ${(y + ny * (jig + w)).toFixed(1)}`); R.push(`${(x + nx * (jig - w)).toFixed(1)} ${(y + ny * (jig - w)).toFixed(1)}`); });
+    return `M${L.join("L")}L${R.reverse().join("L")}Z`; };
   // sparks: forks that fan out of the input port and two arcs along the card's edge. They zap: every frame is a new bolt, some frames are dark, some flare.
   const fork = (x, y, ang, len) => { let out = `M${x.toFixed(1)} ${y.toFixed(1)}`, px = x, py = y; const n = 5;
     for (let i = 1; i <= n; i++) { const a = ang + (Math.random() - 0.5) * 1.5, l = (len / n) * (0.5 + Math.random()); px += Math.cos(a) * l; py += Math.sin(a) * l; out += `L${px.toFixed(1)} ${py.toFixed(1)}`; } return out; };
@@ -74,8 +83,11 @@ export default function NodeConnect({ shiver = 4, duration = 0.5, tab = 14 }) {
       {card("b", "Action", "Spring scale", "right", phase === "connected" || near, phase === "connected" ? "nc-snap" : near ? "nc-near" : "")}
       <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 4, overflow: "visible" }}>
         {phase === "dragging" && p && <path d={crackle(near ? 5 : 2.4)} fill="none" stroke={C.accent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{ filter: "drop-shadow(0 0 3px rgba(21,255,0,.55))" }} />}
-        {phase === "connected" && <path key={snap} d={d} pathLength="1" fill="none" stroke={C.accent} strokeWidth={tab} strokeLinecap="round" strokeDasharray="1" role="button" aria-label="Connected. Tap to disconnect" onClick={() => setPhase("idle")}
-          style={{ pointerEvents: "stroke", cursor: "pointer", filter: "drop-shadow(0 4px 10px rgba(21,255,0,.35))", animation: "ncTab .32s cubic-bezier(.3,1.2,.5,1) both" }} />}
+        {phase === "connected" && <g key={snap}>
+          <path d={bolt(tab * 1.5)} fill={C.accent} stroke={C.accent} strokeWidth="1" strokeLinejoin="round" style={{ filter: "drop-shadow(0 0 7px rgba(21,255,0,.75))" }} />
+          <path d={bolt(tab * 0.45)} fill="#eaffe6" opacity=".85" />
+          <path d={d} fill="none" stroke="transparent" strokeWidth="26" strokeLinecap="round" role="button" aria-label="Connected. Tap to disconnect" onClick={() => setPhase("idle")} style={{ pointerEvents: "stroke", cursor: "pointer" }} />
+        </g>}
         {sp && <g fill="none" strokeLinecap="round" strokeLinejoin="round" opacity={sp.power}>
           <path d={sp.arcUp} stroke="rgba(21,255,0,.3)" strokeWidth="6" style={{ filter: "blur(2px)" }} /><path d={sp.arcDown} stroke="rgba(21,255,0,.3)" strokeWidth="6" style={{ filter: "blur(2px)" }} />
           <path d={sp.arcUp} stroke="rgba(21,255,0,.55)" strokeWidth="1" strokeDasharray="2 3" /><path d={sp.arcDown} stroke="rgba(21,255,0,.55)" strokeWidth="1" strokeDasharray="2 3" />
