@@ -16,15 +16,17 @@ export default function NodeConnect({ shiver = 4, duration = 0.5, tab = 14 }) {
   const [p, setP] = useState(null);                      // wire end while dragging, in box pixels
   const [near, setNear] = useState(false);
   const [, tick] = useState(0);                          // re-roll the electric jitter on the wire while dragging
+  const [zap, setZap] = useState(false);               // the sparks also fire for a moment when the connection lands
   const [snap, setSnap] = useState(0);                   // counts connects so the jitter replays each time
-  useEffect(() => { if (phase !== "dragging") return undefined; let id, last = 0;
-    const f = (t) => { id = requestAnimationFrame(f); if (t - last > 45) { last = t; tick((n) => n + 1); } }; id = requestAnimationFrame(f); return () => cancelAnimationFrame(id); }, [phase]);
+  useEffect(() => { if (phase !== "dragging" && !zap) return undefined; let id, last = 0;
+    const f = (t) => { id = requestAnimationFrame(f); if (t - last > 45) { last = t; tick((n) => n + 1); } }; id = requestAnimationFrame(f); return () => cancelAnimationFrame(id); }, [phase, zap]);
+  useEffect(() => { if (!zap) return undefined; const id = setTimeout(() => setZap(false), 700); return () => clearTimeout(id); }, [zap, snap]);
   const centre = (el) => { const r = el.getBoundingClientRect(), b = box.current.getBoundingClientRect(); return [r.left + r.width / 2 - b.left, r.top + r.height / 2 - b.top]; };
   const down = (e) => { if (phase === "connected") return; e.currentTarget.setPointerCapture(e.pointerId); setPhase("dragging"); move(e); };
   const move = (e) => { if (phase === "idle" && !e.buttons) return; const b = box.current.getBoundingClientRect(), x = e.clientX - b.left, y = e.clientY - b.top; setP([x, y]);
     const [bx, by] = centre(portB.current); setNear(Math.hypot(x - bx, y - by) < 90); };
   const up = (e) => { if (phase !== "dragging") return; const b = box.current.getBoundingClientRect(), [bx, by] = centre(portB.current);
-    if (Math.hypot(e.clientX - b.left - bx, e.clientY - b.top - by) < 40) { setPhase("connected"); setSnap((n) => n + 1); } else setPhase("idle"); setP(null); setNear(false); };
+    if (Math.hypot(e.clientX - b.left - bx, e.clientY - b.top - by) < 40) { setPhase("connected"); setSnap((n) => n + 1); setZap(true); } else setPhase("idle"); setP(null); setNear(false); };
   const [ax, ay] = box.current && portA.current ? centre(portA.current) : [0, 0], [bx, by] = box.current && portB.current ? centre(portB.current) : [0, 0];
   const wireEnd = phase === "dragging" && p ? p : [bx, by];
   const d = `M${ax} ${ay} C${ax + Math.max(40, Math.abs(wireEnd[0] - ax) / 2)} ${ay} ${wireEnd[0] - Math.max(40, Math.abs(wireEnd[0] - ax) / 2)} ${wireEnd[1]} ${wireEnd[0]} ${wireEnd[1]}`;
@@ -32,6 +34,13 @@ export default function NodeConnect({ shiver = 4, duration = 0.5, tab = 14 }) {
   const crackle = (x0, y0, c1x, c1y, c2x, c2y, x1, y1, amp) => { const N = 46; let out = "";
     for (let i = 0; i <= N; i++) { const t = i / N, u = 1 - t, x = u * u * u * x0 + 3 * u * u * t * c1x + 3 * u * t * t * c2x + t * t * t * x1, y = u * u * u * y0 + 3 * u * u * t * c1y + 3 * u * t * t * c2y + t * t * t * y1;
       const k = i === 0 || i === N ? 0 : amp * (Math.random() * 2 - 1); out += `${i ? "L" : "M"}${(x + (Math.random() - 0.5) * k).toFixed(1)} ${(y + k * 0.8).toFixed(1)} `; } return out; };
+  // spark forks off the input port (short zigzags that fan out to the left, as in the design) and two faint arcs hugging the card's edge
+  const fork = (x, y, ang, len) => { let out = `M${x.toFixed(1)} ${y.toFixed(1)}`, px = x, py = y; const n = 4;
+    for (let i = 1; i <= n; i++) { const a = ang + (Math.random() - 0.5) * 0.9, l = (len / n) * (0.6 + Math.random() * 0.8); px += Math.cos(a) * l; py += Math.sin(a) * l; out += `L${px.toFixed(1)} ${py.toFixed(1)}`; } return out; };
+  const sparks = (x, y) => { const j = () => (Math.random() - 0.5) * 3;
+    return { forks: [fork(x - 3, y, Math.PI * 1.22, 13 + Math.random() * 10), fork(x - 3, y, Math.PI, 14 + Math.random() * 9), fork(x - 3, y, Math.PI * 0.78, 10 + Math.random() * 9), fork(x - 3, y, Math.PI * 1.06, 8 + Math.random() * 7)],
+      arcUp: `M${x - 1} ${y - 7} C${x - 5 + j()} ${y - 18} ${x - 5 + j()} ${y - 32} ${x + 12 + j()} ${y - 44 + j()}`, arcDown: `M${x - 1} ${y + 7} C${x - 5 + j()} ${y + 18} ${x - 5 + j()} ${y + 32} ${x + 12 + j()} ${y + 44 + j()}` }; };
+  const sp = (phase === "dragging" && near) || zap ? sparks(bx, by) : null;
   const card = (title, sub, side, cls) => (
     <div className={cls} style={{ "--a": shiver, position: "absolute", top: "50%", [side]: "7%", width: "36%", minWidth: 110, marginTop: -44, height: 88, boxSizing: "border-box", padding: 12, borderRadius: 11, background: C.card, boxShadow: `inset 0 0 0 1px ${C.line}, 0 8px 18px rgba(0,0,0,.24)`, font: "500 11.5px/1.3 system-ui, sans-serif", color: C.ink }}>
       <div>{title}</div><div style={{ marginTop: 3, color: C.faint, fontWeight: 400, fontSize: 11 }}>{sub}</div>
@@ -55,6 +64,11 @@ export default function NodeConnect({ shiver = 4, duration = 0.5, tab = 14 }) {
       <div ref={portB} aria-hidden="true" style={{ ...portStyle("left", phase === "connected"), position: "absolute", right: "calc(7% + max(36%, 110px) - 7px)", left: "auto", top: "50%" }} />
       <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 2, overflow: "visible" }}>
         {phase === "dragging" && p && <path d={crackle(ax, ay, ax + Math.max(40, Math.abs(wireEnd[0] - ax) / 2), ay, wireEnd[0] - Math.max(40, Math.abs(wireEnd[0] - ax) / 2), wireEnd[1], wireEnd[0], wireEnd[1], near ? 5 : 2.4)} fill="none" stroke={C.accent} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{ filter: "drop-shadow(0 0 3px rgba(21,255,0,.55))" }} />}
+        {sp && <g fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d={sp.arcUp} stroke="rgba(21,255,0,.28)" strokeWidth="5" style={{ filter: "blur(2px)" }} /><path d={sp.arcDown} stroke="rgba(21,255,0,.28)" strokeWidth="5" style={{ filter: "blur(2px)" }} />
+          <path d={sp.arcUp} stroke="rgba(21,255,0,.45)" strokeWidth="1" strokeDasharray="2 3" /><path d={sp.arcDown} stroke="rgba(21,255,0,.45)" strokeWidth="1" strokeDasharray="2 3" />
+          {sp.forks.map((f, i) => <path key={i} d={f} stroke={C.accent} strokeWidth="1.6" style={{ filter: "drop-shadow(0 0 3px rgba(21,255,0,.6))" }} />)}
+        </g>}
       </svg>
       {phase === "connected" && <>
         <div key={snap} role="button" aria-label="Connected. Tap to disconnect" onClick={() => { setPhase("idle"); }} style={{ position: "absolute", left: ax, top: ay - tab / 2, width: Math.max(0, bx - ax), height: tab, borderRadius: tab / 2, background: `linear-gradient(${C.accent}, #0fd100)`, boxShadow: "0 4px 14px rgba(21,255,0,.35), inset 0 1px 0 rgba(255,255,255,.35)", transformOrigin: "left center", animation: "ncTab .32s cubic-bezier(.3,1.4,.5,1) both", cursor: "pointer", zIndex: 1 }} />
