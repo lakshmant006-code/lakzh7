@@ -2,6 +2,7 @@
    (that is what people copy and download), and add one entry to COMPONENTS. Nothing else needs to change. */
 import CardStack from "./components/CardStack.jsx";
 import ContextMeter from "./components/ContextMeter.jsx";
+import MorphSignIn from "./components/MorphSignIn.jsx";
 import MorphSlingshot from "./components/MorphSlingshot.jsx";
 import MorphPasscode from "./components/MorphPasscode.jsx";
 import ScrollParallax from "./components/ScrollParallax.jsx";
@@ -17,6 +18,7 @@ import MorphIconButtons from "./components/MorphIconButtons.jsx";
 import nodeConnectSrc from "./components/NodeConnect.jsx?raw";
 import cardStackSrc from "./components/CardStack.jsx?raw";
 import contextMeterSrc from "./components/ContextMeter.jsx?raw";
+import morphSignInSrc from "./components/MorphSignIn.jsx?raw";
 import morphSlingSrc from "./components/MorphSlingshot.jsx?raw";
 import passcodeSrc from "./components/MorphPasscode.jsx?raw";
 import scrollParallaxSrc from "./components/ScrollParallax.jsx?raw";
@@ -58,6 +60,8 @@ export const COMPONENTS = [
     controls: [c("threshold", "Threshold %", 50, 100, 1, 85)] },
   { id: "tilt-card", name: "Tilt card", category: "Hover", Component: TiltCard, source: tiltSrc, added: "2026-11-16", description: "A card that leans toward your pointer, with a soft light that follows it.",
     controls: [c("tilt", "Tilt", 0, 30, 1, 14), c("glare", "Glare", 0, 80, 1, 40)] },
+  { id: "morph-signin", name: "Morph sign-in", category: "Press", Component: MorphSignIn, source: morphSignInSrc, added: "2026-11-20", description: "A Sign In pill that grows into a sign-in card and back: size, corner and colour follow one spring while the contents blur in row by row.",
+    controls: [c("duration", "Smoothness (s)", 0.2, 1.4, 0.05, 0.55), c("bounce", "Bounce", 0, 0.6, 0.05, 0.15), c("blur", "Blur (px)", 0, 14, 1, 6), c("stagger", "Stagger", 0, 0.3, 0.02, 0.1)] },
   { id: "node-connect", name: "Node connect", category: "Drag", Component: NodeConnect, source: nodeConnectSrc, added: "2026-11-17", description: "Two nodes. Drag a wire from the first to the second: the second card starts to shiver as the wire gets close, jitters when it connects, then a solid tab forms between them. Tap the tab to disconnect.",
     controls: [c("shiver", "Shiver", 0, 10, 0.5, 4), c("duration", "Duration (s)", 0.2, 1.4, 0.05, 0.5), c("tab", "Tab size", 6, 26, 1, 14)] },
   { id: "morph-icon-buttons", name: "Icon buttons", category: "Press", from: "MORPH", Component: MorphIconButtons, source: iconBtnSrc, added: "2026-11-16", description: "From MORPH. The toolbar icon button: quiet until hovered, soft orange when active.",
