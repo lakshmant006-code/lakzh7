@@ -54,8 +54,8 @@ const Nav = () => {
 
   const navItems = [
     { label: "work", href: "/", isLink: true },
-    { label: "about", href: "/about", isLink: true },
     { label: "craft", href: "/craft", isLink: true },
+    { label: "about", href: "/about", isLink: true },
   ];
 
   const handleLogoClick = (e) => {
