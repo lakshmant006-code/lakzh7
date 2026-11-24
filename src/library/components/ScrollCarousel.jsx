@@ -11,7 +11,7 @@ const PICS = Array.from({ length: 8 }, (_, i) => `/library/art-${i + 1}.webp`); 
 const W = 96, H = 128;                                                              // one card, before the stage scales it
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const SHUFFLE = [3, 6, 1, 7, 0, 4, 2, 5];
-const DEFAULTS = { animate: 0, drive: 1, vertical: 0, infinite: 1, ratio: 1, debug: 1, rotX: 0, rotZ: 0, backface: 1, perspective: 320, gap: 0.1, items: 16, sort: 1, grid: 1, smoothness: 0.28, snap: 0, panel: 1 };
+const DEFAULTS = { animate: 0, drive: 1, vertical: 0, infinite: 1, ratio: 1, debug: 1, rotX: 0, rotZ: 0, backface: 1, perspective: 320, gap: 0.1, items: 16, sort: 1, grid: 1, smoothness: 0.28, snap: 0, panel: 0 };
 
 const SECTIONS = [
   ["Config", [["animate", "Animate", "check"]]],
