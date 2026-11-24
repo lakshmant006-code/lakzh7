@@ -2,6 +2,7 @@
    (that is what people copy and download), and add one entry to COMPONENTS. Nothing else needs to change. */
 import CardStack from "./components/CardStack.jsx";
 import ContextMeter from "./components/ContextMeter.jsx";
+import TextWaterfall from "./components/TextWaterfall.jsx";
 import ScrollCarousel from "./components/ScrollCarousel.jsx";
 import MorphSignIn from "./components/MorphSignIn.jsx";
 import MorphSlingshot from "./components/MorphSlingshot.jsx";
@@ -19,6 +20,7 @@ import MorphIconButtons from "./components/MorphIconButtons.jsx";
 import nodeConnectSrc from "./components/NodeConnect.jsx?raw";
 import cardStackSrc from "./components/CardStack.jsx?raw";
 import contextMeterSrc from "./components/ContextMeter.jsx?raw";
+import textWaterfallSrc from "./components/TextWaterfall.jsx?raw";
 import scrollCarouselSrc from "./components/ScrollCarousel.jsx?raw";
 import morphSignInSrc from "./components/MorphSignIn.jsx?raw";
 import morphSlingSrc from "./components/MorphSlingshot.jsx?raw";
@@ -69,6 +71,8 @@ export const COMPONENTS = [
       g("Rotation", c("rotX", "X", -60, 60, 1, 0)), g("Rotation", c("rotZ", "Z", -90, 90, 1, 0)),
       g("Mask", c("backface", "Backface", 0, 1, 1, 1)), g("Mask", c("perspective", "Perspective (px)", 150, 1200, 10, 320)), g("Mask", c("gap", "Gap", 0, 1, 0.05, 0.1)), g("Mask", c("items", "Items", 6, 24, 1, 16)), g("Mask", c("sort", "Sort them", 0, 1, 1, 1))] },
 
+  { id: "text-waterfall", name: "Text waterfall", category: "Type", Component: TextWaterfall, source: textWaterfallSrc, added: "2026-11-24", description: "Three.js. A sentence poured as strands across a floor: huge lines up close, scattering letters far off, always flowing toward you. Move the pointer to swing the camera.",
+    controls: [c("speed", "Speed", 0, 4, 0.1, 1), c("strands", "Strands", 3, 20, 1, 13), c("scatter", "Scatter", 0, 3, 0.1, 1), c("size", "Size", 0.5, 2.5, 0.05, 1.35), c("spacing", "Spacing", 0.7, 2, 0.05, 0.95), c("height", "Height", 3, 24, 0.5, 14), c("lens", "Lens (fov)", 30, 90, 1, 62), c("label", "Label", 0, 1, 1, 1)] },
   { id: "morph-signin", name: "Morph sign-in", category: "Press", Component: MorphSignIn, source: morphSignInSrc, added: "2026-11-20", description: "A Sign In pill that grows into a sign-in card and back: size, corner and colour follow one spring while the contents blur in row by row.",
     controls: [c("duration", "Smoothness (s)", 0.2, 1.4, 0.05, 0.55), c("bounce", "Bounce", 0, 0.6, 0.05, 0.15), c("blur", "Blur (px)", 0, 14, 1, 6), c("stagger", "Stagger", 0, 0.3, 0.02, 0.1)] },
   { id: "node-connect", name: "Node connect", category: "Drag", Component: NodeConnect, source: nodeConnectSrc, added: "2026-11-17", description: "Two nodes. Drag a wire from the first to the second: the second card starts to shiver as the wire gets close, jitters when it connects, then a solid tab forms between them. Tap the tab to disconnect.",
