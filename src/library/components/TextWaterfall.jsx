@@ -28,7 +28,7 @@ const FRAG = /* glsl */ `
 uniform sampler2D uMap; varying vec2 vUv; varying float vFade;
 void main() { float a = texture2D(uMap, vUv).a * vFade; if (a < 0.02) discard; gl_FragColor = vec4(0.04, 0.04, 0.04, a); }`;
 
-export default function TextWaterfall({ text = "WE ARE ALREADY INFINITE.", speed = 1, strands = 13, scatter = 1, size = 1.35, spacing = 0.95, height = 14, lens = 62, label = 1 }) {
+export default function TextWaterfall({ text = "WE ARE ALREADY INFINITE.", speed = 1, strands = 18, scatter = 1, size = 1.35, spacing = 0.95, height = 14, lens = 62, label = 1 }) {
   const host = useRef(null), cfg = useRef({});
   cfg.current = { speed, scatter, height, lens };
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function TextWaterfall({ text = "WE ARE ALREADY INFINITE.", speed
           info.set([s - (strands - 1) / 2, j, Math.max(0, chars.indexOf(ch)), sv], n * 4); seed.set([rnd(), rnd(), rnd()], n * 3); n++; } }
       geo.setAttribute("aInfo", new THREE.InstancedBufferAttribute(info, 4)); geo.setAttribute("aSeed", new THREE.InstancedBufferAttribute(seed, 3)); geo.instanceCount = total;
       const mat = new THREE.ShaderMaterial({ vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false, side: THREE.DoubleSide,
-        uniforms: { uMap: { value: tex }, uTime: { value: 0 }, uSpeed: { value: 1 }, uScatter: { value: 1 }, uSize: { value: size }, uN: { value: per }, uGap: { value: size * 2.1 }, uCells: { value: chars.length }, uZFar: { value: ZFAR }, uZNear: { value: ZNEAR } } });
+        uniforms: { uMap: { value: tex }, uTime: { value: 0 }, uSpeed: { value: 1 }, uScatter: { value: 1 }, uSize: { value: size }, uN: { value: per }, uGap: { value: size * 1.45 }, uCells: { value: chars.length }, uZFar: { value: ZFAR }, uZNear: { value: ZNEAR } } });
       const mesh = new THREE.Mesh(geo, mat); mesh.frustumCulled = false;
       const scene = new THREE.Scene(); scene.add(mesh);
       const cam = new THREE.PerspectiveCamera(55, 1, 0.1, 400), P = { x: 0, y: 0, tx: 0, ty: 0 };
