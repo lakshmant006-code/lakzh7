@@ -2,9 +2,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { motion, useReducedMotion } from "framer-motion";
 import "./ArcFan.css";
 
-/* A hand of photos fanned out along a semicircle. Move across it (or drag a finger across it) and the card under the pointer lifts out
-   of the fan, straightens up and gets a name tag; its neighbours step aside to make room, and everything settles back when you leave. */
-const SPAN = 132;                                                     // degrees the whole fan covers, left to right
+/* A row of photos laid out in a straight line. Move across it (or drag a finger across it) and the card under the pointer lifts out of the
+   row and gets a name tag; its neighbours step aside to make room, and everything settles back when you leave. */
 const SPRING = { type: "spring", stiffness: 320, damping: 27, mass: 0.9 };
 
 export default function ArcFan({ photos, label = "Photos" }) {
@@ -25,37 +24,34 @@ export default function ArcFan({ photos, label = "Photos" }) {
     return () => { ro.disconnect(); io.disconnect(); };
   }, []);
 
-  // sizes follow the width of the page: the fan is a bit under a semicircle of cards, each card about a sixth of the width
+  // sizes follow the width of the page: each card about a seventh of the width, the row as wide as fits
   const g = useMemo(() => {
-    const cw = Math.max(60, Math.min(128, w * 0.14)), ch = cw * 1.32, r0 = cw * 2.7, padB = ch * 0.55;
-    const angles = photos.map((_, i) => (n === 1 ? 0 : -SPAN / 2 + (SPAN * i) / (n - 1)));
-    return { cw, ch, r0, padB, angles, height: ch * 1.55 + r0 * 0.95 + padB + 44 };
+    const cw = Math.max(60, Math.min(128, w * 0.14)), ch = cw * 1.32, padB = ch * 0.3;
+    const pitch = n === 1 ? 0 : Math.min(cw * 1.14, (w * 0.94 - cw) / (n - 1)), half = n === 1 ? 1 : ((n - 1) * pitch) / 2 + cw / 2;
+    const xs = photos.map((_, i) => (i - (n - 1) / 2) * pitch);
+    return { cw, ch, pitch, padB, xs, half, height: ch * 1.5 + padB + 44 };
   }, [w, n, photos]);
 
   const pose = (i) => {
-    const th = g.angles[i];
-    if (!open) return { x: 0, y: 0, rotate: 0, scale: 0.7, opacity: 0, filter: "blur(6px)" };
-    let rot = th, lift = 0, scale = 1;
+    if (!open) return { x: g.xs[i], y: 14, rotate: 0, scale: 0.7, opacity: 0, filter: "blur(6px)" };
+    let x = g.xs[i], lift = 0, scale = 1;
     if (active !== null) {
-      const d = i - active, step = SPAN / (n - 1);
-      if (d === 0) { rot = th * 0.3; lift = g.ch * 0.2; scale = 1.22; }
-      else rot = th + Math.sign(d) * Math.min(16, 26 / Math.abs(d + 0.0001) ** 0.9) * (step / 18);   // neighbours step aside, the further the less
+      const d = i - active;
+      if (d === 0) { lift = g.ch * 0.22; scale = 1.22; }
+      else x += Math.sign(d) * (g.cw * 0.42) / Math.abs(d) ** 0.9;                   // neighbours step aside, the further the less
     }
-    const rad = (th * Math.PI) / 180, r = g.r0 + lift;
-    // the cards at either end of the fan dissolve into the page: soft and a little faint, sharp again when the pointer is on them
-    const edge = Math.abs(th) / (SPAN / 2), soft = active === i ? 0 : edge ** 2 * (active === null ? 3.4 : 2.4);
-    return { x: Math.sin(rad) * r, y: -Math.cos(rad) * r * 0.92, rotate: rot, scale, opacity: active === i ? 1 : 1 - 0.42 * edge ** 2.4, filter: `blur(${soft.toFixed(2)}px)` };
+    // the cards at either end dissolve into the page: soft and a little faint, sharp again when the pointer is on them
+    const edge = Math.abs(g.xs[i]) / (g.half || 1), soft = active === i ? 0 : edge ** 3 * (active === null ? 3 : 2.2);
+    return { x, y: -lift, rotate: 0, scale, opacity: active === i ? 1 : 1 - 0.4 * edge ** 3, filter: `blur(${soft.toFixed(2)}px)` };
   };
 
-  // which card is the pointer over: the one whose direction (seen from the centre of the fan) is closest
+  // which card is the pointer over: the one whose slot in the row is closest to it sideways
   const pick = useCallback((e) => {
     const rect = box.current.getBoundingClientRect();
-    const px = e.clientX - (rect.left + rect.width / 2), py = rect.bottom - g.padB - e.clientY;
-    if (py < -g.padB - 10 || py > rect.height + 20) return null;
-    let ang = (Math.atan2(px, Math.max(py, 1)) * 180) / Math.PI;
-    ang = Math.max(-SPAN / 2, Math.min(SPAN / 2, ang * 1.0));
+    const px = e.clientX - (rect.left + rect.width / 2), py = rect.bottom - e.clientY;
+    if (py < -10 || py > rect.height + 20) return null;
     let best = 0, bd = 1e9;
-    g.angles.forEach((a, i) => { const d = Math.abs(a - ang); if (d < bd) { bd = d; best = i; } });
+    g.xs.forEach((x, i) => { const d = Math.abs(x - px); if (d < bd) { bd = d; best = i; } });
     return best;
   }, [g]);
 
@@ -65,11 +61,7 @@ export default function ArcFan({ photos, label = "Photos" }) {
   const onUp = (e) => { if (e.pointerType !== "mouse") { clearTimeout(leaveTimer.current); leaveTimer.current = setTimeout(() => setActive(null), 1400); } };
   useEffect(() => () => clearTimeout(leaveTimer.current), []);
 
-  const tip = active === null ? null : (() => {
-    const p = pose(active), rad = (g.angles[active] * Math.PI) / 180;
-    const reach = g.ch * p.scale + 10;
-    return { x: p.x + Math.sin(rad * 0.3) * reach, y: p.y - Math.cos(rad * 0.3) * reach };
-  })();
+  const tip = active === null ? null : (() => { const p = pose(active); return { x: p.x, y: p.y - g.ch * p.scale - 10 }; })();
 
   return (
     <div className="arcfan" ref={box} style={{ height: g.height }} role="group" aria-label={label}
@@ -86,7 +78,7 @@ export default function ArcFan({ photos, label = "Photos" }) {
         );
       })}
       <motion.span className="arcfan-tag" aria-hidden="true" initial={false} style={{ bottom: g.padB }}
-        animate={tip ? { x: tip.x, y: tip.y, opacity: 1, scale: 1 } : { x: 0, y: -g.r0, opacity: 0, scale: 0.85 }} transition={reduced ? { duration: 0.1 } : { ...SPRING, stiffness: 420 }}>
+        animate={tip ? { x: tip.x, y: tip.y, opacity: 1, scale: 1 } : { x: 0, y: -g.ch, opacity: 0, scale: 0.85 }} transition={reduced ? { duration: 0.1 } : { ...SPRING, stiffness: 420 }}>
         {active !== null ? photos[active].caption : ""}
       </motion.span>
     </div>

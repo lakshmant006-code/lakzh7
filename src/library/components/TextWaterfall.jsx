@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
-/* Text waterfall, in Three.js (needs the `three` package). A sentence is set in strands that fall from the top and bend outward as they
+/* Text waterfall, in Three.js (needs the `three` package). A sentence is set in white strands on black that fall from the top and bend outward as they
    come out at the bottom, read from a screen recording of the effect:
      - At the top every letter falls on its own: some drop 3-5 times faster than the line they are heading for, some barely faster, and each one
        eases out (cubic) as it settles into its place. Speeds between letters differ, but no letter ever overtakes another once it has landed.
@@ -44,7 +44,7 @@ void main() {
 }`;
 const FRAG = /* glsl */ `
 uniform sampler2D uMap; varying vec2 vUv; varying float vFade;
-void main() { float a = texture2D(uMap, vUv).a * vFade; if (a < 0.02) discard; gl_FragColor = vec4(0.04, 0.04, 0.04, a); }`;
+void main() { float a = texture2D(uMap, vUv).a * vFade; if (a < 0.02) discard; gl_FragColor = vec4(0.96, 0.96, 0.94, a); }`;
 
 export default function TextWaterfall({ text = "WE ARE ALREADY INFINITE.", speed = 1, strands = 18, fall = 1, settle = 1, scatter = 0.6, tracking = 0.04, size = 1.2, fan = 5.5, height = 26, lens = 30, label = 1 }) {
   const host = useRef(null), cfg = useRef({});
@@ -54,7 +54,7 @@ export default function TextWaterfall({ text = "WE ARE ALREADY INFINITE.", speed
     import("three").then((THREE) => {
       if (dead) return;
       const el = host.current, renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1)); renderer.setClearColor(0xffffff, 1);
+      renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1)); renderer.setClearColor(0x000000, 1);
       renderer.domElement.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block";
       el.appendChild(renderer.domElement);
       // a glyph atlas, one cell per distinct letter; the font's own advance widths give the real spacing
@@ -98,8 +98,8 @@ export default function TextWaterfall({ text = "WE ARE ALREADY INFINITE.", speed
     return () => { dead = true; cleanup(); };
   }, [text, strands, size, tracking, fan]);
   return (
-    <div ref={host} style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden", background: "#fff", borderRadius: 10 }}>
-      {label ? <div aria-hidden="true" style={{ position: "absolute", left: 0, top: 0, zIndex: 2, padding: "6px 8px 7px", background: "#0a0a0a", color: "#f5f5f3", font: "500 8px/1.35 ui-monospace, Menlo, monospace", letterSpacing: ".04em", borderBottomRightRadius: 4, pointerEvents: "none" }}>STG V.WATERFALL<br /><span style={{ color: "#8d8d88" }}>a kinetic type generator</span></div> : null}
+    <div ref={host} style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden", background: "#000", borderRadius: 10 }}>
+      {label ? <div aria-hidden="true" style={{ position: "absolute", left: 0, top: 0, zIndex: 2, padding: "6px 8px 7px", background: "#000", boxShadow: "inset 0 0 0 1px #2a2a2a", color: "#f5f5f3", font: "500 8px/1.35 ui-monospace, Menlo, monospace", letterSpacing: ".04em", borderBottomRightRadius: 4, pointerEvents: "none" }}>STG V.WATERFALL<br /><span style={{ color: "#8d8d88" }}>a kinetic type generator</span></div> : null}
     </div>
   );
 }
