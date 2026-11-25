@@ -8,6 +8,18 @@ import "./WorkBentoItem.css";
 // thumbnailImage: used as thumbnail in mobile view instead of video
 const workProjects = [
   {
+    id: "ubcbim-website",
+    title: "UBC BIM: A Website for a Building Design and Detailing Company",
+    role: "Product Designer, Developer",
+    tags: ["Website", "BIM", "Construction"],
+    summary:
+      "A BIM and construction services company needed its work to be easy to understand. The website explains modeling, engineering, permit sets and bills of materials, and shows real projects in 3D.",
+    shortSummary: "A company site that makes BIM services easy to understand.",
+    image: "/work/ubcbim/ubcbim-thumb.jpg",
+    liveUrl: "https://ubcbim.com/",
+    category: "website",
+  },
+  {
     id: "keep-memory-calendar",
     title: "Keep: A Memory Calendar That Answers Back",
     role: "Product Designer, Developer",
@@ -18,23 +30,6 @@ const workProjects = [
     video: "/work/keep/keep-thumb.mp4",
     thumbnailImage: "/work/keep/keep-thumb-frame.jpg",
     liveUrl: "https://keepxmeta.onrender.com/",
-    category: "case-study",
-  },
-  {
-    id: "quizai-approval-flow",
-    title: "Reef: AI Powered Notetaking Application",
-    role: "Product Designer",
-    tags: [
-      "Human Interface Design",
-      "UX Research",
-      "Data Application",
-      "Web Development",
-    ],
-    summary:
-      "Students capture a third of a lecture, then never reopen the notes. Reef turns any upload into instant summaries and self-scoring quizzes — so studying actually happens.",
-    shortSummary: "Notes pile up; studying doesn't. Reef turns uploads into quizzes.",
-    video: "/work/reef/reef-thumb.mp4",
-    liveUrl: "https://quizai.help",
     category: "case-study",
   },
   {
@@ -60,18 +55,6 @@ const workProjects = [
     video: "/work/time-management/summer-launch.mp4",
     thumbnailImage: "/work/time-management/summer-launch-frame.jpg",
     category: "case-study",
-  },
-  {
-    id: "ubcbim-website",
-    title: "UBC BIM: A Website for a Building Design and Detailing Company",
-    role: "Product Designer, Developer",
-    tags: ["Website", "BIM", "Construction"],
-    summary:
-      "A BIM and construction services company needed its work to be easy to understand. The website explains modeling, engineering, permit sets and bills of materials, and shows real projects in 3D.",
-    shortSummary: "A company site that makes BIM services easy to understand.",
-    image: "/work/ubcbim/ubcbim-thumb.jpg",
-    liveUrl: "https://ubcbim.com/",
-    category: "website",
   },
   {
     id: "promove-svsd-hackathon",
