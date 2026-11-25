@@ -945,3 +945,23 @@
   background-color: #ffffff;
   border-radius: 6px;
 }
+
+
+/* ===== Work page cards: plain media, one caption line, no hover effects ===== */
+.work-bento-item--compact .work-bento-image-container,
+.work-bento-item.work-bento-item--compact.case-study-card .work-bento-image-container {
+  --compact-thumb-aspect: 16 / 9;
+  border: 0;
+  border-radius: 6px;
+  background-color: #efefed;
+  box-shadow: none;
+}
+.work-bento-item--compact .work-bento-image { object-fit: cover; background: transparent; transition: none; transform: none; }
+.work-bento-item--compact:hover .work-bento-image-container,
+.work-bento-item--compact:hover .work-bento-image { transform: none; filter: none; box-shadow: none; }
+.work-bento-item--compact .work-bento-compact-tags, .work-bento-item--compact .work-bento-live-link, .work-bento-item--compact .work-bento-compact-award-pill { display: none !important; }
+.work-bento-item--compact .work-bento-compact-footer { display: block; margin-top: .1rem; }
+.work-bento-item--compact .work-bento-compact-title { margin: 0; font: 400 15px/1.3 "Geist", "DM Sans", system-ui, sans-serif; letter-spacing: -.005em; color: #8a8a86; }
+.work-bento-item--compact .work-bento-compact-title strong { font-weight: 600; color: #26262a; }
+.work-bento-item--compact .work-bento-compact-slash { color: #b9b9b4; margin: 0 .1em; }
+.work-bento-item--compact .work-bento-compact-role-inline { color: #8a8a86; }

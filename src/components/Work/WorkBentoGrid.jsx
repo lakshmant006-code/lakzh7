@@ -203,7 +203,7 @@ function WorkCard({
           />
         )
       )}
-      {project.liveUrl ? (
+      {project.liveUrl && !compactLayout ? (
         <button
           type="button"
           className="work-bento-live-link"
@@ -228,12 +228,12 @@ function WorkCard({
           </svg>
         </button>
       ) : null}
-      {compactLayout && project.awardLine ? (
+      {false && compactLayout && project.awardLine ? (
         <span className="work-bento-compact-award-pill">
           {project.awardLine}
         </span>
       ) : null}
-      {compactLayout && project.tags.length > 0 ? (
+      {false && compactLayout && project.tags.length > 0 ? (
         <div className="work-bento-compact-tags">
           {project.tags.map((tag, index) => (
             <span key={index} className="work-bento-compact-tag">
@@ -245,16 +245,17 @@ function WorkCard({
     </div>
   );
 
+  // The Work page shows each project as plain media with one caption line under it: "Name / what I did". No overlays, nothing that reacts to hover.
   const content = compactLayout ? (
     <>
       {mediaBlock}
       <div className="work-bento-compact-footer">
-        <h3 className="work-bento-compact-title">{project.title}</h3>
-        <p className="work-bento-compact-role">{project.role}</p>
+        <h3 className="work-bento-compact-title">
+          <strong>{project.title.split(":")[0]}</strong>
+          <span className="work-bento-compact-slash"> / </span>
+          <span className="work-bento-compact-role-inline">{project.role}</span>
+        </h3>
       </div>
-      {project.shortSummary ? (
-        <p className="work-bento-compact-summary">{project.shortSummary}</p>
-      ) : null}
     </>
   ) : (
     <>
