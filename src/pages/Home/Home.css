@@ -646,3 +646,7 @@
 
 /* the Work page starts with the projects (the shop-house now lives on the About page): clear the nav */
 .home > .home-work:first-child { padding-top: 104px; }
+
+/* the one line at the top of the Work page: who this is */
+.home-role { width: 100%; max-width: 1080px; margin: 0 auto clamp(1.25rem, 3vw, 2.25rem); padding-inline: clamp(0.75rem, 3vw, 2.5rem); box-sizing: border-box; font: 500 clamp(1.6rem, 3.6vw, 2.9rem)/1.08 "Geist", "DM Sans", system-ui, sans-serif; letter-spacing: -.03em; color: #111; text-wrap: balance; }
+.home-role span { color: #8a8a86; }

@@ -137,6 +137,7 @@ const Home = () => {
           </div>
         ) : null}
         <div className="home-work-loading-wrapper">
+          <h1 className="home-role">Product designer specializing in <span>interaction design.</span></h1>
           <div
             style={{
               opacity: isWorkLoading ? 1 : 0,

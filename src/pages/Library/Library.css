@@ -1,6 +1,6 @@
 /* MORPH's tokens: graphite surfaces, one orange accent, a 4px grid, 6 / 10 px radii */
-html.lib-dark, html.lib-dark body { background: #181818; }
-.lib { --base: #181818; --surface: #242424; --raised: #2c2c2c; --elevated: #363636; --line: #333; --line2: #454545; --accent: #f5f5f3; --accent-soft: rgba(255, 255, 255, .08); --ink: #f5f5f3; --muted: #a8a8a4; --faint: #7c7c78;
+html.lib-dark, html.lib-dark body { background: #000; }
+.lib { --base: #000; --surface: #0a0a0a; --raised: #131313; --elevated: #1b1b1b; --line: #1f1f1f; --line2: #2e2e2e; --accent: #f5f5f3; --accent-soft: rgba(255, 255, 255, .08); --ink: #f5f5f3; --muted: #a8a8a4; --faint: #7c7c78;
   min-height: 100vh; min-height: 100dvh; box-sizing: border-box; padding: 6.2rem clamp(1rem, 3vw, 2.5rem) 4rem; background: var(--base); color: var(--ink); font: 400 13px/1.4 "Geist", "DM Sans", system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
 .lib *:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .lib-head { max-width: 1480px; margin: 0 auto 20px; display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
