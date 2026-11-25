@@ -33,15 +33,20 @@ const workProjects = [
     category: "case-study",
   },
   {
-    id: "hiku-bio-smart-wearable",
-    title: "Hiku: A Mobile Application for Hiking Enthusiasts",
-    role: "UX Researcher, UX Designer",
-    tags: ["Mobile", "Outdoor Recreation"],
+    id: "quizai-approval-flow",
+    title: "Reef: AI Powered Notetaking Application",
+    role: "Product Designer",
+    tags: [
+      "Human Interface Design",
+      "UX Research",
+      "Data Application",
+      "Web Development",
+    ],
     summary:
-      "Great trails are no fun alone, and gear is a hassle to track down. Hiku connects hikers around shared routes and makes buying or renting outdoor gear effortless.",
-    shortSummary: "Trails are better shared — Hiku connects hikers and their gear.",
-    video: "/work/Hiku/hiku-promo.mp4",
-    thumbnailImage: "/work/Hiku/hiku-promo-frame.jpg",
+      "Students capture a third of a lecture, then never reopen the notes. Reef turns any upload into instant summaries and self-scoring quizzes — so studying actually happens.",
+    shortSummary: "Notes pile up; studying doesn't. Reef turns uploads into quizzes.",
+    video: "/work/reef/reef-thumb.mp4",
+    liveUrl: "https://quizai.help",
     category: "case-study",
   },
   {
